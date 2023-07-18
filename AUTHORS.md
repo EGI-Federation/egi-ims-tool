@@ -1,9 +1,7 @@
 # Authors
 
-## Maintainers
-
-Full Name <email>
+Levente Farkas <levente.farkas@egi.eu>
 
 ## Contributors
 
-[All contributors](https://github.com/EGI-Federation/<REPOSITORY>/graphs/contributors)
+[All contributors](https://github.com/EGI-Federation/egi-capacity-registry/graphs/contributors)

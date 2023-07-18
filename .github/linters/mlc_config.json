@@ -12,10 +12,7 @@
       "pattern": "^http://localhost"
     },
     {
-      "pattern": "^https://example.com"
-    },
-    {
-      "pattern": "https://github.com/EGI-Federation/REPOSITORY/issues/new"
+      "pattern": "https://github.com/EGI-Federation/egi-capacity-registry/issues/new"
     }
   ]
 }

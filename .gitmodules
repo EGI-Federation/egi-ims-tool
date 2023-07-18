@@ -1,0 +1,6 @@
+[submodule "backend/service-level-management"]
+	path = backend/service-level-management
+	url = https://github.com/EGI-Federation/egi-service-level-management
+[submodule "backend/capacity-management"]
+	path = backend/capacity-management
+	url = https://github.com/EGI-Federation/egi-capacity-management
