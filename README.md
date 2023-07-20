@@ -16,11 +16,20 @@ The EGI IMS is based on [FitSM](https://www.fitsm.eu) and consists of a collecti
 Jira tickets, and miscellaneous supporting documents (e.g. agreements, reports). The processes, as well as the roles
 and procedures in each process, are documented in the EGI Confluence, in dedicated sections for each process.
 
-The IMS procedures are manually initiated and executed by EGI employees.
+The processes of the EGI IMS are currently implemented by manually executed procedures described in Confluence pages.
+The steps in (some of) these procedures are (very) hard to understand and/or challenging to perform in the correct
+sequence time after time, as required for repeatable processes prescribed by ITSM Coordination.
 
-[EGI IMS Tools](https://ims.egi.eu) is an internal service that supports the IMS processes, by offering a
-centralized management interface to perform and, where possible, to automate the procedures in each of the
-IMS processes.
+The EGI IMS Tools service alleviates this pain by offering an easy-to-use web interface dedicated to the EGI IMS.
+
+With [EGI IMS Tools](https://ims.egi.eu) you can: 
+
+- Perform procedures in ISM processes easily, with enforced step-by-step workflows.
+- Perform procedures in ISM processes in the same way time after time.
+- Use APIs to programmatically query IMS information and perform operations.
+- Run ISM procedures on a schedule, without human intervention.
+- Monitor IMS processes in real-time for all IT services offered with the help of the EGI IMS.
+- Centrally control access to all aspects of ISM with role-based policies.
 
 ## Processes
 
