@@ -18,13 +18,9 @@ and procedures in each process, are documented in the EGI Confluence, in dedicat
 
 The IMS procedures are manually initiated and executed by EGI employees.
 
-[EGI IMS Tools](https://ims.tools.egi.eu) is an internal service that supports the IMS processes, by offering a
+[EGI IMS Tools](https://ims.egi.eu) is an internal service that supports the IMS processes, by offering a
 centralized management interface to perform and, where possible, to automate the procedures in each of the
 IMS processes.
-
-## Architecture
-
-TBD
 
 ## Processes
 
@@ -33,3 +29,6 @@ The following IMS processes are currently supported by this tool:
 - [Capacity Management](backend/capacity-management/README.md)
 - [Service Level Management](backend/service-level-management/README.md)
 
+## Configuration and deployment
+
+For details on how to configure, build, and deploy the EGI IMS Tool, [look here](deploy/README.md).
