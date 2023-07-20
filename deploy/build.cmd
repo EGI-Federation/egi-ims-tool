@@ -1,0 +1,3 @@
+@echo off
+echo Building API containers...
+docker compose -p egi-ism up -d --build --remove-orphans

@@ -1,0 +1,20 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: my-metrics
+    type: prometheus
+    url: http://prometheus:9090
+    editable: true
+    isDefault: true
+    jsonData:
+      exemplarTraceIdDestinations:
+        # Field with internal link pointing to data source in Grafana.
+        # datasourceUid value can be anything, but it should be unique across all defined data source uids.
+        - datasourceUid: my-traces
+          name: trace_id
+
+        # Field with external link
+        - url: http://jaeger:16686/jaeger/ui/trace/$${__value.raw}
+          name: trace_id
+          urlDisplayLabel: View in Jaeger

@@ -1,0 +1,85 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+        cors:
+          allowed_origins:
+            - "http://*"
+            - "https://*"
+  filelog:
+    start_at: beginning
+    include:
+      - /usr/logs/egi-ism/*.json*
+
+exporters:
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+  prometheus:
+    endpoint: "otelcol:9464"
+    enable_open_metrics: true
+    resource_to_telemetry_conversion:
+      enabled: true
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+
+processors:
+  batch:
+  tail_sampling:
+    decision_wait: 10s
+    num_traces: 1000
+    policies:
+#      - name: latency-policy
+#        type: latency
+#        latency:
+#          threshold_ms: 500
+#      - name: error-policy
+#        type: status_code
+#        status_code:
+#          status_codes: [ ERROR, UNSET ]
+      - name: filter-uri-policy
+        type: string_attribute
+        string_attribute:
+          key: uri
+          values: [ \/health, \/metrics, \/openapi, \/q/.+ ]
+          enabled_regex_matching: true
+          invert_match: true
+      - name: filter-target-policy
+        type: string_attribute
+        string_attribute:
+          key: http.target
+          values: [ \/health, \/metrics, \/openapi, \/q/.+ ]
+          enabled_regex_matching: true
+          invert_match: true
+  attributes:
+    # Adding a Loki label based on OTLP attribute "log.file.name" happens in two steps:
+    actions:
+      # Insert a new attribute "file_name" from the OTLP attribute "log.file.name"
+      - action: insert
+        key: filename
+        from_attribute: log.file.name
+      # Add hint for Loki that the attribute "filename" should be placed as a Loki label
+      - action: insert
+        key: loki.attribute.labels
+        value: filename
+
+extensions:
+  health_check:
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [ otlp ]
+      processors: [ tail_sampling, batch ]
+      exporters: [ otlp ]
+    metrics:
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ prometheus ]
+    logs:
+      receivers: [ filelog ]
+      processors: [ attributes, batch ]
+      exporters: [ loki ]
