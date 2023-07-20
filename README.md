@@ -2,9 +2,9 @@
 # EGI Integrated Management System Tools
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/EGI-Federation/egi-ims-tools?color=darkcyan&label=Release)
-![GitHub issues](https://img.shields.io/github/issues/EGI-Federation/egi-ims-tools?label=Issues)
-![GitHub issue custom search in repo](https://img.shields.io/github/issues-search/EGI-Federation/egi-ims-tools?label=Bugs&color=red&query=is%3Aopen%20label%3Abug)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/EGI-Federation/egi-ims-tool?color=darkcyan&label=Release)
+![GitHub issues](https://img.shields.io/github/issues/EGI-Federation/egi-ims-tool?label=Issues)
+![GitHub issue custom search in repo](https://img.shields.io/github/issues-search/EGI-Federation/egi-ims-tool?label=Bugs&color=red&query=is%3Aopen%20label%3Abug)
 
 [EGI](https://www.egi.eu/egi-federation/) is a federation of computing and storage resource providers united by a
 mission to support research and development, coordinated by the EGI Foundation. EGI uses an
