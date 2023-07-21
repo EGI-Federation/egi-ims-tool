@@ -66,6 +66,7 @@ services:
     build:
       context: ../backend/service-level-management/src/main/docker
     environment:
+      - MP_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/slm
       - EGI_CHECKIN_PASSWORD=${EGI_CHECKIN_PASSWORD}
       - QUARKUS_OIDC_CREDENTIALS=${QUARKUS_OIDC_CREDENTIALS}
       - QUARKUS_LOG_FILE_PATH=/deployments/logs/slm-api.json
