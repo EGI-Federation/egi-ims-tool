@@ -13,6 +13,8 @@ release.properties
 *.log
 *.log.*
 gen/
+target/
+logs/
 
 # NetBeans
 nb-configuration.xml
@@ -23,6 +25,9 @@ nb-configuration.xml
 
 # OSX
 .DS_Store
+
+# Draw.io
+*.bkp
 
 # Vim
 *.swp
