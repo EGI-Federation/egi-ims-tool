@@ -35,8 +35,8 @@ With [EGI IMS Tools](https://ims.egi.eu) you can:
 
 The following IMS processes are currently supported by this tool:
 
-- [Capacity Management](backend/capacity-management/README.md)
-- [Service Level Management](backend/service-level-management/README.md)
+- [Capacity Management](https://github.com/EGI-Federation/egi-capacity-management)
+- [Service Level Management](https://github.com/EGI-Federation/egi-service-level-management)
 
 ## Configuration and deployment
 

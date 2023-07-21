@@ -42,13 +42,13 @@ You can use Docker Compose to easily deploy and run the components of the EGI IM
 Steps to run the API in a container:
 
 1. Copy the file `deploy/.env.template` to `deploy/.env`, then:
-    * Provide the domain name and port where you will deploy the API in the environment
+    * Put the domain name and port where you will deploy the service in the environment
       variables `SERVICE_DOMAIN` and `SERVICE_PORT`, respectively.
-    * Provide an email address in the environment variable `SERVICE_EMAIL` to be used,
+    * Provide an email address in environment variable `SERVICE_EMAIL` that will be used,
       together with the domain name, to automatically request a SSL certificate for the
       SSL terminator.
     * Provide the Check-in credentials the APIs will use to reconfigure access of users to
-      IMS areas/features: the username in environment variable `EGI_CKECKIN_USERNAME`
+      IMS areas/features: the username should go in environment variable `EGI_CKECKIN_USERNAME`
       and the password in variable `EGI_CKECKIN_PASSWORD`.
     * TODO Configure the DB
     * TODO Configure Jira
