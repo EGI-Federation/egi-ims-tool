@@ -15,7 +15,7 @@ services:
   # IMS Tools components
   # ************************
   # SSL terminator
-  cert:
+  ssl:
     container_name: ism-ssl
     image: egi/ism-ssl:latest
     build:
@@ -48,25 +48,16 @@ services:
       - "${TELEMETRY_PORT}:8080"
 
   # Frontend
-#  ui:
-#    container_name: ism-ui
-#    image: egi/ism-ui:latest
-#    build:
-#      context: ../frontend/
-#    environment:
-#      - QUARKUS_LOG_FILE_PATH=/deployments/logs/data-transfer-2.json
-#      - QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
-#      - QUARKUS_OPENTELEMETRY_TRACER_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=data-transfer
-#      - QUARKUS_HTTP_CORS_ORIGINS=/${CORS_ORIGINS:-.*}/
-#      - QUARKUS_HTTP_CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
-#      - QUARKUS_HTTP_CORS_METHODS=${CORS_METHODS:-GET,POST,PUT,DELETE,OPTIONS}
-#    volumes:
-#      - logs:/deployments/logs:rw
-#    restart: unless-stopped
-#    ports:
-#      - "8082:8081"
-#    depends_on:
-#      - otelcol
+  ui:
+    container_name: ism-ui
+    image: egi/ism-ui:latest
+    build:
+      context: ../frontend/
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - slm-api
 
   # SLM API
   slm-api:
