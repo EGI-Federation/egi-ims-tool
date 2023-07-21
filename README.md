@@ -40,4 +40,4 @@ The following IMS processes are currently supported by this tool:
 
 ## Configuration and deployment
 
-For details on how to configure, build, and deploy the EGI IMS Tool, [look here](deploy/README.md).
+For details on how to configure, build, and deploy the EGI IMS Tool, [look here](deploy/DEPLOYING.md).
