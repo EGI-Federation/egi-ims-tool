@@ -10,7 +10,7 @@ receivers:
   filelog:
     start_at: beginning
     include:
-      - /usr/logs/egi-ism/*.json*
+      - /usr/logs/egi-ims/*.json*
 
 exporters:
   otlp:
