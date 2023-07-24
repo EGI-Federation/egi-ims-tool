@@ -11,7 +11,7 @@ scrape_configs:
   static_configs:
   - targets:
     - 'otelcol:8888'
-- job_name: slm
-  static_configs:
-  - targets:
-    - 'slm-api:8081'
+#- job_name: slm
+#  static_configs:
+#  - targets:
+#    - 'slm-api:8081'
