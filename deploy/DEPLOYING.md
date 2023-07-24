@@ -67,7 +67,7 @@ make sure it is requesting an actual HTTPS certificate. By default, it will use 
 certificate and will only do dry runs for requesting a certificate to avoid the
 [rate limits](https://letsencrypt.org/docs/rate-limits/) of Let's Encrypt. To do this:
 
-- Run the command `sudo docker exec -it data-transfer-ssl /bin/sh` then
+- Run the command `sudo docker exec -it ims-ssl /bin/sh` then
 - In the container change directory `cd /opt`
 - Edit the file `request.sh` and remove the `certbot` parameter `--dry-run`
 
