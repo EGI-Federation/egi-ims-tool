@@ -16,7 +16,7 @@
                 <div class="title"><a href="https://www.egi.eu/solutions/" target="_blank">{{ $t('footer.solutions') }}</a></div>
                 <div><a href="https://www.egi.eu/solution/batch-computing/" target="_blank">{{ $t('footer.batch') }}</a></div>
                 <div><a href="https://www.egi.eu/solution/interactive-computing/" target="_blank">{{ $t('footer.interactive') }}</a></div>
-                <div><a href="https://www.egi.eu/solution/federated-access/" target="_blank">{{ $t('footer.fedAcccess') }}</a></div>
+                <div><a href="https://www.egi.eu/solution/federated-access/" target="_blank">{{ $t('footer.fedAccess') }}</a></div>
                 <div><a href="https://www.egi.eu/solution/data-spaces/" target="_blank">{{ $t('footer.dataSpaces') }}</a></div>
                 <div><a href="https://www.egi.eu/solution/data-federation/" target="_blank">{{ $t('footer.dataFed') }}</a></div>
                 <div><a href="https://www.egi.eu/solution/service-hosting/" target="_blank">{{ $t('footer.hosting') }}</a></div>
@@ -153,7 +153,7 @@ hr {
 }
 .footer .bottom {
     flex-direction: row;
-    margin: auto auto 1rem;
+    margin: auto auto 2rem;
     padding: 0 1rem;
     max-width: 55rem;
 }

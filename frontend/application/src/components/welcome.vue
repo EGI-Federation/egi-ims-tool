@@ -16,7 +16,7 @@
     <p class="mt-3 mb-3">
         {{ $t('welcome.imsPartsIntro') }}:
     </p>
-    <div class="d-flex ism-blocks">
+    <div class="d-flex justify-content-center ism-blocks">
         <ism-component
             :title="$t('welcome.cmsTitle')"
             code="CMS"

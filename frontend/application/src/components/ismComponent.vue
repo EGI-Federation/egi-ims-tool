@@ -31,9 +31,10 @@ export default {
 <style scoped>
 .card {
     width: 25%;
-    min-width: 11rem;
-    margin: 0 auto;
-    flex: 1;
+    min-width: 10rem;
+    max-width: 17rem;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 .card-header {
     background-color: aliceblue;

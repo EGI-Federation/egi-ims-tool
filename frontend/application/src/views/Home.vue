@@ -32,7 +32,7 @@
         icon="sliders"
     />
     <ism-module
-        title="$t('home.CSI')"
+        :title="$t('home.CSI')"
         code="CSI"
         icon="stack-overflow"
     />
