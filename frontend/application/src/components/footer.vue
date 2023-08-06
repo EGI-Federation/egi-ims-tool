@@ -7,38 +7,38 @@
         </div>
         <div class="d-flex details">
             <div class="d-flex flex-column infocol">
-                <div class="title"><a href="https://www.egi.eu/services/" target="_blank">Services</a></div>
-                <div><a href="https://www.egi.eu/services/research/" target="_blank">For Research</a></div>
-                <div><a href="https://www.egi.eu/services/business/" target="_blank">For Business</a></div>
-                <div><a href="https://www.egi.eu/services/federation/" target="_blank">For Federation</a></div>
+                <div class="title"><a href="https://www.egi.eu/services/" target="_blank">{{ $t('footer.services') }}</a></div>
+                <div><a href="https://www.egi.eu/services/research/" target="_blank">{{ $t('footer.forRes') }}</a></div>
+                <div><a href="https://www.egi.eu/services/business/" target="_blank">{{ $t('footer.forBus') }}</a></div>
+                <div><a href="https://www.egi.eu/services/federation/" target="_blank">{{ $t('footer.forFed') }}</a></div>
             </div>
             <div class="d-flex flex-column infocol">
-                <div class="title"><a href="https://www.egi.eu/solutions/" target="_blank">Solutions</a></div>
-                <div><a href="https://www.egi.eu/solution/batch-computing/" target="_blank">Batch computing</a></div>
-                <div><a href="https://www.egi.eu/solution/interactive-computing/" target="_blank">Interactive computing</a></div>
-                <div><a href="https://www.egi.eu/solution/federated-access/" target="_blank">Federated access</a></div>
-                <div><a href="https://www.egi.eu/solution/data-spaces/" target="_blank">Data spaces</a></div>
-                <div><a href="https://www.egi.eu/solution/data-federation/" target="_blank">Data federation</a></div>
-                <div><a href="https://www.egi.eu/solution/service-hosting/" target="_blank">Service hosting</a></div>
-                <div><a href="https://www.egi.eu/egi-for-eosc/" target="_blank">EGI for EOSC</a></div>
+                <div class="title"><a href="https://www.egi.eu/solutions/" target="_blank">{{ $t('footer.solutions') }}</a></div>
+                <div><a href="https://www.egi.eu/solution/batch-computing/" target="_blank">{{ $t('footer.batch') }}</a></div>
+                <div><a href="https://www.egi.eu/solution/interactive-computing/" target="_blank">{{ $t('footer.interactive') }}</a></div>
+                <div><a href="https://www.egi.eu/solution/federated-access/" target="_blank">{{ $t('footer.fedAcccess') }}</a></div>
+                <div><a href="https://www.egi.eu/solution/data-spaces/" target="_blank">{{ $t('footer.dataSpaces') }}</a></div>
+                <div><a href="https://www.egi.eu/solution/data-federation/" target="_blank">{{ $t('footer.dataFed') }}</a></div>
+                <div><a href="https://www.egi.eu/solution/service-hosting/" target="_blank">{{ $t('footer.hosting') }}</a></div>
+                <div><a href="https://www.egi.eu/egi-for-eosc/" target="_blank">{{ $t('footer.eosc') }}</a></div>
             </div>
             <div class="d-flex flex-column infocol">
-                <div class="title"><a href="https://www.egi.eu/resources/" target="_blank">Resources</a></div>
-                <div><a href="https://www.egi.eu/news/" target="_blank">News</a></div>
-                <div><a href="https://www.egi.eu/publications/" target="_blank">Publications</a></div>
-                <div><a href="https://www.egi.eu/training-materials/" target="_blank">Training</a></div>
-                <div><a href="https://www.egi.eu/event/egi2023/" target="_blank">EGI Conference</a></div>
+                <div class="title"><a href="https://www.egi.eu/resources/" target="_blank">{{ $t('footer.resources') }}</a></div>
+                <div><a href="https://www.egi.eu/news/" target="_blank">{{ $t('footer.news') }}</a></div>
+                <div><a href="https://www.egi.eu/publications/" target="_blank">{{ $t('footer.pubs') }}</a></div>
+                <div><a href="https://www.egi.eu/training-materials/" target="_blank">{{ $t('footer.training') }}</a></div>
+                <div><a href="https://www.egi.eu/event/egi2023/" target="_blank">{{ $t('footer.conf') }}</a></div>
             </div>
             <div class="d-flex flex-column infocol">
-                <div class="title"><a href="https://www.egi.eu/about/" target="_blank">About</a></div>
-                <div><a href="https://www.egi.eu/egi-foundation/" target="_blank">EGI Foundation</a></div>
-                <div><a href="https://www.egi.eu/egi-federation/" target="_blank">EGI Federation</a></div>
-                <div><a href="https://www.egi.eu/egi-infrastructure/" target="_blank">EGI Infrastructure</a></div>
-                <div><a href="https://www.egi.eu/egi-community/" target="_blank">EGI Community</a></div>
-                <div><a href="https://www.egi.eu/egi-dih/" target="_blank">EGI Digital Innovation Hub</a></div>
-                <div><a href="https://www.egi.eu/egi-foundation/team/" target="_blank">Foundation Team</a></div>
-                <div><a href="https://www.egi.eu/jobs/" target="_blank">Jobs</a></div>
-                <div><a href="https://www.egi.eu/contact-us/" target="_blank">Contact us</a></div>
+                <div class="title"><a href="https://www.egi.eu/about/" target="_blank">{{ $t('footer.about') }}</a></div>
+                <div><a href="https://www.egi.eu/egi-foundation/" target="_blank">{{ $t('footer.foundation') }}</a></div>
+                <div><a href="https://www.egi.eu/egi-federation/" target="_blank">{{ $t('footer.federation') }}</a></div>
+                <div><a href="https://www.egi.eu/egi-infrastructure/" target="_blank">{{ $t('footer.infra') }}</a></div>
+                <div><a href="https://www.egi.eu/egi-community/" target="_blank">{{ $t('footer.community') }}</a></div>
+                <div><a href="https://www.egi.eu/egi-dih/" target="_blank">{{ $t('footer.dih') }}</a></div>
+                <div><a href="https://www.egi.eu/egi-foundation/team/" target="_blank">{{ $t('footer.team') }}</a></div>
+                <div><a href="https://www.egi.eu/jobs/" target="_blank">{{ $t('footer.jobs') }}</a></div>
+                <div><a href="https://www.egi.eu/contact-us/" target="_blank">{{ $t('footer.contact') }}</a></div>
             </div>
         </div>
     </div>
@@ -46,9 +46,9 @@
     <div class="d-flex justify-content-between bottom">
         <div class="d-flex copyright">
             <div>Copyright © 2023, EGI Foundation</div>
-            <div><a href="https://www.egi.eu/terms-of-use/" target="_blank">Terms of Use</a></div>
-            <div><a href="https://www.egi.eu/privacy-notice/" target="_blank">Privacy Policy</a></div>
-            <div class="language dropup">Language:
+            <div><a href="https://www.egi.eu/terms-of-use/" target="_blank">{{ $t('footer.termsUse') }}</a></div>
+            <div><a href="https://www.egi.eu/privacy-notice/" target="_blank">{{ $t('footer.privPolicy') }}</a></div>
+            <div class="language dropup" data-bs-theme="dark">{{ $t('footer.language') }}:
                 <a class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">{{ languageNames[locale] }}</a>
                 <ul class="dropdown-menu">
                     <li v-for="lang in languages">
@@ -186,7 +186,6 @@ hr {
         margin-right: auto;
     }
 }
-
 
 a {
     text-decoration: none;

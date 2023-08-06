@@ -1,6 +1,6 @@
 {
     "welcome": {
-        "greet": "Welcome to the",
+        "greet": "Bienvenuto da",
         "imsTitle": "EGI Integrated Management System",
         "imsPartsIntro": "Integrated Management System (IMS) is an umbrella term that encompasses the following parts",
         "imsBasedOn": "The EGI IMS is based on",
@@ -53,7 +53,7 @@
     "footer": {
         "termsUse": "Terms of Use",
         "privPolicy": "Privacy Policy",
-        "language": "Language",
+        "language": "Lingua",
         "services": "Services",
         "forRes": "For Research",
         "forBus": "For Business",
@@ -65,7 +65,7 @@
         "dataSpaces": "Data spaces",
         "dataFed": "Data federation",
         "hosting": "Service hosting",
-        "eosc": "EGI for EOSC",
+        "eosc": "EGI per EOSC",
         "resources": "Resources",
         "news": "News",
         "pubs": "Publications",
