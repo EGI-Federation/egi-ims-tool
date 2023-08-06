@@ -155,4 +155,11 @@ export default {
     padding: 0;
     justify-content: center;
 }
+
+@media screen and (max-width: 770px) {
+    .ism-modules {
+        margin: 3rem 1rem 1rem;
+        min-width: 25rem;
+    }
+}
 </style>

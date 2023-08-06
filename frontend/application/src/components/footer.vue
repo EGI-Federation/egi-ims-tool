@@ -1,10 +1,61 @@
 <template>
-<div class="footer info">
-    Footer text comes here {{ version }}
-</div>
-<hr/>
-<div class="footer bottom">
-    fsdjlkfhsdjk
+<div class="dt-flex justify-content-center footer">
+    <div class="d-flex justify-content-between info">
+        <div class="logo">
+            <img alt="EGI logo" src="../assets/logo.png">
+        </div>
+        <div class="d-flex details">
+            <div class="d-flex flex-column infocol">
+                <div class="title"><a href="https://www.egi.eu/services/" target="_blank">Services</a></div>
+                <div><a href="https://www.egi.eu/services/research/" target="_blank">For Research</a></div>
+                <div><a href="https://www.egi.eu/services/business/" target="_blank">For Business</a></div>
+                <div><a href="https://www.egi.eu/services/federation/" target="_blank">For Federation</a></div>
+            </div>
+            <div class="d-flex flex-column infocol">
+                <div class="title"><a href="https://www.egi.eu/solutions/" target="_blank">Solutions</a></div>
+                <div><a href="https://www.egi.eu/solution/batch-computing/" target="_blank">Batch computing</a></div>
+                <div><a href="https://www.egi.eu/solution/interactive-computing/" target="_blank">Interactive computing</a></div>
+                <div><a href="https://www.egi.eu/solution/federated-access/" target="_blank">Federated access</a></div>
+                <div><a href="https://www.egi.eu/solution/data-spaces/" target="_blank">Data spaces</a></div>
+                <div><a href="https://www.egi.eu/solution/data-federation/" target="_blank">Data federation</a></div>
+                <div><a href="https://www.egi.eu/solution/service-hosting/" target="_blank">Service hosting</a></div>
+                <div><a href="https://www.egi.eu/egi-for-eosc/" target="_blank">EGI for EOSC</a></div>
+            </div>
+            <div class="d-flex flex-column infocol">
+                <div class="title"><a href="https://www.egi.eu/resources/" target="_blank">Resources</a></div>
+                <div><a href="https://www.egi.eu/news/" target="_blank">News</a></div>
+                <div><a href="https://www.egi.eu/publications/" target="_blank">Publications</a></div>
+                <div><a href="https://www.egi.eu/training-materials/" target="_blank">Training</a></div>
+                <div><a href="https://www.egi.eu/event/egi2023/" target="_blank">EGI Conference</a></div>
+            </div>
+            <div class="d-flex flex-column infocol">
+                <div class="title"><a href="https://www.egi.eu/about/" target="_blank">About</a></div>
+                <div><a href="https://www.egi.eu/egi-foundation/" target="_blank">EGI Foundation</a></div>
+                <div><a href="https://www.egi.eu/egi-federation/" target="_blank">EGI Federation</a></div>
+                <div><a href="https://www.egi.eu/egi-infrastructure/" target="_blank">EGI Infrastructure</a></div>
+                <div><a href="https://www.egi.eu/egi-community/" target="_blank">EGI Community</a></div>
+                <div><a href="https://www.egi.eu/egi-dih/" target="_blank">EGI Digital Innovation Hub</a></div>
+                <div><a href="https://www.egi.eu/egi-foundation/team/" target="_blank">Foundation Team</a></div>
+                <div><a href="https://www.egi.eu/jobs/" target="_blank">Jobs</a></div>
+                <div><a href="https://www.egi.eu/contact-us/" target="_blank">Contact us</a></div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <div class="d-flex justify-content-between bottom">
+        <div class="d-flex copyright">
+            <div>Copyright © 2023, EGI Foundation</div>
+            <div><a href="https://www.egi.eu/terms-of-use/" target="_blank">Terms of Use</a></div>
+            <div><a href="https://www.egi.eu/privacy-notice/" target="_blank">Privacy Policy</a></div>
+            <div class="language">Language: <a href="#">English</a></div>
+        </div>
+        <div class="d-flex social">
+            <div><a href="https://community.egi.eu/" target="_blank"><i class="bi bi-chat-quote-fill"/></a></div>
+            <div><a href="https://twitter.com/EGI_eInfra" target="_blank"><i class="bi bi-twitter"/></a></div>
+            <div><a href="https://www.linkedin.com/company/egi-foundation/" target="_blank"><i class="bi bi-linkedin"/></a></div>
+            <div><a href="https://www.youtube.com/@EGI_eInfra" target="_blank"><i class="bi bi-youtube"/></a></div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -25,13 +76,100 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .footer {
-    background: #282a2d;
-    color: white;
+    font-size: medium;
+    background-color: #282a2d;
+    color: #5b5d5b;
     min-height: 15rem;
+    flex-direction: column;
     margin-top: auto;
 }
+.footer .info {
+    max-width: 55rem;
+    margin: 3rem auto 1rem;
+}
+.footer .logo {
+    min-width: 8rem;
+    text-align: left;
+    padding-left: .5rem;
+}
+.footer .logo img {
+    max-height: 60px;
+    margin-bottom: 1rem;
+}
+.footer .details {
+    gap: 1rem;
+}
+.footer .infocol {
+    text-align: left;
+}
+.footer .title {
+    font-weight: bold;
+}
+
+@media screen and (max-width: 750px) {
+    .footer .info,
+    .footer .details {
+        flex-direction: column;
+    }
+    .footer .logo {
+        text-align: center;
+        padding-left: 0;
+    }
+    .footer .infocol {
+        text-align: center;
+    }
+}
+
 hr {
-    border-color: white;
-    background: white;
+    border-color: #333538;
+    opacity: 0.8;
+}
+.footer .bottom {
+    flex-direction: row;
+    margin: auto auto 1rem;
+    padding: 0 1rem;
+    max-width: 55rem;
+}
+.footer .language {
+    margin-left: .7rem;
+}
+.footer .copyright,
+.footer .social  {
+    gap: .5rem;
+}
+.footer .social {
+    font-size: larger;
+}
+
+@media screen and (max-width: 750px) {
+    .footer .bottom {
+        flex-direction: column;
+        gap: .7rem;
+    }
+    .footer .language {
+        margin-left: 0;
+    }
+    .footer .copyright {
+        flex-direction: column;
+        gap: 0;
+    }
+    .footer .social {
+        font-size: larger;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+
+a {
+    text-decoration: none;
+    color: #7d807d;
+}
+.footer .title a {
+    color: white;
+}
+a:hover,
+.footer .title a:hover {
+    color: #b0c2d2;
 }
 </style>
