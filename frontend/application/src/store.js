@@ -1,13 +1,13 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
-import i18n, { selectedLocale, languages } from './locales'
+import i18n, { selectedLocale, languageNames } from './locales'
 
 // Create a store for shared data across pages
 export const store = createStore({
     state () {
         return {
             locale: selectedLocale,
-            localeName: languages[selectedLocale],
+            localeName: languageNames[selectedLocale],
             loggedIn: true,
             userId: 10,
             userFullName: 'John Doe',
@@ -17,7 +17,7 @@ export const store = createStore({
     mutations: {
         updateLocale(state, newLocale) {
             state.locale = newLocale;
-            state.localeName = languages[newLocale];
+            state.localeName = languageNames[newLocale];
         },
         logIn(state) {
             state.loggedIn = true;
@@ -30,7 +30,7 @@ export const store = createStore({
         }
     },
     actions: {
-        changeLocale({ commit }, newLocale, newLocaleName) {
+        changeLocale({ commit }, newLocale) {
             i18n.locale = newLocale // important!
             commit('updateLocale', newLocale)
         }

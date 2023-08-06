@@ -2,123 +2,123 @@
 <welcome/>
 <div v-if="store.state.loggedIn" class="d-flex flex-wrap ism-modules">
     <ism-module
-        :title="$t('BA')"
+        :title="$t('home.BA')"
         code="BA"
         icon="sliders"
     />
     <ism-module
-        :title="$t('BDS')"
+        :title="$t('home.BDS')"
         code="BDS"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('CAPM')"
+        :title="$t('home.CAPM')"
         code="CAPM"
         icon="sliders"
     />
     <ism-module
-        :title="$t('CHM')"
+        :title="$t('home.CHM')"
         code="CHM"
         icon="sliders"
     />
     <ism-module
-        :title="$t('COM')"
+        :title="$t('home.COM')"
         code="COM"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('CONFM')"
+        :title="$t('home.CONFM')"
         code="CONFM"
         icon="sliders"
     />
     <ism-module
-        title="$t('CSI')"
+        title="$t('home.CSI')"
         code="CSI"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('CRM')"
+        :title="$t('home.CRM')"
         code="CRM"
         icon="sliders"
     />
     <ism-module
-        :title="$t('CPM')"
+        :title="$t('home.CPM')"
         code="CPM"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('FA')"
+        :title="$t('home.FA')"
         code="FA"
         icon="sliders"
     />
     <ism-module
-        :title="$t('HR')"
+        :title="$t('home.HR')"
         code="HR"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('ISM')"
+        :title="$t('home.ISM')"
         code="ISM"
         icon="sliders"
     />
     <ism-module
-        :title="$t('ISRM')"
+        :title="$t('home.ISRM')"
         code="ISRM"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('PPC')"
+        :title="$t('home.PPC')"
         code="PPC"
         icon="sliders"
     />
     <ism-module
-        :title="$t('PM')"
+        :title="$t('home.PM')"
         code="PM"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('PKM')"
+        :title="$t('home.PKM')"
         code="PKM"
         icon="sliders"
     />
     <ism-module
-        :title="$t('PPM')"
+        :title="$t('home.PPM')"
         code="PPM"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('RDM')"
+        :title="$t('home.RDM')"
         code="RDM"
         icon="sliders"
     />
     <ism-module
-        :title="$t('RM')"
+        :title="$t('home.RM')"
         code="RM"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('SACM')"
+        :title="$t('home.SACM')"
         code="SACM"
         icon="sliders"
     />
     <ism-module
-        :title="$t('SUPPM')"
+        :title="$t('home.SUPPM')"
         code="SUPPM"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('SLM')"
+        :title="$t('home.SLM')"
         code="SLM"
         icon="sliders"
         active=true
     />
     <ism-module
-        :title="$t('SPM')"
+        :title="$t('home.SPM')"
         code="SPM"
         icon="stack-overflow"
     />
     <ism-module
-        :title="$t('SRM')"
+        :title="$t('home.SRM')"
         code="SRM"
         icon="sliders"
     />

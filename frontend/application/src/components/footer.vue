@@ -2,7 +2,8 @@
 <div class="dt-flex justify-content-center footer">
     <div class="d-flex justify-content-between info">
         <div class="logo">
-            <img alt="EGI logo" src="../assets/logo.png">
+            <img alt="EGI logo" src="../assets/logo.png"><br/>
+            IMS Tools version {{ version }}
         </div>
         <div class="d-flex details">
             <div class="d-flex flex-column infocol">
@@ -47,7 +48,14 @@
             <div>Copyright © 2023, EGI Foundation</div>
             <div><a href="https://www.egi.eu/terms-of-use/" target="_blank">Terms of Use</a></div>
             <div><a href="https://www.egi.eu/privacy-notice/" target="_blank">Privacy Policy</a></div>
-            <div class="language">Language: <a href="#">English</a></div>
+            <div class="language dropup">Language:
+                <a class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">{{ languageNames[locale] }}</a>
+                <ul class="dropdown-menu">
+                    <li v-for="lang in languages">
+                        <a class="dropdown-item" href="#" @click="handleClick(lang, $event)" >{{ languageNames[lang] }}</a>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div class="d-flex social">
             <div><a href="https://community.egi.eu/" target="_blank"><i class="bi bi-chat-quote-fill"/></a></div>
@@ -62,14 +70,33 @@
 <script>
 // @ is an alias to /src
 import Package from "../../package.json";
+import { languages, languageNames } from '@/locales'
 
 export default {
     name: 'IsmFooter',
     data() {
         return {
             version: Package.version,
+            languages: languages,
+            languageNames: languageNames
         }
     },
+    computed: {
+        locale: {
+            get() {
+                return this.$store.state.locale;
+            },
+            set(newVal) {
+                this.$store.dispatch('changeLocale', newVal)
+            }
+        }
+    },
+    methods: {
+        handleClick(newLocale, event) {
+            this.locale = newLocale;
+            event.preventDefault()
+        }
+    }
 }
 </script>
 

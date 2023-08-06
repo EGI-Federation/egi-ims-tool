@@ -39,7 +39,8 @@ function checkDefaultLanguage() {
 }
 
 export const selectedLocale = checkDefaultLanguage() || process.env.EGI_ISM_LOCALE || 'en';
-export const languages = { en: "English", it: "Italiano" };
+export const languages = Object.getOwnPropertyNames(loadLocaleMessages());
+export const languageNames = { en: "English", it: "Italiano" };
 export default createI18n({
     locale: selectedLocale,
     fallbackLocale: process.env.EGI_ISM_FALLBACK_LOCALE || 'it',
