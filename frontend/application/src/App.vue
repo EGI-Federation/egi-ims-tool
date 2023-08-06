@@ -1,30 +1,31 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
   <router-view/>
+  <ism-footer/>
 </template>
 
+<script setup>
+import IsmFooter from "@/components/footer.vue";
+</script>
+
 <style>
+@import url('../node_modules/bootstrap-icons/font/bootstrap-icons.css');
+@import url('https://fonts.googleapis.com/css?family=Barlow+Condensed');
+@import url('https://fonts.googleapis.com/css?family=Hind:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Anton');
+html {
+    height: 100%;
+}
+body {
+    height: 100%;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
+    font-family: Hind, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 }
 </style>
