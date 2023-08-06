@@ -7,7 +7,7 @@
         <h6 class="card-subtitle">{{ code }} </h6>
         <p class="card-text"><a :href="link" target="_blank" class="card-link">{{ standard }}</a></p>
         <p class="card-text text-body-secondary">{{ description }}</p>
-        <p class="card-subtitle mt-2 scope"><strong>Scope</strong>: {{ scope }}</p>
+        <p class="card-subtitle mt-2 scope"><strong>{{ $t('Scope') }}</strong>: {{ scope }}</p>
     </div>
 </div>
 </template>

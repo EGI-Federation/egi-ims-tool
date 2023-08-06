@@ -2,123 +2,123 @@
 <welcome/>
 <div v-if="store.state.loggedIn" class="d-flex flex-wrap ism-modules">
     <ism-module
-        title="Budgeting and Accounting"
+        :title="$t('BA')"
         code="BA"
         icon="sliders"
     />
     <ism-module
-        title="Business Development and Stakeholders"
+        :title="$t('BDS')"
         code="BDS"
         icon="stack-overflow"
     />
     <ism-module
-        title="Capacity Management"
+        :title="$t('CAPM')"
         code="CAPM"
         icon="sliders"
     />
     <ism-module
-        title="Change Management"
+        :title="$t('CHM')"
         code="CHM"
         icon="sliders"
     />
     <ism-module
-        title="Communications Management"
+        :title="$t('COM')"
         code="COM"
         icon="stack-overflow"
     />
     <ism-module
-        title="Configuration Management"
+        :title="$t('CONFM')"
         code="CONFM"
         icon="sliders"
     />
     <ism-module
-        title="Continual Service Improvement"
+        title="$t('CSI')"
         code="CSI"
         icon="stack-overflow"
     />
     <ism-module
-        title="Customer Relationship Management"
+        :title="$t('CRM')"
         code="CRM"
         icon="sliders"
     />
     <ism-module
-        title="Coordinated Project Management"
+        :title="$t('CPM')"
         code="CPM"
         icon="stack-overflow"
     />
     <ism-module
-        title="Finance Administration"
+        :title="$t('FA')"
         code="FA"
         icon="sliders"
     />
     <ism-module
-        title="Human Resources"
+        :title="$t('HR')"
         code="HR"
         icon="stack-overflow"
     />
     <ism-module
-        title="Information Security Management"
+        :title="$t('ISM')"
         code="ISM"
         icon="sliders"
     />
     <ism-module
-        title="Incident and Service Request Management"
+        :title="$t('ISRM')"
         code="ISRM"
         icon="stack-overflow"
     />
     <ism-module
-        title="Participated Project Coordination"
+        :title="$t('PPC')"
         code="PPC"
         icon="sliders"
     />
     <ism-module
-        title="Problem Management"
+        :title="$t('PM')"
         code="PM"
         icon="stack-overflow"
     />
     <ism-module
-        title="Project Knowledge Management"
+        :title="$t('PKM')"
         code="PKM"
         icon="sliders"
     />
     <ism-module
-        title="Project Portfolio Management"
+        :title="$t('PPM')"
         code="PPM"
         icon="stack-overflow"
     />
     <ism-module
-        title="Release and Deployment Management"
+        :title="$t('RDM')"
         code="RDM"
         icon="sliders"
     />
     <ism-module
-        title="Risk Management"
+        :title="$t('RM')"
         code="RM"
         icon="stack-overflow"
     />
     <ism-module
-        title="Service Availability and Continuity Management"
+        :title="$t('SACM')"
         code="SACM"
         icon="sliders"
     />
     <ism-module
-        title="Supplier Relationship Management"
+        :title="$t('SUPPM')"
         code="SUPPM"
         icon="stack-overflow"
     />
     <ism-module
-        title="Service Level Management"
+        :title="$t('SLM')"
         code="SLM"
         icon="sliders"
         active=true
     />
     <ism-module
-        title="Service Portfolio Management"
+        :title="$t('SPM')"
         code="SPM"
         icon="stack-overflow"
     />
     <ism-module
-        title="Service Reporting Management"
+        :title="$t('SRM')"
         code="SRM"
         icon="sliders"
     />
@@ -127,23 +127,23 @@
 
 <script>
 // @ is an alias to /src
-import { store } from "@/main"
+import { store } from "@/store"
 import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/ismModule.vue";
 
 export default {
     name: 'Home',
-    computed: {
-        store() {
-            return store
-        }
-    },
     components: { Welcome, IsmModule },
     data() {
         return {
             test: false,
         }
-    }
+    },
+    computed: {
+        store() {
+            return store
+        }
+    },
 }
 </script>
 
