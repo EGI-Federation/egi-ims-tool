@@ -14,6 +14,7 @@
 <script>
 // @ is an alias to /src
 import { isValid } from '@/utils'
+
 export default {
     name: 'IsmModule',
     props: {

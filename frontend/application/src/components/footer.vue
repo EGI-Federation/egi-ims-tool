@@ -3,7 +3,8 @@
     <div class="d-flex justify-content-between info">
         <div class="logo">
             <img alt="EGI logo" src="../assets/logo.png"><br/>
-            IMS Tools version {{ version }}
+            IMS Tools version {{ version }}<br/>
+            {{ moduleDetails }}
         </div>
         <div class="d-flex details">
             <div class="d-flex flex-column infocol">
@@ -69,11 +70,16 @@
 
 <script>
 // @ is an alias to /src
+import { isValid } from '@/utils'
 import Package from "../../package.json";
 import { languages, languageNames } from '@/locales'
 
 export default {
     name: 'IsmFooter',
+    props: {
+        moduleName: String,
+        moduleVersion: String
+    },
     data() {
         return {
             version: Package.version,
@@ -89,6 +95,12 @@ export default {
             set(newVal) {
                 this.$store.dispatch('changeLocale', newVal)
             }
+        },
+        moduleDetails() {
+            if(isValid(this.moduleName) && isValid(this.moduleVersion))
+                return this.moduleName + " version " + this.moduleVersion;
+
+            return "";
         }
     },
     methods: {
