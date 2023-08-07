@@ -1,11 +1,6 @@
 <template>
   <router-view/>
-  <ism-footer/>
 </template>
-
-<script setup>
-import IsmFooter from "@/components/footer.vue";
-</script>
 
 <style>
 @import url('../node_modules/bootstrap-icons/font/bootstrap-icons.css');

@@ -123,6 +123,7 @@
         icon="sliders"
     />
 </div>
+<ism-footer/>
 </template>
 
 <script>
@@ -130,10 +131,11 @@
 import { store } from "@/store"
 import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/ismModule.vue";
+import IsmFooter from "@/components/footer.vue";
 
 export default {
     name: 'Home',
-    components: { Welcome, IsmModule },
+    components: { Welcome, IsmModule, IsmFooter },
     data() {
         return {
             test: false,
