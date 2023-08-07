@@ -25,6 +25,7 @@
         "Scope": "Scope"
     },
     "home": {
+        "processes": "Processes",
         "BA": "Budgeting and Accounting",
         "BDS": "Business Development and Stakeholders",
         "CAPM": "Capacity Management",
@@ -81,22 +82,4 @@
         "jobs": "Jobs",
         "contact": "Contact us"
     }
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": ""
 }

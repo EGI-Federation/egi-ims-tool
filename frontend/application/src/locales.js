@@ -19,7 +19,7 @@ function loadLocaleMessages() {
     return messages;
 }
 
-function checkDefaultLanguage() {
+function browserLanguage() {
     let matched = null;
     let languages = loadLocaleMessages();
     Object.getOwnPropertyNames(languages).forEach(lang => {
@@ -35,14 +35,18 @@ function checkDefaultLanguage() {
             }
         })
     }
+    console.log("Browser language: " + matched);
     return matched;
 }
 
-export const selectedLocale = checkDefaultLanguage() || process.env.EGI_ISM_LOCALE || 'en';
+export const defaultLocale = browserLanguage() || process.env.EGI_ISM_LOCALE || 'en';
+
+console.log("Using default language: " + defaultLocale);
+
 export const languages = Object.getOwnPropertyNames(loadLocaleMessages());
 export const languageNames = { en: "English", it: "Italiano" };
 export default createI18n({
-    locale: selectedLocale,
-    fallbackLocale: process.env.EGI_ISM_FALLBACK_LOCALE || 'it',
+    locale: defaultLocale,
+    fallbackLocale: process.env.EGI_ISM_FALLBACK_LOCALE || 'en',
     messages: loadLocaleMessages()
 })

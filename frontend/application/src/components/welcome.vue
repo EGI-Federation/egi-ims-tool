@@ -121,6 +121,7 @@ export default {
 .what {
     cursor: pointer;
     text-decoration: none;
+    font-size: small;
     color: lightgray;
 }
 .what:hover {

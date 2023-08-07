@@ -50,7 +50,7 @@
             <div><a href="https://www.egi.eu/terms-of-use/" target="_blank">{{ $t('footer.termsUse') }}</a></div>
             <div><a href="https://www.egi.eu/privacy-notice/" target="_blank">{{ $t('footer.privPolicy') }}</a></div>
             <div class="language dropup" data-bs-theme="dark">{{ $t('footer.language') }}:
-                <a class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">{{ languageNames[locale] }}</a>
+                <a class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">{{ languageNames[language] }}</a>
                 <ul class="dropdown-menu">
                     <li v-for="lang in languages">
                         <a class="dropdown-item" href="#" @click="handleClick(lang, $event)" >{{ languageNames[lang] }}</a>
@@ -72,7 +72,8 @@
 // @ is an alias to /src
 import { isValid } from '@/utils'
 import Package from "../../package.json";
-import { languages, languageNames } from '@/locales'
+import { store } from "@/store"
+import { languages, languageNames, defaultLocale } from '@/locales'
 
 export default {
     name: 'IsmFooter',
@@ -88,14 +89,7 @@ export default {
         }
     },
     computed: {
-        locale: {
-            get() {
-                return this.$store.state.locale;
-            },
-            set(newVal) {
-                this.$store.dispatch('changeLocale', newVal)
-            }
-        },
+        language() { return store.state.language; },
         moduleDetails() {
             if(isValid(this.moduleName) && isValid(this.moduleVersion))
                 return this.moduleName + " version " + this.moduleVersion;
@@ -104,9 +98,19 @@ export default {
         }
     },
     methods: {
-        handleClick(newLocale, event) {
-            this.locale = newLocale;
+        handleClick(newLang, event) {
             event.preventDefault()
+            store.dispatch('changeLocale', newLang);
+        }
+    },
+    mounted() {
+        const savedLocale = store.state.language;
+        if(isValid(savedLocale) && savedLocale !== defaultLocale) {
+            store.dispatch("changeLocale", savedLocale);
+        }
+        else {
+            console.log("Save default language: " + defaultLocale);
+            store.commit("updateLocale", defaultLocale);
         }
     }
 }
@@ -129,6 +133,7 @@ export default {
 .footer .logo {
     min-width: 8rem;
     text-align: left;
+    margin-bottom: 1rem;
     padding-left: .5rem;
 }
 .footer .logo img {

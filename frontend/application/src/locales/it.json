@@ -1,7 +1,7 @@
 {
     "welcome": {
-        "greet": "Bienvenuto da",
-        "imsTitle": "EGI Integrated Management System",
+        "greet": "Benvenuto a",
+        "imsTitle": "Sistema di Gestione Integrata EGI",
         "imsPartsIntro": "Integrated Management System (IMS) is an umbrella term that encompasses the following parts",
         "imsBasedOn": "The EGI IMS is based on",
         "imsDocumentedIn": "and is documented in",
@@ -25,6 +25,7 @@
         "Scope": "Scope"
     },
     "home": {
+        "processes": "Processes",
         "BA": "Budgeting and Accounting",
         "BDS": "Business Development and Stakeholders",
         "CAPM": "Capacity Management",
@@ -54,7 +55,7 @@
         "termsUse": "Terms of Use",
         "privPolicy": "Privacy Policy",
         "language": "Lingua",
-        "services": "Services",
+        "services": "Servizi",
         "forRes": "For Research",
         "forBus": "For Business",
         "forFed": "For Federation",
@@ -65,7 +66,7 @@
         "dataSpaces": "Data spaces",
         "dataFed": "Data federation",
         "hosting": "Service hosting",
-        "eosc": "EGI per EOSC",
+        "eosc": "EGI for EOSC",
         "resources": "Resources",
         "news": "News",
         "pubs": "Publications",
@@ -81,22 +82,4 @@
         "jobs": "Jobs",
         "contact": "Contact us"
     }
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": "",
-//    "": ""
 }
