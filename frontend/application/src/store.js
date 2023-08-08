@@ -2,7 +2,6 @@ import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import SecureLS from "secure-ls";
 import i18n, { languageNames } from './locales'
-import {isValid} from "@/utils";
 
 var sls = new SecureLS({ isCompression: false });
 
@@ -11,8 +10,9 @@ export const store = createStore({
     state() {
         return {
             language: null,
-            loggedIn: false,
+            loggedIn: true,
             accessToken: null,
+            isAdmin: true,
             userId: 10,
             userFullName: 'John Doe',
             userEmail: 'john.doe@abc.com',

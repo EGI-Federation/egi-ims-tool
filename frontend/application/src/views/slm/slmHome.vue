@@ -1,7 +1,9 @@
 <template>
-  <div class="about">
-    <h1>This is the SLM home page</h1>
-  </div>
+<slm-navbar/>
+    <div class="about">
+        <br/>
+        <h1>This is the SLM home page</h1>
+    </div>
 <ism-footer module-name="SLM" :module-version="slmVersion"/>
 </template>
 
@@ -9,15 +11,21 @@
 // @ is an alias to /src
 import { isValid } from '@/utils'
 import { store } from "@/store"
+import SlmNavbar from "@/components/navbarSLM.vue";
 import IsmFooter from "@/components/footer.vue";
-import {languageNames, selectedLocale} from "@/locales";
 
 export default {
     name: 'slmHome',
-    components: { IsmFooter },
+    components: { SlmNavbar, IsmFooter },
     data() {
         return {
             slmVersion: "1.0.0",
+            loggedIn: store.state.loggedIn,
+        }
+    },
+    methods: {
+        processMenu() {
+            return false;
         }
     }
 }

@@ -51,6 +51,22 @@
         "SPM": "Service Portfolio Management",
         "SRM": "Service Reporting Management"
     },
+    "navbar": {
+        "search": "Search",
+        "toggle": "Toggle navigation",
+        "offcanvas": "EGI IMS Menu",
+        "manageSys": "Management System",
+        "config": "Configure",
+        "plans": "Plans",
+        "processes": "Processes",
+        "thisProcess": "This Process",
+        "otherProcesses": "Other Processes",
+        "gov": "Governance",
+        "projects": "Projects",
+        "roles": "Roles",
+        "procedures": "Procedures",
+        "kpis": "Key Performance Indicators"
+    },
     "footer": {
         "termsUse": "Terms of Use",
         "privPolicy": "Privacy Policy",
@@ -81,5 +97,14 @@
         "team": "Foundation Team",
         "jobs": "Jobs",
         "contact": "Contact us"
+    },
+    "slm": {
+        "navbar" : {
+            "catalogs": "Catalogs",
+            "slas": "Service Level Agreements",
+            "olas": "Operational Level Agreements",
+            "uas": "Underpinning Agreements",
+            "reports": "Reports"
+        }
     }
 }

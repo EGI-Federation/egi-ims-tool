@@ -53,7 +53,7 @@
                 <a class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="#">{{ languageNames[language] }}</a>
                 <ul class="dropdown-menu">
                     <li v-for="lang in languages">
-                        <a class="dropdown-item" href="#" @click="handleClick(lang, $event)" >{{ languageNames[lang] }}</a>
+                        <a class="dropdown-item" href="#" @click="changeLanguage(lang, $event)" >{{ languageNames[lang] }}</a>
                     </li>
                 </ul>
             </div>
@@ -98,8 +98,8 @@ export default {
         }
     },
     methods: {
-        handleClick(newLang, event) {
-            event.preventDefault()
+        changeLanguage(newLang, event) {
+            event.preventDefault();
             store.dispatch('changeLocale', newLang);
         }
     },
