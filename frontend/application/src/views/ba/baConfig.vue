@@ -1,7 +1,7 @@
 <template>
     <div class="about">
         <br/>
-        <h1>This is the SLM home page</h1>
+        <h1>This is the BA configuration page</h1>
     </div>
 </template>
 
@@ -11,15 +11,15 @@ import { isValid } from '@/utils'
 import { store } from "@/store"
 
 export default {
-    name: 'slmHome',
-    components: { },
+    name: 'baConfig',
+    components: {  },
     data() {
         return {
             loggedIn: store.state.loggedIn,
         }
     },
     methods: {
-        test() {
+        processMenu() {
             return false;
         }
     }

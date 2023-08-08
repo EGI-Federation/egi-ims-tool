@@ -2,9 +2,9 @@
 <nav class="navbar sticky-top navbar-expand-md bg-body-tertiary p-0">
     <div class="d-flex flex-nowrap left">
         <!-- Logo Start -->
-        <a class="navbar-brand" href="https://www.egi.eu" target="_blank">
+        <router-link to="/" class="navbar-brand">
             <img alt="EGI logo" src="../assets/logo.png">
-        </a>
+        </router-link>
         <!-- Logo End -->
         <!-- Search Start -->
         <form class="d-flex" role="search">
@@ -29,8 +29,8 @@
                             {{ $t('navbar.manageSys') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="systemMenu">
-                            <li><a class="dropdown-item" href="/global/config">{{ $t('navbar.config') }}</a></li>
-                            <li><a class="dropdown-item" href="/global/plans">{{ $t('navbar.plans') }}</a></li>
+                            <li><router-link class="dropdown-item" to="/system/config">{{ $t('navbar.config') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/system/plans">{{ $t('navbar.plans') }}</router-link></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -45,11 +45,11 @@
                                     {{ $t('navbar.gov') }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="governanceSubMenu" ref="governanceSubMenu">
-                                    <li v-if="!('BA' === processCode)"><a class="dropdown-item" href="/ba">{{ $t('home.BA') }}</a></li>
-                                    <li v-if="!('BDS' === processCode)"><a class="dropdown-item" href="/bds">{{ $t('home.BDS') }}</a></li>
-                                    <li v-if="!('COM' === processCode)"><a class="dropdown-item" href="/com">{{ $t('home.COM') }}</a></li>
-                                    <li v-if="!('FA' === processCode)"><a class="dropdown-item" href="/fa">{{ $t('home.FA') }}</a></li>
-                                    <li v-if="!('HR' === processCode)"><a class="dropdown-item" href="/hr">{{ $t('home.HR') }}</a></li>
+                                    <li v-if="!('BA' === moduleName)"><router-link class="dropdown-item" to="/ba">{{ $t('home.BA') }}</router-link></li>
+                                    <li v-if="!('BDS' === moduleName)"><router-link class="dropdown-item" to="/bds">{{ $t('home.BDS') }}</router-link></li>
+                                    <li v-if="!('COM' === moduleName)"><router-link class="dropdown-item" to="/com">{{ $t('home.COM') }}</router-link></li>
+                                    <li v-if="!('FA' === moduleName)"><router-link class="dropdown-item" to="/fa">{{ $t('home.FA') }}</router-link></li>
+                                    <li v-if="!('HR' === moduleName)"><router-link class="dropdown-item" to="/hr">{{ $t('home.HR') }}</router-link></li>
                                 </ul>
                             </li>
                             <li class="dropdown-submenu dropstart">
@@ -58,28 +58,28 @@
                                     {{ $t('navbar.projects') }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="projectsSubMenu" ref="projectsSubMenu">
-                                    <li v-if="!('CPM' === processCode)"><a class="dropdown-item" href="/cpm">{{ $t('home.CPM') }}</a></li>
-                                    <li v-if="!('PPC' === processCode)"><a class="dropdown-item" href="/ppc">{{ $t('home.PPC') }}</a></li>
-                                    <li v-if="!('PPM' === processCode)"><a class="dropdown-item" href="/ppm">{{ $t('home.PPM') }}</a></li>
-                                    <li v-if="!('PKM' === processCode)"><a class="dropdown-item" href="/pkm">{{ $t('home.PKM') }}</a></li>
+                                    <li v-if="!('CPM' === moduleName)"><router-link class="dropdown-item" to="cpm">{{ $t('home.CPM') }}</router-link></li>
+                                    <li v-if="!('PPC' === moduleName)"><router-link class="dropdown-item" to="/ppc">{{ $t('home.PPC') }}</router-link></li>
+                                    <li v-if="!('PPM' === moduleName)"><router-link class="dropdown-item" to="/ppm">{{ $t('home.PPM') }}</router-link></li>
+                                    <li v-if="!('PKM' === moduleName)"><router-link class="dropdown-item" to="/pkm">{{ $t('home.PKM') }}</router-link></li>
                                 </ul>
                             </li>
                             <li><hr class="dropdown-divider"/></li>
-                            <li v-if="!('CAPM' === processCode)"><a class="dropdown-item" href="/capm">{{ $t('home.CAPM') }}</a></li>
-                            <li v-if="!('CHM' === processCode)"><a class="dropdown-item" href="/chm">{{ $t('home.CHM') }}</a></li>
-                            <li v-if="!('CONFM' === processCode)"><a class="dropdown-item" href="/confm">{{ $t('home.CONFM') }}</a></li>
-                            <li v-if="!('CSI' === processCode)"><a class="dropdown-item" href="/csi">{{ $t('home.CSI') }}</a></li>
-                            <li v-if="!('CRM' === processCode)"><a class="dropdown-item" href="/crm">{{ $t('home.CRM') }}</a></li>
-                            <li v-if="!('ISM' === processCode)"><a class="dropdown-item" href="/ism">{{ $t('home.ISM') }}</a></li>
-                            <li v-if="!('ISRM' === processCode)"><a class="dropdown-item" href="/isrm">{{ $t('home.ISRM') }}</a></li>
-                            <li v-if="!('PM' === processCode)"><a class="dropdown-item" href="/pm">{{ $t('home.PM') }}</a></li>
-                            <li v-if="!('RDM' === processCode)"><a class="dropdown-item" href="/rdm">{{ $t('home.RDM') }}</a></li>
-                            <li v-if="!('RM' === processCode)"><a class="dropdown-item" href="/rm">{{ $t('home.RM') }}</a></li>
-                            <li v-if="!('SACM' === processCode)"><a class="dropdown-item" href="/sacm">{{ $t('home.SACM') }}</a></li>
-                            <li v-if="!('SUPPM' === processCode)"><a class="dropdown-item" href="/suppm">{{ $t('home.SUPPM') }}</a></li>
-                            <li v-if="!('SLM' === processCode)"><a class="dropdown-item" href="/slm">{{ $t('home.SLM') }}</a></li>
-                            <li v-if="!('SPM' === processCode)"><a class="dropdown-item" href="/spm">{{ $t('home.SPM') }}</a></li>
-                            <li v-if="!('SRM' === processCode)"><a class="dropdown-item" href="/srm">{{ $t('home.SRM') }}</a></li>
+                            <li v-if="!('CAPM' === moduleName)"><router-link class="dropdown-item" to="/capm">{{ $t('home.CAPM') }}</router-link></li>
+                            <li v-if="!('CHM' === moduleName)"><router-link class="dropdown-item" to="/chm">{{ $t('home.CHM') }}</router-link></li>
+                            <li v-if="!('CONFM' === moduleName)"><router-link class="dropdown-item" to="/confm">{{ $t('home.CONFM') }}</router-link></li>
+                            <li v-if="!('CSI' === moduleName)"><router-link class="dropdown-item" to="/csi">{{ $t('home.CSI') }}</router-link></li>
+                            <li v-if="!('CRM' === moduleName)"><router-link class="dropdown-item" to="/crm">{{ $t('home.CRM') }}</router-link></li>
+                            <li v-if="!('ISM' === moduleName)"><router-link class="dropdown-item" to="/ism">{{ $t('home.ISM') }}</router-link></li>
+                            <li v-if="!('ISRM' === moduleName)"><router-link class="dropdown-item" to="/isrm">{{ $t('home.ISRM') }}</router-link></li>
+                            <li v-if="!('PM' === moduleName)"><router-link class="dropdown-item" to="/pm">{{ $t('home.PM') }}</router-link></li>
+                            <li v-if="!('RDM' === moduleName)"><router-link class="dropdown-item" to="/rdm">{{ $t('home.RDM') }}</router-link></li>
+                            <li v-if="!('RM' === moduleName)"><router-link class="dropdown-item" to="/rm">{{ $t('home.RM') }}</router-link></li>
+                            <li v-if="!('SACM' === moduleName)"><router-link class="dropdown-item" to="/sacm">{{ $t('home.SACM') }}</router-link></li>
+                            <li v-if="!('SUPPM' === moduleName)"><router-link class="dropdown-item" to="/suppm">{{ $t('home.SUPPM') }}</router-link></li>
+                            <li v-if="!('SLM' === moduleName)"><router-link class="dropdown-item" to="/slm">{{ $t('home.SLM') }}</router-link></li>
+                            <li v-if="!('SPM' === moduleName)"><router-link class="dropdown-item" to="/spm">{{ $t('home.SPM') }}</router-link></li>
+                            <li v-if="!('SRM' === moduleName)"><router-link class="dropdown-item" to="/srm">{{ $t('home.SRM') }}</router-link></li>
                         </ul>
                     </li>
                     <li v-if="isProcess" class="nav-item dropdown">
@@ -88,9 +88,12 @@
                             {{ $t('navbar.thisProcess') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="processMenu">
-                            <span v-for="item in localMenu">
-                                <li v-html="menuItem(item)"></li>
-                            </span>
+                            <ba-menu v-if="('BA' === moduleName)"/>
+                            <bds-menu v-if="('BDS' === moduleName)"/>
+                            <com-menu v-if="('COM' === moduleName)"/>
+                            <fa-menu v-if="('FA' === moduleName)"/>
+                            <hr-menu v-if="('HR' === moduleName)"/>
+                            <slm-menu v-if="('SLM' === moduleName)"/>
                         </ul>
                     </li>
                 </ul>
@@ -116,12 +119,18 @@
 // @ is an alias to /src
 import { isValid } from '@/utils'
 import { store } from "@/store"
+import baMenu from "@/components/baMenu.vue";
+import bdsMenu from "@/components/bdsMenu.vue";
+import comMenu from "@/components/comMenu.vue";
+import faMenu from "@/components/faMenu.vue";
+import hrMenu from "@/components/hrMenu.vue";
+import slmMenu from "@/components/slmMenu.vue";
 
 export default {
     name: 'IsmNavbar',
+    components: { baMenu, bdsMenu, comMenu, faMenu, hrMenu, slmMenu },
     props: {
-        processCode: String,
-        processMenu: Array // Contains items of the form { isSeparator, text, link }
+        moduleName: String,
     },
     data() {
         return {
@@ -130,8 +139,7 @@ export default {
     },
     computed: {
         isAdmin() { return store.state.isAdmin; },
-        isProcess() { return isValid(this.$props.processCode) && this.$props.processCode.length > 0; },
-        localMenu() { return isValid(this.$props.processMenu) ? this.$props.processMenu : []; }
+        isProcess() { return isValid(this.$props.moduleName) && this.$props.moduleName.length > 0; },
     },
     methods: {
         menuItem(item) {

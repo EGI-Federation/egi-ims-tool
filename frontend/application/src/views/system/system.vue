@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="SLM"/>
+    <ism-navbar/>
     <router-view/>
-    <ism-footer module-name="SLM" :module-version="slmVersion"/>
+    <ism-footer/>
 </template>
 
 <script>
@@ -11,11 +11,10 @@ import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
 
 export default {
-    name: 'ServiceLevelManagement',
+    name: 'systemHome',
     components: { IsmNavbar, IsmFooter },
     data() {
         return {
-            slmVersion: "1.0.0",
             loggedIn: store.state.loggedIn,
         }
     },

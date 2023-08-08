@@ -1,7 +1,7 @@
 <template>
     <div class="about">
         <br/>
-        <h1>This is the SLM home page</h1>
+        <h1>This is the FA home page</h1>
     </div>
 </template>
 
@@ -11,7 +11,7 @@ import { isValid } from '@/utils'
 import { store } from "@/store"
 
 export default {
-    name: 'slmHome',
+    name: 'faHome',
     components: { },
     data() {
         return {

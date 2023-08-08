@@ -1,15 +1,27 @@
 <template>
-  <div class="about">
-    <h1>This is the SLM roles page</h1>
-  </div>
+    <div class="about">
+        <br/>
+        <h1>This is the SLM roles page</h1>
+    </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import { isValid } from '@/utils'
+import { store } from "@/store"
+
 export default {
     name: 'slmRoles',
-    components: {
-
+    components: { },
+    data() {
+        return {
+            loggedIn: store.state.loggedIn,
+        }
+    },
+    methods: {
+        processMenu() {
+            return false;
+        }
     }
 }
 </script>
