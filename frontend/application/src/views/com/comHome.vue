@@ -1,4 +1,5 @@
 <template>
+    <bread-crumb :segments="locationSegments"/>
     <div class="about">
         <br/>
         <h1>This is the BA home page</h1>
@@ -9,13 +10,18 @@
 // @ is an alias to /src
 import { isValid } from '@/utils'
 import { store } from "@/store"
+import BreadCrumb from "@/components/breadCrumb.vue";
 
 export default {
     name: 'baHome',
-    components: { },
+    components: { BreadCrumb },
     data() {
         return {
             loggedIn: store.state.loggedIn,
+            locationSegments: [
+                { text: this.$t("home.home"), link:"/" },
+                { text: this.$t("home.COM") },
+            ],
         }
     },
     methods: {

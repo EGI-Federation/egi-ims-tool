@@ -14,7 +14,7 @@ import BreadCrumb from "@/components/breadCrumb.vue";
 
 export default {
     name: 'slmConfig',
-    components:  {BreadCrumb },
+    components:  { BreadCrumb },
     data() {
         return {
             loggedIn: store.state.loggedIn,

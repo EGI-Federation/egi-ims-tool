@@ -15,7 +15,7 @@ export default {
     components: { IsmNavbar, IsmFooter },
     data() {
         return {
-            baVersion: "1.0.0",
+            baVersion: "1.0.21",
             loggedIn: store.state.loggedIn,
         }
     },
