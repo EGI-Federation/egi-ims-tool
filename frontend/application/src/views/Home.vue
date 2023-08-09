@@ -128,6 +128,20 @@
             />
         </div>
     </div>
+    <div v-if="!loggedIn" class="d-flex flex-nowrap auth">
+        <p class="mb-0">{{ $t('home.needAuth') }}</p>
+        <p class="mb-2">{{ $t('home.clickAuth') }}</p>
+        <div class="d-flex flex-nowrap justify-content-center checkin">
+            <a href=""
+               data-bs-toggle="tooltip" :data-bs-title="$t('home.authCheckin')"
+               data-delay='{"show":"5000", "hide":"3000"}'>
+                <img src="../assets/check-in.webp" :alt="$t('home.authCheckin')">
+            </a>
+        </div>
+        <p class="mt-2">
+            <b>{{ $t('home.pleaseNote') }}</b>: {{ $t('home.voMember') }}
+            {{ $t('home.requestEnroll') }} <a :href="enrollUrl">{{ $t('home.clickingHere') }}</a>.</p>
+    </div>
 </div>
 <ism-footer/>
 </template>
@@ -135,10 +149,13 @@
 <script>
 // @ is an alias to /src
 import { store } from "@/store"
+import { Tooltip } from 'bootstrap'
 import IsmNavbar from "@/components/navbar.vue";
 import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/ismModule.vue";
 import IsmFooter from "@/components/footer.vue";
+
+const voEnrollUrl = "https://aai.egi.eu/registry/co_petitions/start/coef:643";
 
 export default {
     name: 'Home',
@@ -146,13 +163,21 @@ export default {
     data() {
         return {
             loggedIn: store.state.loggedIn,
+            enrollUrl: voEnrollUrl,
         }
+    },
+    mounted() {
+        // Tooltips need to be initialized to work
+        new Tooltip(document.body, { selector: "[data-bs-toggle='tooltip']" });
     }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+.checkin a {
+
+}
 .page {
     min-height: 100vh;
 }
@@ -179,5 +204,21 @@ export default {
     .ism-modules {
         min-width: 25rem;
     }
+}
+
+.auth {
+    margin: 5rem auto;
+    flex-direction: column;
+    max-width: 35rem;
+}
+.auth img {
+    max-height: 10rem;
+    opacity: 0.4;
+}
+.auth img:hover {
+    opacity: 1;
+}
+.auth a {
+    text-decoration: none;
 }
 </style>

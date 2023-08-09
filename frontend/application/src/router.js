@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from './views/Home.vue'
+import { store } from "@/store"
+import Login from "@/views/Login.vue";
 import Logout from "@/views/Logout.vue";
+import Home from './views/Home.vue'
 
 import System from './views/system/system.vue'
 import systemHome from "@/views/system/systemHome.vue";
@@ -185,6 +187,11 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login
   },
   {
     path: '/logout',
@@ -499,6 +506,16 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
+
+// Do not allow navigation to any page, unless authenticated
+router.beforeEach(async(to,
+                              from,
+                              next) => {
+  if(to.name !== 'home' && !store.state.loggedIn)
+      next({ name: 'home' })
+  else
+      next();
+});
 
 export default router

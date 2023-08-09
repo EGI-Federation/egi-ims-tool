@@ -50,7 +50,14 @@
         "SUPPM": "Supplier Relationship Management",
         "SLM": "Service Level Management",
         "SPM": "Service Portfolio Management",
-        "SRM": "Service Reporting Management"
+        "SRM": "Service Reporting Management",
+        "needAuth": "To access the EGI Integrated Management System you need to authenticate.",
+        "clickAuth": "Click the EGI Check-in logo below to sign in using with an identity from your home organisation.",
+        "authCheckin": "Login with EGI Check-in",
+        "pleaseNote": "Please note",
+        "voMember": "You must be a member of the EGI Tools virtual organisation (VO) to access this system.",
+        "requestEnroll": "You can request to be enrolled in this VO by",
+        "clickingHere": "clicking here"
     },
     "navbar": {
         "search": "Search",
