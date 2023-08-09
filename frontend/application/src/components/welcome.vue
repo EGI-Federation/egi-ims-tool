@@ -1,6 +1,6 @@
 <template>
 <div class="d-flex justify-content-center welcome">
-    <div class="sizer"><img alt="EGI logo" src="../assets/logo.png"></div>
+    <div class="me-3 sizer"><img alt="EGI logo" src="../assets/logo.png"></div>
     <div class="sizer">
         <div class="greet">{{ $t('welcome.greet') }}</div>
         <div class="text-nowrap title">{{ $t('welcome.imsTitle') }}</div>
@@ -109,12 +109,13 @@ export default {
     flex: 1;
 }
 .welcome .sizer:first-of-type {
+    display: flex;
     max-width: 100px;
 }
 .welcome img {
     height: 100%;
     padding-top: 2px;
-    padding-bottom: 4px;
+    padding-bottom: 6px;
 }
 .welcome .greet {
     text-align: left;
@@ -137,6 +138,13 @@ export default {
 .what:hover {
     color: #797979;
 }
+
+@media screen and (max-width: 880px) {
+    .welcome .sizer:first-of-type {
+        display: none;
+    }
+}
+
 .ism-blocks {
     gap: .7rem;
     margin: 0 6rem;
