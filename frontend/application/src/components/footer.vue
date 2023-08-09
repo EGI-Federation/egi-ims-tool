@@ -89,7 +89,7 @@ export default {
         }
     },
     computed: {
-        language() { return store.state.language; },
+        language() { return store.getters.language; },
         moduleDetails() {
             if(isValid(this.moduleName) && isValid(this.moduleVersion))
                 return this.moduleName + " version " + this.moduleVersion;

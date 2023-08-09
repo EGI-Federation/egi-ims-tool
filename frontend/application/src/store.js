@@ -16,12 +16,13 @@ export const store = createStore({
             userId: 10,
             userFullName: 'John Doe',
             userEmail: 'john.doe@abc.com',
+            notifications: [{ isNew: false },{ isNew: true }],
         }
     },
-    computed: {
-        languageName() {
-            return languageNames[this.language];
-        }
+    getters: {
+        language(state) { return state.language; },
+        languageName(state) { return languageNames[state.language]; },
+        unreadNotifications(state) { return state.notifications.filter(msg => msg.isNew).length; },
     },
     mutations: {
         updateLocale(state, newLocale) {

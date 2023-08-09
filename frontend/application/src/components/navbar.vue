@@ -102,8 +102,8 @@
         <!-- Menu End -->
         <!-- User Start -->
         <div class="d-inline-flex flex-nowrap gap-1 user">
-            <a href="#" class="user-info bg-body-secondary" role="button"><span class="badge-notif animation-blink"></span><i class="bi bi-bell"></i></a>
-            <a href="#" class="user-info bg-body-secondary" role="button"><i class="bi bi-person-square"></i></a>
+            <a href="#" class="user-info bg-body-secondary" role="button"><span :class="unreadNotifications ? 'badge-notif animation-blink' : ''"></span><i class="bi bi-bell"></i></a>
+            <a href="#" class="user-info bg-body-secondary" role="button"><i class="bi bi-sliders"></i></a>
         </div>
         <!-- User End -->
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
@@ -140,14 +140,9 @@ export default {
     computed: {
         isAdmin() { return store.state.isAdmin; },
         isProcess() { return isValid(this.$props.moduleName) && this.$props.moduleName.length > 0; },
+        unreadNotifications() { return store.getters.unreadNotifications; },
     },
     methods: {
-        menuItem(item) {
-            if(item.isSeparator)
-                return "<hr class='dropdown-divider'/>";
-
-            return "<a class='dropdown-item' href='" + item.link + "'>" + item.text + "</a>";
-        },
         toggleGovernanceSubMenu(event) {
             event.stopPropagation();
             if(isValid(this.$refs.projectsSubMenu))
