@@ -65,7 +65,9 @@
         "projects": "Projects",
         "roles": "Roles",
         "procedures": "Procedures",
-        "kpis": "Key Performance Indicators"
+        "kpis": "Key Performance Indicators",
+        "settings": "Settings",
+        "logout": "Sign Out"
     },
     "footer": {
         "termsUse": "Terms of Use",

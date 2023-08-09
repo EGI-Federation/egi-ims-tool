@@ -14,8 +14,8 @@ export const store = createStore({
             accessToken: null,
             isAdmin: true,
             userId: 10,
-            userFullName: 'John Doe',
-            userEmail: 'john.doe@abc.com',
+            userFullName: 'Levente Farkas',
+            userEmail: 'levente.farkas@egi.eu',
             notifications: [{ isNew: false },{ isNew: true }],
         }
     },
@@ -45,6 +45,10 @@ export const store = createStore({
             console.log("Switch language to: " + newLocale);
             i18n.global.locale = newLocale; // important!
             commit('updateLocale', newLocale)
+        },
+        signOut({ commit }) {
+            console.log("Signed out");
+            commit('logOut');
         }
     },
     plugins: [createPersistedState(

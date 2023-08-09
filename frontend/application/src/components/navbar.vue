@@ -120,8 +120,37 @@
         <!-- Menu End -->
         <!-- User Start -->
         <div class="d-inline-flex flex-nowrap gap-1 user">
-            <a href="#" class="user-info bg-body-secondary" role="button"><span :class="unreadNotifications ? 'badge-notif animation-blink' : ''"></span><i class="bi bi-bell"></i></a>
-            <a href="#" class="user-info bg-body-secondary" role="button"><i class="bi bi-sliders"></i></a>
+            <div class="d-flex flex-nowrap user-info">
+                <a class="bg-body-secondary" role="button" href="#" >
+                    <span :class="unreadNotifications ? 'badge-notif animation-blink' : ''"></span>
+                    <i class="bi bi-bell"/>
+                </a>
+            </div>
+            <div class="d-flex flex-nowrap user-info">
+                <a class="bg-body-secondary dropdown" id="userProfile" role="button" aria-expanded="false"
+                   data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" href="#">
+                    <i class="bi bi-sliders"/>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfile">
+                    <!-- Profile info -->
+                    <li class="px-3">
+                        <div class="d-flex align-items-center">
+                            <!-- Avatar -->
+                            <div class="avatar me-3">
+                                <i class="bi bi-person-circle"/>
+                            </div>
+                            <div>
+                                <p class="h5 mb-1">{{ userFullName }}</p>
+                                <p class="small m-0 text-secondary">{{ userEmail }}</p>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- Links -->
+                    <li class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"/>{{ $t('navbar.settings') }}</a></li>
+                    <li><router-link to="/logout" class="dropdown-item"><i class="bi bi-power me-2"/>{{ $t('navbar.logout') }}</router-link></li>
+                </ul>
+            </div>
         </div>
         <!-- User End -->
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
@@ -173,7 +202,8 @@ export default {
     },
     data() {
         return {
-            test: true,
+            userFullName: store.state.userFullName,
+            userEmail: store.state.userEmail,
         }
     },
     computed: {
@@ -230,23 +260,43 @@ export default {
     margin-right: .5rem;
     padding-top: 12px;
     padding-bottom: 4px;
+    align-items: stretch;
 }
 .navbar .right .user {
     margin: 0 .3rem;
 }
-.navbar .right .user-info,
+.navbar .right .user-info {
+    position: relative;
+    left: -3px;
+}
+.navbar .right .user-info > a {
+    padding-top: 4px;
+    padding-left: .5rem;
+    padding-right: .5rem;
+    margin-right: .3rem;
+    border-radius: .3rem;
+    position: relative;
+    top: -2px;
+}
+.avatar {
+    font-weight: bold;
+    font-size: 4rem;
+    max-height: 5rem;
+    color: #2790ee;
+}
+.navbar .right .user-info > a,
 .navbar-toggler {
     font-size: x-large;
     font-weight: bolder;
-    position: relative;
-    top: -4px;
-    padding-top: 5px
-}
-.navbar .right .user-info {
     color: #707070;
-    margin-right: .3rem;
-    border-radius: .3rem;
-    width: 2.5rem;
+}
+.navbar-toggler {
+    position: relative;
+    top: -2px;
+}
+.navbar-toggler i {
+    position: relative;
+    top: 2px;
 }
 .badge-notif {
     width: 8px;
