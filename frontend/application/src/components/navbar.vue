@@ -94,6 +94,10 @@
                             <fa-menu v-if="('FA' === moduleName)"/>
                             <hr-menu v-if="('HR' === moduleName)"/>
                             <slm-menu v-if="('SLM' === moduleName)"/>
+                            <cpm-menu v-if="('CPM' === moduleName)"/>
+                            <pkm-menu v-if="('PKM' === moduleName)"/>
+                            <ppc-menu v-if="('PPC' === moduleName)"/>
+                            <ppm-menu v-if="('PPM' === moduleName)"/>
                         </ul>
                     </li>
                 </ul>
@@ -125,10 +129,14 @@ import comMenu from "@/components/comMenu.vue";
 import faMenu from "@/components/faMenu.vue";
 import hrMenu from "@/components/hrMenu.vue";
 import slmMenu from "@/components/slmMenu.vue";
+import CpmMenu from "@/components/cpmMenu.vue";
+import PkmMenu from "@/components/pkmMenu.vue";
+import PpcMenu from "@/components/ppcMenu.vue";
+import PpmMenu from "@/components/ppmMenu.vue";
 
 export default {
     name: 'IsmNavbar',
-    components: { baMenu, bdsMenu, comMenu, faMenu, hrMenu, slmMenu },
+    components: {PpmMenu, PpcMenu, PkmMenu, CpmMenu, baMenu, bdsMenu, comMenu, faMenu, hrMenu, slmMenu },
     props: {
         moduleName: String,
     },

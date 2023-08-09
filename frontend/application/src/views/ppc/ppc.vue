@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="BA"/>
+    <ism-navbar module-name="PPC"/>
     <router-view/>
-    <ism-footer module-name="BA" :module-version="baVersion"/>
+    <ism-footer module-name="PPC" :module-version="ppcVersion"/>
 </template>
 
 <script>
@@ -11,11 +11,11 @@ import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
 
 export default {
-    name: 'BudgetingAccounting',
+    name: 'ParticipatedProjectCoordination',
     components: { IsmNavbar, IsmFooter },
     data() {
         return {
-            baVersion: "1.0.0",
+            ppcVersion: "1.0.2",
             loggedIn: store.state.loggedIn,
         }
     },

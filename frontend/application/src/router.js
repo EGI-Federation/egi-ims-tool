@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from './views/Home.vue'
 
 import System from './views/system/system.vue'
+import systemHome from "@/views/system/systemHome.vue";
 import systemConfig from "@/views/system/systemConfig.vue";
 import systemPlans from "@/views/system/systemPlans.vue";
 
@@ -52,6 +53,34 @@ import hrRoles from "@/views/hr/hrRoles.vue";
 import hrProcedures from "@/views/hr/hrProcedures.vue";
 import hrKPIs from "@/views/hr/hrKPIs.vue";
 
+import CoordinatedProjectManagement from './views/cpm/cpm.vue'
+import cpmHome from "@/views/cpm/cpmHome.vue";
+import cpmConfig from "@/views/cpm/cpmConfig.vue";
+import cpmRoles from "@/views/cpm/cpmRoles.vue";
+import cpmProcedures from "@/views/cpm/cpmProcedures.vue";
+import cpmKPIs from "@/views/cpm/cpmKPIs.vue";
+
+import ProjectKnowledgeManagement from './views/pkm/pkm.vue'
+import pkmHome from "@/views/pkm/pkmHome.vue";
+import pkmConfig from "@/views/pkm/pkmConfig.vue";
+import pkmRoles from "@/views/pkm/pkmRoles.vue";
+import pkmProcedures from "@/views/pkm/pkmProcedures.vue";
+import pkmKPIs from "@/views/pkm/pkmKPIs.vue";
+
+import ParticipatedProjectCoordination from './views/ppc/ppc.vue'
+import ppcHome from "@/views/ppc/ppcHome.vue";
+import ppcConfig from "@/views/ppc/ppcConfig.vue";
+import ppcRoles from "@/views/ppc/ppcRoles.vue";
+import ppcProcedures from "@/views/ppc/ppcProcedures.vue";
+import ppcKPIs from "@/views/ppc/ppcKPIs.vue";
+
+import ProjectPortfolioManagement from './views/ppm/ppm.vue'
+import ppmHome from "@/views/ppm/ppmHome.vue";
+import ppmConfig from "@/views/ppm/ppmConfig.vue";
+import ppmRoles from "@/views/ppm/ppmRoles.vue";
+import ppmProcedures from "@/views/ppm/ppmProcedures.vue";
+import ppmKPIs from "@/views/ppm/ppmKPIs.vue";
+
 
 const routes = [
   {
@@ -64,6 +93,7 @@ const routes = [
     name: 'system',
     component: System,
     children: [
+      { path: '', component: systemHome },
       { path: 'config', component: systemConfig },
       { path: 'plans', component: systemPlans },
     ]
@@ -126,6 +156,54 @@ const routes = [
       { path: 'roles', component: hrRoles },
       { path: 'procedures', component: hrProcedures },
       { path: 'kpis', component: hrKPIs },
+    ]
+  },
+  {
+    path: '/cpm',
+    name: 'cpm',
+    component: CoordinatedProjectManagement,
+    children: [
+      { path: '', component: cpmHome },
+      { path: 'config', component: cpmConfig },
+      { path: 'roles', component: cpmRoles },
+      { path: 'procedures', component: cpmProcedures },
+      { path: 'kpis', component: cpmKPIs },
+    ]
+  },
+  {
+    path: '/pkm',
+    name: 'pkm',
+    component: ProjectKnowledgeManagement,
+    children: [
+      { path: '', component: pkmHome },
+      { path: 'config', component: pkmConfig },
+      { path: 'roles', component: pkmRoles },
+      { path: 'procedures', component: pkmProcedures },
+      { path: 'kpis', component: pkmKPIs },
+    ]
+  },
+  {
+    path: '/ppc',
+    name: 'ppc',
+    component: ParticipatedProjectCoordination,
+    children: [
+      { path: '', component: ppcHome },
+      { path: 'config', component: ppcConfig },
+      { path: 'roles', component: ppcRoles },
+      { path: 'procedures', component: ppcProcedures },
+      { path: 'kpis', component: ppcKPIs },
+    ]
+  },
+  {
+    path: '/ppm',
+    name: 'ppm',
+    component: ProjectPortfolioManagement,
+    children: [
+      { path: '', component: ppmHome },
+      { path: 'config', component: ppmConfig },
+      { path: 'roles', component: ppmRoles },
+      { path: 'procedures', component: ppmProcedures },
+      { path: 'kpis', component: ppmKPIs },
     ]
   },
   {
