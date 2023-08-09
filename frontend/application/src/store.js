@@ -14,8 +14,8 @@ export const store = createStore({
             accessToken: null,
             isAdmin: true,
             userId: 10,
-            userFullName: 'Levente Farkas',
-            userEmail: 'levente.farkas@egi.eu',
+            userFullName: 'Jonathan Wick',
+            userEmail: 'john.wick@egi.eu',
             notifications: [{ isNew: false },{ isNew: true }],
         }
     },
