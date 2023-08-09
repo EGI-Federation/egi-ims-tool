@@ -1,9 +1,9 @@
 <template>
 <div class="d-flex justify-content-center welcome">
-    <div><img alt="EGI logo" src="../assets/logo.png"></div>
-    <div>
+    <div class="sizer"><img alt="EGI logo" src="../assets/logo.png"></div>
+    <div class="sizer">
         <div class="greet">{{ $t('welcome.greet') }}</div>
-        <div class="display-6 text-nowrap title">{{ $t('welcome.imsTitle') }}</div>
+        <div class="text-nowrap title">{{ $t('welcome.imsTitle') }}</div>
         <div class="explain">
             <a href="#explanation" class="what" @click="explain"
                role="button" data-bs-toggle="collapse" :aria-expanded="explaining" aria-controls="explanation"
@@ -102,10 +102,16 @@ export default {
     gap: 1rem;
     margin: 2rem auto 0 auto;
     max-width: fit-content;
+    align-items: stretch;
+    height: 5rem;
+}
+.welcome .sizer {
+    flex: 1;
 }
 .welcome img {
-    margin-top: 5px;
-    max-height: 60px;
+    height: 100%;
+    padding-top: 2px;
+    padding-bottom: 4px;
 }
 .welcome .greet {
     text-align: left;
@@ -114,6 +120,7 @@ export default {
 .welcome .title {
     border-top: 1px solid lightgrey;
     font-family: Anton, sans-serif;
+    font-size: 2.7rem;
 }
 .explain {
     text-align: right;
