@@ -235,12 +235,12 @@ export default {
     margin: 0 .3rem;
 }
 .navbar .right .user-info,
-.navbar .right .navbar-toggler {
+.navbar-toggler {
     font-size: x-large;
     font-weight: bolder;
     position: relative;
     top: -4px;
-    padding-top: 5px;
+    padding-top: 5px
 }
 .navbar .right .user-info {
     color: #707070;
@@ -258,7 +258,22 @@ export default {
     right: -3px;
     z-index: 1;
 }
-.offcanvas.show .dropdown-menu.show {
+.offcanvas.show ul.dropdown-menu {
     text-align: center;
+}
+.navbar-toggler {
+    border: none;
+    background-color: #e9ecef;
+}
+.dropdown-menu,
+.offcanvas-body {
+    background-color: #f8f9fa;
+}
+.offcanvas-header {
+    background-color: #e9ecef;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    background-color: #e9ecef;
 }
 </style>

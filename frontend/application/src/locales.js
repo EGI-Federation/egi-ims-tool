@@ -48,5 +48,7 @@ export const languageNames = { en: "English", it: "Italiano" };
 export default createI18n({
     locale: defaultLocale,
     fallbackLocale: process.env.EGI_ISM_FALLBACK_LOCALE || 'en',
-    messages: loadLocaleMessages()
+    messages: loadLocaleMessages(),
+    globalInjection: true,
+    legacy: true
 })

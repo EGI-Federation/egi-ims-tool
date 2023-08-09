@@ -25,6 +25,7 @@
         "Scope": "Scope"
     },
     "home": {
+        "home": "Home",
         "processes": "Processes",
         "BA": "Budgeting and Accounting",
         "BDS": "Business Development and Stakeholders",
@@ -58,7 +59,6 @@
         "manageSys": "Management System",
         "config": "Configure",
         "plans": "Plans",
-        "processes": "Processes",
         "thisProcess": "This Process",
         "otherProcesses": "Other Processes",
         "gov": "Governance",

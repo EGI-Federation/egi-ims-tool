@@ -100,13 +100,16 @@ export default {
 <style scoped>
 .welcome {
     gap: 1rem;
-    margin: 2rem auto 0 auto;
+    margin: 2rem auto 3rem auto;
     max-width: fit-content;
     align-items: stretch;
     height: 5rem;
 }
 .welcome .sizer {
     flex: 1;
+}
+.welcome .sizer:first-of-type {
+    max-width: 100px;
 }
 .welcome img {
     height: 100%;
