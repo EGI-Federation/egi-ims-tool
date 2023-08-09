@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar/>
+    <ism-navbar module-name="SACM"/>
     <router-view/>
-    <ism-footer :module-name="$t('navbar.manageSys')" :module-version="systemVersion"/>
+    <ism-footer module-name="SACM" :module-version="sacmVersion"/>
 </template>
 
 <script>
@@ -11,11 +11,11 @@ import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
 
 export default {
-    name: 'systemHome',
+    name: 'ServiceAvailabilityContinuityManagement',
     components: { IsmNavbar, IsmFooter },
     data() {
         return {
-            systemVersion: "1.0.0",
+            sacmVersion: "1.0.0",
             loggedIn: store.state.loggedIn,
         }
     },

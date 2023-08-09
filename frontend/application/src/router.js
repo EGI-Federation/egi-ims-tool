@@ -81,6 +81,103 @@ import ppmRoles from "@/views/ppm/ppmRoles.vue";
 import ppmProcedures from "@/views/ppm/ppmProcedures.vue";
 import ppmKPIs from "@/views/ppm/ppmKPIs.vue";
 
+import CapacityManagement from './views/capm/capm.vue'
+import capmHome from "@/views/capm/capmHome.vue";
+import capmConfig from "@/views/capm/capmConfig.vue";
+import capmRoles from "@/views/capm/capmRoles.vue";
+import capmProcedures from "@/views/capm/capmProcedures.vue";
+import capmKPIs from "@/views/capm/capmKPIs.vue";
+
+import ChangeManagement from './views/chm/chm.vue'
+import chmHome from "@/views/chm/chmHome.vue";
+import chmConfig from "@/views/chm/chmConfig.vue";
+import chmRoles from "@/views/chm/chmRoles.vue";
+import chmProcedures from "@/views/chm/chmProcedures.vue";
+import chmKPIs from "@/views/chm/chmKPIs.vue";
+
+import ConfigurationManagement from './views/confm/confm.vue'
+import confmHome from "@/views/confm/confmHome.vue";
+import confmConfig from "@/views/confm/confmConfig.vue";
+import confmRoles from "@/views/confm/confmRoles.vue";
+import confmProcedures from "@/views/confm/confmProcedures.vue";
+import confmKPIs from "@/views/confm/confmKPIs.vue";
+
+import ContinualServiceImprovement from './views/csi/csi.vue'
+import csiHome from "@/views/csi/csiHome.vue";
+import csiConfig from "@/views/csi/csiConfig.vue";
+import csiRoles from "@/views/csi/csiRoles.vue";
+import csiProcedures from "@/views/csi/csiProcedures.vue";
+import csiKPIs from "@/views/csi/csiKPIs.vue";
+
+import CustomerRelationshipManagement from './views/crm/crm.vue'
+import crmHome from "@/views/crm/crmHome.vue";
+import crmConfig from "@/views/crm/crmConfig.vue";
+import crmRoles from "@/views/crm/crmRoles.vue";
+import crmProcedures from "@/views/crm/crmProcedures.vue";
+import crmKPIs from "@/views/crm/crmKPIs.vue";
+
+import InformationSecurityManagement from './views/ism/ism.vue'
+import ismHome from "@/views/ism/ismHome.vue";
+import ismConfig from "@/views/ism/ismConfig.vue";
+import ismRoles from "@/views/ism/ismRoles.vue";
+import ismProcedures from "@/views/ism/ismProcedures.vue";
+import ismKPIs from "@/views/ism/ismKPIs.vue";
+
+import IncidentServiceRequestManagement from './views/isrm/isrm.vue'
+import isrmHome from "@/views/isrm/isrmHome.vue";
+import isrmConfig from "@/views/isrm/isrmConfig.vue";
+import isrmRoles from "@/views/isrm/isrmRoles.vue";
+import isrmProcedures from "@/views/isrm/isrmProcedures.vue";
+import isrmKPIs from "@/views/isrm/isrmKPIs.vue";
+
+import ProblemManagement from './views/pm/pm.vue'
+import pmHome from "@/views/pm/pmHome.vue";
+import pmConfig from "@/views/pm/pmConfig.vue";
+import pmRoles from "@/views/pm/pmRoles.vue";
+import pmProcedures from "@/views/pm/pmProcedures.vue";
+import pmKPIs from "@/views/pm/pmKPIs.vue";
+
+import ReleaseDeploymentManagement from './views/rdm/rdm.vue'
+import rdmHome from "@/views/rdm/rdmHome.vue";
+import rdmConfig from "@/views/rdm/rdmConfig.vue";
+import rdmRoles from "@/views/rdm/rdmRoles.vue";
+import rdmProcedures from "@/views/rdm/rdmProcedures.vue";
+import rdmKPIs from "@/views/rdm/rdmKPIs.vue";
+
+import RiskManagement from './views/rm/rm.vue'
+import rmHome from "@/views/rm/rmHome.vue";
+import rmConfig from "@/views/rm/rmConfig.vue";
+import rmRoles from "@/views/rm/rmRoles.vue";
+import rmProcedures from "@/views/rm/rmProcedures.vue";
+import rmKPIs from "@/views/rm/rmKPIs.vue";
+
+import ServiceAvailabilityContinuityManagement from './views/sacm/sacm.vue'
+import sacmHome from "@/views/sacm/sacmHome.vue";
+import sacmConfig from "@/views/sacm/sacmConfig.vue";
+import sacmRoles from "@/views/sacm/sacmRoles.vue";
+import sacmProcedures from "@/views/sacm/sacmProcedures.vue";
+import sacmKPIs from "@/views/sacm/sacmKPIs.vue";
+
+import SupplierRelationshipManagement from './views/suppm/suppm.vue'
+import suppmHome from "@/views/suppm/suppmHome.vue";
+import suppmConfig from "@/views/suppm/suppmConfig.vue";
+import suppmRoles from "@/views/suppm/suppmRoles.vue";
+import suppmProcedures from "@/views/suppm/suppmProcedures.vue";
+import suppmKPIs from "@/views/suppm/suppmKPIs.vue";
+
+import ServicePortfolioManagement from './views/spm/spm.vue'
+import spmHome from "@/views/spm/spmHome.vue";
+import spmConfig from "@/views/spm/spmConfig.vue";
+import spmRoles from "@/views/spm/spmRoles.vue";
+import spmProcedures from "@/views/spm/spmProcedures.vue";
+import spmKPIs from "@/views/spm/spmKPIs.vue";
+
+import ServiceReportingManagement from './views/srm/srm.vue'
+import srmHome from "@/views/srm/srmHome.vue";
+import srmConfig from "@/views/srm/srmConfig.vue";
+import srmRoles from "@/views/srm/srmRoles.vue";
+import srmProcedures from "@/views/srm/srmProcedures.vue";
+import srmKPIs from "@/views/srm/srmKPIs.vue";
 
 const routes = [
   {
@@ -204,6 +301,174 @@ const routes = [
       { path: 'roles', component: ppmRoles },
       { path: 'procedures', component: ppmProcedures },
       { path: 'kpis', component: ppmKPIs },
+    ]
+  },
+  {
+    path: '/capm',
+    name: 'capm',
+    component: CapacityManagement,
+    children: [
+      { path: '', component: capmHome },
+      { path: 'config', component: capmConfig },
+      { path: 'roles', component: capmRoles },
+      { path: 'procedures', component: capmProcedures },
+      { path: 'kpis', component: capmKPIs },
+    ]
+  },
+  {
+    path: '/chm',
+    name: 'chm',
+    component: ChangeManagement,
+    children: [
+      { path: '', component: chmHome },
+      { path: 'config', component: chmConfig },
+      { path: 'roles', component: chmRoles },
+      { path: 'procedures', component: chmProcedures },
+      { path: 'kpis', component: chmKPIs },
+    ]
+  },
+  {
+    path: '/confm',
+    name: 'confm',
+    component: ConfigurationManagement,
+    children: [
+      { path: '', component: confmHome },
+      { path: 'config', component: confmConfig },
+      { path: 'roles', component: confmRoles },
+      { path: 'procedures', component: confmProcedures },
+      { path: 'kpis', component: confmKPIs },
+    ]
+  },
+  {
+    path: '/csi',
+    name: 'csi',
+    component: ContinualServiceImprovement,
+    children: [
+      { path: '', component: csiHome },
+      { path: 'config', component: csiConfig },
+      { path: 'roles', component: csiRoles },
+      { path: 'procedures', component: csiProcedures },
+      { path: 'kpis', component: csiKPIs },
+    ]
+  },
+  {
+    path: '/crm',
+    name: 'crm',
+    component: CustomerRelationshipManagement,
+    children: [
+      { path: '', component: crmHome },
+      { path: 'config', component: crmConfig },
+      { path: 'roles', component: crmRoles },
+      { path: 'procedures', component: crmProcedures },
+      { path: 'kpis', component: crmKPIs },
+    ]
+  },
+  {
+    path: '/ism',
+    name: 'ism',
+    component: InformationSecurityManagement,
+    children: [
+      { path: '', component: ismHome },
+      { path: 'config', component: ismConfig },
+      { path: 'roles', component: ismRoles },
+      { path: 'procedures', component: ismProcedures },
+      { path: 'kpis', component: ismKPIs },
+    ]
+  },
+  {
+    path: '/isrm',
+    name: 'isrm',
+    component: IncidentServiceRequestManagement,
+    children: [
+      { path: '', component: isrmHome },
+      { path: 'config', component: isrmConfig },
+      { path: 'roles', component: isrmRoles },
+      { path: 'procedures', component: isrmProcedures },
+      { path: 'kpis', component: isrmKPIs },
+    ]
+  },
+  {
+    path: '/pm',
+    name: 'pm',
+    component: ProblemManagement,
+    children: [
+      { path: '', component: pmHome },
+      { path: 'config', component: pmConfig },
+      { path: 'roles', component: pmRoles },
+      { path: 'procedures', component: pmProcedures },
+      { path: 'kpis', component: pmKPIs },
+    ]
+  },
+  {
+    path: '/rdm',
+    name: 'rdm',
+    component: ReleaseDeploymentManagement,
+    children: [
+      { path: '', component: rdmHome },
+      { path: 'config', component: rdmConfig },
+      { path: 'roles', component: rdmRoles },
+      { path: 'procedures', component: rdmProcedures },
+      { path: 'kpis', component: rdmKPIs },
+    ]
+  },
+  {
+    path: '/rm',
+    name: 'rm',
+    component: RiskManagement,
+    children: [
+      { path: '', component: rmHome },
+      { path: 'config', component: rmConfig },
+      { path: 'roles', component: rmRoles },
+      { path: 'procedures', component: rmProcedures },
+      { path: 'kpis', component: rmKPIs },
+    ]
+  },
+  {
+    path: '/sacm',
+    name: 'sacm',
+    component: ServiceAvailabilityContinuityManagement,
+    children: [
+      { path: '', component: sacmHome },
+      { path: 'config', component: sacmConfig },
+      { path: 'roles', component: sacmRoles },
+      { path: 'procedures', component: sacmProcedures },
+      { path: 'kpis', component: sacmKPIs },
+    ]
+  },
+  {
+    path: '/suppm',
+    name: 'suppm',
+    component: SupplierRelationshipManagement,
+    children: [
+      { path: '', component: suppmHome },
+      { path: 'config', component: suppmConfig },
+      { path: 'roles', component: suppmRoles },
+      { path: 'procedures', component: suppmProcedures },
+      { path: 'kpis', component: suppmKPIs },
+    ]
+  },
+  {
+    path: '/spm',
+    name: 'spm',
+    component: ServicePortfolioManagement,
+    children: [
+      { path: '', component: spmHome },
+      { path: 'config', component: spmConfig },
+      { path: 'roles', component: spmRoles },
+      { path: 'procedures', component: spmProcedures },
+      { path: 'kpis', component: spmKPIs },
+    ]
+  },
+  {
+    path: '/srm',
+    name: 'srm',
+    component: ServiceReportingManagement,
+    children: [
+      { path: '', component: srmHome },
+      { path: 'config', component: srmConfig },
+      { path: 'roles', component: srmRoles },
+      { path: 'procedures', component: srmProcedures },
+      { path: 'kpis', component: srmKPIs },
     ]
   },
   {

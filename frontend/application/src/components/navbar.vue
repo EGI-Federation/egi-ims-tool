@@ -36,7 +36,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="modulesMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
-                            {{ isProcess ? $t('navbar.otherProcesses') : $t('navbar.processes') }}
+                            {{ isProcess ? $t('navbar.otherProcesses') : $t('home.processes') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="modulesMenu">
                             <li class="dropdown-submenu dropstart">
@@ -93,11 +93,25 @@
                             <com-menu v-if="('COM' === moduleName)"/>
                             <fa-menu v-if="('FA' === moduleName)"/>
                             <hr-menu v-if="('HR' === moduleName)"/>
-                            <slm-menu v-if="('SLM' === moduleName)"/>
                             <cpm-menu v-if="('CPM' === moduleName)"/>
                             <pkm-menu v-if="('PKM' === moduleName)"/>
                             <ppc-menu v-if="('PPC' === moduleName)"/>
                             <ppm-menu v-if="('PPM' === moduleName)"/>
+                            <capm-menu v-if="('CAPM' === moduleName)"/>
+                            <chm-menu v-if="('CHM' === moduleName)"/>
+                            <confm-menu v-if="('CONFM' === moduleName)"/>
+                            <csi-menu v-if="('CSI' === moduleName)"/>
+                            <crm-menu v-if="('CRM' === moduleName)"/>
+                            <ism-menu v-if="('ISM' === moduleName)"/>
+                            <isrm-menu v-if="('ISRM' === moduleName)"/>
+                            <pm-menu v-if="('PM' === moduleName)"/>
+                            <rdm-menu v-if="('RDM' === moduleName)"/>
+                            <rm-menu v-if="('RM' === moduleName)"/>
+                            <sacm-menu v-if="('SACM' === moduleName)"/>
+                            <suppm-menu v-if="('SUPPM' === moduleName)"/>
+                            <slm-menu v-if="('SLM' === moduleName)"/>
+                            <spm-menu v-if="('SPM' === moduleName)"/>
+                            <srm-menu v-if="('SRM' === moduleName)"/>
                         </ul>
                     </li>
                 </ul>
@@ -123,20 +137,37 @@
 // @ is an alias to /src
 import { isValid } from '@/utils'
 import { store } from "@/store"
-import baMenu from "@/components/baMenu.vue";
-import bdsMenu from "@/components/bdsMenu.vue";
-import comMenu from "@/components/comMenu.vue";
-import faMenu from "@/components/faMenu.vue";
-import hrMenu from "@/components/hrMenu.vue";
-import slmMenu from "@/components/slmMenu.vue";
-import CpmMenu from "@/components/cpmMenu.vue";
-import PkmMenu from "@/components/pkmMenu.vue";
-import PpcMenu from "@/components/ppcMenu.vue";
-import PpmMenu from "@/components/ppmMenu.vue";
+import baMenu from "@/components/menus/baMenu.vue";
+import bdsMenu from "@/components/menus/bdsMenu.vue";
+import comMenu from "@/components/menus/comMenu.vue";
+import faMenu from "@/components/menus/faMenu.vue";
+import hrMenu from "@/components/menus/hrMenu.vue";
+import slmMenu from "@/components/menus/slmMenu.vue";
+import CpmMenu from "@/components/menus/cpmMenu.vue";
+import PkmMenu from "@/components/menus/pkmMenu.vue";
+import PpcMenu from "@/components/menus/ppcMenu.vue";
+import PpmMenu from "@/components/menus/ppmMenu.vue";
+import CapmMenu from "@/components/menus/capmMenu.vue";
+import ChmMenu from "@/components/menus/chmMenu.vue";
+import ConfmMenu from "@/components/menus/confmMenu.vue";
+import CsiMenu from "@/components/menus/csiMenu.vue";
+import CrmMenu from "@/components/menus/crmMenu.vue";
+import IsmMenu from "@/components/menus/ismMenu.vue";
+import IsrmMenu from "@/components/menus/isrmMenu.vue";
+import PmMenu from "@/components/menus/pmMenu.vue";
+import RdmMenu from "@/components/menus/rdmMenu.vue";
+import RmMenu from "@/components/menus/rmMenu.vue";
+import SacmMenu from "@/components/menus/sacmMenu.vue";
+import SuppmMenu from "@/components/menus/suppmMenu.vue";
+import SpmMenu from "@/components/menus/spmMenu.vue";
+import SrmMenu from "@/components/menus/srmMenu.vue";
 
 export default {
     name: 'IsmNavbar',
-    components: {PpmMenu, PpcMenu, PkmMenu, CpmMenu, baMenu, bdsMenu, comMenu, faMenu, hrMenu, slmMenu },
+    components: {
+        SrmMenu, SpmMenu, SuppmMenu, SacmMenu, RmMenu, RdmMenu, PmMenu, IsrmMenu, IsmMenu,
+        CrmMenu, CsiMenu, ConfmMenu, ChmMenu, CapmMenu, PpmMenu, PpcMenu, PkmMenu, CpmMenu,
+        baMenu, bdsMenu, comMenu, faMenu, hrMenu, slmMenu },
     props: {
         moduleName: String,
     },

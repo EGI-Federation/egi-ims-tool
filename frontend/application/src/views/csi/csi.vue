@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar/>
+    <ism-navbar module-name="CSI"/>
     <router-view/>
-    <ism-footer :module-name="$t('navbar.manageSys')" :module-version="systemVersion"/>
+    <ism-footer module-name="CSI" :module-version="csiVersion"/>
 </template>
 
 <script>
@@ -11,11 +11,11 @@ import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
 
 export default {
-    name: 'systemHome',
+    name: 'ContinualServiceImprovement',
     components: { IsmNavbar, IsmFooter },
     data() {
         return {
-            systemVersion: "1.0.0",
+            csiVersion: "1.0.0",
             loggedIn: store.state.loggedIn,
         }
     },

@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar/>
+    <ism-navbar module-name="SRM"/>
     <router-view/>
-    <ism-footer :module-name="$t('navbar.manageSys')" :module-version="systemVersion"/>
+    <ism-footer module-name="SRM" :module-version="srmVersion"/>
 </template>
 
 <script>
@@ -11,11 +11,11 @@ import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
 
 export default {
-    name: 'systemHome',
+    name: 'ServiceReportingManagement',
     components: { IsmNavbar, IsmFooter },
     data() {
         return {
-            systemVersion: "1.0.0",
+            srmVersion: "1.0.0",
             loggedIn: store.state.loggedIn,
         }
     },

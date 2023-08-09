@@ -2,7 +2,7 @@
     <bread-crumb :segments="locationSegments"/>
     <div class="about">
         <br/>
-        <h1>This is the System Plans page</h1>
+        <h1>This is the ISM configuration page</h1>
     </div>
 </template>
 
@@ -13,15 +13,15 @@ import { store } from "@/store"
 import BreadCrumb from "@/components/breadCrumb.vue";
 
 export default {
-    name: 'systemPlans',
+    name: 'ismConfig',
     components: { BreadCrumb },
     data() {
         return {
             loggedIn: store.state.loggedIn,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
-                { text: this.$t("navbar.manageSys"), link:"/system" },
-                { text: this.$t("navbar.plans") },
+                { text: this.$t("home.ISM"), link: "/ism" },
+                { text: this.$t("navbar.config") },
             ],
         }
     },

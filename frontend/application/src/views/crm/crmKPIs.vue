@@ -2,7 +2,7 @@
     <bread-crumb :segments="locationSegments"/>
     <div class="about">
         <br/>
-        <h1>This is the System Plans page</h1>
+        <h1>This is the CRM KPIs page</h1>
     </div>
 </template>
 
@@ -13,15 +13,15 @@ import { store } from "@/store"
 import BreadCrumb from "@/components/breadCrumb.vue";
 
 export default {
-    name: 'systemPlans',
+    name: 'crmKPIs',
     components: { BreadCrumb },
     data() {
         return {
             loggedIn: store.state.loggedIn,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
-                { text: this.$t("navbar.manageSys"), link:"/system" },
-                { text: this.$t("navbar.plans") },
+                { text: this.$t("home.CRM"), link: "/crm" },
+                { text: this.$t("navbar.kpis") },
             ],
         }
     },
