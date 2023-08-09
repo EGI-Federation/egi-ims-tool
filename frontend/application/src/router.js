@@ -190,7 +190,7 @@ const routes = [
     name: 'system',
     component: System,
     children: [
-      { path: '', component: systemHome },
+      { path: '', name:'system-home', component: systemHome },
       { path: 'config', component: systemConfig },
       { path: 'plans', component: systemPlans },
     ]
@@ -200,7 +200,7 @@ const routes = [
     name: 'ba',
     component: BudgetingAccounting,
     children: [
-      { path: '', component: baHome },
+      { path: '', name:'ba-home', component: baHome },
       { path: 'config', component: baConfig },
       { path: 'roles', component: baRoles },
       { path: 'procedures', component: baProcedures },
@@ -212,7 +212,7 @@ const routes = [
     name: 'bds',
     component: BusinessDevelopmentStakeholders,
     children: [
-      { path: '', component: bdsHome },
+      { path: '', name:'bds-home', component: bdsHome },
       { path: 'config', component: bdsConfig },
       { path: 'roles', component: bdsRoles },
       { path: 'procedures', component: bdsProcedures },
@@ -224,7 +224,7 @@ const routes = [
     name: 'com',
     component: CommunicationsManagement,
     children: [
-      { path: '', component: comHome },
+      { path: '', name:'com-home', component: comHome },
       { path: 'config', component: comConfig },
       { path: 'roles', component: comRoles },
       { path: 'procedures', component: comProcedures },
@@ -236,7 +236,7 @@ const routes = [
     name: 'fa',
     component: FinanceAdministration,
     children: [
-      { path: '', component: faHome },
+      { path: '', name:'fa-home', component: faHome },
       { path: 'config', component: faConfig },
       { path: 'roles', component: faRoles },
       { path: 'procedures', component: faProcedures },
@@ -248,7 +248,7 @@ const routes = [
     name: 'hr',
     component: HumanResources,
     children: [
-      { path: '', component: hrHome },
+      { path: '', name:'hr-home', component: hrHome },
       { path: 'config', component: hrConfig },
       { path: 'roles', component: hrRoles },
       { path: 'procedures', component: hrProcedures },
@@ -260,7 +260,7 @@ const routes = [
     name: 'cpm',
     component: CoordinatedProjectManagement,
     children: [
-      { path: '', component: cpmHome },
+      { path: '', name:'cpm-home', component: cpmHome },
       { path: 'config', component: cpmConfig },
       { path: 'roles', component: cpmRoles },
       { path: 'procedures', component: cpmProcedures },
@@ -272,7 +272,7 @@ const routes = [
     name: 'pkm',
     component: ProjectKnowledgeManagement,
     children: [
-      { path: '', component: pkmHome },
+      { path: '', name:'pkm-home', component: pkmHome },
       { path: 'config', component: pkmConfig },
       { path: 'roles', component: pkmRoles },
       { path: 'procedures', component: pkmProcedures },
@@ -284,7 +284,7 @@ const routes = [
     name: 'ppc',
     component: ParticipatedProjectCoordination,
     children: [
-      { path: '', component: ppcHome },
+      { path: '', name:'ppc-home', component: ppcHome },
       { path: 'config', component: ppcConfig },
       { path: 'roles', component: ppcRoles },
       { path: 'procedures', component: ppcProcedures },
@@ -296,7 +296,7 @@ const routes = [
     name: 'ppm',
     component: ProjectPortfolioManagement,
     children: [
-      { path: '', component: ppmHome },
+      { path: '', name:'ppm-home', component: ppmHome },
       { path: 'config', component: ppmConfig },
       { path: 'roles', component: ppmRoles },
       { path: 'procedures', component: ppmProcedures },
@@ -308,7 +308,7 @@ const routes = [
     name: 'capm',
     component: CapacityManagement,
     children: [
-      { path: '', component: capmHome },
+      { path: '', name:'capm-home', component: capmHome },
       { path: 'config', component: capmConfig },
       { path: 'roles', component: capmRoles },
       { path: 'procedures', component: capmProcedures },
@@ -320,7 +320,7 @@ const routes = [
     name: 'chm',
     component: ChangeManagement,
     children: [
-      { path: '', component: chmHome },
+      { path: '', name:'chm-home', component: chmHome },
       { path: 'config', component: chmConfig },
       { path: 'roles', component: chmRoles },
       { path: 'procedures', component: chmProcedures },
@@ -332,7 +332,7 @@ const routes = [
     name: 'confm',
     component: ConfigurationManagement,
     children: [
-      { path: '', component: confmHome },
+      { path: '', name:'confm-home', component: confmHome },
       { path: 'config', component: confmConfig },
       { path: 'roles', component: confmRoles },
       { path: 'procedures', component: confmProcedures },
@@ -344,7 +344,7 @@ const routes = [
     name: 'csi',
     component: ContinualServiceImprovement,
     children: [
-      { path: '', component: csiHome },
+      { path: '', name:'csi-home', component: csiHome },
       { path: 'config', component: csiConfig },
       { path: 'roles', component: csiRoles },
       { path: 'procedures', component: csiProcedures },
@@ -356,7 +356,7 @@ const routes = [
     name: 'crm',
     component: CustomerRelationshipManagement,
     children: [
-      { path: '', component: crmHome },
+      { path: '', name:'srm-home', component: crmHome },
       { path: 'config', component: crmConfig },
       { path: 'roles', component: crmRoles },
       { path: 'procedures', component: crmProcedures },
@@ -368,7 +368,7 @@ const routes = [
     name: 'ism',
     component: InformationSecurityManagement,
     children: [
-      { path: '', component: ismHome },
+      { path: '', name:'ism-home', component: ismHome },
       { path: 'config', component: ismConfig },
       { path: 'roles', component: ismRoles },
       { path: 'procedures', component: ismProcedures },
@@ -380,7 +380,7 @@ const routes = [
     name: 'isrm',
     component: IncidentServiceRequestManagement,
     children: [
-      { path: '', component: isrmHome },
+      { path: '', name:'isrm-home', component: isrmHome },
       { path: 'config', component: isrmConfig },
       { path: 'roles', component: isrmRoles },
       { path: 'procedures', component: isrmProcedures },
@@ -392,7 +392,7 @@ const routes = [
     name: 'pm',
     component: ProblemManagement,
     children: [
-      { path: '', component: pmHome },
+      { path: '', name:'pm-home', component: pmHome },
       { path: 'config', component: pmConfig },
       { path: 'roles', component: pmRoles },
       { path: 'procedures', component: pmProcedures },
@@ -404,7 +404,7 @@ const routes = [
     name: 'rdm',
     component: ReleaseDeploymentManagement,
     children: [
-      { path: '', component: rdmHome },
+      { path: '', name:'rdm-home', component: rdmHome },
       { path: 'config', component: rdmConfig },
       { path: 'roles', component: rdmRoles },
       { path: 'procedures', component: rdmProcedures },
@@ -416,7 +416,7 @@ const routes = [
     name: 'rm',
     component: RiskManagement,
     children: [
-      { path: '', component: rmHome },
+      { path: '', name:'rm-home', component: rmHome },
       { path: 'config', component: rmConfig },
       { path: 'roles', component: rmRoles },
       { path: 'procedures', component: rmProcedures },
@@ -428,7 +428,7 @@ const routes = [
     name: 'sacm',
     component: ServiceAvailabilityContinuityManagement,
     children: [
-      { path: '', component: sacmHome },
+      { path: '', name:'sacm-home', component: sacmHome },
       { path: 'config', component: sacmConfig },
       { path: 'roles', component: sacmRoles },
       { path: 'procedures', component: sacmProcedures },
@@ -440,7 +440,7 @@ const routes = [
     name: 'suppm',
     component: SupplierRelationshipManagement,
     children: [
-      { path: '', component: suppmHome },
+      { path: '', name:'suppm-home', component: suppmHome },
       { path: 'config', component: suppmConfig },
       { path: 'roles', component: suppmRoles },
       { path: 'procedures', component: suppmProcedures },
@@ -452,7 +452,7 @@ const routes = [
     name: 'spm',
     component: ServicePortfolioManagement,
     children: [
-      { path: '', component: spmHome },
+      { path: '', name:'spm-home', component: spmHome },
       { path: 'config', component: spmConfig },
       { path: 'roles', component: spmRoles },
       { path: 'procedures', component: spmProcedures },
@@ -464,7 +464,7 @@ const routes = [
     name: 'srm',
     component: ServiceReportingManagement,
     children: [
-      { path: '', component: srmHome },
+      { path: '', name:'srm-home', component: srmHome },
       { path: 'config', component: srmConfig },
       { path: 'roles', component: srmRoles },
       { path: 'procedures', component: srmProcedures },
@@ -476,7 +476,7 @@ const routes = [
     name: 'slm',
     component: ServiceLevelManagement,
     children: [
-      { path: '', component: slmHome },
+      { path: '', name:'slm-home', component: slmHome },
       { path: 'config', component: slmConfig },
       { path: 'roles', component: slmRoles },
       { path: 'procedures', component: slmProcedures },
@@ -487,7 +487,7 @@ const routes = [
       { path: 'uas', component: slmUAs },
       { path: 'reports', component: slmReports },
     ]
-  },
+  }
 ]
 
 const router = createRouter({
