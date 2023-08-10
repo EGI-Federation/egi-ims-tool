@@ -4,3 +4,9 @@
 [submodule "backend/capacity-management"]
 	path = backend/capacity-management
 	url = https://github.com/EGI-Federation/egi-capacity-management
+[submodule "backend/notification-service"]
+	path = backend/notification-service
+	url = https://github.com/EGI-Federation/egi-ims-messaging
+[submodule "backend/management-system"]
+	path = backend/management-system
+	url = https://github.com/EGI-Federation/egi-ims-config
