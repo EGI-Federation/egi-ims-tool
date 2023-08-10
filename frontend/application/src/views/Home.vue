@@ -140,7 +140,7 @@
         </div>
         <p class="mt-2">
             <b>{{ $t('home.pleaseNote') }}</b>: {{ $t('home.voMember') }}
-            {{ $t('home.requestEnroll') }} <a :href="enrollUrl">{{ $t('home.clickingHere') }}</a>.</p>
+            {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.</p>
     </div>
 </div>
 <ism-footer/>
