@@ -2,7 +2,7 @@
 <div class="dt-flex justify-content-center footer">
     <div class="d-flex justify-content-between info">
         <div class="logo">
-            <img alt="EGI logo" src="../assets/logo.png"><br/>
+            <img alt="EGI logo" src="../assets/egi-logo-color.png"><br/>
             IMS Tools version {{ version }}<br/>
             {{ moduleDetails }}
         </div>
@@ -89,7 +89,7 @@ export default {
         }
     },
     computed: {
-        language() { return store.getters.language; },
+        language() { return store.getters["ims/language"]; },
         moduleDetails() {
             if(isValid(this.moduleName) && isValid(this.moduleVersion))
                 return this.moduleName + " version " + this.moduleVersion;
@@ -100,17 +100,17 @@ export default {
     methods: {
         changeLanguage(newLang, event) {
             event.preventDefault();
-            store.dispatch('changeLocale', newLang);
+            store.dispatch('ims/changeLocale', newLang);
         }
     },
     mounted() {
-        const savedLocale = store.state.language;
+        const savedLocale = store.state.ims.language;
         if(isValid(savedLocale) && savedLocale !== defaultLocale) {
-            store.dispatch("changeLocale", savedLocale);
+            store.dispatch("ims/changeLocale", savedLocale);
         }
         else {
             console.log("Save default language: " + defaultLocale);
-            store.commit("updateLocale", defaultLocale);
+            store.commit("ims/updateLocale", defaultLocale);
         }
     }
 }

@@ -3,7 +3,7 @@
     <div class="d-flex flex-nowrap left">
         <!-- Logo Start -->
         <router-link to="/" class="navbar-brand">
-            <img alt="EGI logo" src="../assets/logo.png">
+            <img alt="EGI logo" src="../assets/egi-logo-color.png">
         </router-link>
         <!-- Logo End -->
         <!-- Search Start -->
@@ -202,14 +202,14 @@ export default {
     },
     data() {
         return {
-            userFullName: store.state.userFullName,
-            userEmail: store.state.userEmail,
+            userFullName: store.state.ims.userFullName,
+            userEmail: store.state.ims.userEmail,
         }
     },
     computed: {
-        isAdmin() { return store.state.isAdmin; },
+        isAdmin() { return store.state.ims.isAdmin; },
         isProcess() { return isValid(this.$props.moduleName) && this.$props.moduleName.length > 0; },
-        unreadNotifications() { return store.getters.unreadNotifications; },
+        unreadNotifications() { return store.getters["ims/unreadNotifications"]; },
     },
     methods: {
         toggleGovernanceSubMenu(event) {

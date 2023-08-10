@@ -1,7 +1,7 @@
 <template>
 <ism-navbar v-if="loggedIn"/>
 <div class="page">
-    <welcome/>
+  <welcome/>
     <div v-if="loggedIn" class="home">
         <div class="greet">{{ $t('home.processes') }}</div>
         <div class="d-flex flex-wrap ism-modules">
@@ -128,19 +128,14 @@
             />
         </div>
     </div>
-    <div v-if="!loggedIn" class="d-flex flex-nowrap auth">
+    <div v-else class="d-flex flex-nowrap auth">
         <p class="mb-0">{{ $t('home.needAuth') }}</p>
         <p class="mb-2">{{ $t('home.clickAuth') }}</p>
-        <div class="d-flex flex-nowrap justify-content-center checkin">
-            <a href=""
-               data-bs-toggle="tooltip" :data-bs-title="$t('home.authCheckin')"
-               data-delay='{"show":"5000", "hide":"3000"}'>
-                <img src="../assets/check-in.webp" :alt="$t('home.authCheckin')">
-            </a>
-        </div>
+        <div class="checkin-blue-border"><p>Sign in with EGI Check-in</p></div>
         <p class="mt-2">
             <b>{{ $t('home.pleaseNote') }}</b>: {{ $t('home.voMember') }}
-            {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.</p>
+            {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.
+        </p>
     </div>
 </div>
 <ism-footer/>
@@ -149,26 +144,23 @@
 <script>
 // @ is an alias to /src
 import { store } from "@/store"
-import { Tooltip } from 'bootstrap'
 import IsmNavbar from "@/components/navbar.vue";
 import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/ismModule.vue";
 import IsmFooter from "@/components/footer.vue";
 
-const voEnrollUrl = "https://aai.egi.eu/registry/co_petitions/start/coef:643";
+const voEnrollUrl = process.env.EGI_VO_ENROLL_URL || "https://aai.egi.eu/registry/co_petitions/start/coef:643";
 
 export default {
     name: 'Home',
     components: { IsmNavbar, Welcome, IsmModule, IsmFooter },
     data() {
         return {
-            loggedIn: store.state.loggedIn,
+            loggedIn: store.state.ims.loggedIn,
             enrollUrl: voEnrollUrl,
         }
     },
     mounted() {
-        // Tooltips need to be initialized to work
-        new Tooltip(document.body, { selector: "[data-bs-toggle='tooltip']" });
     }
 }
 </script>
@@ -191,6 +183,35 @@ export default {
     border-bottom: 1px solid lightgrey;
     margin: 0 1rem .7rem;
 }
+.checkin-blue-border {
+    margin: 2rem auto;
+    display: flex;
+    flex-wrap: nowrap;
+    min-height: 3rem;
+    padding-left: 4rem;
+    padding-right: 1.5rem;
+    border: 2px solid #005faa;
+    border-radius: 100vw;
+    color: #005faa;
+    background-color: #fff;
+    font-family: "DM Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    background-image: url(../assets/egi-logo-color.png);
+    background-position: 20px 43%;
+    background-size: 32px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.checkin-blue-border:hover {
+    color: #fff;
+    background-color: #005faa;
+    background-image: url(../assets/egi-logo-white.svg);
+}
+.checkin-blue-border p {
+  margin: auto 0;
+}
+
 .ism-modules {
     gap: .7rem;
     padding: 0;

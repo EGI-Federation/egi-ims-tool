@@ -9,7 +9,7 @@ export default {
     name: "Logout",
     mounted() {
         console.log("Logout!");
-        store.dispatch("signOut");
+        store.dispatch("ims/signOut");
         router.replace({ path: '/' });
     }
 }

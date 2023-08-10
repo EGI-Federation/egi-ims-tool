@@ -17,7 +17,7 @@ export default {
     components: { BreadCrumb },
     data() {
         return {
-            loggedIn: store.state.loggedIn,
+            loggedIn: store.state.ims.loggedIn,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.BA") },

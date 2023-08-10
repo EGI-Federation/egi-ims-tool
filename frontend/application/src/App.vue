@@ -4,6 +4,7 @@
 
 <style>
 @import url('../node_modules/bootstrap-icons/font/bootstrap-icons.css');
+@import url('https://fonts.googleapis.com/css?family=DM+Sans');
 @import url('https://fonts.googleapis.com/css?family=Barlow+Condensed');
 @import url('https://fonts.googleapis.com/css?family=Hind:wght@300;400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Anton');

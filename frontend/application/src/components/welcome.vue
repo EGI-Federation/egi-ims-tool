@@ -1,6 +1,6 @@
 <template>
 <div class="d-flex justify-content-center welcome">
-    <div class="me-3 sizer"><img alt="EGI logo" src="../assets/logo.png"></div>
+    <div class="me-3 sizer"><img alt="EGI logo" src="../assets/egi-logo-color.png"></div>
     <div class="sizer">
         <div class="greet">{{ $t('welcome.greet') }}</div>
         <div class="text-nowrap title">{{ $t('welcome.imsTitle') }}</div>
