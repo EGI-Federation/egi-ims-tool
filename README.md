@@ -38,6 +38,13 @@ The following IMS processes are currently supported by this tool:
 - [Capacity Management](https://github.com/EGI-Federation/egi-capacity-management)
 - [Service Level Management](https://github.com/EGI-Federation/egi-service-level-management)
 
+## Supporting services
+
+The following components support the ones that implement the processes of the IMS:
+
+- [Configuration Service](https://github.com/EGI-Federation/egi-ims-config)
+- [Notification Service](https://github.com/EGI-Federation/egi-ims-messaging)
+
 ## Configuration and deployment
 
 For details on how to configure, build, and deploy the EGI IMS Tool, [look here](deploy/DEPLOYING.md).
