@@ -1,6 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
 import { store } from "@/store"
-import Login from "@/views/Login.vue";
+
+import OidcCallback from "@/views/OidcCallback.vue";
+import OidcCallbackPopup from "@/views/OidcCallbackPopup.vue";
+import OidcCallbackError from "@/views/OidcCallbackError.vue";
+
 import Logout from "@/views/Logout.vue";
 import Home from './views/Home.vue'
 
@@ -186,12 +191,28 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    meta: {
+      isPublic: true
+    }
   },
   {
-    path: '/login',
-    name: 'login',
-    component: Login
+    path: '/oidc-callback', // Needs to match redirectUri in you oidcSettings
+    name: 'oidcCallback',
+    component: OidcCallback
+  },
+  {
+    path: '/oidc-popup-callback', // Needs to match popupRedirectUri in you oidcSettings
+    name: 'oidcPopupCallback',
+    component: OidcCallbackPopup
+  },
+  {
+    path: '/oidc-callback-error', // Needs to match redirect_uri in you oidcSettings
+    name: 'oidcCallbackError',
+    component: OidcCallbackError,
+    meta: {
+      isPublic: true
+    }
   },
   {
     path: '/logout',
@@ -509,13 +530,17 @@ const router = createRouter({
 });
 
 // Do not allow navigation to any page, unless authenticated
-router.beforeEach(async(to,
-                              from,
-                              next) => {
-  if(to.name !== 'home' && !store.state.loggedIn)
-      next({ name: 'home' })
-  else
-      next();
-});
+//router.beforeEach(vuexOidcCreateRouterMiddleware(store, 'oidcStore'));
+
+// router.beforeEach(async(to,
+//                               from,
+//                               next) => {
+//   if(to.name !== 'home' && !store.state.loggedIn)
+//       next({ name: 'home' })
+//   else
+//       next();
+// });
+
+
 
 export default router
