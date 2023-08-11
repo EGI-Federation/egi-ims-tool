@@ -140,8 +140,8 @@
                                 <i class="bi bi-person-circle"/>
                             </div>
                             <div>
-                                <p class="h5 mb-1">{{ userFullName }}</p>
-                                <p class="small m-0 text-secondary">{{ userEmail }}</p>
+                                <p class="h5 mb-1 user-details">{{ userFullName }}</p>
+                                <p class="small m-0 text-secondary user-details">{{ userEmail }}</p>
                             </div>
                         </div>
                     </li>
@@ -283,6 +283,9 @@ export default {
     font-size: 4rem;
     max-height: 5rem;
     color: #2790ee;
+}
+.user-details {
+  white-space: nowrap;
 }
 .navbar .right .user-info > a,
 .navbar-toggler {
