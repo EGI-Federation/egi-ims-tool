@@ -16,7 +16,7 @@ export default {
     data() {
         return {
             ppcVersion: "1.0.2",
-            loggedIn: store.state.loggedIn,
+            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
         }
     },
 }

@@ -16,7 +16,7 @@ export default {
     data() {
         return {
             pkmVersion: "1.0.11",
-            loggedIn: store.state.loggedIn,
+            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
         }
     },
 }

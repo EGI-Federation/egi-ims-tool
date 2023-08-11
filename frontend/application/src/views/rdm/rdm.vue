@@ -16,7 +16,7 @@ export default {
     data() {
         return {
             rdmVersion: "1.0.0",
-            loggedIn: store.state.loggedIn,
+            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
         }
     },
 }

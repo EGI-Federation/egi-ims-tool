@@ -157,7 +157,7 @@ export default {
     components: { IsmNavbar, Welcome, IsmModule, IsmFooter },
     data() {
         return {
-            loggedIn: store.state.ims.loggedIn,
+            loggedIn: this.oidcIsAuthenticated && null != this.oidcAccessToken,
             enrollUrl: voEnrollUrl,
         }
     },

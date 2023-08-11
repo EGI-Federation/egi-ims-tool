@@ -15,7 +15,7 @@ export default {
     created () {
         this.oidcSignInPopupCallback()
           .catch((err) => {
-              console.error(err) // Handle errors any way you want
+              console.error("OIDC popup error", err); // Handle errors any way you want
           })
     }
 }

@@ -26,6 +26,7 @@
     },
     "home": {
         "home": "Home",
+        "back": "Back",
         "processes": "Processes",
         "BA": "Budgeting and Accounting",
         "BDS": "Business Development and Stakeholders",
@@ -57,7 +58,8 @@
         "pleaseNote": "Please note",
         "voMember": "You must be a member of the EGI Tools virtual organisation (VO) to access this system.",
         "requestEnroll": "You can request to be enrolled in this VO by",
-        "clickingHere": "clicking here"
+        "clickingHere": "clicking here",
+        "authError": "Error in authentication"
     },
     "navbar": {
         "search": "Search",

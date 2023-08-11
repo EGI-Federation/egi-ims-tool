@@ -17,7 +17,7 @@ export default {
     components: { BreadCrumb },
     data() {
         return {
-            loggedIn: store.state.loggedIn,
+            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.CPM"), link: "/cpm" },

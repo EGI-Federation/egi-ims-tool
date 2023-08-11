@@ -2,7 +2,7 @@
     <bread-crumb :segments="locationSegments"/>
     <div class="about">
         <br/>
-        <h1>This is the CAPM home page</h1>
+        <h1>This is the System roles page</h1>
     </div>
 </template>
 
@@ -13,19 +13,20 @@ import { store } from "@/store"
 import BreadCrumb from "@/components/breadCrumb.vue";
 
 export default {
-    name: 'capmHome',
+    name: 'systemRoles',
     components: { BreadCrumb },
     data() {
         return {
             loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
-                { text: this.$t("home.CAPM") },
+                { text: this.$t("home.manageSys"), link: "/system" },
+                { text: this.$t("navbar.roles") },
             ],
         }
     },
     methods: {
-        test() {
+        processMenu() {
             return false;
         }
     }

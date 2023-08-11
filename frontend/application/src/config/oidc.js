@@ -2,7 +2,7 @@
 export const oidcSettings = {
   accessTokenExpiringNotificationTime: 3570,
   authority: process.env.EGI_CHECKIN_AUTH_SERVER || "https://aai-demo.egi.eu/auth/realms/egi",
-  clientId: "egi-capacity-registry",
+  clientId: "client",
   redirectUri: "http://localhost:8080/oidc-callback",
   popupRedirectUri: "http://localhost:8080/oidc-callback-popup",
   redirect_uri: "http://localhost:8080/oidc-callback-error",

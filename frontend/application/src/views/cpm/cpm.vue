@@ -16,7 +16,7 @@ export default {
     data() {
         return {
             cpmVersion: "1.0.1",
-            loggedIn: store.state.loggedIn,
+            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
         }
     },
 }

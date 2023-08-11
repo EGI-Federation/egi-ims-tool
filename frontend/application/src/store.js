@@ -87,7 +87,7 @@ export const store = createStore({
                 silentRenewError: () => console.log('OIDC user is unloaded'),
                 userSignedOut: () => console.log('OIDC user is signed out'),
                 oidcError: (payload) => console.log('OIDC error', payload),
-                automaticSilentRenewError: (payload) => console.log('OIDC automaticSilentRenewError', payload)
+                automaticSilentRenewError: (payload) => console.log('OIDC silent renew error', payload)
             }
         )
     },

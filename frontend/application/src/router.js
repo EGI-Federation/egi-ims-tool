@@ -13,6 +13,7 @@ import System from './views/system/system.vue'
 import systemHome from "@/views/system/systemHome.vue";
 import systemConfig from "@/views/system/systemConfig.vue";
 import systemPlans from "@/views/system/systemPlans.vue";
+import systemRoles from "@/views/system/systemRoles.vue";
 
 import ServiceLevelManagement from './views/slm/slm.vue'
 import slmHome from './views/slm/slmHome.vue'
@@ -226,6 +227,7 @@ const routes = [
     children: [
       { path: '', name:'system-home', component: systemHome },
       { path: 'config', component: systemConfig },
+      { path: 'roles', component: systemRoles },
       { path: 'plans', component: systemPlans },
     ]
   },
