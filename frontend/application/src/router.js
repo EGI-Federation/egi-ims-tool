@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
 import { store } from "@/store"
 
-import OidcCallback from "@/views/OidcCallback.vue";
-import OidcCallbackPopup from "@/views/OidcCallbackPopup.vue";
-import OidcCallbackError from "@/views/OidcCallbackError.vue";
+import OidcCallback from "@/views/auth/OidcCallback.vue";
+import OidcCallbackPopup from "@/views/auth/OidcCallbackPopup.vue";
+import OidcCallbackError from "@/views/auth/OidcCallbackError.vue";
 
-import Logout from "@/views/Logout.vue";
 import Home from './views/Home.vue'
+import Logout from "@/views/Logout.vue";
 
 import System from './views/system/system.vue'
 import systemHome from "@/views/system/systemHome.vue";
@@ -197,18 +197,18 @@ const routes = [
     }
   },
   {
-    path: '/oidc-callback', // Needs to match redirectUri in you oidcSettings
-    name: 'oidcCallback',
+    path: '/oidc-callback', // Needs to match redirectUri in oidcSettings
+    name: 'oidc',
     component: OidcCallback
   },
   {
-    path: '/oidc-popup-callback', // Needs to match popupRedirectUri in you oidcSettings
-    name: 'oidcPopupCallback',
+    path: '/oidc-callback-popup', // Needs to match popupRedirectUri in oidcSettings
+    name: 'oidc-popup',
     component: OidcCallbackPopup
   },
   {
-    path: '/oidc-callback-error', // Needs to match redirect_uri in you oidcSettings
-    name: 'oidcCallbackError',
+    path: '/oidc-callback-error', // Needs to match redirect_uri in oidcSettings
+    name: 'oidc-error',
     component: OidcCallbackError,
     meta: {
       isPublic: true
@@ -530,7 +530,7 @@ const router = createRouter({
 });
 
 // Do not allow navigation to any page, unless authenticated
-//router.beforeEach(vuexOidcCreateRouterMiddleware(store, 'oidcStore'));
+//router.beforeEach(vuexOidcCreateRouterMiddleware(store, 'oidc'));
 
 // router.beforeEach(async(to,
 //                               from,

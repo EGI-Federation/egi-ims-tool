@@ -63,7 +63,7 @@ export const store = createStore({
                 }
             },
         },
-        oidcStore: vuexOidcCreateStoreModule(
+        oidc: vuexOidcCreateStoreModule(
             oidcSettings,
             // NOTE: If you do not want to use localStorage for tokens, in stead of just passing oidcSettings, you can
             // spread your oidcSettings and define a userStore of your choice
@@ -74,6 +74,8 @@ export const store = createStore({
             // Optional OIDC store settings
             {
                 namespaced: true,
+                isAuthenticatedBy: 'access_token',
+                removeUserWhenTokensExpire: false,
                 dispatchEventsOnWindow: true
             },
             // Optional OIDC event listeners

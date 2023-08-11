@@ -131,7 +131,7 @@
     <div v-else class="d-flex flex-nowrap auth">
         <p class="mb-0">{{ $t('home.needAuth') }}</p>
         <p class="mb-2">{{ $t('home.clickAuth') }}</p>
-        <div class="checkin-blue-border"><p>Sign in with EGI Check-in</p></div>
+        <div class="checkin-blue-border" @click="authenticateOidc"><p>Sign in with EGI Check-in</p></div>
         <p class="mt-2">
             <b>{{ $t('home.pleaseNote') }}</b>: {{ $t('home.voMember') }}
             {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.
@@ -148,6 +148,7 @@ import IsmNavbar from "@/components/navbar.vue";
 import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/ismModule.vue";
 import IsmFooter from "@/components/footer.vue";
+import { mapGetters, mapActions } from 'vuex'
 
 const voEnrollUrl = process.env.EGI_VO_ENROLL_URL || "https://aai.egi.eu/registry/co_petitions/start/coef:643";
 
@@ -160,6 +161,29 @@ export default {
             enrollUrl: voEnrollUrl,
         }
     },
+    computed: {
+        ...mapGetters('oidc', [
+          'oidcIsAuthenticated',
+          'oidcUser',
+          'oidcAccessToken',
+          'oidcAccessTokenExp',
+          'oidcIdToken',
+          'oidcIdTokenExp',
+          'oidcRefreshToken',
+          'oidcRefreshTokenExp',
+          'oidcAuthenticationIsChecked',
+          'oidcError'
+        ]),
+    },
+    methods: {
+        ...mapActions('oidc', [
+          'authenticateOidc', // Authenticates with redirect to sign in if not signed in
+          'getOidcUser', // Get user from oidc-client storage and update it in vuex store. Returns a promise
+          'signOutOidc', // Signs out user in open id provider
+          'signOutOidcSilent', // Signs out user in open id provider using a hidden iframe
+          'removeOidcUser' // Signs out user in vuex and browser storage, but not in open id provider
+        ]),
+    },
     mounted() {
     }
 }
@@ -167,9 +191,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-.checkin a {
-
-}
 .page {
     min-height: 100vh;
 }
