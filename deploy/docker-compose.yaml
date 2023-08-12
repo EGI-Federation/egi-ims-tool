@@ -62,7 +62,7 @@ services:
       - TRACE_ROLES=${TRACE_ROLES}
     restart: unless-stopped
     ports:
-      - "8070:8080"
+      - "8080:8080"
     depends_on:
       - ims-slm-api
 
