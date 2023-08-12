@@ -23,13 +23,15 @@
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav navbar-nav-scroll me-auto" style="--bs-scroll-height: 80vh;">
-                    <li v-if="isAdmin" class="nav-item dropdown">
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="systemMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
                             {{ $t('navbar.manageSys') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="systemMenu">
-                            <li><router-link class="dropdown-item" to="/system/config">{{ $t('navbar.config') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/system">{{ $t('navbar.overview') }}</router-link></li>
+                            <li v-if="isAdmin"><router-link class="dropdown-item" to="/system/config">{{ $t('navbar.config') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/system/roles">{{ $t('navbar.roles') }}</router-link></li>
                             <li><router-link class="dropdown-item" to="/system/plans">{{ $t('navbar.plans') }}</router-link></li>
                         </ul>
                     </li>
@@ -58,7 +60,7 @@
                                     {{ $t('navbar.projects') }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="projectsSubMenu" ref="projectsSubMenu">
-                                    <li v-if="!('CPM' === moduleName)"><router-link class="dropdown-item" to="cpm">{{ $t('home.CPM') }}</router-link></li>
+                                    <li v-if="!('CPM' === moduleName)"><router-link class="dropdown-item" to="/cpm">{{ $t('home.CPM') }}</router-link></li>
                                     <li v-if="!('PPC' === moduleName)"><router-link class="dropdown-item" to="/ppc">{{ $t('home.PPC') }}</router-link></li>
                                     <li v-if="!('PPM' === moduleName)"><router-link class="dropdown-item" to="/ppm">{{ $t('home.PPM') }}</router-link></li>
                                     <li v-if="!('PKM' === moduleName)"><router-link class="dropdown-item" to="/pkm">{{ $t('home.PKM') }}</router-link></li>
@@ -122,7 +124,7 @@
         <div class="d-inline-flex flex-nowrap gap-1 user">
             <div class="d-flex flex-nowrap user-info">
                 <a class="bg-body-secondary" role="button" href="#" >
-                    <span :class="unreadNotifications ? 'badge-notif animation-blink' : ''"></span>
+                    <span :class="unreadNotificationCount ? 'badge-notif' : ''"></span>
                     <i class="bi bi-bell"/>
                 </a>
             </div>
@@ -138,6 +140,7 @@
                             <!-- Avatar -->
                             <div class="avatar me-3">
                                 <i class="bi bi-person-circle"/>
+                                <i :class="highAssurance ? 'bi bi-shield-fill-plus badge-assurance high' : 'bi bi-shield-fill-minus badge-assurance low'"></i>
                             </div>
                             <div>
                                 <p class="h5 mb-1 user-details">{{ userFullName }}</p>
@@ -202,14 +205,27 @@ export default {
     },
     data() {
         return {
-            userFullName: store.state.ims.userFullName,
-            userEmail: store.state.ims.userEmail,
+            isAuthenticated: store.state.oidc.is_checked,
+            accessToken: store.state.oidc.access_token,
+            userInfo: store.state.oidc.user,
+            userEmail: store.state.oidc.user.email,
+            roles: store.state.roles,
         }
     },
     computed: {
-        isAdmin() { return store.state.ims.isAdmin; },
+        loggedIn() { return this.isAuthenticated && null != this.accessToken },
+        userFullName() { return store.getters["ims/userFullName"]; },
+        highAssurance() {
+            let assurance = false;
+            if(isValid(this.userInfo.eduperson_assurance)) {
+                let ha = this.userInfo.eduperson_assurance.filter((a) => "https://aai.egi.eu/LoA#Substantial" === a);
+                assurance = ha.length > 0;
+            }
+            return assurance;
+        },
+        unreadNotificationCount() { return store.getters["ims/unreadNotificationCount"]; },
+        isAdmin() { return store.getters["ims/isAdmin"]; },
         isProcess() { return isValid(this.$props.moduleName) && this.$props.moduleName.length > 0; },
-        unreadNotifications() { return store.getters["ims/unreadNotifications"]; },
     },
     methods: {
         toggleGovernanceSubMenu(event) {
@@ -310,6 +326,19 @@ export default {
     top: 0;
     right: -3px;
     z-index: 1;
+}
+.badge-assurance {
+    font-size: 1.5rem;
+    position: absolute;
+    top: 55px;
+    left: 65px;
+    z-index: 1;
+}
+.badge-assurance.high {
+    color: #bfd5ab;
+}
+.badge-assurance.low {
+    color: #a16767;
 }
 .offcanvas.show ul.dropdown-menu {
     text-align: center;

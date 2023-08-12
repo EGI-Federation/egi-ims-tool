@@ -104,12 +104,11 @@ export default {
         }
     },
     mounted() {
-        const savedLocale = store.state.ims.language;
+        const savedLocale = store.state.language;
         if(isValid(savedLocale) && savedLocale !== defaultLocale) {
             store.dispatch("ims/changeLocale", savedLocale);
         }
         else {
-            console.log("Save default language: " + defaultLocale);
             store.commit("ims/updateLocale", defaultLocale);
         }
     }

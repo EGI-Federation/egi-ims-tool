@@ -20,7 +20,7 @@ export default {
             loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
-                { text: this.$t("home.manageSys"), link: "/system" },
+                { text: this.$t("navbar.manageSys"), link: "/system" },
                 { text: this.$t("navbar.roles") },
             ],
         }

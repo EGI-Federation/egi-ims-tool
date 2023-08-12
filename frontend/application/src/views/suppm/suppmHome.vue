@@ -11,6 +11,7 @@
 import { isValid } from '@/utils'
 import { store } from "@/store"
 import BreadCrumb from "@/components/breadCrumb.vue";
+import {parseRoles} from "@/roles";
 
 export default {
     name: 'suppmHome',
@@ -28,7 +29,11 @@ export default {
         test() {
             return false;
         }
-    }
+    },
+    mounted() {
+        if(!isValid(store.state.roles))
+            parseRoles();
+    },
 }
 </script>
 

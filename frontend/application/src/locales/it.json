@@ -66,6 +66,7 @@
         "toggle": "Toggle navigation",
         "offcanvas": "EGI IMS Menu",
         "manageSys": "Management System",
+        "overview": "Overview",
         "config": "Configure",
         "plans": "Plans",
         "thisProcess": "This Process",

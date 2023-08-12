@@ -41,7 +41,7 @@ function browserLanguage() {
 
 export const defaultLocale = browserLanguage() || process.env.EGI_ISM_LOCALE || 'en';
 
-console.log("Using default language: " + defaultLocale);
+console.log("Default language: " + defaultLocale);
 
 export const languages = Object.getOwnPropertyNames(loadLocaleMessages());
 export const languageNames = { en: "English", it: "Italiano" };

@@ -532,17 +532,7 @@ const router = createRouter({
 });
 
 // Do not allow navigation to any page, unless authenticated
-//router.beforeEach(vuexOidcCreateRouterMiddleware(store, 'oidc'));
-
-// router.beforeEach(async(to,
-//                               from,
-//                               next) => {
-//   if(to.name !== 'home' && !store.state.loggedIn)
-//       next({ name: 'home' })
-//   else
-//       next();
-// });
-
+router.beforeEach(vuexOidcCreateRouterMiddleware(store, 'oidc'));
 
 
 export default router

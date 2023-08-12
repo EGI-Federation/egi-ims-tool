@@ -6,6 +6,8 @@
 
 <script>
 // @ is an alias to /src
+import { isValid } from "@/utils";
+import { parseRoles } from "@/roles";
 import { store } from "@/store";
 import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
@@ -16,8 +18,11 @@ export default {
     data() {
         return {
             baVersion: "1.0.0",
-            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
         }
+    },
+    mounted() {
+        if(!isValid(store.state.roles))
+            parseRoles();
     },
 }
 </script>

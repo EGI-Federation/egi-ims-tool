@@ -16,7 +16,7 @@ import { isValid } from '@/utils'
 export default {
     name: 'breadCrumb',
     props: {
-        segments: [] // Contains
+        segments: Array // Contains { text, link } elements, the last one does not have link
     }
 }
 </script>
