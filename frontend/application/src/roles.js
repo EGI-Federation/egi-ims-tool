@@ -125,7 +125,7 @@ export const parseRoles = function() {
         const user = store.state.oidc.user;
         if(isValid(user.eduperson_entitlement)) {
             const entitlements = user.eduperson_entitlement;
-            const roles = rolesFromEntitlements(entitlements, true);
+            const roles = rolesFromEntitlements(entitlements, false);
             if(null != roles)
                 store.commit('updateRoles', roles);
         }
@@ -139,7 +139,7 @@ export const hasRole = function(roles, role) {
         return false;
     }
 
-    const trace = true || process.env.TRACE_ROLES;
+    const trace = process.env.TRACE_ROLES;
 
     if(!isValid(roles)) {
         console.log("Cannot check for role, roles not loaded!");

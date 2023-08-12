@@ -53,9 +53,16 @@ services:
     image: egi/ims-ui:latest
     build:
       context: ../frontend/
+    environment:
+      - EGI_CHECKIN_SERVER=${EGI_CHECKIN_SERVER}
+      - EGI_VO=${EGI_VO}
+      - EGI_VO_ENROLL_URL=${EGI_VO_ENROLL_URL}
+      - EGI_ISM_LOCALE=${EGI_ISM_LOCALE:-en}
+      - EGI_ISM_FALLBACK_LOCALE=${EGI_ISM_FALLBACK_LOCALE:-it}
+      - TRACE_ROLES=${TRACE_ROLES}
     restart: unless-stopped
     ports:
-      - "8079:8080"
+      - "8070:8080"
     depends_on:
       - ims-slm-api
 
@@ -66,9 +73,10 @@ services:
     build:
       context: ../backend/service-level-management/src/main/docker
     environment:
-      - EGI_CHECKIN_PASSWORD=${EGI_CHECKIN_PASSWORD}
+      - EGI_IMS_VO=${EGI_VO}
       - QUARKUS_SMALLRYE_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/slm
       - QUARKUS_LOG_FILE_PATH=/deployments/logs/slm-api.json
+      - QUARKUS_OIDC_AUTH_SERVER_URL=${EGI_CHECKIN_SERVER}/auth/realms/egi
       - QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
       - QUARKUS_OPENTELEMETRY_TRACER_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=data-transfer
       - QUARKUS_HTTP_CORS_ORIGINS=/${CORS_ORIGINS:-.*}/
