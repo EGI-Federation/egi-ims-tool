@@ -73,7 +73,7 @@
 import { isValid } from '@/utils'
 import Package from "../../package.json";
 import { store } from "@/store"
-import { languages, languageNames, defaultLocale } from '@/locales'
+import i18n, { languages, languageNames, defaultLocale } from '@/locales'
 
 export default {
     name: 'IsmFooter',
@@ -104,12 +104,9 @@ export default {
         }
     },
     mounted() {
-        const savedLocale = store.state.language;
-        if(isValid(savedLocale) && savedLocale !== defaultLocale) {
+        const savedLocale = this.language;
+        if(isValid(savedLocale) && savedLocale !== i18n.global.locale) {
             store.dispatch("ims/changeLocale", savedLocale);
-        }
-        else {
-            store.commit("ims/updateLocale", defaultLocale);
         }
     }
 }

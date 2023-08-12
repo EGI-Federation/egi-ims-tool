@@ -102,6 +102,7 @@ export const store = createStore({
             },
             mutations: {
                 updateLocale(state, newLocale) {
+                    console.log("Saved language: " + newLocale);
                     state.language = newLocale;
                 },
             },
