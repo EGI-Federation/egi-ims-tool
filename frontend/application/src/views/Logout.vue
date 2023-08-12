@@ -18,7 +18,7 @@ export default {
     mounted() {
         console.log("Logout!");
         store.dispatch("signOut");
-        store.dispatch("oidc/signOutOidc");
+        store.dispatch("oidc/signOutOidcSilent");
         router.replace({ path: '/' });
     }
 }
