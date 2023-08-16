@@ -42,6 +42,7 @@ export const store = createStore({
                 return {
                     language: null,
                     notifications: [{isNew: false}, {isNew: true}],
+                    slm: {}
                 }
             },
             getters: {
@@ -102,9 +103,14 @@ export const store = createStore({
             },
             mutations: {
                 updateLocale(state, newLocale) {
-                    console.log("Saved language: " + newLocale);
+                    console.log("Store language: " + newLocale);
                     state.language = newLocale;
                 },
+                slmProcessInfo(state, info) {
+                    console.log("Store SLM process info: " + info.processInfo.value.apiVersion);
+                    state.slm.processInfo = info.processInfo.value;
+                    state.slm.error = info.error.value;
+                }
             },
             actions: {
                 changeLocale({commit}, newLocale) {

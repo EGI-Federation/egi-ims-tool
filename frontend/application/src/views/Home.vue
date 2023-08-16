@@ -172,7 +172,7 @@ export default {
     },
     methods: {
         ...mapActions('oidc', [
-            'authenticateOidc', // Authenticates with redirect to sign in if not signed in
+            'authenticateOidc', // Authenticates with redirect to sign in, if not signed in
         ]),
         isMember(group) {
             if(!isValid(this.roles))

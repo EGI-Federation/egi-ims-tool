@@ -23,6 +23,7 @@
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav navbar-nav-scroll me-auto" style="--bs-scroll-height: 80vh;">
+                    <!-- Management System menu -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="systemMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
@@ -35,6 +36,7 @@
                             <li><router-link class="dropdown-item" to="/system/plans">{{ $t('navbar.plans') }}</router-link></li>
                         </ul>
                     </li>
+                    <!-- Other Processes menu -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="modulesMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
@@ -84,6 +86,7 @@
                             <li v-if="!('SRM' === moduleName)"><router-link class="dropdown-item" to="/srm">{{ $t('home.SRM') }}</router-link></li>
                         </ul>
                     </li>
+                    <!-- This Process menu -->
                     <li v-if="isProcess" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="processMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">

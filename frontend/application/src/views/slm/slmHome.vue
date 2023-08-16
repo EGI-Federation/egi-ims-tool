@@ -2,7 +2,7 @@
     <bread-crumb :segments="locationSegments"/>
     <div class="about">
         <br/>
-        <h1>This is the SLM home page</h1>
+        <h1>Service Level Management (SLM)</h1>
         {{ roles }}
     </div>
 </template>
@@ -11,7 +11,7 @@
 // @ is an alias to /src
 import { isValid } from '@/utils'
 import { store } from "@/store"
-import {Roles, hasRole, parseRoles} from "@/roles";
+import { Roles, hasRole } from "@/roles";
 import BreadCrumb from "@/components/breadCrumb.vue"
 
 export default {
@@ -21,7 +21,9 @@ export default {
         return {
             userInfo: store.state.oidc.user,
             accessToken: store.state.oidc.access_token,
+            processInfo: store.state.ims.slm.processInfo,
             roles: store.state.roles,
+            slmError: store.state.ims.slm.error,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM") },
