@@ -40,7 +40,7 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="modulesMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
-                            {{ isProcess ? $t('navbar.otherProcesses') : $t('home.processes') }}
+                            {{ isProcess ? $t('navbar.otherProcesses') : $t('navbar.processes') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="modulesMenu">
                             <li class="dropdown-submenu dropstart">
@@ -212,10 +212,10 @@ export default {
             accessToken: store.state.oidc.access_token,
             userInfo: store.state.oidc.user,
             userEmail: store.state.oidc.user.email,
-            roles: store.state.roles,
         }
     },
     computed: {
+        roles() { return store.state.roles; },
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
         userFullName() { return store.getters["ims/userFullName"]; },
         highAssurance() {

@@ -8,7 +8,7 @@
     <router-link to="/slm/slas" class='dropdown-item'>{{ $t('slm.navbar.slas') }}</router-link>
     <router-link to="/slm/olas" class='dropdown-item'>{{ $t('slm.navbar.olas') }}</router-link>
     <router-link to="/slm/uas" class='dropdown-item'>{{ $t('slm.navbar.uas') }}</router-link>
-    <router-link to="/slm/reports" class='dropdown-item'>{{ $t('slm.navbar.reports') }}</router-link>
+    <router-link to="/slm/reports" class='dropdown-item'>{{ $t('navbar.reports') }}</router-link>
 </template>
 
 <script>
@@ -20,13 +20,15 @@ export default {
     name: 'slmMenu',
     data() {
         return {
-            roles: store.state.roles,
+
         }
     },
     computed: {
-        canConfig() { return isValid(this.roles) &&
-                            (hasRole(this.roles, Roles.SLM.PROCESS_OWNER) ||
-                             hasRole(this.roles, Roles.SLM.PROCESS_MANAGER)); },
+        roles() { return store.state.roles; },
+        canConfig() {
+            return isValid(this.roles) &&
+                  (hasRole(this.roles, Roles.SLM.PROCESS_OWNER) ||
+                   hasRole(this.roles, Roles.SLM.PROCESS_MANAGER)); },
     },
 }
 </script>

@@ -20,7 +20,7 @@ export default {
             ppcVersion: "1.0.2",
         }
     },
-    mounted() {
+    created() {
         if(!isValid(store.state.roles))
             parseRoles();
     },

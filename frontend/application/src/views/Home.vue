@@ -3,7 +3,7 @@
 <div class="page">
   <welcome/>
     <div v-if="loggedIn" class="home">
-        <div class="greet">{{ $t('home.processes') }}</div>
+        <div class="greet">{{ $t('navbar.processes') }}</div>
         <div class="d-flex flex-wrap ism-modules">
             <ism-module
                 :title="$t('home.BA')"
@@ -149,7 +149,7 @@ import { store } from "@/store"
 import { mapActions } from "vuex";
 import IsmNavbar from "@/components/navbar.vue";
 import Welcome from "@/components/welcome.vue";
-import IsmModule from "@/components/ismModule.vue";
+import IsmModule from "@/components/imsModule.vue";
 import IsmFooter from "@/components/footer.vue";
 
 const voEnrollUrl = process.env.EGI_VO_ENROLL_URL || "https://aai.egi.eu/registry/co_petitions/start/coef:643";
@@ -162,30 +162,22 @@ export default {
             enrollUrl: voEnrollUrl,
             isAuthenticated: store.state.oidc.is_checked,
             accessToken: store.state.oidc.access_token,
-            userInfo: store.state.oidc.user,
-            roles: store.state.roles,
         }
     },
     computed: {
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
-        isAdmin() { return store.getters["ims/isAdmin"]; },
+        roles() { return store.state.roles; },
     },
     methods: {
         ...mapActions('oidc', [
             'authenticateOidc', // Authenticates with redirect to sign in, if not signed in
         ]),
-        isMember(group) {
-            if(!isValid(this.roles))
-                return false;
-
-            const groups = store.getters["ims/memberInGroups"];
-            const member = groups.filter(g => g === group);
-            return member.length > 0;
-        },
     },
-    mounted() {
+    created() {
         if(!isValid(this.roles))
             parseRoles();
+    },
+    mounted() {
     }
 }
 </script>

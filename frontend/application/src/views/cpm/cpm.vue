@@ -20,7 +20,7 @@ export default {
             cpmVersion: "1.0.1",
         }
     },
-    mounted() {
+    created() {
         if(!isValid(store.state.roles))
             parseRoles();
     },

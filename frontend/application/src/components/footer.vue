@@ -73,7 +73,7 @@
 import { isValid } from '@/utils'
 import Package from "../../package.json";
 import { store } from "@/store"
-import i18n, { languages, languageNames, defaultLocale } from '@/locales'
+import i18n, { languages, languageNames } from '@/locales'
 
 export default {
     name: 'IsmFooter',
@@ -103,11 +103,12 @@ export default {
             store.dispatch('ims/changeLocale', newLang);
         }
     },
-    mounted() {
+    created() {
         const savedLocale = this.language;
-        if(isValid(savedLocale) && savedLocale !== i18n.global.locale) {
+        if(!isValid(savedLocale))
+            store.dispatch("ims/changeLocale", i18n.global.locale);
+        else if(savedLocale !== i18n.global.locale)
             store.dispatch("ims/changeLocale", savedLocale);
-        }
     }
 }
 </script>
@@ -146,7 +147,7 @@ export default {
     font-weight: bold;
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 765px) {
     .footer .info,
     .footer .details {
         flex-direction: column;
@@ -181,7 +182,7 @@ hr {
     font-size: larger;
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 765px) {
     .footer .bottom {
         flex-direction: column;
         gap: .7rem;

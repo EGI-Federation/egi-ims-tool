@@ -208,7 +208,7 @@ const routes = [
     component: OidcCallbackPopup
   },
   {
-    path: '/oidc-callback-error', // Needs to match redirect_uri in oidcSettings
+    path: '/oidc-callback-error',
     name: 'oidc-error',
     component: OidcCallbackError,
     meta: {

@@ -20,7 +20,7 @@ export default {
             pkmVersion: "1.0.11",
         }
     },
-    mounted() {
+    created() {
         if(!isValid(store.state.roles))
             parseRoles();
     },

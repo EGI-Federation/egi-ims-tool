@@ -20,7 +20,7 @@ export default {
             systemVersion: "1.0.0",
         }
     },
-    mounted() {
+    created() {
         if(!isValid(store.state.roles))
             parseRoles();
     },

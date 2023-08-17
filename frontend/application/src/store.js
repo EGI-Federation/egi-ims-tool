@@ -22,6 +22,7 @@ export const store = createStore({
             },
             mutations: {
                 updateRoles(state, roles) {
+                    console.log(`Store ${roles.size} roles`);
                     state.roles = roles;
                 },
                 logOut(state) {
@@ -42,7 +43,9 @@ export const store = createStore({
                 return {
                     language: null,
                     notifications: [{isNew: false}, {isNew: true}],
-                    slm: {}
+                    slm: {
+                        processInfo: null, // Version<Process>
+                    }
                 }
             },
             getters: {
@@ -69,16 +72,17 @@ export const store = createStore({
                     if(!isValid(rootState.roles))
                         return null;
 
-                    const assigned = [...rootSate.roles].filter(([k, v]) => v.assigned && "member" !== k.description);
+                    const assigned = [...rootState.roles].filter(([k, v]) => v.assigned && "member" !== k.description);
                     const ar = [];
                     for(const role of assigned)
                         ar.push(role[0]);
                     return ar;
                 },
                 isAdmin(state, getters, rootState) {
-                    return hasRole(rootState.roles, Roles.IMS.IMS_OWNER) ||
+                    return isValid(rootState.roles) &&
+                          (hasRole(rootState.roles, Roles.IMS.IMS_OWNER) ||
                            hasRole(rootState.roles, Roles.IMS.IMS_MANAGER) ||
-                           hasRole(rootState.roles, Roles.IMS.IMS_COORDINATOR);
+                           hasRole(rootState.roles, Roles.IMS.IMS_COORDINATOR));
                 },
                 memberInGroups(state, getters, rootState) {
                     if(!isValid(rootState.roles))
@@ -107,9 +111,9 @@ export const store = createStore({
                     state.language = newLocale;
                 },
                 slmProcessInfo(state, info) {
-                    console.log("Store SLM process info: " + info.processInfo.value.apiVersion);
-                    state.slm.processInfo = info.processInfo.value;
-                    state.slm.error = info.error.value;
+                    console.log("Store SLM process info v" + info.version.version);
+                    state.slm.processInfo = info.version;
+                    state.slm.error = info.error;
                 }
             },
             actions: {

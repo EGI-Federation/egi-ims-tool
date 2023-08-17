@@ -1,10 +1,6 @@
 <template>
     <bread-crumb :segments="locationSegments"/>
-    <div class="about">
-        <br/>
-        <h1>Service Level Management (SLM)</h1>
-        {{ roles }}
-    </div>
+    <ims-process-info :info="{ current: currentProcess, approved: approvedProcess, manager: processManager }"/>
 </template>
 
 <script>
@@ -13,17 +9,18 @@ import { isValid } from '@/utils'
 import { store } from "@/store"
 import { Roles, hasRole } from "@/roles";
 import BreadCrumb from "@/components/breadCrumb.vue"
+import ImsProcessInfo from "@/components/imsProcess.vue"
 
 export default {
     name: 'slmHome',
-    components: { BreadCrumb },
+    components: { BreadCrumb, ImsProcessInfo },
     data() {
         return {
             userInfo: store.state.oidc.user,
             accessToken: store.state.oidc.access_token,
-            processInfo: store.state.ims.slm.processInfo,
-            roles: store.state.roles,
-            slmError: store.state.ims.slm.error,
+            currentProcess: store.state.ims.slm.processInfo, // Version<Process>
+            approvedProcess: null,                           // Version<Process>
+            processManager: null,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM") },
@@ -31,6 +28,7 @@ export default {
         }
     },
     computed: {
+        roles() { return store.state.roles; },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
         isReportOwner() { return hasRole(this.roles, Roles.SLM.REPORT_OWNER); },
@@ -52,9 +50,28 @@ export default {
             return false;
         }
     },
+    created() {
+        if(isValid(this.currentProcess) && isValid(this.currentProcess.entity)) {
+            if("APPROVED" === this.currentProcess.entity.status) {
+                this.approvedProcess = this.currentProcess;
+            }
+            else {
+                const history = this.currentProcess.entity.history;
+                if(isValid(history) && isValid(history.versions)) {
+                    for(let version of history.versions) {
+                        const pi = version.entity;
+                        if("APPROVED" === pi.status) {
+                            this.approvedProcess = version;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
 </style>

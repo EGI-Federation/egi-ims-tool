@@ -68,7 +68,7 @@
 
 <script>
 // @ is an alias to /src
-import IsmComponent from "@/components/ismComponent.vue";
+import IsmComponent from "@/components/imsComponent.vue";
 
 export default {
     name: 'Welcome',
