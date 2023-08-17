@@ -64,7 +64,7 @@ services:
       - IMS_SLM_API=http://ims-slm-api:8081
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "9080:8080"
     depends_on:
       - ims-slm-api
 
@@ -90,7 +90,7 @@ services:
       - logs:/deployments/logs:rw
     restart: unless-stopped
     ports:
-      - "8081:8081"
+      - "9081:8081"
     depends_on:
       - otelcol
       - db

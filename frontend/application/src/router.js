@@ -200,12 +200,18 @@ const routes = [
   {
     path: '/oidc-callback', // Needs to match redirectUri in oidcSettings
     name: 'oidc',
-    component: OidcCallback
+    component: OidcCallback,
+    meta: {
+      isPublic: true
+    }
   },
   {
     path: '/oidc-callback-popup', // Needs to match popupRedirectUri in oidcSettings
     name: 'oidc-popup',
-    component: OidcCallbackPopup
+    component: OidcCallbackPopup,
+    meta: {
+      isPublic: true
+    }
   },
   {
     path: '/oidc-callback-error',

@@ -15,7 +15,7 @@ export default {
     created () {
         this.oidcSignInCallback()
           .then((redirectPath) => {
-              this.$router.push(redirectPath);
+              this.$router.replace(redirectPath);
           })
           .catch((err) => {
               console.error(err);
