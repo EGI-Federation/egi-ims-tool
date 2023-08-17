@@ -14,11 +14,13 @@
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "core-js": "^3.8.3",
+    "gridjs": "^6.0.6",
     "oidc-client": "^1.11.5",
     "secure-ls": "^1.2.6",
     "vue": "^3.3.4",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.4",
+    "vue3-markdown-it": "^1.0.10",
     "vuex": "^4.1.0",
     "vuex-oidc": "^4.0.2",
     "vuex-persistedstate": "^4.1.0"
