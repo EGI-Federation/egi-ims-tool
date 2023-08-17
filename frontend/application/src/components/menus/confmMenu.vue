@@ -16,7 +16,7 @@ export default {
     name: 'confmMenu',
     data() {
         return {
-            roles: store.state.roles,
+            roles: store.state.temp.roles,
         }
     },
     computed: {

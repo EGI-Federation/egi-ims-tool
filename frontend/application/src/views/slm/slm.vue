@@ -7,9 +7,10 @@
 <script>
 // @ is an alias to /src
 import { isValid } from "@/utils";
-import { parseRoles } from "@/roles";
+import { parseRoles, getRoleByName, Roles } from "@/roles";
 import { getProcessInfo } from "@/api/getProcessInfo";
-import { store } from "@/store";
+import { getUsersWithRole } from "@/api/getUsersWithRole";
+import { store, storeProcessInfo, storeUsersByRole } from "@/store";
 import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
 
@@ -26,26 +27,24 @@ export default {
     },
     computed: {
         slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
-        slmVersion() { return this.processInfo.entity ? this.processInfo.entity.apiVersion : "1.0.0" },
+        slmVersion() { return this.processInfo && this.processInfo.entity ? this.processInfo.entity.apiVersion : "1.0.0" },
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
     },
     created() {
-        if(!isValid(store.state.roles))
-            parseRoles();
-
-        const { processInfo, error, load } = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
-        load().then(() => {
-            let version = {};
-            if(isValid(processInfo)) {
-                const pi = processInfo.value;
-                version.version = pi.version;
-                version.changedOn = pi.changedOn;
-                version.changeBy = pi.changeBy;
-                version.changeDescription = pi.changeDescription;
-                version.entity = pi;
-            }
-            store.commit('ims/slmProcessInfo', { version: version, error: error.value });
+        // Fetch the process information from the API
+        const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+        piResult.load().then(() => {
+            storeProcessInfo('ims/slmProcessInfo', piResult);
         });
+
+        // Fetch the users from the API
+        const urResult = getUsersWithRole(this.accessToken, 'SLM', null, this.slmApi);
+        urResult.load().then(() => {
+            storeUsersByRole('ims/slmUsers', urResult);
+        });
+
+        if(!isValid(store.state.temp.roles))
+            parseRoles();
     },
     mounted() {
     },

@@ -24,7 +24,7 @@ export default {
         }
     },
     computed: {
-        roles() { return store.state.roles; },
+        roles() { return store.state.temp.roles; },
         canConfig() {
             return isValid(this.roles) &&
                   (hasRole(this.roles, Roles.SLM.PROCESS_OWNER) ||

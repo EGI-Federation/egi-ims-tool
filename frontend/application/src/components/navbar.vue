@@ -211,11 +211,11 @@ export default {
             isAuthenticated: store.state.oidc.is_checked,
             accessToken: store.state.oidc.access_token,
             userInfo: store.state.oidc.user,
-            userEmail: store.state.oidc.user.email,
+            userEmail: store.state.oidc.user ? store.state.oidc.user.email : "",
         }
     },
     computed: {
-        roles() { return store.state.roles; },
+        roles() { return store.state.temp.roles; },
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
         userFullName() { return store.getters["ims/userFullName"]; },
         highAssurance() {

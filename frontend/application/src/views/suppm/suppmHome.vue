@@ -31,7 +31,7 @@ export default {
         }
     },
     mounted() {
-        if(!isValid(store.state.roles))
+        if(!isValid(store.state.temp.roles))
             parseRoles();
     },
 }
