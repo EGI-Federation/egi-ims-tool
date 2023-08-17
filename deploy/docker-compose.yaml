@@ -9,6 +9,7 @@ networks:
 volumes:
   certificates:
   logs:
+  database:
 
 services:
   # ************************
@@ -57,9 +58,10 @@ services:
       - EGI_CHECKIN_SERVER=${EGI_CHECKIN_SERVER}
       - EGI_VO=${EGI_VO}
       - EGI_VO_ENROLL_URL=${EGI_VO_ENROLL_URL}
-      - EGI_ISM_LOCALE=${EGI_ISM_LOCALE:-en}
-      - EGI_ISM_FALLBACK_LOCALE=${EGI_ISM_FALLBACK_LOCALE:-it}
-      - TRACE_ROLES=${TRACE_ROLES}
+      - EGI_ISM_LOCALE=${EGI_IMS_LOCALE:-en}
+      - EGI_ISM_FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
+      - TRACE_ROLES=${EGI_IMS_TRACE_ROLES:-false}
+      - IMS_SLM_API=http://ims-slm-api:8081
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -77,6 +79,8 @@ services:
       - QUARKUS_SMALLRYE_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/slm
       - QUARKUS_LOG_FILE_PATH=/deployments/logs/slm-api.json
       - QUARKUS_OIDC_AUTH_SERVER_URL=${EGI_CHECKIN_SERVER}/auth/realms/egi
+      - QUARKUS_DATASOURCE_USERNAME=${EGI_IMS_DB_USER:-ims}
+      - QUARKUS_DATASOURCE_PASSWORD=${EGI_IMS_DB_PASSWORD}
       - QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
       - QUARKUS_OPENTELEMETRY_TRACER_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=data-transfer
       - QUARKUS_HTTP_CORS_ORIGINS=/${CORS_ORIGINS:-.*}/
@@ -89,6 +93,32 @@ services:
       - "8081:8081"
     depends_on:
       - otelcol
+      - db
+
+  # ************************
+  # Backend components
+  # ************************
+  db:
+    image: postgres:15.4
+    environment:
+      - POSTGRES_USER=${EGI_IMS_DB_USER}
+      - POSTGRES_PASSWORD=${EGI_IMS_DB_PASSWORD}
+      - POSTGRES_DB=ims
+    volumes:
+      - database:/var/lib/postgresql/data
+    restart: always
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=ims@egi.eu
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_LISTEN_PORT=5050
+    ports:
+      - "5050:5050"
 
   # ************************
   # Telemetry components
