@@ -31,6 +31,29 @@ export const Roles = {
     SUPPM: makeEnum(['member','process-owner','process-manager','report-owner']),
 };
 
+// Takes in a role name such as "process-owner", returns details of the role, including its role constant (Symbol)
+export const getRoleByName = function(roleEnum, roleName) {
+
+    for(let name in roleEnum) {
+        const role = roleEnum[name];
+        const regexRole = role.description.replace("-", "\\-") + "(?:\\-([^\\#]+))?";
+        let regex = new RegExp(regexRole, "ig");
+        let matches = regex.exec(roleName);
+        if(isValid(matches)) {
+            let roleInfo = { role: role };
+            const objectId = matches[1];
+            if(isValid(objectId))
+                roleInfo.objectId = objectId;
+            else
+                roleInfo.assigned = true;
+
+            return roleInfo;
+        }
+    }
+
+    return null;
+}
+
 // Parse user roles from the entitlements the user has
 export const rolesFromEntitlements = function(entitlements, trace) {
     console.log("Parsing roles...");
@@ -69,7 +92,7 @@ export const rolesFromEntitlements = function(entitlements, trace) {
             if("member" === role.description)
                 continue;
 
-            const regexRole = regexPrefix + role.description.replace("-", "\\-") +  "(?:\\-([^\\#]+))?" + suffix;
+            const regexRole = regexPrefix + role.description.replace("-", "\\-") + "(?:\\-([^\\#]+))?" + suffix;
             let roleDetails= { name: group.toLowerCase() + "-" + role.description,
                                     role: role,
                                     assigned: false,
@@ -157,4 +180,19 @@ export const hasRole = function(roles, role) {
         console.log("Check for role " + role.description + ", " + (roleDetails.assigned ? "assigned" : "nope, but owns objects"));
 
     return roleDetails.assigned;
+}
+
+// Returns all users that hold a specific role, null if no user with that role
+// Assumes users have been loaded already and store in the root module of the store
+export const findUsersWithRole = function(role, firstOnly = false) {
+    const users = store.state.temp.users;
+    if(isValid(users)) {
+        const roleUserMap = users.has(role) ? users.get(role) : null;
+        if(isValid(roleUserMap)) {
+            const users = Array.from(roleUserMap.values());
+            return firstOnly ? users.slice(0, 1) : users;
+        }
+    }
+
+    return null;
 }

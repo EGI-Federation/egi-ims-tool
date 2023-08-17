@@ -5,7 +5,7 @@ import {vuexOidcCreateStoreModule} from 'vuex-oidc'
 import {oidcSettings} from '@/config/oidc'
 import i18n, {languageNames} from './locales'
 import {isValid} from "@/utils";
-import {hasRole, Roles} from "@/roles";
+import {getRoleByName, hasRole, Roles} from "@/roles";
 
 var sls = new SecureLS({ isCompression: false });
 
@@ -17,13 +17,18 @@ export const store = createStore({
            namespaced: false,
             state() {
                 return {
-                    roles: new Map(),
+                    roles: new Map(), // roles of current user Map<Symbol, { name:String, assigned:boolean, ownedEntities:Set<String> }>
+                    users: new Map(), // users holding roles Map<Symbol, Map<checkinUserId, User>>
                 }
             },
             mutations: {
                 updateRoles(state, roles) {
                     console.log(`Store ${roles.size} roles`);
                     state.roles = roles;
+                },
+                updateUsers(state, users) {
+                    console.log(`Store ${users.size} users`);
+                    state.users = users;
                 },
                 logOut(state) {
                     state.roles = null;
@@ -114,7 +119,12 @@ export const store = createStore({
                     console.log("Store SLM process info v" + info.version.version);
                     state.slm.processInfo = info.version;
                     state.slm.error = info.error;
-                }
+                },
+                slmUsers(state, info) {
+                    console.log("Store SLM users");
+                    store.commit("updateUsers", info.users);
+                    state.slm.error = info.error;
+                },
             },
             actions: {
                 changeLocale({commit}, newLocale) {
@@ -158,3 +168,43 @@ export const store = createStore({
         }
     )],
 })
+
+// Extract the process information then call a mutation on the store to save it
+export const storeProcessInfo = function(mutation, piResult) {
+    let latest = {};
+    if(isValid(piResult.processInfo)) {
+        const pi = piResult.processInfo.value;
+        latest.version = pi.version;
+        latest.changeAt = pi.changeAt;
+        latest.changeBy = pi.changeBy;
+        latest.changeDescription = pi.changeDescription;
+        latest.entity = pi;
+    }
+    store.commit(mutation, { version: latest, error: piResult.error.value });
+}
+
+// Extract the users then call a mutation on the store to save them
+export const storeUsersByRole = function(mutation, urResult) {
+    let users = new Map();
+    if(isValid(urResult.page)) {
+        const page = urResult.page.value;
+        if(isValid(page.elements)) {
+            for(let user of page.elements) {
+                for(let roleName of user.roles) {
+                    const roleInfo = getRoleByName(Roles.SLM, roleName);
+                    if(isValid(roleInfo) && roleInfo.assigned) {
+                        // Check if there is a map for this role
+                        let roleUserMap = users.get(roleInfo.role);
+                        if(null == roleUserMap) {
+                            roleUserMap = new Map();
+                            users.set(roleInfo.role, roleUserMap);
+                        }
+
+                        roleUserMap.set(user.checkinUserId, user);
+                    }
+                }
+            }
+        }
+    }
+    store.commit(mutation, { users: users, error: urResult.error.value });
+}

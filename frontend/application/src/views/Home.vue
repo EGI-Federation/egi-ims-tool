@@ -166,7 +166,7 @@ export default {
     },
     computed: {
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
-        roles() { return store.state.roles; },
+        roles() { return store.state.temp.roles; },
     },
     methods: {
         ...mapActions('oidc', [

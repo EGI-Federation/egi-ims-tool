@@ -1,4 +1,5 @@
 import i18n from '@/locales'
+import {store} from "@/store";
 
 
 // Check if an instance is valid
@@ -89,4 +90,47 @@ export const formatNextEvent = function(frequency, unit, nextEvent, t) {
     }
 
     return { frequency: f, when: w };
+}
+
+// Find entity with a specific status
+// Parameter current is a Version<T> where T has a history field
+// Returns Version<T> or null if no entity with specified status
+export const findEntityWithStatus = function(current, status) {
+    if(isValid(current) && isValid(current.entity)) {
+        if(status === current.entity.status)
+            return current;
+
+        // Attempt to find specified status
+        const history = current.entity.history;
+        if(isValid(history) && isValid(history.versions)) {
+            for(let version of history.versions) {
+                const ent = version.entity;
+                if(status === ent.status)
+                    return version;
+            }
+        }
+    }
+
+    return null;
+}
+
+// Find entity with a specific version
+// Parameter current is a Version<T> where T has a history field
+// Returns Version<T> or null if no entity with specified version
+export const findEntityWithVersion = function(current, ver) {
+    if(isValid(current) && isValid(current.entity)) {
+        if(ver === current.entity.version.toString())
+            return current;
+
+        // Attempt to find specified version
+        const history = current.entity.history;
+        if(isValid(history) && isValid(history.versions)) {
+            for(let version of history.versions) {
+                if(ver === version.version.toString())
+                    return version;
+            }
+        }
+    }
+
+    return null;
 }

@@ -1,6 +1,6 @@
 <template>
 <div class="process">
-    <h1>Service Level Management (SLM)</h1>
+    <h2>Service Level Management (SLM)</h2>
     <div class="d-flex flex-nowrap info">
         <div>
             <div>{{ $t('home.procOwner') }} :</div>
@@ -14,26 +14,26 @@
         </div>
         <div>
             <div>{{ current.entity.owner ? current.entity.owner.fullName : $t('home.notSet') }}</div>
-            <div>{{ info.manager ? info.manager.fullName : $t('home.notSet') }}</div>
-            <div>{{ current.entity.version }}</div>
+            <div>{{ processManager }}</div>
+            <div>{{ processVersion }}</div>
             <div><span :class="processStatus.pillClass">{{ processStatus.label }}</span></div>
             <div>{{ approvalStatus }}</div>
             <div>{{ nextReview.frequency }}</div>
             <div>{{ nextReview.when }}</div>
-            <div>{{ current.entity.contact ? current.entity.contact : $t('home.notSet') }}</div>
+            <div>{{ contact }}</div>
         </div>
     </div>
     <div class="details">
-        <h2>{{ $t('home.goals') }}</h2>
+        <h3>{{ $t('home.goals') }}</h3>
         <vue3-markdown-it :source='goals' />
-        <h2>{{ $t('home.scope') }}</h2>
+        <h3>{{ $t('home.scope') }}</h3>
         <vue3-markdown-it :source='scope' />
-        <h2>{{ $t('home.requirements') }}</h2>
+        <h3>{{ $t('home.requirements') }}</h3>
         <div class="requirements">
             <div id="requirements"/>
             <p v-if="!current.entity.requirements || 0 === current.entity.requirements.length">{{ $t('home.notDef') }}</p>
         </div>
-        <h2>{{ $t('home.inputOutput') }}</h2>
+        <h3>{{ $t('home.inputOutput') }}</h3>
         <div class="interfaces">
             <div id="interfaces"/>
             <p v-if="!current.entity.interfaces || 0 === current.entity.interfaces.length">{{ $t('home.notDef') }}</p>
@@ -46,20 +46,20 @@
 // @ is an alias to /src
 import { isValid, formatDate, formatNextEvent } from '@/utils'
 import VueMarkdownIt from 'vue3-markdown-it';
-import MarkdownIt from 'markdown-it'
+import MarkdownIt from 'markdown-it';
 import { Grid, html } from "gridjs";
+import { Roles, findUsersWithRole } from "@/roles";
 
 var mdRender = new MarkdownIt();
 
 export default {
     name: 'imsProcessInfo',
+    components: { VueMarkdownIt, Grid },
     props: {
         info: Object,
     },
-    components: { VueMarkdownIt, Grid },
     data() {
         return {
-
             requirementsGrid: new Grid(),
             requirementsHeader: [
                 this.$t('home.code'),
@@ -94,6 +94,8 @@ export default {
     computed: {
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
+        contact() { return isValid(this.current) ? this.current.contact : this.$t('home.notSet'); },
+        processVersion() { return isValid(this.current) ? this.current.version : "?"; },
         processStatus() {
             if("READY_FOR_APPROVAL" === this.current.entity.status)
                 return { label: this.$t("slm.statusReadyForApproval"), pillClass: "badge rounded-pill bg-info" };
@@ -103,6 +105,14 @@ export default {
                 return { label: this.$t("slm.statusDeprecated"), pillClass: "badge rounded-pill bg-danger" };
 
             return { label: this.$t("slm.statusDraft"), pillClass: "badge bg-secondary" };
+        },
+        processManager() {
+            let pms = findUsersWithRole(Roles.SLM.PROCESS_MANAGER, true);
+            if(isValid(pms) && pms.length > 0) {
+                let pm = pms[0];
+                return pm.fullName;
+            }
+            return this.$t('home.notSet');
         },
         approvalStatus() {
             if(!isValid(this.approved) ||
@@ -159,21 +169,22 @@ export default {
             let i = [];
             if(isValid(this.current.entity.interfaces)) {
                 for(let itf of this.current.entity.interfaces) {
+                    const _from = this.$t("slm.from");
+                    const _to = this.$t("slm.to");
+                    let prefix = "in" === itf.direction.substr(0,2).toLowerCase() ? _from : _to;
+                    let interfacesWith = "";
+                    if(isValid(itf.interfacesWith)) {
+                        interfacesWith = itf.interfacesWith;
+                        const itfw = interfacesWith.toLowerCase();
+                        if("internal" !== itfw && "external" !== itfw)
+                            interfacesWith = prefix + "<br/>" + interfacesWith;
+                    }
                     let row = [
                         isValid(itf.direction) ? itf.direction : "",
-                        isValid(itf.interfacesWith) ? itf.interfacesWith : "",
+                        interfacesWith,
                         isValid(itf.relevantMaterial) ? itf.relevantMaterial : "",
                         isValid(itf.description) ? itf.description : ""
                     ];
-                    // let responsibles = "";
-                    // if(isValid(itf.responsibles)) {
-                    //     for(let rp of itf.responsibles) {
-                    //         if(responsibles.length > 0)
-                    //             responsibles += ",<br/>";
-                    //         responsibles += rp.fullName;
-                    //     }
-                    // }
-                    // row.push(responsibles);
                     i.push(row);
                 }
             }
@@ -242,7 +253,7 @@ export default {
     padding-left: 1rem;
     padding-right: 1rem;
 }
-.process .details h2 {
+.process .details h3 {
     border-bottom: 1px solid lightgray;
 }
 .gridjs-td > span > :last-child {

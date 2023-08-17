@@ -152,6 +152,8 @@
         "statusReadyForApproval": "READY-FOR-APPROVAL",
         "statusApproved": "APPROVED",
         "statusDeprecated": "DEPRECATED",
-        "relevantMaterial": "Relevant material"
+        "relevantMaterial": "Relevant material",
+        "to": "To",
+        "from": "From"
     }
 }

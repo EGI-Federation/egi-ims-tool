@@ -518,7 +518,7 @@ const routes = [
     name: 'slm',
     component: ServiceLevelManagement,
     children: [
-      { path: '', name:'slm-home', component: slmHome },
+      { path: '', name:'slm-home', component: slmHome, props: route => ({ version: route.query.v }) },
       { path: 'config', component: slmConfig },
       { path: 'roles', component: slmRoles },
       { path: 'procedures', component: slmProcedures },
