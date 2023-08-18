@@ -174,7 +174,7 @@ export default {
         ]),
     },
     created() {
-        if(!isValid(this.roles))
+        if(!isValid(this.roles) || 0 === this.roles.size)
             parseRoles();
     },
     mounted() {

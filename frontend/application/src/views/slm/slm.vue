@@ -43,7 +43,7 @@ export default {
             storeUsersByRole('ims/slmUsers', urResult);
         });
 
-        if(!isValid(store.state.temp.roles))
+        if(!isValid(store.state.temp.roles) || 0 === store.state.temp.roles.size)
             parseRoles();
     },
     mounted() {
