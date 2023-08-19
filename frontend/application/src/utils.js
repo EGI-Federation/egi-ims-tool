@@ -1,5 +1,4 @@
 import i18n from '@/locales'
-import {store} from "@/store";
 
 
 // Check if an instance is valid
@@ -19,10 +18,60 @@ export const makeEnum = function(values) {
     return Object.freeze(obj);
 }
 
+// Entity statuses
+export const Status = makeEnum(['DRAFT', 'READY_FOR_APPROVAL', 'APPROVED', 'DEPRECATED']);
+
+// Get localized label and class for a status
+export const statusPill = function(status, t) {
+
+    if(!isValid(status))
+        return { label: "", pillClass: "" };
+
+    if(Status.READY_FOR_APPROVAL.description === status)
+        return { label: t("ims.statusReadyForApproval"), pillClass: "badge rounded-pill bg-info" };
+    else if(Status.APPROVED.description === status)
+        return { label: t("ims.statusApproved"), pillClass: "badge rounded-pill bg-success" };
+    else if(Status.DEPRECATED.description === status)
+        return { label: t("ims.statusDeprecated"), pillClass: "badge rounded-pill bg-danger" };
+
+    return { label: t("ims.statusDraft"), pillClass: "badge bg-secondary" };
+}
+
+// Format a date and time as a string
+// If the date is in the current year, omit the year
+export const formatTime = function(someDateTime) {
+
+    if(!isValid(someDateTime))
+        return " ";
+
+    // Check if we got a Date
+    let d = someDateTime;
+    if(Object.prototype.toString.call(someDateTime) !== '[object Date]')
+        d = new Date(someDateTime.toString());
+
+    let options = {
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        day: 'numeric',
+        month: 'long',
+    };
+
+    const today  = new Date();
+    if(today.getFullYear() !== d.getFullYear())
+        options.year = 'numeric';
+
+    const formattedDate = d.toLocaleDateString(i18n.global.locale, options);
+    return formattedDate;
+}
+
 // Format a date as a string
 // Unit controls the granularity ('day', 'month', or 'year')
 // If the date is in the current year and granularity is finer than 'year', omit the year
 export const formatDate = function(someDate, unit = 'day') {
+
+    if(!isValid(someDate))
+        return " ";
 
     // Check if we got a Date
     let d = someDate;
@@ -59,31 +108,31 @@ export const formatDate = function(someDate, unit = 'day') {
 // Return formatted texts for the frequency and next occurrence of an event
 export const formatNextEvent = function(frequency, unit, nextEvent, t) {
 
-    let f = t('home.notSet');
+    let f = t('ims.notSet');
     if(frequency === 1) {
-        f = `${t('home.every')} `;
+        f = `${t('ims.every')} `;
         switch(unit) {
-            case 'day': f += t('home.day'); break;
-            case 'month': f += t('home.month'); break;
-            default: f+= t('home.year'); break;
+            case 'day': f += t('ims.day'); break;
+            case 'month': f += t('ims.month'); break;
+            default: f+= t('ims.year'); break;
         }
     }
     else if(frequency > 1) {
-        f = `${t('home.every')} ${frequency} `;
+        f = `${t('ims.every')} ${frequency} `;
         switch(unit) {
             case 'day':
-                f += t('home.days');
+                f += t('ims.days');
                 break;
             case 'month':
-                f += t('home.months');
+                f += t('ims.months');
                 break;
             default:
-                f += t('home.years');
+                f += t('ims.years');
                 break;
         }
     }
 
-    let w = t('home.notSet');
+    let w = t('ims.notSet');
     if(isValid(nextEvent)) {
         const next = new Date(nextEvent);
         w = formatDate(next, unit);

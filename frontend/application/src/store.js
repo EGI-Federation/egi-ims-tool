@@ -32,14 +32,15 @@ export const store = createStore({
                 },
                 logOut(state) {
                     state.roles = null;
+                    state.users = null;
                     console.log("Signed out");
                 }
             },
             actions: {
-                signOut({commit}) {
+                logOut({commit}) {
                     commit('logOut');
-                }
-            },
+                },
+            }
         },
         // Contains IMS state
         ims: {
@@ -125,12 +126,19 @@ export const store = createStore({
                     store.commit("updateUsers", info.users);
                     state.slm.error = info.error;
                 },
+                clearState(state, newLocale) {
+                    state.slm.processInfo = null;
+                },
             },
             actions: {
                 changeLocale({commit}, newLocale) {
                     console.log("Switching language to: " + newLocale);
                     i18n.global.locale = newLocale; // important!
                     commit('updateLocale', newLocale)
+                },
+                signOut({dispatch, commit}) {
+                    commit('clearState');
+                    dispatch('logOut', null, { root: true });
                 },
             },
         },
@@ -175,7 +183,7 @@ export const storeProcessInfo = function(mutation, piResult) {
     if(isValid(piResult.processInfo)) {
         const pi = piResult.processInfo.value;
         latest.version = pi.version;
-        latest.changeAt = pi.changeAt;
+        latest.changedOn = pi.changedOn;
         latest.changeBy = pi.changeBy;
         latest.changeDescription = pi.changeDescription;
         latest.entity = pi;
@@ -188,7 +196,7 @@ export const storeUsersByRole = function(mutation, urResult) {
     let users = new Map();
     if(isValid(urResult.page)) {
         const page = urResult.page.value;
-        if(isValid(page.elements)) {
+        if(isValid(page) && isValid(page.elements)) {
             for(let user of page.elements) {
                 for(let roleName of user.roles) {
                     const roleInfo = getRoleByName(Roles.SLM, roleName);

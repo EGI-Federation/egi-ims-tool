@@ -194,7 +194,7 @@ export default {
 .home .greet {
     text-align: center;
     font-family: "Barlow Condensed", sans-serif;
-    border-bottom: 1px solid lightgrey;
+    border-bottom: 1px solid #e9ecef;
     margin: 0 1rem .7rem;
 }
 .checkin-blue-border {

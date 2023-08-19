@@ -1,6 +1,6 @@
 <template>
     <ism-navbar module-name="SLM"/>
-    <router-view/>
+    <router-view :key="$route.fullPath"/>
     <ism-footer module-name="SLM" :module-version="slmVersion"/>
 </template>
 
