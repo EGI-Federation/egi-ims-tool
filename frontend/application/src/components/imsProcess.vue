@@ -58,7 +58,7 @@
             </div>
         </div>
     </div>
-    <version-history :visible="historyVisible" :version-to-show="latest"/>
+    <version-history :visible="historyVisible" :version-to-show="latest" :filter-to-status="Status.APPROVED.description"/>
 </div>
 </template>
 
@@ -117,6 +117,7 @@ export default {
         }
     },
     computed: {
+        Status() { return Status; },
         latest() { return store.state.ims.slm.processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
@@ -128,7 +129,7 @@ export default {
                 this.current.entity.contact :
                 this.$t('ims.notSet'); },
         processVersion() { return isValid(this.current) ? this.current.version : "?"; },
-        processStatus() { return isValid(this.current) ? statusPill(this.current.entity.status, this.$t) : {}; },
+        processStatus() { return isValid(this.current) && isValid(this.current.entity) ? statusPill(this.current.entity.status, this.$t) : {}; },
         processOwner() {
             return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.owner) ?
                 this.current.entity.owner.fullName :
@@ -271,7 +272,6 @@ export default {
     width: 100%;
     max-width: 60rem;
     margin: 0 auto 2rem;
-    overflow: hidden;
 }
 .content .process {
     margin: 0 auto;

@@ -1,37 +1,45 @@
 <template>
 <div v-if="showHistory" class="bg-body-secondary history-top">
     <div class="d-flex flex-nowrap gap-1">
-        <h5>Version History</h5>
+        <h5>{{ $t('ims.versionHistory') }}</h5>
         <button type="button" class="btn-close btn-close" aria-label="Close" @click="closeHistory"/>
     </div>
 </div>
 <div v-if="showHistory" class="bg-body-tertiary history">
     <div class="d-flex flex-nowrap flex-column">
-        <!-- Approved only filter -->
-        <!-- Latest version -->
-        <div class="history-item" @click="showVersion(versionToShow.version)">
-            <div>
-                <div>{{ $t('ims.version') }} {{ versionToShow.version }} &nbsp;
-                    <span :class="statusCurrent.pillClass">{{ statusCurrent.label }}</span>
-                </div>
-            </div>
-            <div>{{ versionToShow.changedOn ? formatTime(versionToShow.changedOn) : '?' }}</div>
-            <div>{{ versionToShow.changeBy }}</div>
-            <div>{{ versionToShow.changeDescription }}</div>
+        <!-- Version filter -->
+        <div v-if="filterToStatus" class="filter">
+            <input v-model="applyFilter" type="checkbox" id="filterHistory">&nbsp;
+            <label for="filterHistory">Approved versions only</label>
             <hr/>
         </div>
-        <!-- Older versions -->
-        <div v-if="versionToShow.entity && versionToShow.entity.history && versionToShow.entity.history.versions"
-             v-for="ver in versionToShow.entity.history.versions" class="history-item" @click="showVersion(ver.version)">
-            <div>
-                <div>{{ $t('ims.version') }} {{ ver.version }} &nbsp;
-                    <span :class="statusOf(ver.entity).pillClass">{{ statusOf(ver.entity).label }}</span>
+        <div class="history-items">
+            <!-- Latest version -->
+            <div v-if="!applyFilter || !versionToShow.entity.status || filterToStatus === versionToShow.entity.status"
+                 class="history-item" @click="showVersion(versionToShow.version)">
+                <div>
+                    <div>{{ $t('ims.version') }} {{ versionToShow.version }} &nbsp;
+                        <span :class="statusCurrent.pillClass">{{ statusCurrent.label }}</span>
+                    </div>
                 </div>
+                <div>{{ versionToShow.changedOn ? formatTime(versionToShow.changedOn) : '?' }}</div>
+                <div>{{ versionToShow.changeBy }}</div>
+                <div>{{ versionToShow.changeDescription }}</div>
+                <hr/>
             </div>
-            <div>{{ ver.changedOn ? formatTime(ver.changedOn) : '?' }}</div>
-            <div>{{ ver.changeBy }}</div>
-            <div>{{ ver.changeDescription }}</div>
-            <hr/>
+            <!-- Older versions -->
+            <div v-if="versionToShow.entity && versionToShow.entity.history && versionToShow.entity.history.versions"
+                 v-for="ver in filteredVersions" class="history-item" @click="showVersion(ver.version)">
+                <div>
+                    <div>{{ $t('ims.version') }} {{ ver.version }} &nbsp;
+                        <span :class="statusOf(ver.entity).pillClass">{{ statusOf(ver.entity).label }}</span>
+                    </div>
+                </div>
+                <div>{{ ver.changedOn ? formatTime(ver.changedOn) : '?' }}</div>
+                <div>{{ ver.changeBy }}</div>
+                <div>{{ ver.changeDescription }}</div>
+                <hr/>
+            </div>
         </div>
     </div>
 </div>
@@ -49,6 +57,12 @@ export default {
             default: () => {}
         },
         versionToShow: Object, // Version<T>
+        filterToStatus: String,
+    },
+    data() {
+        return {
+            filterActive: true,
+        }
     },
     computed: {
         statusCurrent() {
@@ -58,6 +72,18 @@ export default {
         showHistory: {
             get() { return this.$props.visible.visible; },
             set(value) { this.$props.visible.visible = value; }
+        },
+        applyFilter: {
+            get() { return isValid(this.$props.filterToStatus) && this.$data.filterActive; },
+            set(value) { this.$data.filterActive = value; }
+        },
+        filteredVersions() {
+            const allVersions = this.$props.versionToShow.entity.history.versions;
+            if(!this.applyFilter)
+                return allVersions;
+
+            const showVersions = allVersions.filter(ver => !isValid(ver.entity.status) || ver.entity.status === this.$props.filterToStatus);
+            return showVersions;
         },
     },
     methods: {
@@ -99,11 +125,17 @@ export default {
     height: 100%;
     min-width: 15rem;
     max-width: 15rem;
+}
+.history > div {
+    height: 100%;
+    overflow: hidden;
+}
+.history-items {
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
 }
-.history::-webkit-scrollbar { /* WebKit */
+.history-items::-webkit-scrollbar { /* WebKit */
     width: 0;
     height: 0;
 }
@@ -111,20 +143,29 @@ export default {
 .history {
     box-shadow: -5px 5px 10px rgb(0 0 0 / 0.15)
 }
+.filter {
+    text-wrap: none;
+    margin-top: 1rem;
+}
+.filter input[type=checkbox],
+.filter label {
+    cursor: pointer;
+    margin-bottom: .5rem;
+}
 .history-item {
     padding: 1rem .5rem 0;
     text-align: left;
     font-size: smaller;
     cursor: pointer;
 }
-.history-item div:nth-child(4) {
+.history-item div:has(+ hr) {
     margin-top: .5rem;
+    margin-bottom: .5rem;
 }
-.history-item hr {
+.history hr {
     border: none;
     border-bottom: 1px solid rgb(93, 99, 106, .3);
-    margin-top: 1rem;
-    margin-bottom: 0;
+    margin: 0;
 }
 .history-item:not(:has(+ .history-item)) hr {
     border: 0 transparent;
