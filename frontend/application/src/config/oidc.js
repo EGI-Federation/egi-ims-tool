@@ -10,5 +10,5 @@ export const oidcSettings = {
   automaticSilentRenew: true,
   automaticSilentSignin: false,
   silentRedirectUri: window.location.origin + "/oidc-silent-renew",
-  postLogoutRedirectUri: window.location.origin
+  post_logout_redirect_uri: window.location.origin
 };
