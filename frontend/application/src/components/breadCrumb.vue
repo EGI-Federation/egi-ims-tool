@@ -11,8 +11,6 @@
 
 <script>
 // @ is an alias to /src
-import { isValid } from '@/utils'
-
 export default {
     name: 'breadCrumb',
     props: {
@@ -23,9 +21,20 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+nav:has(> .breadcrumb) {
+    display: flex;
+    flex-wrap: nowrap;
+}
 .breadcrumb {
     margin-left: 1rem;
     margin-top: .5rem;
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+}
+.breadcrumb-item {
+    display: flex;
+    flex-wrap: nowrap;
 }
 .breadcrumb-item a {
     text-decoration: none;
