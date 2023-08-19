@@ -3,7 +3,7 @@
     <div class="me-3 sizer"><img alt="EGI logo" src="../assets/egi-logo-color.png"></div>
     <div class="sizer">
         <div class="greet">{{ $t('welcome.greet') }}</div>
-        <div class="text-nowrap title">{{ $t('welcome.imsTitle') }}</div>
+        <div class="text-nowrap title fade-top-border">{{ $t('welcome.imsTitle') }}</div>
         <div class="explain">
             <a href="#explanation" class="what" @click="explain"
                role="button" data-bs-toggle="collapse" :aria-expanded="explaining" aria-controls="explanation"
@@ -122,9 +122,15 @@ export default {
     font-family: "Barlow Condensed", sans-serif;
 }
 .welcome .title {
-    border-top: 1px solid lightgrey;
     font-family: Anton, sans-serif;
     font-size: 2.7rem;
+}
+.fade-top-border {
+    border: 1px solid;
+    border-image: linear-gradient(90deg, rgba(233,236,239,1), rgba(60,74,83,0)) 1;
+    border-left: none;
+    border-bottom:none;
+    border-right:none;
 }
 .explain {
     text-align: right;
