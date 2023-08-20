@@ -4,7 +4,7 @@
         <div class="process">
             <div class="d-flex flex-nowrap header">
                 <div class="d-flex flex-nowrap flex-column operations">
-                    <button type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'ims.hideHistory' : 'ims.showHistory') }}</button>
+                    <button type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
                     <button v-if="!isDeprecated && (isProcessOwner || isProcessManager)" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.configure') }}</button>
                     <button v-if="isDraft && isProcessManager" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
                     <button v-if="isReady && isProcessOwner" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>

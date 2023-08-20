@@ -163,7 +163,8 @@
         "deprecate": "Deprecate",
         "saveChanges": "Save Changes",
         "cancel": "Cancel",
-        "general": "General"
+        "general": "General",
+        "changeDesc": "Describe your changes"
     },
     "slm": {
         "navbar" : {

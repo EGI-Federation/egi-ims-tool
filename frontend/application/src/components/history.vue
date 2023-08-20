@@ -1,7 +1,7 @@
 <template>
 <div v-if="showHistory" class="bg-body-secondary history-top">
     <div class="d-flex flex-nowrap gap-1">
-        <h5>{{ $t('ims.versionHistory') }}</h5>
+        <h5>{{ $t('history.versionHistory') }}</h5>
         <button type="button" class="btn-close btn-close" aria-label="Close" @click="closeHistory"/>
     </div>
 </div>
@@ -12,7 +12,7 @@
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="filterHistory" v-model="applyFilter">
                 <label class="form-check-label" for="filterHistory">
-                    {{ $t('ims.approvedOnly') }}
+                    {{ $t('history.approvedOnly') }}
                 </label>
             </div>
             <hr/>
@@ -22,7 +22,7 @@
             <div v-if="!applyFilter || !versionToShow.entity.status || filterToStatus === versionToShow.entity.status"
                  class="history-item" @click="showVersion(versionToShow.version)">
                 <div>
-                    <div>{{ $t('ims.version') }} {{ versionToShow.version }} &nbsp;
+                    <div>{{ $t('history.version') }} {{ versionToShow.version }} &nbsp;
                         <span :class="statusCurrent.pillClass">{{ statusCurrent.label }}</span>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
             <div v-if="versionToShow.entity && versionToShow.entity.history && versionToShow.entity.history.versions"
                  v-for="ver in filteredVersions" class="history-item" @click="showVersion(ver.version)">
                 <div>
-                    <div>{{ $t('ims.version') }} {{ ver.version }} &nbsp;
+                    <div>{{ $t('history.version') }} {{ ver.version }} &nbsp;
                         <span :class="statusOf(ver.entity).pillClass">{{ statusOf(ver.entity).label }}</span>
                     </div>
                 </div>
