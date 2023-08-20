@@ -9,8 +9,12 @@
     <div class="d-flex flex-nowrap flex-column">
         <!-- Version filter -->
         <div v-if="filterToStatus" class="filter">
-            <input v-model="applyFilter" type="checkbox" id="filterHistory">&nbsp;
-            <label for="filterHistory">Approved versions only</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="filterHistory" v-model="applyFilter">
+                <label class="form-check-label" for="filterHistory">
+                    {{ $t('ims.approvedOnly') }}
+                </label>
+            </div>
             <hr/>
         </div>
         <div class="history-items">
@@ -61,7 +65,7 @@ export default {
     },
     data() {
         return {
-            filterActive: true,
+            filterActive: false,
         }
     },
     computed: {
@@ -146,6 +150,13 @@ export default {
 .filter {
     text-wrap: none;
     margin-top: 1rem;
+}
+.filter .form-check {
+    display: flex;
+}
+.filter input[type=checkbox] {
+    margin-left: .5rem;
+    margin-right: .5rem;
 }
 .filter input[type=checkbox],
 .filter label {
