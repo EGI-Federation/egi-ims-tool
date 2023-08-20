@@ -3,8 +3,8 @@
 <div class="page">
   <welcome/>
     <div v-if="loggedIn" class="home">
-        <div class="greet">{{ $t('navbar.processes') }}</div>
-        <div class="d-flex flex-wrap ism-modules">
+        <div v-if="canUseTool" class="greet">{{ $t('navbar.processes') }}</div>
+        <div v-if="canUseTool" class="d-flex flex-wrap ism-modules">
             <ism-module
                 :title="$t('home.BA')"
                 code="BA"
@@ -127,12 +127,16 @@
                 icon="sliders"
             />
         </div>
+        <p v-else class="must-enroll">
+            {{ $t('home.voMember') }}
+            {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.
+        </p>
     </div>
-    <div v-else class="d-flex flex-nowrap auth">
+    <div v-if="!loggedIn" class="d-flex flex-nowrap auth">
         <p class="mb-0">{{ $t('home.needAuth') }}</p>
         <p class="mb-2">{{ $t('home.clickAuth') }}</p>
-        <div class="checkin-blue-border" @click="authenticateOidc"><p>Sign in with EGI Check-in</p></div>
-        <p class="mt-2">
+        <div class="checkin-blue-border" @click="authenticateOidc"><p>{{ $t('home.signIn') }}</p></div>
+        <p class="mt-2 ">
             <b>{{ $t('home.pleaseNote') }}</b>: {{ $t('home.voMember') }}
             {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.
         </p>
@@ -144,7 +148,7 @@
 <script>
 // @ is an alias to /src
 import { isValid } from "@/utils";
-import {parseRoles, rolesFromEntitlements} from "@/roles";
+import {hasRole, parseRoles, Roles, rolesFromEntitlements} from "@/roles";
 import { store } from "@/store"
 import { mapActions } from "vuex";
 import IsmNavbar from "@/components/navbar.vue";
@@ -167,6 +171,7 @@ export default {
     computed: {
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
         roles() { return store.state.temp.roles; },
+        canUseTool() { return hasRole(this.roles, Roles.VO.MEMBER); },
     },
     methods: {
         ...mapActions('oidc', [
@@ -225,7 +230,11 @@ export default {
 .checkin-blue-border p {
   margin: auto 0;
 }
-
+.must-enroll {
+    max-width: 35rem;
+    text-align: center;
+    margin: 5rem auto;
+}
 .ism-modules {
     gap: .7rem;
     padding: 0;

@@ -7,7 +7,7 @@
 <script>
 // @ is an alias to /src
 import { isValid } from "@/utils";
-import { parseRoles, getRoleByName, Roles } from "@/roles";
+import { Roles, parseRoles, hasRole } from "@/roles";
 import { getProcessInfo } from "@/api/getProcessInfo";
 import { getUsersWithRole } from "@/api/getUsersWithRole";
 import { store, storeProcessInfo, storeUsersByRole } from "@/store";
@@ -31,6 +31,14 @@ export default {
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
     },
     created() {
+        if(!isValid(store.state.temp.roles) || 0 === store.state.temp.roles.size) {
+            parseRoles();
+            if(!hasRole(this.roles, Roles.VO.MEMBER)) {
+                this.$router.replace('/');
+                return;
+            }
+        }
+
         // Fetch the process information from the API
         const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
         piResult.load().then(() => {
@@ -42,9 +50,6 @@ export default {
         urResult.load().then(() => {
             storeUsersByRole('ims/slmUsers', urResult);
         });
-
-        if(!isValid(store.state.temp.roles) || 0 === store.state.temp.roles.size)
-            parseRoles();
     },
     mounted() {
     },

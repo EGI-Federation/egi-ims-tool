@@ -78,6 +78,7 @@
     "home": {
         "home": "Home",
         "back": "Back",
+        "signIn": "Sign in with EGI Check-in",
         "BA": "Budgeting and Accounting",
         "BDS": "Business Development and Stakeholders",
         "CAPM": "Capacity Management",

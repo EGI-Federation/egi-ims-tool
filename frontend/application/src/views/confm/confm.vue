@@ -7,7 +7,7 @@
 <script>
 // @ is an alias to /src
 import { isValid } from "@/utils";
-import { parseRoles } from "@/roles";
+import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
 import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
@@ -21,8 +21,11 @@ export default {
         }
     },
     created() {
-        if(!isValid(store.state.temp.roles) || 0 === store.state.temp.roles.size)
+        if(!isValid(store.state.temp.roles) || 0 === store.state.temp.roles.size) {
             parseRoles();
+            if(!hasRole(this.roles, Roles.VO.MEMBER))
+                this.$router.replace('/');
+        }
     },
 }
 </script>

@@ -4,6 +4,7 @@ import { store } from "@/store";
 // Define all the roles in the IMS
 export const Roles = {
 
+    VO: makeEnum(['member']),
     IMS: makeEnum(['member','ims-owner','ims-manager','ims-coordinator']),
     BA: makeEnum(['member','process-owner','process-manager','report-owner']),
     BDS: makeEnum(['member','process-owner','process-manager','report-owner']),
@@ -69,6 +70,8 @@ export const rolesFromEntitlements = function(entitlements, trace) {
         console.log("Not member or the VO");
         return null;
     }
+
+    roles.set(Roles.VO.MEMBER, { name: "vo-member", assigned: true });
 
     // Only continue checking the roles for members of the VO
     // First, build a list of roles to check (iterates through the entitlements once per role group)

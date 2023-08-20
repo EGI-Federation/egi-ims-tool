@@ -24,7 +24,7 @@
             <div class="offcanvas-body">
                 <ul class="navbar-nav navbar-nav-scroll me-auto" style="--bs-scroll-height: 80vh;">
                     <!-- Management System menu -->
-                    <li class="nav-item dropdown">
+                    <li v-if="canUseTool" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="systemMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
                             {{ $t('navbar.manageSys') }}
@@ -37,7 +37,7 @@
                         </ul>
                     </li>
                     <!-- Other Processes menu -->
-                    <li class="nav-item dropdown">
+                    <li v-if="canUseTool" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="modulesMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
                             {{ isProcess ? $t('navbar.otherProcesses') : $t('navbar.processes') }}
@@ -87,7 +87,7 @@
                         </ul>
                     </li>
                     <!-- This Process menu -->
-                    <li v-if="isProcess" class="nav-item dropdown">
+                    <li v-if="canUseTool && isProcess" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="processMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
                             {{ $t('navbar.thisProcess') }}
@@ -171,6 +171,7 @@
 <script>
 // @ is an alias to /src
 import { isValid } from '@/utils'
+import { Roles, hasRole } from "@/roles";
 import { store } from "@/store"
 import baMenu from "@/components/menus/baMenu.vue";
 import bdsMenu from "@/components/menus/bdsMenu.vue";
@@ -217,6 +218,7 @@ export default {
     computed: {
         roles() { return store.state.temp.roles; },
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
+        canUseTool() { return hasRole(this.roles, Roles.VO.MEMBER); },
         userFullName() { return store.getters["ims/userFullName"]; },
         highAssurance() {
             let assurance = false;
