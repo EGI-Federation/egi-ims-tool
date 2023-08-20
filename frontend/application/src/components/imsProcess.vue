@@ -5,11 +5,11 @@
             <div class="d-flex flex-nowrap header">
                 <div class="d-flex flex-nowrap flex-column operations">
                     <button type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'ims.hideHistory' : 'ims.showHistory') }}</button>
-                    <button v-if="isProcessOwner || isProcessManager" type="button" class="btn btn-primary">{{ $t('ims.configure') }}</button>
-                    <button v-if="isDraft && isProcessManager" type="button" class="btn btn-primary">{{ $t('ims.askApproval') }}</button>
-                    <button v-if="isReady && isProcessOwner" type="button" class="btn btn-success">{{ $t('ims.approve') }}</button>
-                    <button v-if="isApproved && isProcessManager" type="button" class="btn btn-primary">{{ $t('ims.review') }}</button>
-                    <button v-if="isApproved && isProcessOwner" type="button" class="btn btn-danger">{{ $t('ims.deprecate') }}</button>
+                    <button v-if="!isDeprecated && (isProcessOwner || isProcessManager)" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.configure') }}</button>
+                    <button v-if="isDraft && isProcessManager" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
+                    <button v-if="isReady && isProcessOwner" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
+                    <button v-if="isApproved && isProcessManager" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
+                    <button v-if="isApproved && isProcessOwner" type="button" class="btn btn-danger" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
                 </div>
                 <div class="d-flex flex-nowrap flex-column">
                     <div class="entity-type">{{ $t('ims.process') }}</div>
@@ -159,10 +159,11 @@ export default {
             return prefix + `${formatDate(this.approved.entity.approvedOn)} ${this.$t("ims.by")} ${this.approved.entity.approver.fullName}`;
         },
         nextReview() {
-            return formatNextEvent(this.current.entity.reviewFrequency,
+            return isValid(this.current) && isValid(this.current.entity) ?
+                   formatNextEvent(this.current.entity.reviewFrequency,
                                    this.current.entity.frequencyUnit,
                                    this.current.entity.nextReview,
-                                   this.$t);
+                                   this.$t) : "?";
         },
         goals() {
             return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.goals) &&
@@ -236,6 +237,21 @@ export default {
     methods: {
         toggleHistory() {
             this.historyVisible.visible = !this.historyVisible.visible;
+        },
+        configureProcess() {
+            this.$router.push('/slm/config');
+        },
+        askForApproval() {
+
+        },
+        reviewProcess() {
+
+        },
+        approveProcess() {
+
+        },
+        deprecateProcess() {
+
         }
     },
     mounted() {
