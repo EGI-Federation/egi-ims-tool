@@ -47,11 +47,6 @@ export default {
             return member.length > 0;
         },
     },
-    methods: {
-        test() {
-            return false;
-        }
-    },
     created() {
         // Process information is already stored in ims/slm/processInfo
         let current = store.state.ims.slm.processInfo;
@@ -74,6 +69,7 @@ export default {
         this.currentProcess = current;
     },
     mounted() {
+
     },
 }
 </script>

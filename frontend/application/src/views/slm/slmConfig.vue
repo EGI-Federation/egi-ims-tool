@@ -1,23 +1,25 @@
 <template>
     <bread-crumb :segments="locationSegments"/>
-    <div class="about">
-        <br/>
-        <h1>This is the SLM configuration page</h1>
-    </div>
+    <ims-process-edit :info="{ current: currentProcess, approved: approvedProcess }"/>
 </template>
 
 <script>
 // @ is an alias to /src
-import { isValid } from '@/utils'
+import { isValid, findEntityWithStatus } from '@/utils'
 import { store } from "@/store"
+import { Roles, hasRole } from "@/roles";
 import BreadCrumb from "@/components/breadCrumb.vue";
+import ImsProcessEdit from "@/components/imsProcessEdit.vue"
 
 export default {
     name: 'slmConfig',
-    components:  { BreadCrumb },
+    components:  { BreadCrumb, ImsProcessEdit },
     data() {
         return {
-            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
+            userInfo: store.state.oidc.user,
+            accessToken: store.state.oidc.access_token,
+            currentProcess: store.state.ims.slm.processInfo,    // Version<Process>
+            approvedProcess: null,                              // Version<Process>
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM"), link: "/slm" },
@@ -25,11 +27,23 @@ export default {
             ],
         }
     },
-    methods: {
-        processMenu() {
-            return false;
+    computed: {
+        roles() { return store.state.temp.roles; },
+        isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
+        isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
+    },
+    created() {
+        // Process information is already stored in ims/slm/processInfo
+        if(isValid(this.currentProcess)) {
+            // Make sure we know which is the approved version (if any)
+            this.approvedProcess = findEntityWithStatus(this.currentProcess, "APPROVED");
+            console.log("Editing SLM process info v" + this.currentProcess.version);
         }
-    }
+    },
+    mounted() {
+        if(!this.isProcessOwner && !this.isProcessManager)
+            this.$router.push('/slm');
+    },
 }
 </script>
 

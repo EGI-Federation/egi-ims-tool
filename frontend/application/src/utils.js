@@ -183,3 +183,39 @@ export const findEntityWithVersion = function(current, ver) {
 
     return null;
 }
+
+// Create a deep clone of an object
+//
+// Note on keys in Sets and Maps: these are often primitives (in which case no problem to clone), but they
+// can also be objects. In that case the question becomes: should those keys be cloned?
+// One could argue that this should be done, so that if those objects are mutated in the copy, the objects
+// in the original are not affected, and vice versa.
+// On the other hand one would want that if a Set/Map has a key, this should be true in both the original
+// and the copy -- at least before any change is made to either of them. It would be strange if the copy would
+// be a Set/Map that has keys that never occurred before (as they were created during the cloning process):
+// surely that is not very useful for any code that needs to know whether a given object is a key in that Set/Map.
+// Therefore, the keys of Sets and Maps are values (maybe references) that should remain the same.
+export const deepClone = function(obj, hash = new WeakMap()) {
+    if(!isValid(obj))
+        return null;
+
+    if(Object(obj) !== obj)
+        // Primitives
+        return obj;
+
+    if(hash.has(obj))
+        // Cyclic reference
+        return hash.get(obj);
+
+    const result =
+          obj instanceof Set ? new Set(obj)
+        : obj instanceof Map ? new Map(Array.from(obj, ([key, val]) => [key, deepClone(val, hash)]))
+        : obj instanceof Date ? new Date(obj)
+        : obj instanceof RegExp ? new RegExp(obj.source, obj.flags)
+        // ... add here any specific treatment for other classes ...
+        : obj.constructor ? new obj.constructor()
+        : Object.create(null);
+
+    hash.set(obj, result);
+    return Object.assign(result, ...Object.keys(obj).map(key => ({ [key]: deepClone(obj[key], hash) }) ));
+}
