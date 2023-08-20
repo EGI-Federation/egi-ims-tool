@@ -23,8 +23,14 @@ export default {
     created() {
         if(!isValid(store.state.temp.roles) || 0 === store.state.temp.roles.size) {
             parseRoles();
-            if(!hasRole(this.roles, Roles.VO.MEMBER))
-                this.$router.replace('/');
+            i
+            let router = this.$router;
+            const delayedRoleCheck = setTimeout(function() {
+                clearTimeout(delayedRoleCheck);
+                if(!hasRole(store.state.temp.roles, Roles.VO.MEMBER))
+                    // Non VO members to the homepage
+                    router.replace('/');
+            }, 500);
         }
     },
 }
