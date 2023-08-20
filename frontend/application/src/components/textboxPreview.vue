@@ -1,6 +1,7 @@
 <template>
+<div>
     <label for="processGoals" class="form-label">
-        {{ label }}, {{ $t('textbox.useMarkdown') }} (<a href="https://www.markdown-cheatsheet.com/" target="_blank">{{ $t('textbox.cheatsheet') }}</a>)
+        {{ label }}, {{ $t('textbox.useMarkdown') }} (<a href="https://www.markdown-cheatsheet.com/" target="_blank">{{ $t('textbox.cheatsheet') }}</a>):
     </label>
     <div :class="'text-field mb-1' + (highlight ? ' highlight' : '')" ref="row">
         <textarea ref="textarea" class="form-control textarea" id="processGoals" :rows="rows" v-model="textarea"/>
@@ -15,6 +16,7 @@
             {{ $t('textbox.showPreview') }}
         </label>
     </div>
+</div>
 </template>
 
 <script>
@@ -112,7 +114,6 @@ export default {
     height: 100%;
 }
 .preview {
-
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
