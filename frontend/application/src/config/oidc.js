@@ -8,7 +8,7 @@ export const oidcSettings = {
   responseType: "code",
   scope: "openid email profile voperson_id eduperson_entitlement offline_access",
   automaticSilentRenew: true,
-  automaticSilentSignin: false,
+  automaticSilentSignin: true,
   silentRedirectUri: window.location.origin + "/oidc-silent-renew",
   post_logout_redirect_uri: window.location.origin
 };

@@ -51,7 +51,7 @@
 
 <script>
 // @ is an alias to /src
-import { Status, isValid, statusPill, formatTime } from '@/utils'
+import { isValid, statusPill, formatTime } from '@/utils'
 
 export default {
     name: 'versionHistory',

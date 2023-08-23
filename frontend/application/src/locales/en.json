@@ -127,7 +127,7 @@
         "procManager": "Process manager",
         "version": "@:history.version",
         "status": "Status",
-        "created": "Created",
+        "changed": "Changed",
         "approved": "Approved",
         "approvedOn": "approved on",
         "by": "by",
@@ -164,7 +164,11 @@
         "saveChanges": "Save Changes",
         "cancel": "Cancel",
         "general": "General",
-        "changeDesc": "Describe your changes"
+        "changeDesc": "Describe your changes",
+        "reviewFreq": "Review frequency",
+        "nextReview": "Next review on",
+        "linkProcessDiagram": "Link to process diagram",
+        "invalidProcessChange": "Please describe the changes you did to the process configuration."
     },
     "slm": {
         "navbar" : {
@@ -176,6 +180,7 @@
         "relevantMaterial": "Relevant material",
         "to": "To",
         "from": "From",
+        "action": "Action",
         "catalog": "Catalog",
         "sla": "Service Level Agreement",
         "ola": "Operational Level Agreement",

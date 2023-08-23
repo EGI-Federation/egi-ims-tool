@@ -4,7 +4,7 @@
         {{ label }}, {{ $t('textbox.useMarkdown') }} (<a href="https://www.markdown-cheatsheet.com/" target="_blank">{{ $t('textbox.cheatsheet') }}</a>):
     </label>
     <div :class="'text-field mb-1' + (highlight ? ' highlight' : '')" ref="row">
-        <textarea ref="textarea" class="form-control textarea" id="processGoals" :rows="rows" v-model="textarea"/>
+        <textarea ref="textarea" class="form-control textarea" id="processGoals" :rows="rows" :required="required" v-model="textarea"/>
         <div class="sizer" ref="sizer">&nbsp;</div>
         <div v-if="showPreview" class="preview">
             <vue3-markdown-it :source='textarea'/>
@@ -38,6 +38,10 @@ export default {
             type: Boolean,
             default: false
         },
+        required: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {

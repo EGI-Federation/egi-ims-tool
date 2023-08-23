@@ -20,7 +20,7 @@
                             <div>{{ $t('ims.procManager') }} :</div>
                             <div>{{ $t('ims.version') }} :</div>
                             <div>{{ $t('ims.status') }} :</div>
-                            <div>{{ $t('ims.created') }} :</div>
+                            <div>{{ $t('ims.changed') }} :</div>
                             <div>{{ $t('ims.approved') }} :</div>
                             <div>{{ $t('ims.reviewFrequency') }} :</div>
                             <div>{{ $t('ims.reviewNext') }} :</div>
@@ -31,7 +31,7 @@
                             <div>{{ processManager }}</div>
                             <div>{{ processVersion }}</div>
                             <div><span :class="processStatus.pillClass">{{ processStatus.label }}</span></div>
-                            <div>{{ createDate }}</div>
+                            <div>{{ changeDate }}</div>
                             <div>{{ approvalStatus }}</div>
                             <div>{{ nextReview.frequency }}</div>
                             <div>{{ nextReview.when }}</div>
@@ -43,17 +43,22 @@
             <div class="details">
                 <h3>{{ $t('ims.goals') }}</h3>
                 <vue3-markdown-it :source='goals' />
+
                 <h3>{{ $t('ims.scope') }}</h3>
                 <vue3-markdown-it :source='scope' />
+
                 <h3>{{ $t('ims.requirements') }}</h3>
                 <div class="requirements">
-                    <div id="requirements"/>
-                    <p v-if="!current.entity.requirements || 0 === current.entity.requirements.length">{{ $t('ims.notDef') }}</p>
+                    <table-control v-if="hasRequirements" id="requirements" ref="requirements"
+                                   :header="requirementsHeader" :data="requirementsData"/>
+                    <p v-else>{{ $t('ims.notDef') }}</p>
                 </div>
+
                 <h3>{{ $t('ims.inputOutput') }}</h3>
                 <div class="interfaces">
-                    <div id="interfaces"/>
-                    <p v-if="!current.entity.interfaces || 0 === current.entity.interfaces.length">{{ $t('ims.notDef') }}</p>
+                    <table-control v-if="hasInterfaces" id="interfaces" ref="interfaces"
+                                   :header="interfacesHeader" :data="interfacesData"/>
+                    <p v-else>{{ $t('ims.notDef') }}</p>
                 </div>
             </div>
         </div>
@@ -68,23 +73,21 @@ import { reactive } from 'vue';
 import { store } from "@/store";
 import { Status, isValid, statusPill, formatDate, formatNextEvent } from '@/utils'
 import { Roles, hasRole, findUsersWithRole } from "@/roles";
-import VueMarkdownIt from 'vue3-markdown-it';
 import MarkdownIt from 'markdown-it';
-import { Grid, html } from "gridjs";
 import VersionHistory from "@/components/history.vue"
+import TableControl, { html } from "@/components/table.vue"
 
 var mdRender = new MarkdownIt();
 
 export default {
     name: 'imsProcessInfo',
-    components: { VersionHistory, VueMarkdownIt, Grid },
+    components: { TableControl, VersionHistory },
     props: {
         name: String,
         info: Object,
     },
     data() {
         return {
-            requirementsGrid: new Grid(),
             requirementsHeader: [
                 this.$t('ims.code'),
                 {
@@ -97,7 +100,7 @@ export default {
                     formatter: (cell) => (cell && cell.length > 0) ? html(cell) : "",
                     sort: true,
                 }],
-            interfacesGrid: new Grid(),
+            requirementsData: reactive({ rows: [] }),
             interfacesHeader: [
                 this.$t('ims.type'),
                 {
@@ -113,6 +116,7 @@ export default {
                     name: this.$t('ims.description'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 }],
+            interfacesData: reactive({ rows: [] }),
             historyVisible: reactive({ visible: false }),
         }
     },
@@ -143,7 +147,7 @@ export default {
             }
             return this.$t('ims.notSet');
         },
-        createDate() {
+        changeDate() {
             return isValid(this.current) && isValid(this.current.changedOn) ?
                    formatDate(this.current.changedOn) : "?"; },
         approvalStatus() {
@@ -177,6 +181,10 @@ export default {
                 this.current.entity.scope :
                 this.$t('ims.notSet');
         },
+        hasRequirements() {
+            return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.requirements) &&
+                this.current.entity.requirements.length > 0;
+        },
         requirements() {
             let r = [];
             if(isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.requirements)) {
@@ -199,6 +207,10 @@ export default {
                 }
             }
             return r;
+        },
+        hasInterfaces() {
+            return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.interfaces) &&
+                this.current.entity.interfaces.length > 0;
         },
         interfaces() {
             let i = [];
@@ -255,23 +267,17 @@ export default {
         }
     },
     mounted() {
-        // Set up the requirements grid
-        this.requirementsGrid.updateConfig({
-            columns: this.requirementsHeader,
-            data: this.requirements,
-            width: '100%',
-            resizable: true
-        });
-        this.requirementsGrid.render(document.getElementById("requirements"));
+        let t = this;
+        const delayedData = setTimeout(function() {
+            if(isValid(t.current) && isValid(t.current.entity)) {
+                clearTimeout(delayedData);
+                t.requirementsData.rows = t.requirements;
+                t.$refs.requirements.forceUpdate();
 
-        // Set up the interfaces grid
-        this.interfacesGrid.updateConfig({
-            columns: this.interfacesHeader,
-            data: this.interfaces,
-            width: '100%',
-            resizable: true
-        });
-        this.interfacesGrid.render(document.getElementById("interfaces"));
+                t.interfacesData.rows = t.interfaces;
+                t.$refs.interfaces.forceUpdate();
+            }
+        }, 100);
     }
 }
 </script>
