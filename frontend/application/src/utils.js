@@ -212,6 +212,7 @@ export const deepClone = function(obj, hash = new WeakMap()) {
         : obj instanceof Map ? new Map(Array.from(obj, ([key, val]) => [key, deepClone(val, hash)]))
         : obj instanceof Date ? new Date(obj)
         : obj instanceof RegExp ? new RegExp(obj.source, obj.flags)
+        : typeof obj === 'function' ? obj
         // ... add here any specific treatment for other classes ...
         : obj.constructor ? new obj.constructor()
         : Object.create(null);
