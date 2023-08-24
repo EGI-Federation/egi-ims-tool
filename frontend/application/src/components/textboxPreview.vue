@@ -69,6 +69,8 @@ export default {
             if(!isValid(taElement) || !isValid(sizer))
                 return;
 
+            sizer.style.width = this.showPreview ? "50%" : "100%";
+
             const delayedSizeAdjust = setTimeout(function() {
                 // Resize width of floating textarea to be half/full row
                 const sizerSize = sizer.getBoundingClientRect();
