@@ -434,11 +434,32 @@ export default {
         },
         nextReview: {
             get() {
-                if(isValid(this.edited) && isValid(this.edited.entity))
-                    return this.edited.entity.nextReview;
-                return null;
+                let date = Date.now();
+                if(isValid(this.edited) && isValid(this.edited.entity)) {
+                    date = new Date(this.edited.entity.nextReview);
+                    switch(this.edited.entity.frequencyUnit) {
+                        case 'year': return date.getFullYear();
+                        case 'month': return { year: date.getFullYear(), month: date.getMonth() }
+                    }
+                }
+
+                return date;
             },
             set(value) {
+                console.log(typeof(value));
+                if(value instanceof Date) {
+                    value.setHours(8);
+                    value = value.toISOString();
+                }
+                else if(typeof(value) === "number") {
+                    // Got a year
+                    value = new Date(value, 3, 1, 8).toISOString();
+                }
+                else if(isValid(value.year) || isValid(value.month)) {
+                    // Got { month: 0, year: 2023 }
+                    value = new Date(value.year, value.month, 1, 8).toISOString();
+                }
+
                 if(isValid(this.edited) && isValid(this.edited.entity))
                     this.edited.entity.nextReview = value;
             },
@@ -729,7 +750,7 @@ export default {
                 }
 
                 this.requirementsData.rows = this.requirements;
-                this.$refs.requirements.forceUpdate();
+                this.$refs.requirements?.forceUpdate();
                 scrollTo('requirements-title');
                 event.preventDefault();
             }
@@ -879,7 +900,7 @@ export default {
                 }
 
                 this.interfacesData.rows = this.interfaces;
-                this.$refs.interfaces.forceUpdate();
+                this.$refs.interfaces?.forceUpdate();
                 scrollTo('interfaces-title');
                 event.preventDefault();
             }
@@ -1013,6 +1034,12 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+.form-control-fix {
+    padding-left: 35px!important;
+    padding-right: 30px!important;
+}
+</style>
 <style scoped>
 .content {
     position: relative;
@@ -1109,10 +1136,6 @@ export default {
 .details label.form-check-label {
     position: relative;
     top: 2px;
-}
-.form-control-fix {
-    padding-left: 35px!important;
-    padding-right: 30px!important;
 }
 .process .requirements,
 .process .interfaces {
