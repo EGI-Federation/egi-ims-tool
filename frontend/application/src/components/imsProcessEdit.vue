@@ -5,8 +5,13 @@
         <div class="process">
             <div class="d-flex flex-nowrap header">
                 <div class="d-flex flex-nowrap flex-column operations">
-                    <button type="submit" class="btn btn-primary" @click="saveChanges($event)" ref="submit">{{ $t('ims.saveChanges') }}</button>
-                    <button type="button" class="btn btn-secondary" @click="cancelChanges()">{{ $t('ims.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary" ref="submit"
+                            :disabled="!processChanged" @click="saveChanges($event)">
+                        {{ $t('ims.saveChanges') }}
+                    </button>
+                    <button type="button" class="btn btn-secondary" @click="cancelChanges()">
+                        {{ $t('ims.cancel') }}
+                    </button>
                 </div>
                 <div class="d-flex flex-nowrap flex-column">
                     <div class="entity-type">{{ $t('ims.process') }}</div>
@@ -35,7 +40,8 @@
                 <!-- Commit message -->
                 <div class="text-field mb-3">
                     <label for="changeDesc" class="form-label">{{ $t('ims.changeDesc') }}:</label>
-                    <textarea ref="textarea" class="form-control textarea" id="changeDesc" rows=3 v-model="changeDescription" required/>
+                    <textarea ref="textarea" class="form-control textarea" id="changeDesc" rows=3
+                              v-model="changeDescription" required/>
                     <div class="invalid-feedback">{{ $t('ims.invalidProcessChange') }}</div>
                 </div>
 
@@ -60,18 +66,20 @@
                     <div class="input-group review-date">
                         <div class="text-field">
                             <label for="nextReview" class="form-label">{{ $t('ims.nextReview') }}:</label>
-                            <VueDatePicker v-if="reviewFrequencyUnit === 'day'" id="nextReview" v-model="nextReview" auto-apply class="focus-ring" required
-                                           text-input :enable-time-picker="false" month-name-format="long" :locale="i18n.global.locale"
+                            <VueDatePicker v-if="reviewFrequencyUnit === 'day'" id="nextReview" v-model="nextReview"
+                                           text-input auto-apply class="focus-ring" required :enable-time-picker="false"
+                                           month-name-format="long" :locale="i18n.global.locale"
                                            :action-row="{ showSelect: false, showCancel: false, showNow: false, showPreview: false }"
                                            :clearable="false" placeholder="dd/MM/yyyy" format="dd/MM/yyyy"/>
 
-                            <VueDatePicker v-if="reviewFrequencyUnit === 'month'" id="nextReview" v-model="nextReview" month-picker auto-apply
-                                           text-input month-name-format="long" :locale="i18n.global.locale"
+                            <VueDatePicker v-if="reviewFrequencyUnit === 'month'" id="nextReview" v-model="nextReview"
+                                           month-picker text-input auto-apply
+                                           month-name-format="long" :locale="i18n.global.locale"
                                            :action-row="{ showSelect: false, showCancel: false, showNow: false, showPreview: false }"
                                            :clearable="false" placeholder="MM/yyyy"/>
 
-                            <VueDatePicker v-if="reviewFrequencyUnit === 'year'" id="nextReview" v-model="nextReview" year-picker auto-apply
-                                           text-input :locale="i18n.global.locale"
+                            <VueDatePicker v-if="reviewFrequencyUnit === 'year'" id="nextReview" v-model="nextReview"
+                                           year-picker text-input auto-apply :locale="i18n.global.locale"
                                            :action-row="{ showSelect: false, showCancel: false, showNow: false, showPreview: false }"
                                            :clearable="false" placeholder="yyyy"/>
                         </div>
@@ -92,10 +100,12 @@
                 </div>
                 <!-- Goals -->
                 <h3>{{ $t('ims.goals') }}</h3>
-                <textbox-with-preview class="mt-1" :label="$t('ims.goalsLabel')" :text="goalsEditor" :rows="5" :max-length=4096 required/>
+                <textbox-with-preview class="mt-1" :label="$t('ims.goalsLabel')" :text="goalsEditor"
+                                      :rows="5" :max-length=4096 required/>
                 <!-- Scope -->
                 <h3>{{ $t('ims.scope') }}</h3>
-                <textbox-with-preview class="mt-1" :label="$t('ims.scopeLabel')" :text="scopeEditor" :rows="10" :max-length=4096 required/>
+                <textbox-with-preview class="mt-1" :label="$t('ims.scopeLabel')" :text="scopeEditor"
+                                      :rows="10" :max-length=4096 required/>
                 <!-- Requirements -->
                 <h3 id="requirements-title">{{ $t('ims.requirements') }}</h3>
                 <div class="requirements">
@@ -251,7 +261,7 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store } from "@/store";
-import { Status, deepClone, formatDate, isValid, statusPill, userNames, scrollTo } from '@/utils'
+import {Status, deepClone, formatDate, isValid, strEqual, statusPill, userNames, scrollTo } from '@/utils'
 import { Roles, findUsersWithRole } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
 import MarkdownIt from 'markdown-it';
@@ -353,7 +363,10 @@ export default {
         processCode() { return isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.code : "SLM"; },
         processName() { return this.$t('home.' + this.processCode); },
         processVersion() { return isValid(this.edited) ? this.edited.version : "?"; },
-        processStatus() { return isValid(this.edited) && isValid(this.edited.entity) ? statusPill(this.edited.entity.status, this.$t) : {}; },
+        processStatus() {
+            return isValid(this.edited) && isValid(this.edited.entity) ?
+                   statusPill(this.edited.entity.status, this.$t) : {};
+        },
         processOwner() {
             return isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.owner) ?
                 this.edited.entity.owner.fullName :
@@ -497,9 +510,9 @@ export default {
 
             if(!isValid(this.requirementBeingEdited) ||
                 this.reqId !== this.requirementBeingEdited.id.toString() ||
-                this.reqCode !== this.requirementBeingEdited.code ||
-                this.reqDescriptionEditor.text !== this.requirementBeingEdited.requirement ||
-                this.reqSourceEditor.text !== this.requirementBeingEdited.source ||
+                !strEqual(this.reqCode, this.requirementBeingEdited.code) ||
+                !strEqual(this.reqDescriptionEditor.text, this.requirementBeingEdited.requirement) ||
+                !strEqual(this.reqSourceEditor.text, this.requirementBeingEdited.source) ||
                 isValid(this.reqResponsibles) !== isValid(this.requirementBeingEdited.responsibles))
                 return true;
 
@@ -510,6 +523,60 @@ export default {
                 for(const user of this.requirementBeingEdited.responsibles) {
                     if(!this.reqResponsibles.has(user.checkinUserId))
                         return true;
+                }
+            }
+
+            return false;
+        },
+        requirementsChanged() {
+            const pc = this.current.entity;
+            const pe = this.edited.entity;
+
+            if(isValid(pc.requirements) !== isValid(pe.requirements))
+                return true;
+
+            if(isValid(pc.requirements)) {
+                if(pc.requirements.length !== pe.requirements.length)
+                    return true;
+
+                for(const reqc of pc.requirements) {
+                    // See if there is such a requirements in the edited process
+                    let reqe = null;
+                    for(const req of pe.requirements) {
+                        if(reqc.id === req.id) {
+                            reqe = req;
+                            break;
+                        }
+                    }
+                    if(!isValid(reqe))
+                        // No such requirement in edited process
+                        return true;
+
+                    // Same requirement present in both processes, compare them
+                    if (!strEqual(reqc.code, reqe.code) ||
+                        !strEqual(reqc.requirement, reqe.requirement) ||
+                        !strEqual(reqc.source, reqe.source) ||
+                        isValid(reqc.responsibles) !== isValid(reqe.responsibles))
+                        return true;
+
+                    if(isValid(reqc.responsibles)) {
+                        if(reqc.responsibles.length !== reqe.responsibles.length)
+                            return true;
+
+                        for(const ruc of reqc.responsibles) {
+                            // See if there is such a responsible
+                            let rue = null;
+                            for(const user of reqe.responsibles) {
+                                if(ruc.checkinUserId === user.checkinUserId) {
+                                    rue = user;
+                                    break;
+                                }
+                            }
+                            if(!isValid(rue))
+                                // No such responsible for requirement in edited process
+                                return true;
+                        }
+                    }
                 }
             }
 
@@ -558,8 +625,8 @@ export default {
             if(!isValid(this.interfaceBeingEdited) ||
                 this.itfId !== this.interfaceBeingEdited.id.toString() ||
                 this.itfDirection !== this.interfaceBeingEdited.direction ||
-                this.itfDescriptionEditor.text !== this.interfaceBeingEdited.description ||
-                this.itfRelevantMaterialEditor.text !== this.interfaceBeingEdited.relevantMaterial)
+                !strEqual(this.itfDescriptionEditor.text, this.interfaceBeingEdited.description) ||
+                !strEqual(this.itfRelevantMaterialEditor.text, this.interfaceBeingEdited.relevantMaterial))
                 return true;
 
             if(isValid(this.itfWith) && isValid(this.interfaceBeingEdited.itfWith)) {
@@ -577,13 +644,93 @@ export default {
 
             return false;
         },
-        processChanged() {
-            return true;
+        interfacesChanged() {
+            const pc = this.current.entity;
+            const pe = this.edited.entity;
+
+            if(isValid(pc.interfaces) !== isValid(pe.interfaces))
+                return true;
+
+            if(isValid(pc.interfaces)) {
+                if(pc.interfaces.length !== pe.interfaces.length)
+                    return true;
+
+                for(const itfc of pc.interfaces) {
+                    // See if there is such an interface in the edited process
+                    let itfe = null;
+                    for(const itf of pe.interfaces) {
+                        if(itfc.id === itf.id) {
+                            itfe = itf;
+                            break;
+                        }
+                    }
+                    if(!isValid(itfe))
+                        // No such interface in edited process
+                        return true;
+
+                    // Same interface present in both processes, compare them
+                    if (!strEqual(itfc.direction, itfe.direction) ||
+                        !strEqual(itfc.description, itfe.description) ||
+                        !strEqual(itfc.relevantMaterial, itfe.relevantMaterial))
+                        return true;
+
+                    const itfcWith = parseInterfaces(itfc.interfacesWith);
+                    const itfeWith = parseInterfaces(itfe.interfacesWith);
+
+                    if (itfcWith.internal !== itfeWith.internal ||
+                        itfcWith.external !== itfeWith.external ||
+                        itfcWith.customer !== itfeWith.customer ||
+                        itfcWith.process.size !== itfeWith.process.size)
+                        return true;
+
+                    for(const processCode of itfcWith.process)
+                        if(!itfeWith.process.has(processCode))
+                            return true;
+                }
+            }
+
+            return false;
         },
-        isDraft() { return isValid(this.edited) && isValid(this.edited.entity) && Status.DRAFT.description === this.edited.entity.status; },
-        isApproved() { return isValid(this.edited) && isValid(this.edited.entity) && Status.APPROVED.description === this.edited.entity.status; },
-        isReady() { return isValid(this.edited) && isValid(this.edited.entity) && Status.READY_FOR_APPROVAL.description === this.edited.entity.status; },
-        isDeprecated() { return isValid(this.edited) && isValid(this.edited.entity) && Status.DEPRECATED.description === this.edited.entity.status; },
+        processChanged() {
+            if(!isValid(this.current) || !isValid(this.current.entity) ||
+               !isValid(this.edited) || !isValid(this.edited.entity))
+                return false;
+
+            const pc = this.current.entity;
+            const pe = this.edited.entity;
+
+            if (!strEqual(pc.goals, this.goalsEditor.text) ||
+                !strEqual(pc.scope, this.scopeEditor.text) ||
+                !strEqual(pc.urlDiagram, pe.urlDiagram) ||
+                !strEqual(pc.contact, pe.contact) ||
+                pc.reviewFrequency !== pe.reviewFrequency ||
+                pc.frequencyUnit !== pe.frequencyUnit ||
+                pc.nextReview !== pe.nextReview || // String
+                pc.status !== pe.status)
+                return true;
+
+            // We will not check approval related fields, as those cannot be edited directly
+            // and approving a process creates a new version anyway
+
+            // Check requirements and interfaces
+            return this.requirementsChanged || this.interfacesChanged;
+        },
+        isDraft() {
+            return isValid(this.edited) && isValid(this.edited.entity) &&
+                   Status.DRAFT.description === this.edited.entity.status;
+        },
+        isApproved() {
+            return isValid(this.edited) && isValid(this.edited.entity) &&
+                   Status.APPROVED.description === this.edited.entity.status;
+        },
+        isReady() {
+            return isValid(this.edited) && isValid(this.edited.entity) &&
+                   Status.READY_FOR_APPROVAL.description === this.edited.entity.status;
+        },
+        isDeprecated() {
+            return isValid(this.edited) && isValid(this.edited.entity) &&
+                   Status.DEPRECATED.description === this.edited.entity.status;
+        },
         roles() { return store.state.temp.roles; },
         users() {
             const users = store.state.temp.usersByProcess.get('SLM');

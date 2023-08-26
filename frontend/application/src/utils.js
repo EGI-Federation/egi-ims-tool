@@ -6,6 +6,16 @@ export const isValid = function(t) {
     return (t === undefined || t === null) ? false : true;
 }
 
+// Compare strings that were missing, with ones that were edited but left empty
+export const strEqual = function(text1, text2) {
+    if(!isValid(text1) && "" === text2)
+        return true;
+    if(!isValid(text2) && "" === text1)
+        return true;
+
+    return text1 === text2;
+}
+
 // Create an enum from a list of values
 // Use it like this:
 //      const Colors = makeEnum(["red","green","blue"]);
