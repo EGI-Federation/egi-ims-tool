@@ -188,7 +188,7 @@ export const hasRole = function(roles, role) {
 // Returns all users that hold a specific role, null if no user with that role
 // Assumes users have been loaded already and store in the root module of the store
 export const findUsersWithRole = function(role, firstOnly = false) {
-    const users = store.state.temp.users;
+    const users = store.state.temp.usersByRole;
     if(isValid(users)) {
         const roleUserMap = users.has(role) ? users.get(role) : null;
         if(isValid(roleUserMap)) {

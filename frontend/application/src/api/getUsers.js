@@ -1,14 +1,14 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-export const getUsersWithRole = function(accessToken, processCode, role, baseUrl) {
+export const getUsers = function(accessToken, processCode, processOnly, baseUrl) {
     const users = ref(null);
     const error = ref(null);
 
     const load = async function() {
 
         try {
-            const url = baseUrl + '/users/roles' + (role ? `?role=${role}` : '');
+            const url = baseUrl + `/users?onlyProcess=${processOnly}`;
             let data = await axios.get(url, {
                 headers: {
                     Accept: 'application/json',
@@ -23,7 +23,7 @@ export const getUsersWithRole = function(accessToken, processCode, role, baseUrl
         }
         catch(err) {
             error.value = err.message;
-            console.log("Error getting users holding " + processCode + (role ? ` role ${role}` : " roles"));
+            console.log("Error getting " + processCode + " users");
         }
     }
 

@@ -9,8 +9,9 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { getProcessInfo } from "@/api/getProcessInfo";
+import { getUsers } from "@/api/getUsers";
 import { getUsersWithRole } from "@/api/getUsersWithRole";
-import { store, storeProcessInfo, storeUsersByRole } from "@/store";
+import { store, storeProcessInfo, storeUsers, storeUsersByRole } from "@/store";
 import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
 
@@ -49,13 +50,20 @@ export default {
             storeProcessInfo('ims/slmProcessInfo', piResult);
         });
 
-        // Fetch the users from the API
+        // Fetch the users participating in SLM from the API
+        const upResult = getUsers(this.accessToken, 'SLM', true, this.slmApi);
+        upResult.load().then(() => {
+            storeUsers('ims/slmUsers', upResult);
+        });
+
+        // Fetch the users with roles in SLM from the API
         const urResult = getUsersWithRole(this.accessToken, 'SLM', null, this.slmApi);
         urResult.load().then(() => {
-            storeUsersByRole('ims/slmUsers', urResult);
+            storeUsersByRole('ims/slmUsersByRole', urResult);
         });
     },
     mounted() {
+        scroll(0, 0);
     },
 }
 </script>

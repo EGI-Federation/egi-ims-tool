@@ -71,8 +71,9 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store } from "@/store";
-import { Status, isValid, statusPill, formatDate, formatNextEvent } from '@/utils'
+import { Status, isValid, statusPill, formatDate, formatNextEvent, userNames } from '@/utils'
 import { Roles, hasRole, findUsersWithRole } from "@/roles";
+import { parseInterfaces, interfaceList } from '@/process'
 import MarkdownIt from 'markdown-it';
 import VersionHistory from "@/components/history.vue"
 import TableControl, { html } from "@/components/table.vue"
@@ -94,7 +95,10 @@ export default {
                     name: this.$t('ims.requirement'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
-                this.$t('ims.source'),
+                {
+                    name: this.$t('ims.source'),
+                    formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
+                },
                 {
                     name: this.$t('ims.responsible'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(cell) : "",
@@ -109,7 +113,7 @@ export default {
                     sort: true,
                 },
                 {
-                    name: this.$t('slm.relevantMaterial'),
+                    name: this.$t('ims.relevantMaterial'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
                 {
@@ -188,21 +192,13 @@ export default {
         requirements() {
             let r = [];
             if(isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.requirements)) {
-                for(let req of this.current.entity.requirements) {
+                for(const req of this.current.entity.requirements) {
                     let row = [
                         isValid(req.code) ? req.code : "",
                         isValid(req.requirement) ? req.requirement : "",
-                        isValid(req.source) ? req.source : ""
+                        isValid(req.source) ? req.source : "",
+                        userNames(req.responsibles, "<br/>")
                     ];
-                    let responsibles = "";
-                    if(isValid(req.responsibles)) {
-                        for(let rp of req.responsibles) {
-                            if(responsibles.length > 0)
-                                responsibles += ",<br/>";
-                            responsibles += rp.fullName;
-                        }
-                    }
-                    row.push(responsibles);
                     r.push(row);
                 }
             }
@@ -215,20 +211,17 @@ export default {
         interfaces() {
             let i = [];
             if(isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.interfaces)) {
+                const _from = this.$t("ims.from");
+                const _to = this.$t("ims.to");
+                const _in = this.$t("ims.in");
+                const _out = this.$t("ims.out");
                 for(let itf of this.current.entity.interfaces) {
-                    const _from = this.$t("slm.from");
-                    const _to = this.$t("slm.to");
                     let prefix = "in" === itf.direction.substr(0,2).toLowerCase() ? _from : _to;
-                    let interfacesWith = "";
-                    if(isValid(itf.interfacesWith)) {
-                        interfacesWith = itf.interfacesWith;
-                        const itfw = interfacesWith.toLowerCase();
-                        if("internal" !== itfw && "external" !== itfw)
-                            interfacesWith = prefix + "<br/>" + interfacesWith;
-                    }
+                    const itfWith = parseInterfaces(itf.interfacesWith);
+                    const itfList = interfaceList(itfWith, this.$t);
                     let row = [
-                        isValid(itf.direction) ? itf.direction : "",
-                        interfacesWith,
+                        isValid(itf.direction) && "in" === itf.direction.toLowerCase() ? _in : _out,
+                        prefix + itfList,
                         isValid(itf.relevantMaterial) ? itf.relevantMaterial : "",
                         isValid(itf.description) ? itf.description : ""
                     ];
@@ -247,9 +240,7 @@ export default {
         showHistory() { return this.historyVisible.visible; },
     },
     methods: {
-        toggleHistory() {
-            this.historyVisible.visible = !this.historyVisible.visible;
-        },
+        toggleHistory() { this.historyVisible.visible = !this.historyVisible.visible; },
         configureProcess() {
             this.$router.push('/slm/config');
         },
@@ -277,7 +268,7 @@ export default {
                 t.interfacesData.rows = t.interfaces;
                 t.$refs.interfaces.forceUpdate();
             }
-        }, 100);
+        }, 250);
     }
 }
 </script>

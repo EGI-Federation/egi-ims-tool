@@ -2,7 +2,7 @@
 <div v-if="showHistory" class="bg-body-secondary history-top">
     <div class="d-flex flex-nowrap gap-1">
         <h5>{{ $t('history.versionHistory') }}</h5>
-        <button type="button" class="btn-close btn-close" aria-label="Close" @click="closeHistory"/>
+        <button type="button" class="btn-close btn-close" :aria-label="$t('ims.close')" @click="closeHistory"/>
     </div>
 </div>
 <div v-if="showHistory" class="bg-body-tertiary history">

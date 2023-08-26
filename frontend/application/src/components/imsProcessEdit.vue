@@ -1,12 +1,12 @@
 <template>
 <div class="d-flex flex-nowrap content">
     <div class="d-flex flex-nowrap">
-        <form class="needs-validation" novalidate>
+        <form class="needs-validation" novalidate ref="processForm">
         <div class="process">
             <div class="d-flex flex-nowrap header">
                 <div class="d-flex flex-nowrap flex-column operations">
-                    <button type="submit" class="btn btn-primary" @click="saveChanges">{{ $t('ims.saveChanges') }}</button>
-                    <button type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
+                    <button type="submit" class="btn btn-primary" @click="saveChanges($event)" ref="submit">{{ $t('ims.saveChanges') }}</button>
+                    <button type="button" class="btn btn-secondary" @click="cancelChanges()">{{ $t('ims.cancel') }}</button>
                 </div>
                 <div class="d-flex flex-nowrap flex-column">
                     <div class="entity-type">{{ $t('ims.process') }}</div>
@@ -32,6 +32,7 @@
                 </div>
             </div>
             <div class="details">
+                <!-- Commit message -->
                 <div class="text-field mb-3">
                     <label for="changeDesc" class="form-label">{{ $t('ims.changeDesc') }}:</label>
                     <textarea ref="textarea" class="form-control textarea" id="changeDesc" rows=3 v-model="changeDescription" required/>
@@ -49,9 +50,9 @@
                             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ reviewFrequencyUnitName }}</button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('day', $event)">Days</a></li>
-                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('month', $event)">Months</a></li>
-                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('year', $event)">Years</a></li>
+                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('day', $event)">{{ $t('ims.days') }}</a></li>
+                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('month', $event)">{{ $t('ims.months') }}</a></li>
+                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('year', $event)">{{ $t('ims.years') }}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -79,43 +80,169 @@
                     <div class="input-group">
                         <div class="text-field">
                             <label for="contactEmail" class="form-label">{{ $t('ims.contact') }}:</label>
-                            <input type="email" class="form-control" id="contactEmail" v-model="contactEmail" placeholder="name@example.com" required>
+                            <input type="email" class="form-control" id="contactEmail" v-model="contactEmail"
+                                   placeholder="name@example.com" maxlength="256" required>
                         </div>
                     </div>
                 </div>
-
+                <!-- Diagram -->
                 <div class="text-field mb-3">
                     <label for="urlDiagram" class="form-label">{{ $t('ims.linkProcessDiagram') }}:</label>
                     <input type="text" class="form-control" id="urlDiagram" v-model="urlDiagram"/>
                 </div>
-
+                <!-- Goals -->
                 <h3>{{ $t('ims.goals') }}</h3>
-                <textbox-with-preview class="mt-1" :label="$t('ims.goalsLabel')" :text="goalsEditor" required/>
-
+                <textbox-with-preview class="mt-1" :label="$t('ims.goalsLabel')" :text="goalsEditor" :rows="5" :max-length=4096 required/>
+                <!-- Scope -->
                 <h3>{{ $t('ims.scope') }}</h3>
-                <textbox-with-preview class="mt-1" :label="$t('ims.scopeLabel')" :text="scopeEditor" :rows="10" required/>
-
+                <textbox-with-preview class="mt-1" :label="$t('ims.scopeLabel')" :text="scopeEditor" :rows="10" :max-length=4096 required/>
+                <!-- Requirements -->
                 <h3>{{ $t('ims.requirements') }}</h3>
                 <div class="requirements">
                     <table-control v-if="hasRequirements" id="requirements" ref="requirements"
-                                   :can-edit="true" :can-remove="true" :action-column="$t('slm.action')"
+                                   :can-edit="true" :can-remove="true" :action-column="$t('ims.action')"
                                    :header="requirementsHeader" :data="requirementsData"
-                                    @edit="editRequirement" @remove="removedRequirement"/>
+                                    @edit="editRequirement" @remove="removeRequirement"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
+                    <div class="d-flex flex-nowrap justify-content-end">
+                        <button v-if="!addingRequirement && !editingRequirement" type="button" class="btn btn-primary" @click="addRequirement">{{ $t('ims.addRequirement') }}</button>
+                    </div>
+                    <!-- Requirement edit start -->
+                    <form v-if="addingRequirement || editingRequirement" class="needs-validation" novalidate ref="reqForm">
+                        <h5>{{ $t(addingRequirement ? 'ims.newRequirement' : 'ims.editRequirement') }}</h5>
+                        <div class="input-group pt-3 mb-3 flex-nowrap gap-2 fade-top-border">
+                            <!-- Code -->
+                            <div class="text-field code">
+                                <label for="reqCode" class="form-label">{{ $t('ims.code') }}:</label>
+                                <input type="text" class="form-control" id="reqCode" v-model="requirementCode" maxlength="10">
+                            </div>
+                            <!-- Responsible -->
+                            <div class="input-group flex-column flex-nowrap responsible">
+                                <label for="reqResponsibles" class="form-label">{{ $t('ims.responsible') }}:</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="reqResponsibles" v-model="requirementResponsibles" readonly>
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                        {{ $t('ims.users') }}
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li v-for="[checkinUserId, user] in users" class="dropdown-item check-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" :id="checkinUserId" @change="toggleResponsible($event)">
+                                                <label class="form-check-label" :for="checkinUserId">
+                                                    {{ user.fullName }}
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Description -->
+                        <textbox-with-preview class="mt-1" :label="$t('ims.describeRequirement')" :text="reqDescriptionEditor" :rows="5" :max-length=2048 required/>
+                        <!-- Source -->
+                        <textbox-with-preview class="mt-1" :label="$t('ims.indicateSource')" :text="reqSourceEditor" :rows="3" :max-length=1024 required/>
+                        <div class="d-flex flex-nowrap justify-content-end gap-1">
+                            <button type="submit" class="btn btn-primary" @click="saveRequirement($event)" :disabled="!requirementChanged">
+                                {{ $t(addingRequirement ? 'ims.addRequirement' : 'ims.saveRequirement') }}
+                            </button>
+                            <button type="button" class="btn btn-secondary" @click="newRequirement = false; requirementBeingEdited = null;">{{ $t('ims.cancel') }}</button>
+                        </div>
+                    </form>
+                    <!-- Requirement edit end -->
                 </div>
-
+                <!-- Interfaces -->
                 <h3>{{ $t('ims.inputOutput') }}</h3>
                 <div class="interfaces">
                     <table-control v-if="hasInterfaces" id="interfaces" ref="interfaces"
-                                   :can-edit="false" :can-remove="true" :action-column="$t('slm.action')"
+                                   :can-edit="true" :can-remove="true" :action-column="$t('ims.action')"
                                    :header="interfacesHeader" :data="interfacesData"
-                                   @edit="editInterface" @remove="removedInterface"/>
+                                   @edit="editInterface" @remove="removeInterface"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
+                    <div class="d-flex flex-nowrap justify-content-end">
+                        <button v-if="!addingInterface && !editingInterface" type="button" class="btn btn-primary" @click="addInterface">{{ $t('ims.addInterface') }}</button>
+                    </div>
+                    <!-- Interface edit start -->
+                    <form v-if="addingInterface || editingInterface" class="needs-validation" novalidate ref="itfForm">
+                        <h5>{{ $t(addingInterface ? 'ims.newInterface' : 'ims.editInterface') }}</h5>
+                        <div class="input-group pt-3 mb-3 flex-nowrap gap-2 fade-top-border">
+                            <!-- Direction -->
+                            <div class="input-group flex-column flex-nowrap direction">
+                                <label for="direction" class="form-label">{{ $t('ims.type') }}:</label>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{ interfaceDirection }}</button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" @click="updateInterfaceDirection('In', $event)">{{ $t('ims.in') }}</a></li>
+                                        <li><a class="dropdown-item" href="#" @click="updateInterfaceDirection('Out', $event)">{{ $t('ims.out') }}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- Interfaces with -->
+                            <div class="input-group flex-column flex-nowrap interfaces-with">
+                                <label for="interfaceWith" class="form-label">{{ interfaceDirectionPrefix }}:</label>
+                                <div class="input-group dropup">
+                                    <input type="text" class="form-control" id="interfaceWith" v-model="interfaceWith" readonly>
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                        {{ $t('ims.interfaces') }}
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li class="dropdown-item check-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="Internal" @change="toggleInterface($event)">
+                                                <label class="form-check-label" for="Internal">{{ $t('ims.internal') }}</label>
+                                            </div>
+                                        </li>
+                                        <li class="dropdown-item check-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="External" @change="toggleInterface($event)">
+                                                <label class="form-check-label" for="External">{{ $t('ims.external') }}</label>
+                                            </div>
+                                        </li>
+                                        <li class="dropdown-item check-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="Customer" @change="toggleInterface($event)">
+                                                <label class="form-check-label" for="Customer">{{ $t('ims.customer') }}</label>
+                                            </div>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li v-for="[processCode, processName] in itfConnections" class="dropdown-item check-item">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" :id="processCode" @change="toggleInterface($event)">
+                                                <label class="form-check-label" :for="processCode">{{ processName }}</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Relevant material -->
+                        <textbox-with-preview class="mt-1" :label="$t('ims.provideRelevantMaterial')" :text="itfRelevantMaterialEditor" :rows="5" :max-length=2048 required/>
+                        <!-- Source -->
+                        <textbox-with-preview class="mt-1" :label="$t('ims.describeInterface')" :text="itfDescriptionEditor" :rows="5" :max-length=2048 required/>
+                        <div class="d-flex flex-nowrap justify-content-end gap-1">
+                            <button type="submit" class="btn btn-primary" @click="saveInterface($event)" :disabled="!interfaceChanged">
+                                {{ $t(addingInterface ? 'ims.addInterface' : 'ims.saveInterface') }}
+                            </button>
+                            <button type="button" class="btn btn-secondary" @click="newInterface = false; interfaceBeingEdited = null;">{{ $t('ims.cancel') }}</button>
+                        </div>
+                    </form>
+                    <!-- Interface edit end -->
                 </div>
             </div>
         </div>
         </form>
     </div>
+    <message id="warnEditRequirement" ref="warnEditRequirement"
+             :title="$t('ims.unsavedChanges')" :message="$t('ims.warnEditingRequirement')"
+             :confirm-button="$t('ims.continue')" @confirm="abandonRequirementEditAndSaveChanges" />
+    <message id="warnEditInterface" ref="warnEditInterface"
+             :title="$t('ims.unsavedChanges')" :message="$t('ims.warnEditingInterface')"
+             :confirm-button="$t('ims.continue')" @confirm="abandonInterfaceEditAndSaveChanges" />
+    <message id="warnEditProcess" ref="warnEditProcess"
+             :title="$t('ims.unsavedChanges')" :message="$t('ims.warnEditing')"
+             :confirm-button="$t('ims.continue')" @confirm="abandonChangesAndCancel" />
 </div>
 </template>
 
@@ -124,27 +251,31 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store } from "@/store";
-import { Status, deepClone, formatDate, isValid, statusPill } from '@/utils'
+import { Status, deepClone, formatDate, isValid, statusPill, userNames } from '@/utils'
 import { Roles, findUsersWithRole } from "@/roles";
+import { parseInterfaces, interfaceList } from '@/process'
 import MarkdownIt from 'markdown-it';
 import TextboxWithPreview from "@/components/textboxPreview.vue"
 import TableControl, { html } from "@/components/table.vue"
+import Message from "@/components/message.vue"
 
 var mdRender = new MarkdownIt();
 
 export default {
     name: 'imsProcessEdit',
-    components: { TextboxWithPreview, TableControl },
+    components: { TextboxWithPreview, TableControl, Message },
     props: {
         name: String,
         info: Object,
     },
     data() {
         return {
+            forceCancel: false,
             processInfo: null, // Version<Process>
             goalsEditor: reactive({ text: isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.goals : "" }),
             scopeEditor: reactive({ text: isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.scope : "" }),
             dpInput: null,
+
             requirementsHeader: [
                 {
                     name: "id",
@@ -155,13 +286,25 @@ export default {
                     name: this.$t('ims.requirement'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
-                this.$t('ims.source'),
+                {
+                    name: this.$t('ims.source'),
+                    formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
+                },
                 {
                     name: this.$t('ims.responsible'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(cell) : "",
                     sort: true,
                 }],
             requirementsData: reactive({ rows: [] }),
+            newRequirement: false,
+            requirementBeingEdited: null,
+            nextReqId: -1,
+            reqId: -1,
+            reqCode: "",
+            reqDescriptionEditor: reactive({ text: "" }),
+            reqSourceEditor: reactive({ text: "" }),
+            reqResponsibles: new Map(), // Map<checkinUserId, User>
+
             interfacesHeader: [
                 {
                     name: "id",
@@ -174,7 +317,7 @@ export default {
                     sort: true,
                 },
                 {
-                    name: this.$t('slm.relevantMaterial'),
+                    name: this.$t('ims.relevantMaterial'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
                 {
@@ -182,6 +325,15 @@ export default {
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 }],
             interfacesData: reactive({ rows: [] }),
+            newInterface: false,
+            interfaceBeingEdited: null,
+            nextItfId: -1,
+            itfId: -1,
+            itfDirection: "In",
+            itfWith: null, // { internal: Boolean, external: Boolean, customer: Boolean, process: Set(processCode) }
+            itfRelevantMaterialEditor: reactive({ text: "" }),
+            itfDescriptionEditor: reactive({ text: "" }),
+            itfConnections: new Map(),
         }
     },
     computed: {
@@ -278,7 +430,7 @@ export default {
                         unit = this.$t('ims.months');
                         break;
                 }
-            return unit.charAt(0).toUpperCase() + unit.slice(1);
+            return unit;
         },
         nextReview: {
             get() {
@@ -295,66 +447,127 @@ export default {
             return isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements) &&
                    this.edited.entity.requirements.length > 0;
         },
+        addingRequirement() { return this.newRequirement; },
+        editingRequirement() { return isValid(this.requirementBeingEdited); },
         requirements() {
             let r = [];
             if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements)) {
-                this.edited.entity.requirements.forEach(function (req, idx) {
+                for(const req of this.edited.entity.requirements) {
                     let row = [
                         req.id,
                         isValid(req.code) ? req.code : "",
                         isValid(req.requirement) ? req.requirement : "",
-                        isValid(req.source) ? req.source : ""
+                        isValid(req.source) ? req.source : "",
+                        userNames(req.responsibles, "<br/>")
                     ];
-                    let responsibles = "";
-                    if(isValid(req.responsibles)) {
-                        for(let rp of req.responsibles) {
-                            if(responsibles.length > 0)
-                                responsibles += ",<br/>";
-                            responsibles += rp.fullName;
-                        }
-                    }
-                    row.push(responsibles);
                     r.push(row);
-                });
+                }
             }
             return r;
+        },
+        requirementCode: {
+            get() { return this.reqCode; },
+            set(value) { this.reqCode = value; }
+        },
+        requirementResponsibles() { return userNames(this.reqResponsibles.values()); },
+        requirementChanged() {
+            if(this.addingRequirement)
+                return true;
+
+            if(!isValid(this.requirementBeingEdited) ||
+                this.reqId !== this.requirementBeingEdited.id.toString() ||
+                this.reqCode !== this.requirementBeingEdited.code ||
+                this.reqDescriptionEditor.text !== this.requirementBeingEdited.requirement ||
+                this.reqSourceEditor.text !== this.requirementBeingEdited.source ||
+                isValid(this.reqResponsibles) !== isValid(this.requirementBeingEdited.responsibles))
+                return true;
+
+            if(isValid(this.requirementBeingEdited.responsibles)) {
+                if(this.reqResponsibles.size !== this.requirementBeingEdited.responsibles.length)
+                    return true;
+
+                for(const user of this.requirementBeingEdited.responsibles) {
+                    if(!this.reqResponsibles.has(user.checkinUserId))
+                        return true;
+                }
+            }
+
+            return false;
         },
         hasInterfaces() {
             return isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces) &&
                 this.edited.entity.interfaces.length > 0;
         },
+        addingInterface() { return this.newInterface; },
+        editingInterface() { return isValid(this.interfaceBeingEdited); },
         interfaces() {
             let i = [];
             if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces)) {
-                let t = this.$t;
-                this.edited.entity.interfaces.forEach(function (itf, idx) {
-                    const _from = t("slm.from");
-                    const _to = t("slm.to");
-                    let prefix = "in" === itf.direction.substr(0,2).toLowerCase() ? _from : _to;
-                    let interfacesWith = "";
-                    if(isValid(itf.interfacesWith)) {
-                        interfacesWith = itf.interfacesWith;
-                        const itfw = interfacesWith.toLowerCase();
-                        if("internal" !== itfw && "external" !== itfw)
-                            interfacesWith = prefix + "<br/>" + interfacesWith;
-                    }
+                const _from = this.$t("ims.from");
+                const _to = this.$t("ims.to");
+                const _in = this.$t("ims.in");
+                const _out = this.$t("ims.out");
+                for(const itf of this.edited.entity.interfaces) {
+                    const prefix = ("in" === itf.direction.substr(0,2).toLowerCase() ? _from : _to) + "<br/>";
+                    const itfWith = parseInterfaces(itf.interfacesWith);
+                    const itfList = interfaceList(itfWith, this.$t);
                     let row = [
                         itf.id,
-                        isValid(itf.direction) ? itf.direction : "",
-                        interfacesWith,
+                        isValid(itf.direction) && "in" === itf.direction.toLowerCase() ? _in : _out,
+                        prefix + itfList,
                         isValid(itf.relevantMaterial) ? itf.relevantMaterial : "",
                         isValid(itf.description) ? itf.description : "",
                     ];
                     i.push(row);
-                });
+                }
             }
             return i;
+        },
+        interfaceDirection() {
+            return "in" === this.itfDirection.toLowerCase() ? this.$t('ims.in') : this.$t('ims.out');
+        },
+        interfaceDirectionPrefix() {
+            return "in" === this.itfDirection.toLowerCase() ? this.$t('ims.from') : this.$t('ims.to');
+        },
+        interfaceWith() { return interfaceList(this.itfWith, this.$t); },
+        interfaceChanged() {
+            if(this.addingInterface)
+                return true;
+
+            if(!isValid(this.interfaceBeingEdited) ||
+                this.itfId !== this.interfaceBeingEdited.id.toString() ||
+                this.itfDirection !== this.interfaceBeingEdited.direction ||
+                this.itfDescriptionEditor.text !== this.interfaceBeingEdited.description ||
+                this.itfRelevantMaterialEditor.text !== this.interfaceBeingEdited.relevantMaterial)
+                return true;
+
+            if(isValid(this.itfWith) && isValid(this.interfaceBeingEdited.itfWith)) {
+                if(this.itfWith.internal !== this.interfaceBeingEdited.itfWith.internal ||
+                   this.itfWith.external !== this.interfaceBeingEdited.itfWith.external ||
+                   this.itfWith.customer !== this.interfaceBeingEdited.itfWith.customer ||
+                   this.itfWith.process.size !== this.interfaceBeingEdited.itfWith.process.size)
+                    return true;
+
+                for(const processCode of this.interfaceBeingEdited.itfWith.process) {
+                    if(!this.itfWith.process.has(processCode))
+                        return true;
+                }
+            }
+
+            return false;
+        },
+        processChanged() {
+            return true;
         },
         isDraft() { return isValid(this.edited) && isValid(this.edited.entity) && Status.DRAFT.description === this.edited.entity.status; },
         isApproved() { return isValid(this.edited) && isValid(this.edited.entity) && Status.APPROVED.description === this.edited.entity.status; },
         isReady() { return isValid(this.edited) && isValid(this.edited.entity) && Status.READY_FOR_APPROVAL.description === this.edited.entity.status; },
         isDeprecated() { return isValid(this.edited) && isValid(this.edited.entity) && Status.DEPRECATED.description === this.edited.entity.status; },
         roles() { return store.state.temp.roles; },
+        users() {
+            const users = store.state.temp.usersByProcess.get('SLM');
+            return isValid(users) ? users : new Map();
+        },
     },
     methods: {
         updateReviewFrequencyUnit(value, event) {
@@ -391,11 +604,11 @@ export default {
             this.dpInput.removeEventListener('focusin', this.addHaloFocusIn);
             this.dpInput.removeEventListener('focusout', this.removeHaloFocusOut);
         },
-        setupValidation() {
-            const forms = document.querySelectorAll('.needs-validation')
+        setupValidation(scope) {
+            const forms = document.querySelectorAll(`${isValid(scope) ? scope : ''}.needs-validation`)
             Array.from(forms).forEach(form => {
                 form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
+                    if(!form.checkValidity()) {
                         event.preventDefault();
                         event.stopPropagation();
                     }
@@ -404,12 +617,118 @@ export default {
                 }, false);
             })
         },
-        editRequirement(id) {
-            console.log("Edit requirement " + id);
+        addRequirement() {
+            this.newRequirement = true;
+            this.requirementBeingEdited = null;
+            this.reqId = this.nextReqId--;
+            this.reqCode = "";
+            this.reqResponsibles = new Map();
+            this.reqDescriptionEditor.text = "";
+            this.reqSourceEditor.text = "";
+
+            let t = this;
+            const delayedSetupValidation = setTimeout(function() {
+                clearTimeout(delayedSetupValidation);
+                t.setupValidation(".requirements ");
+            }, 500);
         },
-        removedRequirement(id) {
-            console.log("Removed requirement " + id);
+        editRequirement(id) {
+            this.newRequirement = false;
             if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements)) {
+                for(const req of this.edited.entity.requirements) {
+                    if(id !== req.id.toString())
+                        continue;
+
+                    // Found the requirement to edit, load it in the controls
+                    this.requirementBeingEdited = deepClone(req);
+                    this.reqId = id;
+                    this.reqCode = req.code;
+                    this.reqResponsibles = new Map();
+                    for(const user of req.responsibles)
+                        this.reqResponsibles.set(user.checkinUserId, user);
+                    this.reqDescriptionEditor.text = String(req.requirement);
+                    this.reqSourceEditor.text = String(req.source);
+
+                    // Update the checkboxes in the user dropdown
+                    let t = this;
+                    const delayedResponsibleCheckboxes = setTimeout(function() {
+                        clearTimeout(delayedResponsibleCheckboxes);
+                        for(const [checkinUserId, u] of t.users) {
+                            let el = document.getElementById(checkinUserId);
+                            if(isValid(el))
+                                el.checked = t.reqResponsibles.has(checkinUserId);
+                        }
+                        t.setupValidation(".requirements ");
+                    }, 500);
+
+                    console.log("Edit requirement " + id);
+                    break;
+                }
+            }
+        },
+        toggleResponsible(event) {
+            let el = event.target;
+            const checkinUserId = Number(el.getAttribute("id"));
+            if(el.checked) {
+                // Add user to the responsibles
+                const users = store.state.temp.usersByProcess.get('SLM');
+                const user = users.get(checkinUserId);
+                if(isValid(user))
+                    this.reqResponsibles.set(checkinUserId, user);
+            }
+            else {
+                // Remove use from the responsibles
+                if(this.reqResponsibles.has(checkinUserId))
+                    this.reqResponsibles.delete(checkinUserId);
+            }
+        },
+        saveRequirement(event) {
+            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements) &&
+               this.$refs.reqForm.checkValidity()) {
+                // Check if adding a new requirement or editing an existing one
+                if(this.newRequirement) {
+                    // Adding new one
+                    let requirement = {
+                        id: this.reqId,
+                        code: this.reqCode,
+                        requirement: this.reqDescriptionEditor.text,
+                        source: this.reqSourceEditor.text,
+                        responsibles: []
+                    };
+                    for(const [checkinUserId, usr] of this.reqResponsibles)
+                        requirement.responsibles.push(usr);
+
+                    this.edited.entity.requirements.push(requirement);
+                    this.newRequirement = false;
+                    console.log("Added new requirement " + requirement.id);
+                } else if(isValid(this.requirementBeingEdited)) {
+                    // Saving changes to the one being edited
+                    for(const req of this.edited.entity.requirements) {
+                        if(this.reqId !== req.id.toString())
+                            continue;
+
+                        // Found the requirement being edited, update it
+                        req.code = this.reqCode;
+                        req.requirement = this.reqDescriptionEditor.text;
+                        req.source = this.reqSourceEditor.text;
+                        req.responsibles = [];
+                        for(const [checkinUserId, usr] of this.reqResponsibles)
+                            req.responsibles.push(usr);
+
+                        this.requirementBeingEdited = null;
+                        console.log("Stored changes to requirement " + req.id);
+                        break;
+                    }
+                }
+
+                this.requirementsData.rows = this.requirements;
+                this.$refs.requirements.forceUpdate();
+                event.preventDefault();
+            }
+        },
+        removeRequirement(id) {
+            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements)) {
+                console.log("Remove requirement " + id);
                 this.edited.entity.requirements = this.edited.entity.requirements.filter(req => id !== req.id.toString());
                 if(this.edited.entity.requirements.length > 0) {
                     this.requirementsData.rows = this.requirements;
@@ -417,18 +736,231 @@ export default {
                 }
             }
         },
-        editInterface(id) {
-            console.log("Edit interface " + id);
-        },
-        removedInterface(id) {
-            console.log("Removed interface " + id);
-        },
-        saveChanges() {
+        addInterface() {
+            this.newInterface = true;
+            this.interfaceBeingEdited = null;
+            this.itfId = this.nextItfId--;
+            this.itfDirection = "In";
+            this.itfWith = { internal: false, external: false, customer: false, process: new Set() };
+            this.itfRelevantMaterialEditor.text = "";
+            this.itfDescriptionEditor.text = "";
 
+            let t = this;
+            const delayedSetupValidation = setTimeout(function() {
+                clearTimeout(delayedSetupValidation);
+                t.setupValidation(".interfaces ");
+            }, 500);
+        },
+        editInterface(id) {
+            this.newInterface = false;
+            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces)) {
+                for(const itf of this.edited.entity.interfaces) {
+                    if(id !== itf.id.toString())
+                        continue;
+
+                    // Found the interface to edit, load it in the controls
+                    this.interfaceBeingEdited = deepClone(itf);
+                    this.interfaceBeingEdited.itfWith = parseInterfaces(itf.interfacesWith);
+                    this.itfId = id;
+                    this.itfDirection = itf.direction;
+                    this.itfWith = parseInterfaces(itf.interfacesWith);
+                    this.itfDescriptionEditor.text = String(itf.description);
+                    this.itfRelevantMaterialEditor.text = String(itf.relevantMaterial);
+
+                    // Update the checkboxes in the interfaces dropdown
+                    let t = this;
+                    const delayedInterfacesCheckboxes = setTimeout(function() {
+                        clearTimeout(delayedInterfacesCheckboxes);
+
+                        let el = document.getElementById("Internal");
+                        if(isValid(el))
+                            el.checked = t.itfWith.internal;
+
+                        el = document.getElementById("External");
+                        if(isValid(el))
+                            el.checked = t.itfWith.external;
+
+                        el = document.getElementById("Customer");
+                        if(isValid(el))
+                            el.checked = t.itfWith.customer;
+
+                        for(const [processCode, processName] of t.itfConnections) {
+                            let el = document.getElementById(processCode);
+                            if(isValid(el))
+                                el.checked = t.itfWith.process.has(processCode);
+                        }
+                        t.setupValidation(".interfaces ");
+                    }, 500);
+
+                    console.log("Edit interface " + id);
+                    break;
+                }
+            }
+        },
+        updateInterfaceDirection(value, event) {
+            event.preventDefault();
+            this.itfDirection = value;
+        },
+        toggleInterface(event) {
+            let el = event.target;
+            const code = el.getAttribute("id");
+            if(el.checked) {
+                // Add interface
+                switch(code.toLowerCase()) {
+                    case "internal": this.itfWith.internal = true; break;
+                    case "external": this.itfWith.external = true; break;
+                    case "customer": this.itfWith.customer = true; break;
+                    default:
+                        this.itfWith.process.add(code);
+                        break;
+                }
+            }
+            else {
+                // Remove interface
+                switch(code.toLowerCase()) {
+                    case "internal": this.itfWith.internal = false; break;
+                    case "external": this.itfWith.external = false; break;
+                    case "customer": this.itfWith.customer = false; break;
+                    default:
+                        if(this.itfWith.process.has(code))
+                            this.itfWith.process.delete(code);
+                        break;
+                }
+            }
+        },
+        saveInterface(event) {
+            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces) &&
+                this.$refs.itfForm.checkValidity()) {
+                // Check if adding a new interface or editing an existing one
+                if(this.newInterface) {
+                    // Adding new one
+                    let itf = {
+                        id: this.itfId,
+                        direction: this.itfDirection,
+                        description: this.itfDescriptionEditor.text,
+                        relevantMaterial: this.itfRelevantMaterialEditor.text,
+                        interfacesWith: interfaceList(this.itfWith, this.$t, false, "")
+                    };
+
+                    this.edited.entity.interfaces.push(itf);
+                    this.newInterface = false;
+                    console.log("Added new interface " + itf.id);
+                } else if(isValid(this.interfaceBeingEdited)) {
+                    // Saving changes to the one being edited
+                    for(const itf of this.edited.entity.interfaces) {
+                        if(this.itfId !== itf.id.toString())
+                            continue;
+
+                        // Found the interface being edited, update it
+                        itf.direction = this.itfDirection;
+                        itf.interfacesWith = interfaceList(this.itfWith, this.$t, false, "");
+                        itf.description = this.itfDescriptionEditor.text;
+                        itf.relevantMaterial = this.itfRelevantMaterialEditor.text;
+
+                        this.interfaceBeingEdited = null;
+                        console.log("Stored changes to interface " + itf.id);
+                        break;
+                    }
+                }
+
+                this.interfacesData.rows = this.interfaces;
+                this.$refs.interfaces.forceUpdate();
+                event.preventDefault();
+            }
+        },
+        removeInterface(id) {
+            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces)) {
+                console.log("Remove interface " + id);
+                this.edited.entity.interfaces = this.edited.entity.interfaces.filter(itf => id !== itf.id.toString());
+                if(this.edited.entity.interfaces.length > 0) {
+                    this.interfacesData.rows = this.interfaces;
+                    this.$refs.interfaces.forceUpdate();
+                }
+            }
+        },
+        saveChanges(event) {
+            if(this.addingRequirement || this.editingRequirement) {
+                // Editing a requirement
+                if(this.requirementChanged) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.$refs.warnEditRequirement.showModal();
+                    return;
+                }
+
+                // Cancel requirement editing
+                this.newRequirement = false;
+                this.requirementBeingEdited = null;
+            }
+
+            if(this.addingInterface || this.editingInterface) {
+                // Editing an interface
+                if(this.interfaceChanged) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.$refs.warnEditInterface.showModal();
+                    return;
+                }
+
+                // Cancel requirement editing
+                this.newRequirement = false;
+                this.requirementBeingEdited = null;
+            }
+
+            if(this.$refs.processForm.checkValidity()) {
+                if(!this.processChanged)
+                    this.cancelChanges();
+                else {
+                    // We have changes to the process that must be saved as another version
+                    console.log("Saving new version of SLM process info");
+                }
+            }
+        },
+        abandonRequirementEditAndSaveChanges() {
+            // Cancel requirement editing
+            this.newRequirement = false;
+            this.requirementBeingEdited = null;
+            this.$refs.submit.click();
+        },
+        abandonInterfaceEditAndSaveChanges() {
+            // Cancel interface editing
+            this.newInterface = false;
+            this.interfaceBeingEdited = null;
+            this.$refs.submit.click();
         },
         cancelChanges() {
             this.$router.push('/slm');
         },
+        abandonChangesAndCancel() {
+            this.forceCancel = true;
+            this.$router.push('/slm');
+        },
+    },
+    created() {
+        this.itfConnections.set('BA', this.$t('home.BA'));
+        this.itfConnections.set('BDS', this.$t('home.BDS'));
+        this.itfConnections.set('CAPM', this.$t('home.CAPM'));
+        this.itfConnections.set('CHM', this.$t('home.CHM'));
+        this.itfConnections.set('COM', this.$t('home.COM'));
+        this.itfConnections.set('CONFM', this.$t('home.CONFM'));
+        this.itfConnections.set('CSI', this.$t('home.CSI'));
+        this.itfConnections.set('CRM', this.$t('home.CRM'));
+        this.itfConnections.set('CPM', this.$t('home.CPM'));
+        this.itfConnections.set('FA', this.$t('home.FA'));
+        this.itfConnections.set('HR', this.$t('home.HR'));
+        this.itfConnections.set('ISM', this.$t('home.ISM'));
+        this.itfConnections.set('ISRM', this.$t('home.ISRM'));
+        this.itfConnections.set('PPC', this.$t('home.PPC'));
+        this.itfConnections.set('PM', this.$t('home.PM'));
+        this.itfConnections.set('PKM', this.$t('home.PKM'));
+        this.itfConnections.set('PPM', this.$t('home.PPM'));
+        this.itfConnections.set('RDM', this.$t('home.RDM'));
+        this.itfConnections.set('RM', this.$t('home.RM'));
+        this.itfConnections.set('SACM', this.$t('home.SACM'));
+        this.itfConnections.set('SUPPM', this.$t('home.SUPPM'));
+        //this.itfConnections.set('SLM', this.$t('home.SLM'));
+        this.itfConnections.set('SPM', this.$t('home.SPM'));
+        this.itfConnections.set('SRM', this.$t('home.SRM'));
     },
     mounted() {
         // Add halo ring on focus to the date picker
@@ -446,6 +978,16 @@ export default {
                 t.$refs.interfaces.forceUpdate();
             }
         }, 100);
+    },
+    beforeRouteLeave(to, from, next) {
+        console.log("beforeRouteLeave");
+        // Navigating away from this view
+        if(this.processChanged && !this.forceCancel) {
+            this.$refs.warnEditProcess.showModal();
+            next(false);
+        }
+        else
+            next();
     },
     beforeDestroy() {
         // Cleanup
@@ -467,10 +1009,10 @@ export default {
     max-width: 60rem;
     margin: 0 auto 2rem;
 }
-.content .process {
+.process {
     margin: 0 auto;
 }
-.content .process .header {
+.process .header {
     justify-content: center;
     align-content: flex-start;
     margin: 0 auto 1rem;
@@ -559,5 +1101,28 @@ export default {
 .process .requirements,
 .process .interfaces {
     margin-bottom: 1rem;
+    gap: 0;
+}
+.process .requirements h5,
+.process .interfaces h5{
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+.process .requirements .code {
+    max-width: 10rem;
+}
+.process .interfaces .direction {
+    width: unset;
+    max-width: 5rem;
+}
+.process .interfaces .interfaces-with {
+
+}
+.check-item .form-check-input,
+.check-item .form-check-label {
+    cursor: pointer;
 }
 </style>
+<script setup>
+import Message from "@/components/message.vue";
+</script>

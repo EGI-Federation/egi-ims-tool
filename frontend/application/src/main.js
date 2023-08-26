@@ -1,6 +1,7 @@
 import App from './App.vue'
 import { createApp } from 'vue'
 import { store } from "./store"
+import { tooltip } from './tooltip'
 import router from './router'
 import i18n from './locales'
 import VueMarkdownIt from 'vue3-markdown-it'
@@ -17,4 +18,5 @@ createApp(App)
     .use(i18n)
     .use(VueMarkdownIt)
     .component('VueDatePicker', VueDatePicker)
+    .directive('tooltip', tooltip)
     .mount('#app');

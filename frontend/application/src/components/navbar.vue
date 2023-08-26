@@ -19,7 +19,7 @@
         <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarIMS" aria-labelledby="navbarIMSLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title" id="navbarIMSLabel">{{ $t('navbar.offcanvas') }}</h5>
-                <button type="button" class="btn-close btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close" data-bs-dismiss="offcanvas" :aria-label="$t('ims.close')"></button>
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav navbar-nav-scroll me-auto" style="--bs-scroll-height: 80vh;">

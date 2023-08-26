@@ -121,13 +121,13 @@ export const formatNextEvent = function(frequency, unit, nextEvent, t) {
         f = `${t('ims.every')} ${frequency} `;
         switch(unit) {
             case 'day':
-                f += t('ims.days');
+                f += t('ims.days').toLowerCase();
                 break;
             case 'month':
-                f += t('ims.months');
+                f += t('ims.months').toLowerCase();
                 break;
             default:
-                f += t('ims.years');
+                f += t('ims.years').toLowerCase();
                 break;
         }
     }
@@ -219,4 +219,17 @@ export const deepClone = function(obj, hash = new WeakMap()) {
 
     hash.set(obj, result);
     return Object.assign(result, ...Object.keys(obj).map(key => ({ [key]: deepClone(obj[key], hash) }) ));
+}
+
+// Turn an array of strings into a comma separated list
+export const userNames = function(users, separator = " ") {
+    let userList = "";
+    if(isValid(users)) {
+        for(let rp of users) {
+            if(userList.length > 0)
+                userList += `,${separator}`;
+            userList += rp.fullName;
+        }
+    }
+    return userList;
 }

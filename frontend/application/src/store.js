@@ -17,8 +17,9 @@ export const store = createStore({
            namespaced: false,
             state() {
                 return {
-                    roles: new Map(), // roles of current user Map<Symbol, { name:String, assigned:boolean, ownedEntities:Set<String> }>
-                    users: new Map(), // users holding roles Map<Symbol, Map<checkinUserId, User>>
+                    roles: new Map(),           // Roles of current user Map<Symbol, { name:String, assigned:boolean, ownedEntities:Set<String> }>
+                    usersByProcess: new Map(),  // Users that are members of processes Map<String, Map<checkinUserId, User>>
+                    usersByRole: new Map(),     // Users holding roles in any process Map<Symbol, Map<checkinUserId, User>>
                 }
             },
             mutations: {
@@ -26,9 +27,13 @@ export const store = createStore({
                     console.log(`Store ${roles.size} roles`);
                     state.roles = roles;
                 },
-                updateUsers(state, users) {
+                updateUsersByProcess(state, info) {
+                    console.log(`Store ${info.users.size} users of process ${info.processCode}`);
+                    state.usersByProcess.set(info.processCode, info.users);
+                },
+                updateUsersByRole(state, users) {
                     console.log(`Store ${users.size} users`);
-                    state.users = users;
+                    state.usersByRole = users;
                 },
                 logOut(state) {
                     state.roles = null;
@@ -122,8 +127,13 @@ export const store = createStore({
                     state.slm.error = info.error;
                 },
                 slmUsers(state, info) {
-                    console.log("Store SLM users");
-                    store.commit("updateUsers", info.users);
+                    info.processCode = 'SLM';
+                    store.commit("updateUsersByProcess", info);
+                    state.slm.error = info.error;
+                },
+                slmUsersByRole(state, info) {
+                    console.log("Store SLM users with roles");
+                    store.commit("updateUsersByRole", info.users);
                     state.slm.error = info.error;
                 },
                 clearState(state, newLocale) {
@@ -189,6 +199,20 @@ export const storeProcessInfo = function(mutation, piResult) {
         latest.entity = pi;
     }
     store.commit(mutation, { version: latest, error: piResult.error.value });
+}
+
+// Extract the users then call a mutation on the store to save them
+export const storeUsers = function(mutation, upResult) {
+    let users = new Map();
+    if(isValid(upResult.page)) {
+        const page = upResult.page.value;
+        if(isValid(page) && isValid(page.elements)) {
+            for(let user of page.elements) {
+                users.set(user.checkinUserId, user);
+            }
+        }
+    }
+    store.commit(mutation, { users: users, error: upResult.error.value });
 }
 
 // Extract the users then call a mutation on the store to save them
