@@ -33,6 +33,9 @@ export default {
             }, 500);
         }
     },
+    mounted() {
+        scroll(0, 0);
+    },
 }
 </script>
 
