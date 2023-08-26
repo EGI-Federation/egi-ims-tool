@@ -8,6 +8,7 @@
 // @ is an alias to /src
 import { isValid, deepClone } from "@/utils";
 import { Grid, html } from "gridjs";
+import { Tooltip } from "bootstrap";
 
 export { html };
 
@@ -36,12 +37,13 @@ export default {
             grid: new Grid(),
             headerRow: [],
             rows: [],
+            tooltips: [],
         }
     },
     methods: {
         gridActionButtons(id, canEdit, canRemove, entity) {
-            const editButton = `<div class='btn-action edit edit-${entity}' role='button' data-bs-toggle='tooltip' data-bs-title='Edit'><i class='bi bi-pencil-square' data-${entity}-id='${id}'></i></div>`;
-            const removeButton = `<div class='btn-action remove remove-${entity}' role='button' data-bs-toggle='tooltip' data-bs-title='Remove'><i class='bi bi-x-lg' data-${entity}-id='${id}'></i></div>`;
+            const editButton = `<div class='btn-action edit edit-${entity}' role='button' data-bs-toggle='tooltip' data-bs-title='${this.$t('ims.edit')}'><i class='bi bi-pencil-square' data-${entity}-id='${id}'></i></div>`;
+            const removeButton = `<div class='btn-action remove remove-${entity}' role='button' data-bs-toggle='tooltip' data-bs-title='${this.$t('ims.remove')}'><i class='bi bi-x-lg' data-${entity}-id='${id}'></i></div>`;
             return `<div class='d-flex flex-nowrap gap-1 justify-content-center'>${canEdit ? editButton : ''}${canRemove ? removeButton : ''}</div>`;
         },
         wireActions() {
@@ -55,6 +57,13 @@ export default {
             Array.from(removeReqs).forEach(el => {
                 el.addEventListener('click', t.removeRow);
             });
+
+            const tooltipTriggers = document.querySelectorAll(`#${this.$props.id} [data-bs-toggle='tooltip']`);
+            this.tooltips = [...tooltipTriggers].map(tooltipTrigger =>
+                new Tooltip(tooltipTrigger, {
+                    delay: { "show": 1000, "hide": 100 },
+                    trigger: 'hover'
+                }));
         },
         addActionsColumnToHeader() {
             // Add an Actions cell to the right end of the table header
@@ -87,9 +96,14 @@ export default {
                 })
                 .forceRender();
         },
+        hideTooltips() {
+            for(let tooltip of this.tooltips)
+                tooltip.hide();
+        },
         editRow(event) {
             let el = event.target;
             const id = el.getAttribute(`data-${this.$props.id}-id`);
+            this.hideTooltips();
             this.$emit('edit', id);
         },
         removeRow(event) {
@@ -109,6 +123,7 @@ export default {
                 return;
             }
 
+            this.hideTooltips();
             this.$emit('remove', id);
         },
     },
