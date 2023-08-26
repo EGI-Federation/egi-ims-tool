@@ -97,7 +97,7 @@
                 <h3>{{ $t('ims.scope') }}</h3>
                 <textbox-with-preview class="mt-1" :label="$t('ims.scopeLabel')" :text="scopeEditor" :rows="10" :max-length=4096 required/>
                 <!-- Requirements -->
-                <h3>{{ $t('ims.requirements') }}</h3>
+                <h3 id="requirements-title">{{ $t('ims.requirements') }}</h3>
                 <div class="requirements">
                     <table-control v-if="hasRequirements" id="requirements" ref="requirements"
                                    :can-edit="true" :can-remove="true" :action-column="$t('ims.action')"
@@ -109,7 +109,7 @@
                     </div>
                     <!-- Requirement edit start -->
                     <form v-if="addingRequirement || editingRequirement" class="needs-validation" novalidate ref="reqForm">
-                        <h5>{{ $t(addingRequirement ? 'ims.newRequirement' : 'ims.editRequirement') }}</h5>
+                        <h5 id="requirement-title">{{ $t(addingRequirement ? 'ims.newRequirement' : 'ims.editRequirement') }}</h5>
                         <div class="input-group pt-3 mb-3 flex-nowrap gap-2 fade-top-border">
                             <!-- Code -->
                             <div class="text-field code">
@@ -146,13 +146,13 @@
                             <button type="submit" class="btn btn-primary" @click="saveRequirement($event)" :disabled="!requirementChanged">
                                 {{ $t(addingRequirement ? 'ims.addRequirement' : 'ims.saveRequirement') }}
                             </button>
-                            <button type="button" class="btn btn-secondary" @click="newRequirement = false; requirementBeingEdited = null;">{{ $t('ims.cancel') }}</button>
+                            <button type="button" class="btn btn-secondary" @click="cancelRequirementEditing">{{ $t('ims.cancel') }}</button>
                         </div>
                     </form>
                     <!-- Requirement edit end -->
                 </div>
                 <!-- Interfaces -->
-                <h3>{{ $t('ims.inputOutput') }}</h3>
+                <h3 id="interfaces-title">{{ $t('ims.inputOutput') }}</h3>
                 <div class="interfaces">
                     <table-control v-if="hasInterfaces" id="interfaces" ref="interfaces"
                                    :can-edit="true" :can-remove="true" :action-column="$t('ims.action')"
@@ -164,7 +164,7 @@
                     </div>
                     <!-- Interface edit start -->
                     <form v-if="addingInterface || editingInterface" class="needs-validation" novalidate ref="itfForm">
-                        <h5>{{ $t(addingInterface ? 'ims.newInterface' : 'ims.editInterface') }}</h5>
+                        <h5 id="interface-title">{{ $t(addingInterface ? 'ims.newInterface' : 'ims.editInterface') }}</h5>
                         <div class="input-group pt-3 mb-3 flex-nowrap gap-2 fade-top-border">
                             <!-- Direction -->
                             <div class="input-group flex-column flex-nowrap direction">
@@ -225,7 +225,7 @@
                             <button type="submit" class="btn btn-primary" @click="saveInterface($event)" :disabled="!interfaceChanged">
                                 {{ $t(addingInterface ? 'ims.addInterface' : 'ims.saveInterface') }}
                             </button>
-                            <button type="button" class="btn btn-secondary" @click="newInterface = false; interfaceBeingEdited = null;">{{ $t('ims.cancel') }}</button>
+                            <button type="button" class="btn btn-secondary" @click="cancelInterfaceEditing">{{ $t('ims.cancel') }}</button>
                         </div>
                     </form>
                     <!-- Interface edit end -->
@@ -251,7 +251,7 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store } from "@/store";
-import { Status, deepClone, formatDate, isValid, statusPill, userNames } from '@/utils'
+import { Status, deepClone, formatDate, isValid, statusPill, userNames, scrollTo } from '@/utils'
 import { Roles, findUsersWithRole } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
 import MarkdownIt from 'markdown-it';
@@ -630,7 +630,8 @@ export default {
             const delayedSetupValidation = setTimeout(function() {
                 clearTimeout(delayedSetupValidation);
                 t.setupValidation(".requirements ");
-            }, 500);
+                scrollTo('requirement-title');
+            }, 250);
         },
         editRequirement(id) {
             this.newRequirement = false;
@@ -659,7 +660,8 @@ export default {
                                 el.checked = t.reqResponsibles.has(checkinUserId);
                         }
                         t.setupValidation(".requirements ");
-                    }, 500);
+                        scrollTo('requirement-title');
+                    }, 250);
 
                     console.log("Edit requirement " + id);
                     break;
@@ -681,6 +683,11 @@ export default {
                 if(this.reqResponsibles.has(checkinUserId))
                     this.reqResponsibles.delete(checkinUserId);
             }
+        },
+        cancelRequirementEditing() {
+            this.newRequirement = false;
+            this.requirementBeingEdited = null;
+            scrollTo('requirements-title');
         },
         saveRequirement(event) {
             if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements) &&
@@ -723,6 +730,7 @@ export default {
 
                 this.requirementsData.rows = this.requirements;
                 this.$refs.requirements.forceUpdate();
+                scrollTo('requirements-title');
                 event.preventDefault();
             }
         },
@@ -749,7 +757,8 @@ export default {
             const delayedSetupValidation = setTimeout(function() {
                 clearTimeout(delayedSetupValidation);
                 t.setupValidation(".interfaces ");
-            }, 500);
+                scrollTo('interface-title');
+            }, 250);
         },
         editInterface(id) {
             this.newInterface = false;
@@ -790,7 +799,8 @@ export default {
                                 el.checked = t.itfWith.process.has(processCode);
                         }
                         t.setupValidation(".interfaces ");
-                    }, 500);
+                        scrollTo('interface-title');
+                    }, 250);
 
                     console.log("Edit interface " + id);
                     break;
@@ -827,6 +837,11 @@ export default {
                         break;
                 }
             }
+        },
+        cancelInterfaceEditing() {
+            this.newInterface = false;
+            this.interfaceBeingEdited = null;
+            scrollTo('interfaces-title');
         },
         saveInterface(event) {
             if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces) &&
@@ -865,6 +880,7 @@ export default {
 
                 this.interfacesData.rows = this.interfaces;
                 this.$refs.interfaces.forceUpdate();
+                scrollTo('interfaces-title');
                 event.preventDefault();
             }
         },

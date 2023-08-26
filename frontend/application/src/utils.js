@@ -233,3 +233,20 @@ export const userNames = function(users, separator = " ") {
     }
     return userList;
 }
+
+// Scroll to a specific element
+export const scrollTo = function(id) {
+    let el = document.getElementById(id);
+    if(isValid(el)) {
+        el.scrollIntoView({
+            behavior: 'instant',
+            block: 'start' // Upper border of the element will be aligned at the top of the visible part of the window
+        });
+
+        // Scroll up ~3.5rem so that the scrolled in view element is not under the top navbar
+        const delayedScroll = setTimeout(function() {
+            clearTimeout(delayedScroll);
+            window.scrollBy(0, -60);
+        }, 500);
+    }
+}
