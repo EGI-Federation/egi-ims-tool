@@ -58,8 +58,8 @@ services:
       - EGI_CHECKIN_SERVER=${EGI_CHECKIN_SERVER}
       - EGI_VO=${EGI_VO}
       - EGI_VO_ENROLL_URL=${EGI_VO_ENROLL_URL}
-      - EGI_ISM_LOCALE=${EGI_IMS_LOCALE:-en}
-      - EGI_ISM_FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
+      - EGI_IMS_LOCALE=${EGI_IMS_LOCALE:-en}
+      - EGI_IMS_FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
       - TRACE_ROLES=${EGI_IMS_TRACE_ROLES:-false}
       - IMS_SLM_API=http://ims-slm-api:8081
     restart: unless-stopped
