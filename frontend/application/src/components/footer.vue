@@ -43,7 +43,7 @@
             </div>
         </div>
     </div>
-    <hr/>
+    <div class="hr"/>
     <div class="d-flex justify-content-between bottom">
         <div class="d-flex copyright">
             <div>Copyright © 2023, EGI Foundation</div>
@@ -161,9 +161,12 @@ export default {
     }
 }
 
-hr {
-    border-color: #333538;
+.hr {
+    border: none;
+    background-color: #333538;
+    height: 1px!important;
     opacity: 0.8;
+    clear: both;
 }
 .footer .bottom {
     flex-direction: row;
