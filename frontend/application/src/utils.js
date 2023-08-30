@@ -155,16 +155,15 @@ export const formatNextEvent = function(frequency, unit, nextEvent, t) {
 // Parameter current is a Version<T> where T has a history field
 // Returns Version<T> or null if no entity with specified status
 export const findEntityWithStatus = function(current, status) {
-    if(isValid(current) && isValid(current.entity)) {
-        if(status === current.entity.status)
+    if(isValid(current)) {
+        if(status === current.status)
             return current;
 
         // Attempt to find specified status
-        const history = current.entity.history;
+        const history = current.history;
         if(isValid(history) && isValid(history.versions)) {
             for(let version of history.versions) {
-                const ent = version.entity;
-                if(status === ent.status)
+                if(status === version.status)
                     return version;
             }
         }
@@ -177,12 +176,12 @@ export const findEntityWithStatus = function(current, status) {
 // Parameter current is a Version<T> where T has a history field
 // Returns Version<T> or null if no entity with specified version
 export const findEntityWithVersion = function(current, ver) {
-    if(isValid(current) && isValid(current.entity)) {
-        if(ver === current.entity.version.toString())
+    if(isValid(current)) {
+        if(ver === current.version.toString())
             return current;
 
         // Attempt to find specified version
-        const history = current.entity.history;
+        const history = current.history;
         if(isValid(history) && isValid(history.versions)) {
             for(let version of history.versions) {
                 if(ver === version.version.toString())

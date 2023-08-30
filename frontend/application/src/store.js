@@ -55,7 +55,7 @@ export const store = createStore({
                     language: null,
                     notifications: [{isNew: false}, {isNew: true}],
                     slm: {
-                        processInfo: null, // Version<Process>
+                        processInfo: null, // Process
                     }
                 }
             },
@@ -122,8 +122,8 @@ export const store = createStore({
                     state.language = newLocale;
                 },
                 slmProcessInfo(state, info) {
-                    console.log("Store SLM process info v" + info.version.version);
-                    state.slm.processInfo = info.version;
+                    console.log("Store SLM process info v" + info.processInfo.version);
+                    state.slm.processInfo = info.processInfo;
                     state.slm.error = info.error;
                 },
                 slmUsers(state, info) {
@@ -190,15 +190,10 @@ export const store = createStore({
 // Extract the process information then call a mutation on the store to save it
 export const storeProcessInfo = function(mutation, piResult) {
     let latest = {};
-    if(isValid(piResult.processInfo)) {
-        const pi = piResult.processInfo.value;
-        latest.version = pi.version;
-        latest.changedOn = pi.changedOn;
-        latest.changeBy = pi.changeBy;
-        latest.changeDescription = pi.changeDescription;
-        latest.entity = pi;
-    }
-    store.commit(mutation, { version: latest, error: piResult.error.value });
+    if(isValid(piResult.processInfo))
+        latest = piResult.processInfo.value;
+
+    store.commit(mutation, { processInfo: latest, error: piResult.error.value });
 }
 
 // Extract the users then call a mutation on the store to save them

@@ -148,7 +148,7 @@
 <script>
 // @ is an alias to /src
 import { isValid } from "@/utils";
-import {hasRole, parseRoles, Roles, rolesFromEntitlements} from "@/roles";
+import { Roles, hasRole, parseRoles, rolesFromEntitlements } from "@/roles";
 import { store } from "@/store"
 import { mapActions } from "vuex";
 import IsmNavbar from "@/components/navbar.vue";
@@ -161,6 +161,9 @@ const voEnrollUrl = process.env.EGI_VO_ENROLL_URL || "https://aai.egi.eu/registr
 export default {
     name: 'Home',
     components: { IsmNavbar, Welcome, IsmModule, IsmFooter },
+    props: {
+        toasts: Element,
+    },
     data() {
         return {
             enrollUrl: voEnrollUrl,

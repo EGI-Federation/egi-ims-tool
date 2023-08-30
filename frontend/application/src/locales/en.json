@@ -203,7 +203,10 @@
         "warnEditingRequirement": "You are currently editing a process requirement. If you continue, your changes will be lost.",
         "warnEditingInterface": "You are currently editing a process interface. If you continue, your changes will be lost.",
         "warnEditing": "You have made changes that are not yet saved. If you continue, your changes will be lost.",
-        "action": "Action"
+        "action": "Action",
+        "error": "Error",
+        "success": "Success",
+        "newProcessVersion": "New version of the SLM process was created"
     },
     "slm": {
         "navbar" : {

@@ -2,17 +2,17 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const getProcessInfo = function(accessToken, processCode, allVersions, baseUrl) {
-    const processInfo = ref(null);
+export const updateProcessInfo = function(accessToken, processCode, processInfo, baseUrl) {
+    const processInfoUpdated = ref(null);
     const error = ref(null);
 
-    const load = async function() {
+    const update = async function() {
 
         try {
-            const url = baseUrl + '/process' + (allVersions ? '?allVersions=true' : '');
-            let data = await axios.get(url, {
+            const url = baseUrl + '/process';
+            let data = await axios.put(url, processInfo,{
                 headers: {
-                    Accept: 'application/json',
+                    "Content-Type": 'application/json',
                     Authorization: `Bearer ${accessToken}` }
             });
             if(!data.status) {
@@ -24,9 +24,9 @@ export const getProcessInfo = function(accessToken, processCode, allVersions, ba
         }
         catch(err) {
             error.value = err.message;
-            console.error("Error getting " + processCode + " process info");
+            console.error("Error updating " + processCode + " process info");
         }
     }
 
-    return { processInfo: processInfo, error: error, load: load };
+    return { processInfo: processInfo, error: error, update: update };
 }

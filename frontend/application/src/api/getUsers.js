@@ -15,7 +15,7 @@ export const getUsers = function(accessToken, processCode, processOnly, baseUrl)
                     Authorization: `Bearer ${accessToken}` }
             });
             if(!data.status) {
-                console.log(data.statusText);
+                console.error(data.statusText);
                 throw Error("Error in request " + url + " : " + data.status);
             }
 
@@ -23,7 +23,7 @@ export const getUsers = function(accessToken, processCode, processOnly, baseUrl)
         }
         catch(err) {
             error.value = err.message;
-            console.log("Error getting " + processCode + " users");
+            console.error("Error getting " + processCode + " users");
         }
     }
 

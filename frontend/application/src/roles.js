@@ -199,3 +199,17 @@ export const findUsersWithRole = function(role, firstOnly = false) {
 
     return null;
 }
+
+// Find user with a specific email
+// Returns User or null if no user with specified email
+export const findUserWithEmail = function(processCode, email) {
+    const users = store.state.temp.usersByProcess?.get(processCode);
+    if(isValid(users) && isValid(email)) {
+        for(const [checkinUserId, user] of users) {
+            if(email === user.email)
+                return user;
+        }
+    }
+
+    return null;
+}

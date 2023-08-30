@@ -15,7 +15,7 @@ export const getUsersWithRole = function(accessToken, processCode, role, baseUrl
                     Authorization: `Bearer ${accessToken}` }
             });
             if(!data.status) {
-                console.log(data.statusText);
+                console.error(data.statusText);
                 throw Error("Error in request " + url + " : " + data.status);
             }
 
@@ -23,7 +23,7 @@ export const getUsersWithRole = function(accessToken, processCode, role, baseUrl
         }
         catch(err) {
             error.value = err.message;
-            console.log("Error getting users holding " + processCode + (role ? ` role ${role}` : " roles"));
+            console.error("Error getting users holding " + processCode + (role ? ` role ${role}` : " roles"));
         }
     }
 

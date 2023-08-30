@@ -85,7 +85,7 @@ export default {
     components: { TableControl, VersionHistory },
     props: {
         name: String,
-        info: Object,
+        info: Object, // { current: Process, approved: Process }
     },
     data() {
         return {
@@ -129,19 +129,22 @@ export default {
         latest() { return store.state.ims.slm.processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
-        processCode() { return isValid(this.current) && isValid(this.current.entity) ? this.current.entity.code : "SLM"; },
+        processCode() { return isValid(this.current) ? this.current.code : "SLM"; },
         processName() { return this.$t('home.' + this.processCode); },
         contact() {
-            return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.contact) &&
-                this.current.entity.contact.trim().length > 0 ?
-                this.current.entity.contact :
+            return isValid(this.current) && isValid(this.current.contact) &&
+                this.current.contact.trim().length > 0 ?
+                this.current.contact :
                 this.$t('ims.notSet'); },
         processVersion() { return isValid(this.current) ? this.current.version : "?"; },
-        processStatus() { return isValid(this.current) && isValid(this.current.entity) ? statusPill(this.current.entity.status, this.$t) : {}; },
+        processStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
         processOwner() {
-            return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.owner) ?
-                this.current.entity.owner.fullName :
-                this.$t('ims.notSet');
+            let pos = findUsersWithRole(Roles.SLM.PROCESS_OWNER, true);
+            if(isValid(pos) && pos.length > 0) {
+                let po = pos[0];
+                return po.fullName;
+            }
+            return this.$t('ims.notSet');
         },
         processManager() {
             let pms = findUsersWithRole(Roles.SLM.PROCESS_MANAGER, true);
@@ -156,43 +159,42 @@ export default {
                    formatDate(this.current.changedOn) : "?"; },
         approvalStatus() {
             if(!isValid(this.approved) ||
-               !isValid(this.approved.entity) ||
-               !isValid(this.approved.entity.approver))
+               !isValid(this.approved.approver))
                 return this.$t('ims.no');
 
             let prefix = '';
             if(this.current.version !== this.approved.version)
                 prefix = `${this.$t("ims.version")} ${this.approved.version} ${this.$t("ims.approvedOn")} `;
 
-            return prefix + `${formatDate(this.approved.entity.approvedOn)} ${this.$t("ims.by")} ${this.approved.entity.approver.fullName}`;
+            return prefix + `${formatDate(this.approved.approvedOn)} ${this.$t("ims.by")} ${this.approved.approver.fullName}`;
         },
         nextReview() {
-            return isValid(this.current) && isValid(this.current.entity) ?
-                   formatNextEvent(this.current.entity.reviewFrequency,
-                                   this.current.entity.frequencyUnit,
-                                   this.current.entity.nextReview,
+            return isValid(this.current) ?
+                   formatNextEvent(this.current.reviewFrequency,
+                                   this.current.frequencyUnit,
+                                   this.current.nextReview,
                                    this.$t) : "?";
         },
         goals() {
-            return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.goals) &&
-                this.current.entity.goals.trim().length > 0 ?
-                this.current.entity.goals :
+            return isValid(this.current) && isValid(this.current.goals) &&
+                this.current.goals.trim().length > 0 ?
+                this.current.goals :
                 this.$t('ims.notSet');
         },
         scope() {
-            return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.scope) &&
-                this.current.entity.scope.trim().length > 0 ?
-                this.current.entity.scope :
+            return isValid(this.current) && isValid(this.current.scope) &&
+                this.current.scope.trim().length > 0 ?
+                this.current.scope :
                 this.$t('ims.notSet');
         },
         hasRequirements() {
-            return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.requirements) &&
-                this.current.entity.requirements.length > 0;
+            return isValid(this.current) && isValid(this.current.requirements) &&
+                this.current.requirements.length > 0;
         },
         requirements() {
             let r = [];
-            if(isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.requirements)) {
-                for(const req of this.current.entity.requirements) {
+            if(isValid(this.current) && isValid(this.current.requirements)) {
+                for(const req of this.current.requirements) {
                     let row = [
                         isValid(req.code) ? req.code : "",
                         isValid(req.requirement) ? req.requirement : "",
@@ -205,17 +207,17 @@ export default {
             return r;
         },
         hasInterfaces() {
-            return isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.interfaces) &&
-                this.current.entity.interfaces.length > 0;
+            return isValid(this.current) && isValid(this.current.interfaces) &&
+                this.current.interfaces.length > 0;
         },
         interfaces() {
             let i = [];
-            if(isValid(this.current) && isValid(this.current.entity) && isValid(this.current.entity.interfaces)) {
+            if(isValid(this.current) && isValid(this.current.interfaces)) {
                 const _from = this.$t("ims.from");
                 const _to = this.$t("ims.to");
                 const _in = this.$t("ims.in");
                 const _out = this.$t("ims.out");
-                for(let itf of this.current.entity.interfaces) {
+                for(let itf of this.current.interfaces) {
                     let prefix = "in" === itf.direction.substr(0,2).toLowerCase() ? _from : _to;
                     const itfWith = parseInterfaces(itf.interfacesWith);
                     const itfList = interfaceList(itfWith, this.$t);
@@ -230,10 +232,10 @@ export default {
             }
             return i;
         },
-        isDraft() { return isValid(this.current) && isValid(this.current.entity) && Status.DRAFT.description === this.current.entity.status; },
-        isApproved() { return isValid(this.current) && isValid(this.current.entity) && Status.APPROVED.description === this.current.entity.status; },
-        isReady() { return isValid(this.current) && isValid(this.current.entity) && Status.READY_FOR_APPROVAL.description === this.current.entity.status; },
-        isDeprecated() { return isValid(this.current) && isValid(this.current.entity) && Status.DEPRECATED.description === this.current.entity.status; },
+        isDraft() { return isValid(this.current) && Status.DRAFT.description === this.current.status; },
+        isApproved() { return isValid(this.current) && Status.APPROVED.description === this.current.status; },
+        isReady() { return isValid(this.current) && Status.READY_FOR_APPROVAL.description === this.current.status; },
+        isDeprecated() { return isValid(this.current) && Status.DEPRECATED.description === this.current.status; },
         roles() { return store.state.temp.roles; },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
@@ -260,13 +262,13 @@ export default {
     mounted() {
         let t = this;
         const delayedData = setTimeout(function() {
-            if(isValid(t.current) && isValid(t.current.entity)) {
+            if(isValid(t.current)) {
                 clearTimeout(delayedData);
                 t.requirementsData.rows = t.requirements;
-                t.$refs.requirements.forceUpdate();
+                t.$refs.requirements?.forceUpdate();
 
                 t.interfacesData.rows = t.interfaces;
-                t.$refs.interfaces.forceUpdate();
+                t.$refs.interfaces?.forceUpdate();
             }
         }, 250);
     }

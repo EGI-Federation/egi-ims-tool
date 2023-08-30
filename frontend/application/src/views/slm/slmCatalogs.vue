@@ -26,8 +26,7 @@ export default {
         }
     },
     methods: {
-        processMenu() {
-            return false;
+        test() {
         }
     }
 }

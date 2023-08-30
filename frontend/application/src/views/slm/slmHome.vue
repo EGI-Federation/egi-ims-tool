@@ -19,10 +19,10 @@ export default {
     },
     data() {
         return {
-            userInfo: store.state.oidc.user,
-            accessToken: store.state.oidc.access_token,
-            currentProcess: store.state.ims.slm.processInfo,    // Version<Process>
-            approvedProcess: null,                              // Version<Process>
+            userInfo: store.state.oidc?.user,
+            accessToken: store.state.oidc?.access_token,
+            currentProcess: store.state.ims?.slm?.processInfo,  // Process
+            approvedProcess: null,                              // Process
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM") },
@@ -47,10 +47,12 @@ export default {
             return member.length > 0;
         },
     },
+    methods: {
+    },
     created() {
         // Process information is already stored in ims/slm/processInfo
         let current = store.state.ims.slm.processInfo;
-        if(isValid(current) && isValid(current.entity)) {
+        if(isValid(current)) {
             // Make sure we know which is the approved version (if any)
             this.approvedProcess = findEntityWithStatus(current, "APPROVED");
 
@@ -69,7 +71,6 @@ export default {
         this.currentProcess = current;
     },
     mounted() {
-
     },
 }
 </script>

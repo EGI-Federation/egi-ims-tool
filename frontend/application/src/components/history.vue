@@ -19,7 +19,7 @@
         </div>
         <div class="history-items">
             <!-- Latest version -->
-            <div v-if="!applyFilter || !versionToShow.entity.status || filterToStatus === versionToShow.entity.status"
+            <div v-if="!applyFilter || !versionToShow.status || filterToStatus === versionToShow.status"
                  class="history-item" @click="showVersion(versionToShow.version)">
                 <div>
                     <div>{{ $t('history.version') }} {{ versionToShow.version }} &nbsp;
@@ -27,20 +27,20 @@
                     </div>
                 </div>
                 <div>{{ versionToShow.changedOn ? formatTime(versionToShow.changedOn) : '?' }}</div>
-                <div>{{ versionToShow.changeBy }}</div>
+                <div>{{ versionToShow.changeBy.fullName }}</div>
                 <div>{{ versionToShow.changeDescription }}</div>
                 <hr/>
             </div>
             <!-- Older versions -->
-            <div v-if="versionToShow.entity && versionToShow.entity.history && versionToShow.entity.history.versions"
+            <div v-if="versionToShow && versionToShow.history && versionToShow.history.versions"
                  v-for="ver in filteredVersions" class="history-item" @click="showVersion(ver.version)">
                 <div>
                     <div>{{ $t('history.version') }} {{ ver.version }} &nbsp;
-                        <span :class="statusOf(ver.entity).pillClass">{{ statusOf(ver.entity).label }}</span>
+                        <span :class="statusOf(ver).pillClass">{{ statusOf(ver).label }}</span>
                     </div>
                 </div>
                 <div>{{ ver.changedOn ? formatTime(ver.changedOn) : '?' }}</div>
-                <div>{{ ver.changeBy }}</div>
+                <div>{{ ver.changeBy.fullName }}</div>
                 <div>{{ ver.changeDescription }}</div>
                 <hr/>
             </div>
@@ -56,11 +56,11 @@ import { isValid, statusPill, formatTime } from '@/utils'
 export default {
     name: 'versionHistory',
     props: {
-        visible: {
+        visible: { // Reactive { visible: Boolean }
             type: Object,
             default: () => {}
         },
-        versionToShow: Object, // Version<T>
+        versionToShow: Object, // Latest version of entity, with history field filled in
         filterToStatus: String,
     },
     data() {
@@ -70,8 +70,8 @@ export default {
     },
     computed: {
         statusCurrent() {
-            return isValid(this.$props.versionToShow.entity) ?
-                   statusPill(this.$props.versionToShow.entity.status, this.$t) : {};
+            return isValid(this.$props.versionToShow) ?
+                   statusPill(this.$props.versionToShow.status, this.$t) : {};
         },
         showHistory: {
             get() { return this.$props.visible.visible; },
@@ -82,11 +82,11 @@ export default {
             set(value) { this.$data.filterActive = value; }
         },
         filteredVersions() {
-            const allVersions = this.$props.versionToShow.entity.history.versions;
+            const allVersions = this.$props.versionToShow.history.versions;
             if(!this.applyFilter)
                 return allVersions;
 
-            const showVersions = allVersions.filter(ver => !isValid(ver.entity.status) || ver.entity.status === this.$props.filterToStatus);
+            const showVersions = allVersions.filter(ver => !isValid(ver.status) || ver.status === this.$props.filterToStatus);
             return showVersions;
         },
     },

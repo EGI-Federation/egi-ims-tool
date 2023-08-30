@@ -41,7 +41,7 @@
                 <div class="text-field mb-3">
                     <label for="changeDesc" class="form-label">{{ $t('ims.changeDesc') }}:</label>
                     <textarea ref="textarea" class="form-control textarea" id="changeDesc" rows=3
-                              v-model="changeDescription" required/>
+                              v-model="changeDescription" :maxlength=1024 required/>
                     <div class="invalid-feedback">{{ $t('ims.invalidProcessChange') }}</div>
                 </div>
 
@@ -260,10 +260,12 @@
 // @ is an alias to /src
 import i18n from "@/locales";
 import { reactive } from 'vue';
+import { reference } from "@popperjs/core";
 import { store } from "@/store";
-import {Status, deepClone, formatDate, isValid, strEqual, statusPill, userNames, scrollTo } from '@/utils'
-import { Roles, findUsersWithRole } from "@/roles";
+import { Status, deepClone, formatDate, isValid, strEqual, statusPill, userNames, scrollTo } from '@/utils'
+import { Roles, findUsersWithRole, findUserWithEmail } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
+import { updateProcessInfo } from "@/api/updateProcessInfo";
 import MarkdownIt from 'markdown-it';
 import TextboxWithPreview from "@/components/textboxPreview.vue"
 import TableControl, { html } from "@/components/table.vue"
@@ -277,13 +279,17 @@ export default {
     props: {
         name: String,
         info: Object,
+        toasts: reference
     },
     data() {
         return {
+            accessToken: store.state.oidc?.access_token,
+            myName: store.state.oidc?.user?.name,
+            myEmail: store.state.oidc?.user?.email,
             forceCancel: false,
-            processInfo: null, // Version<Process>
-            goalsEditor: reactive({ text: isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.goals : "" }),
-            scopeEditor: reactive({ text: isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.scope : "" }),
+            processInfo: null, // Process
+            goalsEditor: reactive({ text: isValid(this.edited) ? this.edited.goals : "" }),
+            scopeEditor: reactive({ text: isValid(this.edited) ? this.edited.scope : "" }),
             dpInput: null,
 
             requirementsHeader: [
@@ -348,29 +354,39 @@ export default {
     },
     computed: {
         i18n() { return i18n },
+        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
         edited() {
             if(!isValid(this.processInfo) && isValid(this.current)) {
                 this.processInfo = deepClone(this.current);
-                this.processInfo.entity.changeDescription = "";
-                this.goalsEditor.text = this.processInfo.entity.goals;
-                this.scopeEditor.text = this.processInfo.entity.scope;
+                this.processInfo.changeDescription = "";
+                this.processInfo.changeBy = null;
+                delete this.processInfo['id'];
+                delete this.processInfo['changedOn'];
+                delete this.processInfo['history'];
+                delete this.processInfo['apiVersion'];
+
+                this.goalsEditor.text = this.processInfo.goals;
+                this.scopeEditor.text = this.processInfo.scope;
             }
 
             return this.processInfo;
         },
-        processCode() { return isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.code : "SLM"; },
+        processCode() { return isValid(this.edited) ? this.edited.code : "SLM"; },
         processName() { return this.$t('home.' + this.processCode); },
         processVersion() { return isValid(this.edited) ? this.edited.version : "?"; },
         processStatus() {
-            return isValid(this.edited) && isValid(this.edited.entity) ?
-                   statusPill(this.edited.entity.status, this.$t) : {};
+            return isValid(this.edited) ?
+                   statusPill(this.edited.status, this.$t) : {};
         },
         processOwner() {
-            return isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.owner) ?
-                this.edited.entity.owner.fullName :
-                this.$t('ims.notSet');
+            let pos = findUsersWithRole(Roles.SLM.PROCESS_OWNER, true);
+            if(isValid(pos) && pos.length > 0) {
+                let po = pos[0];
+                return po.fullName;
+            }
+            return this.$t('ims.notSet');
         },
         processManager() {
             let pms = findUsersWithRole(Roles.SLM.PROCESS_MANAGER, true);
@@ -381,61 +397,60 @@ export default {
             return this.$t('ims.notSet');
         },
         changeDate() {
-            return isValid(this.edited) && isValid(this.edited.changedOn) ?
-                   formatDate(this.edited.changedOn) : "?"; },
+            return isValid(this.current) && isValid(this.current.changedOn) ?
+                   formatDate(this.current.changedOn) : "?"; },
         approvalStatus() {
             if(!isValid(this.approved) ||
-               !isValid(this.approved.entity) ||
-               !isValid(this.approved.entity.approver))
+               !isValid(this.approved.approver))
                 return this.$t('ims.no');
 
             let prefix = '';
             if(this.current.version !== this.approved.version)
                 prefix = `${this.$t("ims.version")} ${this.approved.version} ${this.$t("ims.approvedOn")} `;
 
-            return prefix + `${formatDate(this.approved.entity.approvedOn)} ${this.$t("ims.by")} ${this.approved.entity.approver.fullName}`;
+            return prefix + `${formatDate(this.approved.approvedOn)} ${this.$t("ims.by")} ${this.approved.approver.fullName}`;
         },
         changeDescription: {
-            get() { return isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.changeDescription : ""; },
+            get() { return isValid(this.edited) ? this.edited.changeDescription : ""; },
             set(value) {
-                if(isValid(this.edited) && isValid(this.edited.entity))
-                    this.edited.entity.changeDescription = value;
+                if(isValid(this.edited))
+                    this.edited.changeDescription = value;
             },
         },
         contactEmail: {
-            get() { return isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.contact : ""; },
+            get() { return isValid(this.edited) ? this.edited.contact : ""; },
             set(value) {
-                if(isValid(this.edited) && isValid(this.edited.entity))
-                    this.edited.entity.contact = value;
+                if(isValid(this.edited))
+                    this.edited.contact = value;
             },
         },
         urlDiagram: {
-            get() { return isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.urlDiagram : ""; },
+            get() { return isValid(this.edited) ? this.edited.urlDiagram : ""; },
             set(value) {
-                if(isValid(this.edited) && isValid(this.edited.entity))
-                    this.edited.entity.urlDiagram = value;
+                if(isValid(this.edited))
+                    this.edited.urlDiagram = value;
             },
         },
         reviewFrequency: {
-            get() { return isValid(this.edited) && isValid(this.edited.entity) ? this.edited.entity.reviewFrequency : 1; },
+            get() { return isValid(this.edited) ? this.edited.reviewFrequency : 1; },
             set(value) {
-                if(isValid(this.edited) && isValid(this.edited.entity))
-                    this.edited.entity.reviewFrequency = value;
+                if(isValid(this.edited))
+                    this.edited.reviewFrequency = value;
             },
         },
         reviewFrequencyUnit() {
-            if(isValid(this.edited) && isValid(this.edited.entity))
-                switch(this.edited.entity.frequencyUnit) {
+            if(isValid(this.edited))
+                switch(this.edited.frequencyUnit) {
                     case 'day':
                     case 'year':
-                        return this.edited.entity.frequencyUnit;
+                        return this.edited.frequencyUnit;
                 }
             return 'month';
         },
         reviewFrequencyUnitName() {
             let unit = this.$t('ims.years');
-            if(isValid(this.edited) && isValid(this.edited.entity))
-                switch(this.edited.entity.frequencyUnit) {
+            if(isValid(this.edited))
+                switch(this.edited.frequencyUnit) {
                     case 'day':
                         unit = this.$t('ims.days');
                         break;
@@ -448,9 +463,9 @@ export default {
         nextReview: {
             get() {
                 let date = Date.now();
-                if(isValid(this.edited) && isValid(this.edited.entity)) {
-                    date = new Date(this.edited.entity.nextReview);
-                    switch(this.edited.entity.frequencyUnit) {
+                if(isValid(this.edited)) {
+                    date = new Date(this.edited.nextReview);
+                    switch(this.edited.frequencyUnit) {
                         case 'year': return date.getFullYear();
                         case 'month': return { year: date.getFullYear(), month: date.getMonth() }
                     }
@@ -459,7 +474,6 @@ export default {
                 return date;
             },
             set(value) {
-                console.log(typeof(value));
                 if(value instanceof Date) {
                     value.setHours(8);
                     value = value.toISOString();
@@ -473,20 +487,20 @@ export default {
                     value = new Date(value.year, value.month, 1, 8).toISOString();
                 }
 
-                if(isValid(this.edited) && isValid(this.edited.entity))
-                    this.edited.entity.nextReview = value;
+                if(isValid(this.edited))
+                    this.edited.nextReview = value;
             },
         },
         hasRequirements() {
-            return isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements) &&
-                   this.edited.entity.requirements.length > 0;
+            return isValid(this.edited) && isValid(this.edited.requirements) &&
+                   this.edited.requirements.length > 0;
         },
         addingRequirement() { return this.newRequirement; },
         editingRequirement() { return isValid(this.requirementBeingEdited); },
         requirements() {
             let r = [];
-            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements)) {
-                for(const req of this.edited.entity.requirements) {
+            if(isValid(this.edited) && isValid(this.edited.requirements)) {
+                for(const req of this.edited.requirements) {
                     let row = [
                         req.id,
                         isValid(req.code) ? req.code : "",
@@ -529,8 +543,8 @@ export default {
             return false;
         },
         requirementsChanged() {
-            const pc = this.current.entity;
-            const pe = this.edited.entity;
+            const pc = this.current;
+            const pe = this.edited;
 
             if(isValid(pc.requirements) !== isValid(pe.requirements))
                 return true;
@@ -583,19 +597,19 @@ export default {
             return false;
         },
         hasInterfaces() {
-            return isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces) &&
-                this.edited.entity.interfaces.length > 0;
+            return isValid(this.edited) && isValid(this.edited.interfaces) &&
+                this.edited.interfaces.length > 0;
         },
         addingInterface() { return this.newInterface; },
         editingInterface() { return isValid(this.interfaceBeingEdited); },
         interfaces() {
             let i = [];
-            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces)) {
+            if(isValid(this.edited) && isValid(this.edited.interfaces)) {
                 const _from = this.$t("ims.from");
                 const _to = this.$t("ims.to");
                 const _in = this.$t("ims.in");
                 const _out = this.$t("ims.out");
-                for(const itf of this.edited.entity.interfaces) {
+                for(const itf of this.edited.interfaces) {
                     const prefix = ("in" === itf.direction.substr(0,2).toLowerCase() ? _from : _to) + "<br/>";
                     const itfWith = parseInterfaces(itf.interfacesWith);
                     const itfList = interfaceList(itfWith, this.$t);
@@ -645,8 +659,8 @@ export default {
             return false;
         },
         interfacesChanged() {
-            const pc = this.current.entity;
-            const pe = this.edited.entity;
+            const pc = this.current;
+            const pe = this.edited;
 
             if(isValid(pc.interfaces) !== isValid(pe.interfaces))
                 return true;
@@ -692,12 +706,11 @@ export default {
             return false;
         },
         processChanged() {
-            if(!isValid(this.current) || !isValid(this.current.entity) ||
-               !isValid(this.edited) || !isValid(this.edited.entity))
+            if(!isValid(this.current) || !isValid(this.edited))
                 return false;
 
-            const pc = this.current.entity;
-            const pe = this.edited.entity;
+            const pc = this.current;
+            const pe = this.edited;
 
             if (!strEqual(pc.goals, this.goalsEditor.text) ||
                 !strEqual(pc.scope, this.scopeEditor.text) ||
@@ -716,20 +729,20 @@ export default {
             return this.requirementsChanged || this.interfacesChanged;
         },
         isDraft() {
-            return isValid(this.edited) && isValid(this.edited.entity) &&
-                   Status.DRAFT.description === this.edited.entity.status;
+            return isValid(this.edited) &&
+                   Status.DRAFT.description === this.edited.status;
         },
         isApproved() {
-            return isValid(this.edited) && isValid(this.edited.entity) &&
-                   Status.APPROVED.description === this.edited.entity.status;
+            return isValid(this.edited) &&
+                   Status.APPROVED.description === this.edited.status;
         },
         isReady() {
-            return isValid(this.edited) && isValid(this.edited.entity) &&
-                   Status.READY_FOR_APPROVAL.description === this.edited.entity.status;
+            return isValid(this.edited) &&
+                   Status.READY_FOR_APPROVAL.description === this.edited.status;
         },
         isDeprecated() {
-            return isValid(this.edited) && isValid(this.edited.entity) &&
-                   Status.DEPRECATED.description === this.edited.entity.status;
+            return isValid(this.edited) &&
+                   Status.DEPRECATED.description === this.edited.status;
         },
         roles() { return store.state.temp.roles; },
         users() {
@@ -741,8 +754,8 @@ export default {
         updateReviewFrequencyUnit(value, event) {
             event.preventDefault();
             this.dpUnhookFocus();
-            if(isValid(this.edited) && isValid(this.edited.entity))
-                this.edited.entity.frequencyUnit = value;
+            if(isValid(this.edited))
+                this.edited.frequencyUnit = value;
 
             let t = this;
             const delayedRehookFocus = setTimeout(function() {
@@ -803,8 +816,8 @@ export default {
         },
         editRequirement(id) {
             this.newRequirement = false;
-            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements)) {
-                for(const req of this.edited.entity.requirements) {
+            if(isValid(this.edited) && isValid(this.edited.requirements)) {
+                for(const req of this.edited.requirements) {
                     if(id !== req.id.toString())
                         continue;
 
@@ -858,7 +871,7 @@ export default {
             scrollTo('requirements-title');
         },
         saveRequirement(event) {
-            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements) &&
+            if(isValid(this.edited) && isValid(this.edited.requirements) &&
                this.$refs.reqForm.checkValidity()) {
                 // Check if adding a new requirement or editing an existing one
                 if(this.newRequirement) {
@@ -873,12 +886,12 @@ export default {
                     for(const [checkinUserId, usr] of this.reqResponsibles)
                         requirement.responsibles.push(usr);
 
-                    this.edited.entity.requirements.push(requirement);
+                    this.edited.requirements.push(requirement);
                     this.newRequirement = false;
                     console.log("Added new requirement " + requirement.id);
                 } else if(isValid(this.requirementBeingEdited)) {
                     // Saving changes to the one being edited
-                    for(const req of this.edited.entity.requirements) {
+                    for(const req of this.edited.requirements) {
                         if(this.reqId !== req.id.toString())
                             continue;
 
@@ -891,7 +904,7 @@ export default {
                             req.responsibles.push(usr);
 
                         this.requirementBeingEdited = null;
-                        console.log("Stored changes to requirement " + req.id);
+                        console.log("Store changes to requirement " + req.id);
                         break;
                     }
                 }
@@ -903,10 +916,10 @@ export default {
             }
         },
         removeRequirement(id) {
-            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.requirements)) {
+            if(isValid(this.edited) && isValid(this.edited.requirements)) {
                 console.log("Remove requirement " + id);
-                this.edited.entity.requirements = this.edited.entity.requirements.filter(req => id !== req.id.toString());
-                if(this.edited.entity.requirements.length > 0) {
+                this.edited.requirements = this.edited.requirements.filter(req => id !== req.id.toString());
+                if(this.edited.requirements.length > 0) {
                     this.requirementsData.rows = this.requirements;
                     this.$refs.requirements.forceUpdate();
                 }
@@ -930,8 +943,8 @@ export default {
         },
         editInterface(id) {
             this.newInterface = false;
-            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces)) {
-                for(const itf of this.edited.entity.interfaces) {
+            if(isValid(this.edited) && isValid(this.edited.interfaces)) {
+                for(const itf of this.edited.interfaces) {
                     if(id !== itf.id.toString())
                         continue;
 
@@ -1012,7 +1025,7 @@ export default {
             scrollTo('interfaces-title');
         },
         saveInterface(event) {
-            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces) &&
+            if(isValid(this.edited) && isValid(this.edited.interfaces) &&
                 this.$refs.itfForm.checkValidity()) {
                 // Check if adding a new interface or editing an existing one
                 if(this.newInterface) {
@@ -1025,12 +1038,12 @@ export default {
                         interfacesWith: interfaceList(this.itfWith, this.$t, false, "")
                     };
 
-                    this.edited.entity.interfaces.push(itf);
+                    this.edited.interfaces.push(itf);
                     this.newInterface = false;
                     console.log("Added new interface " + itf.id);
                 } else if(isValid(this.interfaceBeingEdited)) {
                     // Saving changes to the one being edited
-                    for(const itf of this.edited.entity.interfaces) {
+                    for(const itf of this.edited.interfaces) {
                         if(this.itfId !== itf.id.toString())
                             continue;
 
@@ -1041,7 +1054,7 @@ export default {
                         itf.relevantMaterial = this.itfRelevantMaterialEditor.text;
 
                         this.interfaceBeingEdited = null;
-                        console.log("Stored changes to interface " + itf.id);
+                        console.log("Store changes to interface " + itf.id);
                         break;
                     }
                 }
@@ -1053,10 +1066,10 @@ export default {
             }
         },
         removeInterface(id) {
-            if(isValid(this.edited) && isValid(this.edited.entity) && isValid(this.edited.entity.interfaces)) {
+            if(isValid(this.edited) && isValid(this.edited.interfaces)) {
                 console.log("Remove interface " + id);
-                this.edited.entity.interfaces = this.edited.entity.interfaces.filter(itf => id !== itf.id.toString());
-                if(this.edited.entity.interfaces.length > 0) {
+                this.edited.interfaces = this.edited.interfaces.filter(itf => id !== itf.id.toString());
+                if(this.edited.interfaces.length > 0) {
                     this.interfacesData.rows = this.interfaces;
                     this.$refs.interfaces.forceUpdate();
                 }
@@ -1096,8 +1109,36 @@ export default {
                     this.cancelChanges();
                 else {
                     // We have changes to the process that must be saved as another version
-                    console.log("Saving new version of SLM process info");
+                    console.log("Saving SLM process info changes");
+
+                    this.processInfo.goals = this.goalsEditor.text;
+                    this.processInfo.scope = this.scopeEditor.text;
+                    this.processInfo.changeBy = findUserWithEmail(this.processCode, this.myEmail);
+                    if(isValid(this.processInfo.changeBy)) {
+                        delete this.processInfo.changeBy['kind'];
+                        delete this.processInfo.changeBy['given_name'];
+                        delete this.processInfo.changeBy['family_name'];
+                        delete this.processInfo.changeBy['email_verified'];
+                    }
+
+                    // Call API to update the process information
+                    let test = JSON.stringify(this.processInfo);
+
+                    let t = this;
+                    const piResult = updateProcessInfo(this.accessToken, 'SLM', this.processInfo, this.slmApi);
+                    piResult.update().then(() => {
+                        if(!isValid(piResult.error)) {
+                            console.log("Created new version of SLM process info");
+                            t.$root.$refs.toasts.showError(t.$t('ims.success'), t.$t('ims.newProcessVersion'));
+                            t.$router.push('/slm');
+                        }
+                        else {
+                            t.$root.$refs.toasts.showError(t.$t('ims.error'), piResult.error.value);
+                        }
+                    });
                 }
+                event.preventDefault();
+                event.stopPropagation();
             }
         },
         abandonRequirementEditAndSaveChanges() {
@@ -1153,13 +1194,13 @@ export default {
 
         let t = this;
         const delayedData = setTimeout(function() {
-            if(isValid(t.edited) && isValid(t.edited.entity)) {
+            if(isValid(t.edited)) {
                 clearTimeout(delayedData);
                 t.requirementsData.rows = t.requirements;
-                t.$refs.requirements.forceUpdate();
+                t.$refs.requirements?.forceUpdate();
 
                 t.interfacesData.rows = t.interfaces;
-                t.$refs.interfaces.forceUpdate();
+                t.$refs.interfaces?.forceUpdate();
             }
         }, 100);
     },

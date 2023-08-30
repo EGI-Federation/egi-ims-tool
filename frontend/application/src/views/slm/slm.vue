@@ -28,7 +28,7 @@ export default {
     },
     computed: {
         slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
-        slmVersion() { return this.processInfo && this.processInfo.entity ? this.processInfo.entity.apiVersion : "1.0.0" },
+        slmVersion() { return this.processInfo ? this.processInfo.apiVersion : "1.0.0" },
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
     },
     created() {
