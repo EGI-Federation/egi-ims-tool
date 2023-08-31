@@ -165,13 +165,13 @@ export default {
     border: none;
     background-color: #333538;
     height: 1px!important;
-    opacity: 0.8;
+    opacity: 0.5;
     clear: both;
 }
 .footer .bottom {
     flex-direction: row;
-    margin: auto auto 2rem;
-    padding: 0 1rem;
+    margin: auto auto 1rem;
+    padding: 1rem;
     max-width: 55rem;
 }
 .footer .language {
