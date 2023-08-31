@@ -19,21 +19,23 @@
         </div>
         <div class="history-items">
             <!-- Latest version -->
-            <div v-if="!applyFilter || !versionToShow.status || filterToStatus === versionToShow.status"
-                 class="history-item" @click="showVersion(versionToShow.version)">
+            <div v-if="!applyFilter || !versionLatest.status || filterToStatus === versionLatest.status"
+                 :class="'history-item' + (versionLatest.version === versionToShow.version ? ' current-version' : '')"
+                 @click="showVersion(versionLatest.version)">
                 <div>
-                    <div>{{ $t('history.version') }} {{ versionToShow.version }} &nbsp;
+                    <div>{{ $t('history.version') }} {{ versionLatest.version }} &nbsp;
                         <span :class="statusCurrent.pillClass">{{ statusCurrent.label }}</span>
                     </div>
                 </div>
-                <div>{{ versionToShow.changedOn ? formatTime(versionToShow.changedOn) : '?' }}</div>
-                <div>{{ versionToShow.changeBy.fullName }}</div>
-                <div>{{ versionToShow.changeDescription }}</div>
+                <div>{{ versionLatest.changedOn ? formatTime(versionLatest.changedOn) : '?' }}</div>
+                <div>{{ versionLatest.changeBy.fullName }}</div>
+                <div>{{ versionLatest.changeDescription }}</div>
                 <hr/>
             </div>
             <!-- Older versions -->
-            <div v-if="versionToShow && versionToShow.history && versionToShow.history.versions"
-                 v-for="ver in filteredVersions" class="history-item" @click="showVersion(ver.version)">
+            <div v-if="versionLatest && versionLatest.history && versionLatest.history.versions"
+                 v-for="ver in filteredVersions" :class="'history-item' + (ver.version == versionToShow.version ? ' current-version' : '')"
+                 @click="showVersion(ver.version)">
                 <div>
                     <div>{{ $t('history.version') }} {{ ver.version }} &nbsp;
                         <span :class="statusOf(ver).pillClass">{{ statusOf(ver).label }}</span>
@@ -56,10 +58,11 @@ import { isValid, statusPill, formatTime } from '@/utils'
 export default {
     name: 'versionHistory',
     props: {
-        visible: { // Reactive { visible: Boolean }
+        bidirectional: { // Reactive { historyVisible: Boolean }
             type: Object,
             default: () => {}
         },
+        versionLatest: Object, // Latest version of entity, with history field filled in
         versionToShow: Object, // Latest version of entity, with history field filled in
         filterToStatus: String,
     },
@@ -70,19 +73,19 @@ export default {
     },
     computed: {
         statusCurrent() {
-            return isValid(this.$props.versionToShow) ?
-                   statusPill(this.$props.versionToShow.status, this.$t) : {};
+            return isValid(this.$props.versionLatest) ?
+                   statusPill(this.$props.versionLatest.status, this.$t) : {};
         },
         showHistory: {
-            get() { return this.$props.visible.visible; },
-            set(value) { this.$props.visible.visible = value; }
+            get() { return this.$props.bidirectional.historyVisible; },
+            set(value) { this.$props.bidirectional.historyVisible = value; }
         },
         applyFilter: {
             get() { return isValid(this.$props.filterToStatus) && this.$data.filterActive; },
             set(value) { this.$data.filterActive = value; }
         },
         filteredVersions() {
-            const allVersions = this.$props.versionToShow.history.versions;
+            const allVersions = this.$props.versionLatest.history.versions;
             if(!this.applyFilter)
                 return allVersions;
 
@@ -168,6 +171,9 @@ export default {
     text-align: left;
     font-size: smaller;
     cursor: pointer;
+}
+.history-item.current-version {
+    cursor: unset;
 }
 .history-item div:has(+ hr) {
     margin-top: .5rem;

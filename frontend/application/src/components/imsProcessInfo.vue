@@ -2,45 +2,9 @@
 <div class="d-flex flex-nowrap content">
     <div class="d-flex flex-nowrap">
         <div class="process">
-            <ims-process-info :info="info" :history-visible="historyVisible"/>
-            <div class="d-flex flex-nowrap header">
-                <div class="d-flex flex-nowrap flex-column operations">
-                    <button type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-                    <button v-if="!isDeprecated && (isProcessOwner || isProcessManager)" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.configure') }}</button>
-                    <button v-if="isDraft && isProcessManager" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
-                    <button v-if="isReady && isProcessOwner" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
-                    <button v-if="isApproved && isProcessManager" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
-                    <button v-if="isApproved && isProcessOwner" type="button" class="btn btn-danger" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
-                </div>
-                <div class="d-flex flex-nowrap flex-column">
-                    <div class="entity-type">{{ $t('ims.process') }}</div>
-                    <h2 class="fade-top-border">{{ processName }} ({{ processCode }})</h2>
-                    <div class="d-flex flex-nowrap info">
-                        <div>
-                            <div>{{ $t('ims.procOwner') }} :</div>
-                            <div>{{ $t('ims.procManager') }} :</div>
-                            <div>{{ $t('ims.version') }} :</div>
-                            <div>{{ $t('ims.status') }} :</div>
-                            <div>{{ $t('ims.changed') }} :</div>
-                            <div>{{ $t('ims.approved') }} :</div>
-                            <div>{{ $t('ims.reviewFrequency') }} :</div>
-                            <div>{{ $t('ims.reviewNext') }} :</div>
-                            <div>{{ $t('ims.contact') }} :</div>
-                        </div>
-                        <div>
-                            <div>{{ processOwner }}</div>
-                            <div>{{ processManager }}</div>
-                            <div>{{ processVersion }}</div>
-                            <div><span :class="processStatus.pillClass">{{ processStatus.label }}</span></div>
-                            <div>{{ changeDate }}</div>
-                            <div>{{ approvalStatus }}</div>
-                            <div>{{ nextReview.frequency }}</div>
-                            <div>{{ nextReview.when }}</div>
-                            <div>{{ contact }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ims-process-header :edit-mode="false" :info="info" :bidirectional="bidirectional"
+                                @configure="configureProcess" @askForApproval="askForApproval"
+                                @review="reviewProcess" @approve="approveProcess" @deprecate="deprecateProcess"/>
             <div class="details">
                 <h3>{{ $t('ims.goals') }}</h3>
                 <vue3-markdown-it :source='goals' />
@@ -64,7 +28,8 @@
             </div>
         </div>
     </div>
-    <version-history :visible="historyVisible" :version-to-show="latest" :filter-to-status="Status.APPROVED.description"/>
+    <version-history :bidirectional="bidirectional" :version-latest="latest" :version-to-show="current"
+                     :filter-to-status="Status.APPROVED.description"/>
 </div>
 </template>
 
@@ -72,11 +37,10 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store } from "@/store";
-import { Status, isValid, statusPill, formatDate, formatNextEvent, userNames } from '@/utils'
-import { Roles, hasRole, findUsersWithRole } from "@/roles";
+import { Status, isValid, userNames } from '@/utils'
 import { parseInterfaces, interfaceList } from '@/process'
 import MarkdownIt from 'markdown-it';
-import ImsProcessInfo from "@/components/imsProcessInfo.vue"
+import ImsProcessHeader from "@/components/imsProcessHeader.vue"
 import VersionHistory from "@/components/history.vue"
 import TableControl, { html } from "@/components/table.vue"
 
@@ -84,9 +48,8 @@ var mdRender = new MarkdownIt();
 
 export default {
     name: 'imsProcessInfo',
-    components: { ImsProcessInfo, TableControl, VersionHistory },
+    components: { ImsProcessHeader, TableControl, VersionHistory },
     props: {
-        name: String,
         info: Object, // { current: Process, approved: Process }
     },
     data() {
@@ -123,7 +86,7 @@ export default {
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 }],
             interfacesData: reactive({ rows: [] }),
-            historyVisible: reactive({ visible: false }),
+            bidirectional: reactive({ historyVisible: false }),
         }
     },
     computed: {
@@ -131,52 +94,6 @@ export default {
         latest() { return store.state.ims.slm.processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
-        processCode() { return isValid(this.current) ? this.current.code : "SLM"; },
-        processName() { return this.$t('home.' + this.processCode); },
-        contact() {
-            return isValid(this.current) && isValid(this.current.contact) &&
-                this.current.contact.trim().length > 0 ?
-                this.current.contact :
-                this.$t('ims.notSet'); },
-        processVersion() { return isValid(this.current) ? this.current.version : "?"; },
-        processStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
-        processOwner() {
-            let pos = findUsersWithRole(Roles.SLM.PROCESS_OWNER, true);
-            if(isValid(pos) && pos.length > 0) {
-                let po = pos[0];
-                return po.fullName;
-            }
-            return this.$t('ims.notSet');
-        },
-        processManager() {
-            let pms = findUsersWithRole(Roles.SLM.PROCESS_MANAGER, true);
-            if(isValid(pms) && pms.length > 0) {
-                let pm = pms[0];
-                return pm.fullName;
-            }
-            return this.$t('ims.notSet');
-        },
-        changeDate() {
-            return isValid(this.current) && isValid(this.current.changedOn) ?
-                   formatDate(this.current.changedOn) : "?"; },
-        approvalStatus() {
-            if(!isValid(this.approved) ||
-               !isValid(this.approved.approver))
-                return this.$t('ims.no');
-
-            let prefix = '';
-            if(this.current.version !== this.approved.version)
-                prefix = `${this.$t("ims.version")} ${this.approved.version} ${this.$t("ims.approvedOn")} `;
-
-            return prefix + `${formatDate(this.approved.approvedOn)} ${this.$t("ims.by")} ${this.approved.approver.fullName}`;
-        },
-        nextReview() {
-            return isValid(this.current) ?
-                   formatNextEvent(this.current.reviewFrequency,
-                                   this.current.frequencyUnit,
-                                   this.current.nextReview,
-                                   this.$t) : "?";
-        },
         goals() {
             return isValid(this.current) && isValid(this.current.goals) &&
                 this.current.goals.trim().length > 0 ?
@@ -234,17 +151,8 @@ export default {
             }
             return i;
         },
-        isDraft() { return isValid(this.current) && Status.DRAFT.description === this.current.status; },
-        isApproved() { return isValid(this.current) && Status.APPROVED.description === this.current.status; },
-        isReady() { return isValid(this.current) && Status.READY_FOR_APPROVAL.description === this.current.status; },
-        isDeprecated() { return isValid(this.current) && Status.DEPRECATED.description === this.current.status; },
-        roles() { return store.state.temp.roles; },
-        isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
-        isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
-        showHistory() { return this.historyVisible.visible; },
     },
     methods: {
-        toggleHistory() { this.historyVisible.visible = !this.historyVisible.visible; },
         configureProcess() {
             this.$router.push('/slm/config');
         },
@@ -272,7 +180,7 @@ export default {
                 t.interfacesData.rows = t.interfaces;
                 t.$refs.interfaces?.forceUpdate();
             }
-        }, 250);
+        }, 100);
     }
 }
 </script>
@@ -292,59 +200,6 @@ export default {
 }
 .content .process {
     margin: 0 auto;
-}
-.content .process .header {
-    justify-content: center;
-    align-content: flex-start;
-    margin: 0 auto 1rem;
-    position: relative;
-}
-.process .operations {
-    gap: .2rem;
-    position: absolute;
-    left: 0;
-    top: 0;
-    padding-top: 1.8rem;
-    margin-left: .5rem;
-    margin-bottom: 1rem;
-}
-.entity-type {
-    text-align: left;
-    font-family: "Barlow Condensed", sans-serif;
-}
-.process .header h2 {
-    padding-top: .5rem;
-}
-.fade-top-border {
-    border: 1px solid;
-    border-image: linear-gradient(90deg, rgba(233,236,239,1), rgba(60,74,83,0)) 1;
-    border-left: none;
-    border-bottom:none;
-    border-right:none;
-}
-.process .info {
-    justify-content: center;
-    margin: 0 auto;
-}
-.process .info > div {
-    flex-direction: column;
-    flex-wrap: nowrap;
-}
-.process .info > div:nth-child(1) > div {
-    color: grey;
-    text-align: right;
-    margin-right: .2rem;
-}
-.process .info > div:nth-child(2) > div {
-    text-align: left;
-    margin-left: .2rem;
-}
-.process .info > div > div {
-    white-space: nowrap;
-    font-size: smaller;
-}
-.process .info .badge {
-    padding-bottom: 2px!important;
 }
 .process .details {
     text-align: left;

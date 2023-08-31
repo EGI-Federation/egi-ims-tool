@@ -3,39 +3,8 @@
     <div class="d-flex flex-nowrap">
         <form class="needs-validation" novalidate ref="processForm">
         <div class="process">
-            <div class="d-flex flex-nowrap header">
-                <div class="d-flex flex-nowrap flex-column operations">
-                    <button type="submit" class="btn btn-primary" ref="submit"
-                            :disabled="!processChanged" @click="saveChanges($event)">
-                        {{ $t('ims.saveChanges') }}
-                    </button>
-                    <button type="button" class="btn btn-secondary" @click="cancelChanges()">
-                        {{ $t('ims.cancel') }}
-                    </button>
-                </div>
-                <div class="d-flex flex-nowrap flex-column">
-                    <div class="entity-type">{{ $t('ims.process') }}</div>
-                    <h2 class="fade-top-border">{{ processName }} ({{ processCode }})</h2>
-                    <div class="d-flex flex-nowrap info">
-                        <div>
-                            <div>{{ $t('ims.procOwner') }} :</div>
-                            <div>{{ $t('ims.procManager') }} :</div>
-                            <div>{{ $t('ims.version') }} :</div>
-                            <div>{{ $t('ims.status') }} :</div>
-                            <div>{{ $t('ims.changed') }} :</div>
-                            <div>{{ $t('ims.approved') }} :</div>
-                        </div>
-                        <div>
-                            <div>{{ processOwner }}</div>
-                            <div>{{ processManager }}</div>
-                            <div>{{ processVersion }}</div>
-                            <div><span :class="processStatus.pillClass">{{ processStatus.label }}</span></div>
-                            <div>{{ changeDate }}</div>
-                            <div>{{ approvalStatus }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ims-process-header :edit-mode="true" :info="info" :bidirectional="bidirectional"
+                                @save="saveChanges($event)" @cancel="cancelChanges"/>
             <div class="details">
                 <!-- Commit message -->
                 <div class="text-field mb-3">
@@ -260,14 +229,14 @@
 // @ is an alias to /src
 import i18n from "@/locales";
 import { reactive } from 'vue';
-import { reference } from "@popperjs/core";
 import { store, storeProcessInfo } from "@/store";
-import { Status, deepClone, formatDate, isValid, strEqual, statusPill, userNames, scrollTo } from '@/utils'
-import { Roles, findUsersWithRole, findUserWithEmail } from "@/roles";
+import { isValid, strEqual, deepClone, userNames, scrollTo } from '@/utils'
+import { findUserWithEmail } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
 import { getProcessInfo } from "@/api/getProcessInfo";
 import { updateProcessInfo } from "@/api/updateProcessInfo";
 import MarkdownIt from 'markdown-it';
+import ImsProcessHeader from "@/components/imsProcessHeader.vue"
 import TextboxWithPreview from "@/components/textboxPreview.vue"
 import TableControl, { html } from "@/components/table.vue"
 import Message from "@/components/message.vue"
@@ -276,17 +245,16 @@ var mdRender = new MarkdownIt();
 
 export default {
     name: 'imsProcessEdit',
-    components: { TextboxWithPreview, TableControl, Message },
+    components: { ImsProcessHeader, TextboxWithPreview, TableControl, Message },
     props: {
-        name: String,
         info: Object,
-        toasts: reference
     },
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
             myName: store.state.oidc?.user?.name,
             myEmail: store.state.oidc?.user?.email,
+            bidirectional: reactive({ processChanged: false }),
             forceCancel: false,
             processInfo: null, // Process
             goalsEditor: reactive({ text: isValid(this.edited) ? this.edited.goals : "" }),
@@ -375,42 +343,6 @@ export default {
             return this.processInfo;
         },
         processCode() { return isValid(this.edited) ? this.edited.code : "SLM"; },
-        processName() { return this.$t('home.' + this.processCode); },
-        processVersion() { return isValid(this.edited) ? this.edited.version : "?"; },
-        processStatus() {
-            return isValid(this.edited) ?
-                   statusPill(this.edited.status, this.$t) : {};
-        },
-        processOwner() {
-            let pos = findUsersWithRole(Roles.SLM.PROCESS_OWNER, true);
-            if(isValid(pos) && pos.length > 0) {
-                let po = pos[0];
-                return po.fullName;
-            }
-            return this.$t('ims.notSet');
-        },
-        processManager() {
-            let pms = findUsersWithRole(Roles.SLM.PROCESS_MANAGER, true);
-            if(isValid(pms) && pms.length > 0) {
-                let pm = pms[0];
-                return pm.fullName;
-            }
-            return this.$t('ims.notSet');
-        },
-        changeDate() {
-            return isValid(this.current) && isValid(this.current.changedOn) ?
-                   formatDate(this.current.changedOn) : "?"; },
-        approvalStatus() {
-            if(!isValid(this.approved) ||
-               !isValid(this.approved.approver))
-                return this.$t('ims.no');
-
-            let prefix = '';
-            if(this.current.version !== this.approved.version)
-                prefix = `${this.$t("ims.version")} ${this.approved.version} ${this.$t("ims.approvedOn")} `;
-
-            return prefix + `${formatDate(this.approved.approvedOn)} ${this.$t("ims.by")} ${this.approved.approver.fullName}`;
-        },
         changeDescription: {
             get() { return isValid(this.edited) ? this.edited.changeDescription : ""; },
             set(value) {
@@ -729,27 +661,15 @@ export default {
             // Check requirements and interfaces
             return this.requirementsChanged || this.interfacesChanged;
         },
-        isDraft() {
-            return isValid(this.edited) &&
-                   Status.DRAFT.description === this.edited.status;
-        },
-        isApproved() {
-            return isValid(this.edited) &&
-                   Status.APPROVED.description === this.edited.status;
-        },
-        isReady() {
-            return isValid(this.edited) &&
-                   Status.READY_FOR_APPROVAL.description === this.edited.status;
-        },
-        isDeprecated() {
-            return isValid(this.edited) &&
-                   Status.DEPRECATED.description === this.edited.status;
-        },
-        roles() { return store.state.temp.roles; },
         users() {
             const users = store.state.temp.usersByProcess.get('SLM');
             return isValid(users) ? users : new Map();
         },
+    },
+    watch: {
+        processChanged(changed) {
+            this.bidirectional.processChanged = changed;
+        }
     },
     methods: {
         updateReviewFrequencyUnit(value, event) {
@@ -1247,59 +1167,6 @@ export default {
 .process {
     margin: 0 auto;
 }
-.process .header {
-    justify-content: center;
-    align-content: flex-start;
-    margin: 0 auto 1rem;
-    position: relative;
-}
-.process .operations {
-    gap: .2rem;
-    position: absolute;
-    left: 0;
-    top: 0;
-    padding-top: 1.8rem;
-    margin-left: .5rem;
-    margin-bottom: 1rem;
-}
-.entity-type {
-    text-align: left;
-    font-family: "Barlow Condensed", sans-serif;
-}
-.process .header h2 {
-    padding-top: .5rem;
-}
-.fade-top-border {
-    border: 1px solid;
-    border-image: linear-gradient(90deg, rgba(233,236,239,1), rgba(60,74,83,0)) 1;
-    border-left: none;
-    border-bottom:none;
-    border-right:none;
-}
-.process .info {
-    justify-content: center;
-    margin: 0 auto;
-}
-.process .info > div {
-    flex-direction: column;
-    flex-wrap: nowrap;
-}
-.process .info > div:nth-child(1) > div {
-    color: grey;
-    text-align: right;
-    margin-right: .2rem;
-}
-.process .info > div:nth-child(2) > div {
-    text-align: left;
-    margin-left: .2rem;
-}
-.process .info > div > div {
-    white-space: nowrap;
-    font-size: smaller;
-}
-.process .info .badge {
-    padding-bottom: 2px!important;
-}
 .process .details {
     text-align: left;
     padding-left: 1rem;
@@ -1356,4 +1223,5 @@ export default {
 </style>
 <script setup>
 import Message from "@/components/message.vue";
+import ImsProcessHeader from "@/components/imsProcessHeader.vue";
 </script>

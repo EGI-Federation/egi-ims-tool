@@ -9,7 +9,7 @@ import { isValid, findEntityWithStatus, findEntityWithVersion } from '@/utils'
 import { store } from "@/store"
 import { Roles, hasRole } from "@/roles";
 import BreadCrumb from "@/components/breadCrumb.vue"
-import ImsProcessInfo from "@/components/imsProcess.vue"
+import ImsProcessInfo from "@/components/imsProcessInfo.vue"
 
 export default {
     name: 'slmHome',

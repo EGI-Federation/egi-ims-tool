@@ -18,7 +18,7 @@ export default {
         return {
             userInfo: store.state.oidc.user,
             accessToken: store.state.oidc.access_token,
-            currentProcess: store.state.ims.slm.processInfo,    // Version<Process>
+            currentProcess: store.state.ims.slm?.processInfo,    // Version<Process>
             approvedProcess: null,                              // Version<Process>
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },

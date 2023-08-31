@@ -35,4 +35,11 @@ body {
     flex-direction: column;
     min-height: 100%;
 }
+.fade-top-border {
+    border: 1px solid;
+    border-image: linear-gradient(90deg, rgba(233,236,239,1), rgba(60,74,83,0)) 1;
+    border-left: none;
+    border-bottom:none;
+    border-right:none;
+}
 </style>

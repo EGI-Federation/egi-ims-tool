@@ -29,7 +29,7 @@ export const makeEnum = function(values) {
 }
 
 // Entity statuses
-export const Status = makeEnum(['DRAFT', 'READY_FOR_APPROVAL', 'APPROVED', 'DEPRECATED']);
+export const Status = makeEnum(['DRAFT', 'READY_FOR_APPROVAL', 'APPROVED', 'IMPLEMENTED', 'DEPRECATED']);
 
 // Get localized label and class for a status
 export const statusPill = function(status, t) {

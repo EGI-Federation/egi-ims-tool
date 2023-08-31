@@ -40,6 +40,9 @@ export default {
             tooltips: [],
         }
     },
+    computed: {
+        tableData() { return this.rows; },
+    },
     methods: {
         gridActionButtons(id, canEdit, canRemove, entity) {
             const editButton = `<div class='btn-action edit edit-${entity}' role='button' data-bs-toggle='tooltip' data-bs-title='${this.$t('ims.edit')}'><i class='bi bi-pencil-square' data-${entity}-id='${id}'></i></div>`;
@@ -77,7 +80,7 @@ export default {
                 row.push(row[0]);
             });
         },
-        forceUpdate() {
+        update() {
             this.headerRow = deepClone(this.$props.header);
             this.rows = deepClone(this.$props.data.rows);
             const hasActions = this.$props.canEdit || this.$props.canRemove;
@@ -92,9 +95,12 @@ export default {
             this.grid
                 .updateConfig({
                     columns: this.headerRow,
-                    data: this.rows
-                })
-                .forceRender();
+                    data: this.tableData
+                });
+        },
+        forceUpdate() {
+            this.update();
+            this.grid.forceRender();
         },
         hideTooltips() {
             for(let tooltip of this.tooltips)
@@ -143,7 +149,7 @@ export default {
         this.grid
             .updateConfig({
                 columns: this.headerRow,
-                data: this.rows,
+                data: this.tableData,
                 width: '100%',
                 resizable: true
             })
