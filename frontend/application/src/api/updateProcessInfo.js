@@ -3,7 +3,7 @@ import axios from 'axios'
 
 
 export const updateProcessInfo = function(accessToken, processCode, processInfo, baseUrl) {
-    const processInfoUpdated = ref(null);
+    const response = ref(null);
     const error = ref(null);
 
     const update = async function() {
@@ -20,7 +20,7 @@ export const updateProcessInfo = function(accessToken, processCode, processInfo,
                 throw Error("Error in request " + url + " : " + data.status);
             }
 
-            processInfo.value = data.data;
+            response.value = data.data;
         }
         catch(err) {
             error.value = err.message;
@@ -28,5 +28,5 @@ export const updateProcessInfo = function(accessToken, processCode, processInfo,
         }
     }
 
-    return { processInfo: processInfo, error: error, update: update };
+    return { response: response, error: error, update: update };
 }

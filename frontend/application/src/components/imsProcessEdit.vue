@@ -89,7 +89,7 @@
                         <div class="text-field">
                             <label for="contactEmail" class="form-label">{{ $t('ims.contact') }}:</label>
                             <input type="email" class="form-control" id="contactEmail" v-model="contactEmail"
-                                   placeholder="name@example.com" maxlength="256" required>
+                                   placeholder="name@example.com" maxlength="255" required>
                         </div>
                     </div>
                 </div>
@@ -261,10 +261,11 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { reference } from "@popperjs/core";
-import { store } from "@/store";
+import { store, storeProcessInfo } from "@/store";
 import { Status, deepClone, formatDate, isValid, strEqual, statusPill, userNames, scrollTo } from '@/utils'
 import { Roles, findUsersWithRole, findUserWithEmail } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
+import { getProcessInfo } from "@/api/getProcessInfo";
 import { updateProcessInfo } from "@/api/updateProcessInfo";
 import MarkdownIt from 'markdown-it';
 import TextboxWithPreview from "@/components/textboxPreview.vue"
@@ -1122,18 +1123,21 @@ export default {
                     }
 
                     // Call API to update the process information
-                    let test = JSON.stringify(this.processInfo);
-
                     let t = this;
                     const piResult = updateProcessInfo(this.accessToken, 'SLM', this.processInfo, this.slmApi);
                     piResult.update().then(() => {
-                        if(!isValid(piResult.error)) {
-                            console.log("Created new version of SLM process info");
-                            t.$root.$refs.toasts.showError(t.$t('ims.success'), t.$t('ims.newProcessVersion'));
-                            t.$router.push('/slm');
-                        }
-                        else {
+                        if(isValid(piResult.error?.value))
                             t.$root.$refs.toasts.showError(t.$t('ims.error'), piResult.error.value);
+                        else {
+                            console.log("Created new version of SLM process info");
+                            t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.newProcessVersion'));
+
+                            // Fetch the process information from the API to include the added version
+                            const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+                            piResult.load().then(() => {
+                                storeProcessInfo('ims/slmProcessInfo', piResult);
+                                t.$router.push('/slm');
+                            });
                         }
                     });
                 }
