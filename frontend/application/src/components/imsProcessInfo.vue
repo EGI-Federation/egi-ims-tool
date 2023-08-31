@@ -2,6 +2,7 @@
 <div class="d-flex flex-nowrap content">
     <div class="d-flex flex-nowrap">
         <div class="process">
+            <ims-process-info :info="info" :history-visible="historyVisible"/>
             <div class="d-flex flex-nowrap header">
                 <div class="d-flex flex-nowrap flex-column operations">
                     <button type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
@@ -75,6 +76,7 @@ import { Status, isValid, statusPill, formatDate, formatNextEvent, userNames } f
 import { Roles, hasRole, findUsersWithRole } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
 import MarkdownIt from 'markdown-it';
+import ImsProcessInfo from "@/components/imsProcessInfo.vue"
 import VersionHistory from "@/components/history.vue"
 import TableControl, { html } from "@/components/table.vue"
 
@@ -82,7 +84,7 @@ var mdRender = new MarkdownIt();
 
 export default {
     name: 'imsProcessInfo',
-    components: { TableControl, VersionHistory },
+    components: { ImsProcessInfo, TableControl, VersionHistory },
     props: {
         name: String,
         info: Object, // { current: Process, approved: Process }
