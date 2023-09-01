@@ -21,6 +21,7 @@ export default {
     props: {
         id: String
     },
+    expose: [ 'showToast', 'showSuccess', 'showError' ],
     data() {
         return {
             notifications: [], // { id, title, subtitle, message, class, delay, visible }

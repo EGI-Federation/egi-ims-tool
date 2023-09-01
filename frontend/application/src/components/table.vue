@@ -32,6 +32,7 @@ export default {
         actionColumn: String,
     },
     emits: ['remove', 'edit'], // Both get the content of the first column as parameter
+    expose: [ 'update', 'forceUpdate' ],
     data() {
         return {
             grid: new Grid(),
