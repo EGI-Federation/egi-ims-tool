@@ -21,7 +21,7 @@ export default {
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM"), link: "/slm" },
-                { text: this.$t("slm.navbar.reports") },
+                { text: this.$t("navbar.reports") },
             ],
         }
     },
