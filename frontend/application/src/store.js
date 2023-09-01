@@ -67,15 +67,15 @@ export const store = createStore({
                     return languageNames[state.language];
                 },
                 userFullName(state, getters, rootState) {
-                    if(isValid(rootState.oidc.user.name))
-                        return rootState.oidc.user.name;
+                    if(isValid(rootState.oidc?.user?.name))
+                        return rootState.oidc?.user?.name;
                     let name = "";
-                    if(isValid(rootState.oidc.user.given_name))
-                        name = rootState.oidc.user.given_name;
-                    if(isValid(rootState.oidc.user.family_name)) {
+                    if(isValid(rootState.oidc?.user?.given_name))
+                        name = rootState.oidc?.user?.given_name;
+                    if(isValid(rootState.oidc?.user?.family_name)) {
                         if(name.length > 0)
                             name += " ";
-                        name += rootState.oidc.user.family_name;
+                        name += rootState.oidc?.user?.family_name;
                     }
                     return name;
                 },
@@ -109,11 +109,11 @@ export const store = createStore({
                     return state.notifications;
                 },
                 unreadNotifications(state) {
-                    return state.notifications.filter(msg => msg.isNew);
+                    return state.notifications?.filter(msg => msg.isNew);
                 },
                 unreadNotificationCount(state) {
-                    const unread = state.notifications.filter(msg => msg.isNew);
-                    return unread.length;
+                    const unread = state.notifications?.filter(msg => msg.isNew);
+                    return unread?.length;
                 },
             },
             mutations: {

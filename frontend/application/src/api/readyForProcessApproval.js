@@ -2,17 +2,16 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const updateProcessInfo = function(accessToken, processCode, processInfo, baseUrl) {
+export const markProcessReadyForApproval = function(accessToken, processCode, user, baseUrl) {
     const response = ref(null);
     const error = ref(null);
 
-    const update = async function() {
+    const request = async function() {
 
         try {
-            const url = baseUrl + '/process';
-            let data = await axios.put(url, processInfo,{
+            const url = baseUrl + '/process/readyforapproval';
+            let data = await axios.patch(url, user,{
                 headers: {
-                    "Content-Type": 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}` }
             });
@@ -25,9 +24,9 @@ export const updateProcessInfo = function(accessToken, processCode, processInfo,
         }
         catch(err) {
             error.value = err.message;
-            console.error("Error updating " + processCode + " process info");
+            console.error("Error requesting " + processCode + " process approval");
         }
     }
 
-    return { response: response, error: error, update: update };
+    return { response: response, error: error, request: request };
 }

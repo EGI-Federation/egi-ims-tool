@@ -206,7 +206,8 @@
         "action": "Action",
         "error": "Error",
         "success": "Success",
-        "newProcessVersion": "New version of the SLM process was created"
+        "newProcessVersion": "New version of the SLM process was created",
+        "requestedProcessApproval": "Requested approval of the SLM process"
     },
     "slm": {
         "navbar" : {

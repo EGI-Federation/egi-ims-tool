@@ -36,13 +36,16 @@
 <script>
 // @ is an alias to /src
 import { reactive } from 'vue';
-import { store } from "@/store";
+import { store, storeProcessInfo } from "@/store";
 import { Status, isValid, userNames } from '@/utils'
 import { parseInterfaces, interfaceList } from '@/process'
+import { getProcessInfo } from "@/api/getProcessInfo";
+import { markProcessReadyForApproval } from "@/api/readyForProcessApproval";
 import MarkdownIt from 'markdown-it';
 import ImsProcessHeader from "@/components/imsProcessHeader.vue"
 import VersionHistory from "@/components/history.vue"
 import TableControl, { html } from "@/components/table.vue"
+import {findUserWithEmail} from "@/roles";
 
 var mdRender = new MarkdownIt();
 
@@ -54,6 +57,8 @@ export default {
     },
     data() {
         return {
+            accessToken: store.state.oidc?.access_token,
+            myEmail: store.state.oidc?.user?.email,
             requirementsHeader: [
                 this.$t('ims.code'),
                 {
@@ -91,9 +96,11 @@ export default {
     },
     computed: {
         Status() { return Status; },
+        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
         latest() { return store.state.ims.slm.processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
+        processCode() { return isValid(this.current) ? this.current.code : "SLM"; },
         goals() {
             return isValid(this.current) && isValid(this.current.goals) &&
                 this.current.goals.trim().length > 0 ?
@@ -157,7 +164,28 @@ export default {
             this.$router.push('/slm/config');
         },
         askForApproval() {
+            // Call API to ask for process approval
+            let t = this;
+            let me = findUserWithEmail(this.processCode, this.myEmail);
+            const prfaResult = markProcessReadyForApproval(this.accessToken, 'SLM', me, this.slmApi);
+            prfaResult.request().then(() => {
+                if(isValid(prfaResult.error?.value))
+                    t.$root.$refs.toasts.showError(t.$t('ims.error'), prfaResult.error.value);
+                else {
+                    console.log("Requested approval of the SLM process");
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.requestedProcessApproval'));
 
+                    // Fetch the process information from the API to include the new status
+                    const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+                    piResult.load().then(() => {
+                        storeProcessInfo('ims/slmProcessInfo', piResult);
+
+                        const pi = piResult.processInfo.value;
+                        if(isValid(pi))
+                            t.$router.push(`/slm?v=${pi.version}`);
+                    });
+                }
+            });
         },
         reviewProcess() {
 
