@@ -19,22 +19,22 @@
         </div>
         <div class="history-items">
             <!-- Latest version -->
-            <div v-if="!applyFilter || !versionLatest.status || filterToStatus === versionLatest.status"
-                 :class="'history-item' + (versionLatest.version === versionToShow.version ? ' current-version' : '')"
-                 @click="showVersion(versionLatest.version)">
+            <div v-if="!applyFilter || !versionLatest?.status || filterToStatus === versionLatest?.status"
+                 :class="'history-item' + (versionLatest?.version === versionToShow?.version ? ' current-version' : '')"
+                 @click="showVersion(versionLatest?.version)">
                 <div>
-                    <div>{{ $t('history.version') }} {{ versionLatest.version }} &nbsp;
+                    <div>{{ $t('history.version') }} {{ versionLatest?.version }} &nbsp;
                         <span :class="statusCurrent.pillClass">{{ statusCurrent.label }}</span>
                     </div>
                 </div>
-                <div>{{ versionLatest.changedOn ? formatTime(versionLatest.changedOn) : '?' }}</div>
-                <div>{{ versionLatest.changeBy.fullName }}</div>
-                <div>{{ versionLatest.changeDescription }}</div>
+                <div>{{ versionLatest?.changedOn ? formatTime(versionLatest?.changedOn) : '?' }}</div>
+                <div>{{ versionLatest?.changeBy.fullName }}</div>
+                <div>{{ versionLatest?.changeDescription }}</div>
                 <hr/>
             </div>
             <!-- Older versions -->
             <div v-if="versionLatest && versionLatest.history && versionLatest.history.versions"
-                 v-for="ver in filteredVersions" :class="'history-item' + (ver.version == versionToShow.version ? ' current-version' : '')"
+                 v-for="ver in filteredVersions" :class="'history-item' + (ver.version == versionToShow?.version ? ' current-version' : '')"
                  @click="showVersion(ver.version)">
                 <div>
                     <div>{{ $t('history.version') }} {{ ver.version }} &nbsp;
@@ -77,7 +77,7 @@ export default {
                    statusPill(this.$props.versionLatest.status, this.$t) : {};
         },
         showHistory: {
-            get() { return this.$props.bidirectional.historyVisible; },
+            get() { return this.$props.bidirectional?.historyVisible; },
             set(value) { this.$props.bidirectional.historyVisible = value; }
         },
         applyFilter: {

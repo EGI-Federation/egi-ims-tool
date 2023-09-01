@@ -3,7 +3,7 @@
     <div class="d-flex flex-nowrap">
         <form class="needs-validation" novalidate ref="processForm">
         <div class="process">
-            <ims-process-header :edit-mode="true" :info="info" :bidirectional="bidirectional"
+            <ims-process-header ref="processHeader" :edit-mode="true" :info="info" :bidirectional="bidirectional"
                                 @save="saveChanges($event)" @cancel="cancelChanges"/>
             <div class="details">
                 <!-- Commit message -->
@@ -221,7 +221,7 @@
              :confirm-button="$t('ims.continue')" @confirm="abandonInterfaceEditAndSaveChanges" />
     <message id="warnEditProcess" ref="warnEditProcess"
              :title="$t('ims.unsavedChanges')" :message="$t('ims.warnEditing')"
-             :confirm-button="$t('ims.continue')" @confirm="abandonChangesAndCancel" />
+             :confirm-button="$t('ims.continue')" @confirm="abandonChanges" />
 </div>
 </template>
 
@@ -248,18 +248,23 @@ export default {
     components: { ImsProcessHeader, TextboxWithPreview, TableControl, Message },
     props: {
         info: Object,
+        state: { // Reactive { hasUnsavedChanges: Boolean, navigateTo: String }
+            type: Object,
+            default: () => {}
+        }
     },
+    expose: [ 'warnUnsavedChanges' ],
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
             myName: store.state.oidc?.user?.name,
             myEmail: store.state.oidc?.user?.email,
             bidirectional: reactive({ processChanged: false }),
-            forceCancel: false,
             processInfo: null, // Process
             goalsEditor: reactive({ text: isValid(this.edited) ? this.edited.goals : "" }),
             scopeEditor: reactive({ text: isValid(this.edited) ? this.edited.scope : "" }),
             dpInput: null,
+            forceCancel: false,
 
             requirementsHeader: [
                 {
@@ -669,6 +674,10 @@ export default {
     watch: {
         processChanged(changed) {
             this.bidirectional.processChanged = changed;
+            this.$props.state.hasUnsavedChanges = changed && !this.forceCancel;
+        },
+        forceCancel(changed) {
+            this.$props.state.hasUnsavedChanges = false;
         }
     },
     methods: {
@@ -1069,20 +1078,23 @@ export default {
             // Cancel requirement editing
             this.newRequirement = false;
             this.requirementBeingEdited = null;
-            this.$refs.submit.click();
+            this.$refs.processHeader.submit();
         },
         abandonInterfaceEditAndSaveChanges() {
             // Cancel interface editing
             this.newInterface = false;
             this.interfaceBeingEdited = null;
-            this.$refs.submit.click();
+            this.$refs.processHeader.submit();
         },
         cancelChanges() {
             this.$router.push('/slm');
         },
-        abandonChangesAndCancel() {
+        warnUnsavedChanges() {
+            this.$refs.warnEditProcess.showModal();
+        },
+        abandonChanges() {
             this.forceCancel = true;
-            this.$router.push('/slm');
+            this.$router.push(isValid(this.$props.state.navigateTo) ? this.$props.state.navigateTo : '/slm');
         },
     },
     created() {
@@ -1127,16 +1139,6 @@ export default {
                 t.$refs.interfaces?.forceUpdate();
             }
         }, 100);
-    },
-    beforeRouteLeave(to, from, next) {
-        console.log("beforeRouteLeave");
-        // Navigating away from this view
-        if(this.processChanged && !this.forceCancel) {
-            this.$refs.warnEditProcess.showModal();
-            next(false);
-        }
-        else
-            next();
     },
     beforeDestroy() {
         // Cleanup

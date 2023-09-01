@@ -1,6 +1,8 @@
 <template>
     <bread-crumb :segments="locationSegments"/>
-    <ims-process-edit :info="{ current: currentProcess, approved: approvedProcess }"/>
+    <ims-process-edit ref="processEdit"
+                      :info="{ current: currentProcess, approved: approvedProcess }"
+                      :state="editState"/>
 </template>
 
 <script>
@@ -10,6 +12,7 @@ import { store } from "@/store"
 import { Roles, hasRole } from "@/roles";
 import BreadCrumb from "@/components/breadCrumb.vue";
 import ImsProcessEdit from "@/components/imsProcessEdit.vue"
+import {reactive} from "vue";
 
 export default {
     name: 'slmConfig',
@@ -18,8 +21,9 @@ export default {
         return {
             userInfo: store.state.oidc.user,
             accessToken: store.state.oidc.access_token,
-            currentProcess: store.state.ims.slm?.processInfo,    // Version<Process>
-            approvedProcess: null,                              // Version<Process>
+            currentProcess: store.state.ims.slm?.processInfo,   // Process
+            approvedProcess: null,                              // Process
+            editState: reactive({ hasUnsavedChanges: false }),
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM"), link: "/slm" },
@@ -43,6 +47,17 @@ export default {
     mounted() {
         if(!this.isProcessOwner && !this.isProcessManager)
             this.$router.push('/slm');
+    },
+    beforeRouteLeave(to, from, next) {
+        // Navigating away from this view
+        if(this.editState.hasUnsavedChanges) {
+            console.log("Leaving page with unsaved changes");
+            this.editState.navigateTo = to;
+            this.$refs.processEdit.warnUnsavedChanges();
+            next(false);
+        }
+        else
+            next(true);
     },
 }
 </script>

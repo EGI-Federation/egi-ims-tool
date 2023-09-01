@@ -3,8 +3,8 @@
     <div class="d-flex flex-nowrap">
         <div class="process">
             <ims-process-header :edit-mode="false" :info="info" :bidirectional="bidirectional"
-                                @configure="configureProcess" @askForApproval="askForApproval"
-                                @review="reviewProcess" @approve="approveProcess" @deprecate="deprecateProcess"/>
+                                @configure="configureProcess" @askForApproval="askForApproval" @review="reviewProcess"
+                                @approve="confirmApproveProcess" @reject="confirmRejectProcess" @deprecate="confirmDeprecateProcess"/>
             <div class="details">
                 <h3>{{ $t('ims.goals') }}</h3>
                 <vue3-markdown-it :source='goals' />
@@ -28,6 +28,14 @@
             </div>
         </div>
     </div>
+    <message id="approveProcessDialog" ref="approveProcessDialog" :collect-message="true" :must-collect-message="false"
+             :title="$t('ims.approveChange')" :message="$t('ims.approveProcessChange')"
+             :placeholder-collect-message="$t('ims.approvalNotes')"
+             :confirm-button="$t('ims.approve')" @confirm="approveProcess" />
+    <message id="rejectProcessDialog" ref="rejectProcessDialog" :collect-message="true" :must-collect-message="true"
+             :title="$t('ims.rejectChange')" :message="$t('ims.rejectProcessChange')"
+             :placeholder-collect-message="$t('ims.rejectReason')"
+             :confirm-button="$t('ims.reject')" @confirm="rejectProcess" />
     <version-history :bidirectional="bidirectional" :version-latest="latest" :version-to-show="current"
                      :filter-to-status="Status.APPROVED.description"/>
 </div>
@@ -39,19 +47,20 @@ import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
 import { Status, isValid, userNames } from '@/utils'
 import { parseInterfaces, interfaceList } from '@/process'
+import { findUserWithEmail } from "@/roles";
 import { getProcessInfo } from "@/api/getProcessInfo";
 import { markProcessReadyForApproval } from "@/api/readyForProcessApproval";
 import MarkdownIt from 'markdown-it';
 import ImsProcessHeader from "@/components/imsProcessHeader.vue"
 import VersionHistory from "@/components/history.vue"
 import TableControl, { html } from "@/components/table.vue"
-import {findUserWithEmail} from "@/roles";
+import Message from "@/components/message.vue";
 
 var mdRender = new MarkdownIt();
 
 export default {
     name: 'imsProcessInfo',
-    components: { ImsProcessHeader, TableControl, VersionHistory },
+    components: { ImsProcessHeader, TableControl, VersionHistory, Message },
     props: {
         info: Object, // { current: Process, approved: Process }
     },
@@ -187,15 +196,27 @@ export default {
                 }
             });
         },
-        reviewProcess() {
-
+        confirmApproveProcess() {
+            this.$refs.approveProcessDialog.showModal();
         },
         approveProcess() {
 
         },
+        confirmRejectProcess() {
+            this.$refs.rejectProcessDialog.showModal();
+        },
+        rejectProcess() {
+
+        },
+        confirmDeprecateProcess() {
+
+        },
         deprecateProcess() {
 
-        }
+        },
+        reviewProcess() {
+
+        },
     },
     mounted() {
         let t = this;

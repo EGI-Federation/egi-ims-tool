@@ -164,6 +164,7 @@
         "configure": "Configure",
         "askApproval": "Request Approval",
         "approve": "Approve",
+        "reject": "Reject",
         "review": "Review",
         "deprecate": "Deprecate",
         "saveChanges": "Save Changes",
@@ -207,7 +208,13 @@
         "error": "Error",
         "success": "Success",
         "newProcessVersion": "New version of the SLM process was created",
-        "requestedProcessApproval": "Requested approval of the SLM process"
+        "requestedProcessApproval": "Requested approval of the SLM process",
+        "approveProcessChange": "You are about to approve the changes to the process. You can also provide some feedback with your approval.",
+        "rejectProcessChange": "You are about to reject the changes to the process. Please provide a reason for rejection.",
+        "approveChange": "Approve Change",
+        "approvalNotes": "Approval notes",
+        "rejectChange": "Reject Change",
+        "rejectReason": "Reason for rejection"
     },
     "slm": {
         "navbar" : {
