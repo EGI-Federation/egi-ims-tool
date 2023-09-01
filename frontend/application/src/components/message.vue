@@ -7,12 +7,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" :aria-label="$t('ims.close')"></button>
                 </div>
                 <div class="modal-body">
-                    {{ message }}
+                    <p>{{ message }}</p>
+                    <textarea v-if="collectMessage" ref="textarea" class="form-control textarea" rows=3
+                              v-model="collectedMessage" :maxlength=1024 :required="mustCollectMessage" :placeholder="placeholderCollectMessage"/>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelAction">{{ cancelButton }}</button>
                     <button v-if="extraButton" type="button" data-bs-dismiss="modal" class="btn btn-primary" @click="extraAction">{{ extraButton }}</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="confirmAction">{{ confirmButton }}</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" :disabled="!canConfirm" @click="confirmAction">{{ confirmButton }}</button>
                 </div>
             </div>
         </div>
@@ -45,12 +47,36 @@ export default {
         mustChoose: {
             type: Boolean,
             default: true
+        },
+        collectMessage: {
+            type: Boolean,
+            default: false
+        },
+        placeholderCollectMessage: String,
+        mustCollectMessage: {
+            type: Boolean,
+            default: false
         }
     },
     emits: ['confirm', 'cancel', 'extra'],
+    expose: [ 'showModal', 'hideModal' ],
     data() {
         return {
             modal: null,
+            collected: ""
+        }
+    },
+    computed: {
+        collectedMessage: {
+            get() {
+                return this.collected;
+            },
+            set(value) {
+                this.collected = value;
+            }
+        },
+        canConfirm() {
+            return this.$props.mustCollectMessage ? this.collected.trim().length > 0 : true;
         }
     },
     methods: {
@@ -78,4 +104,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.modal-body {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
 </style>
