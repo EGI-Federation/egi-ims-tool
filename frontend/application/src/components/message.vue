@@ -2,9 +2,11 @@
     <div class="modal fade" :id="id" :data-bs-backdrop="mustChoose? 'static' : ''" data-bs-keyboard="false" tabindex="-1" aria-labelledby="messageLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div :class="'modal-header' + (titleStyle ? ' text-bg-' + titleStyle : '')">
                     <h1 class="modal-title fs-5" id="messageLabel">{{ title }}</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" :aria-label="$t('ims.close')"></button>
+                    <button type="button" data-bs-dismiss="modal" :aria-label="$t('ims.close')"
+                            :class="'btn-close' + (titleStyle && titleStyle !== 'light' && titleStyle !== 'warning' && titleStyle !== 'info' ? ' btn-close-white' : '')">
+                    </button>
                 </div>
                 <div class="modal-body">
                     <p>{{ message }}</p>
@@ -34,6 +36,10 @@ export default {
             default: 'modalDialog'
         },
         title: String,
+        titleStyle: {
+            type: String, // primary, success, danger, warning, info, light, dark
+            default: 'light'
+        },
         message: String,
         confirmButton: {
             type: String,
