@@ -350,17 +350,17 @@ export default {
 }
 .navbar-toggler {
     border: none;
-    background-color: #e9ecef;
+    background-color: var(--bs-secondary-bg);
 }
 .dropdown-menu,
 .offcanvas-body {
-    background-color: #f8f9fa;
+    background-color: var(--bs-tertiary-bg);
 }
 .offcanvas-header {
-    background-color: #e9ecef;
+    background-color: var(--bs-secondary-bg);
 }
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus {
-    background-color: #e9ecef;
+    background-color: var(--bs-secondary-bg);
 }
 </style>

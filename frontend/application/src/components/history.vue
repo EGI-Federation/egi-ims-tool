@@ -173,7 +173,7 @@ export default {
     cursor: pointer;
 }
 .history-item.current-version {
-    cursor: unset;
+    cursor: default;
 }
 .history-item div:has(+ hr) {
     margin-top: .5rem;
