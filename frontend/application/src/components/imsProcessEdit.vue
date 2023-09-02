@@ -1065,6 +1065,7 @@ export default {
                             const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
                             piResult.load().then(() => {
                                 storeProcessInfo('ims/slmProcessInfo', piResult);
+                                t.forceCancel = true;
                                 t.$router.push('/slm');
                             });
                         }
