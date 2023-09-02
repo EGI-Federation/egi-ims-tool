@@ -214,7 +214,9 @@
         "approveChange": "Approve Change",
         "approvalNotes": "Approval notes",
         "rejectChange": "Reject Change",
-        "rejectReason": "Reason for rejection"
+        "rejectReason": "Reason for rejection",
+        "approvedProcess": "Approved the changes to the process",
+        "rejectedProcess": "Rejected the changes to the process"
     },
     "slm": {
         "navbar" : {

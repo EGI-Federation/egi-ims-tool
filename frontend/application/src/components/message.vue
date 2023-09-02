@@ -87,7 +87,7 @@ export default {
             this.modal.hide();
         },
         confirmAction() {
-            this.$emit('confirm');
+            this.$emit('confirm', this.collectedMessage);
         },
         extraAction() {
             this.$emit('extra');

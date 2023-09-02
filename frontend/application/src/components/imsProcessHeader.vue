@@ -2,11 +2,11 @@
     <div class="d-flex flex-nowrap header">
         <div class="d-flex flex-nowrap flex-column operations">
             <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-            <button v-if="!editMode && !isDeprecated && (isProcessOwner || isProcessManager)" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.configure') }}</button>
+            <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.configure') }}</button>
             <button v-if="!editMode && isLatest && isDraft && isProcessManager" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
             <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
             <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-danger" @click="rejectProcess">{{ $t('ims.reject') }}</button>
-            <button v-if="!editMode && isLatest && isApproved && isProcessManager" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
+            <button v-if="!editMode && isLatest && isApproved && (isProcessManager || isProcessOwner)" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
             <button v-if="!editMode && isLatest && isApproved && isProcessOwner" type="button" class="btn btn-danger" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
             <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!processChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
             <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>

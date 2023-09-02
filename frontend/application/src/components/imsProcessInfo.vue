@@ -50,6 +50,7 @@ import { parseInterfaces, interfaceList } from '@/process'
 import { findUserWithEmail } from "@/roles";
 import { getProcessInfo } from "@/api/getProcessInfo";
 import { markProcessReadyForApproval } from "@/api/readyForProcessApproval";
+import { approveProcess } from "@/api/approveProcess";
 import MarkdownIt from 'markdown-it';
 import ImsProcessHeader from "@/components/imsProcessHeader.vue"
 import VersionHistory from "@/components/history.vue"
@@ -196,17 +197,41 @@ export default {
                 }
             });
         },
+        approveOrRejectProcess(approve, message) {
+            // Call API to approve/reject process changes
+            let t = this;
+            let me = findUserWithEmail(this.processCode, this.myEmail);
+            const paResult = approveProcess(this.accessToken, 'SLM', approve, message, me, this.slmApi);
+            paResult.request().then(() => {
+                if(isValid(paResult.error?.value))
+                    t.$root.$refs.toasts.showError(t.$t('ims.error'), paResult.error.value);
+                else {
+                    console.log(`${approve ? 'Approved' : 'Rejected'} SLM process changes`);
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t(approve ? 'ims.approvedProcess' : 'ims.rejectedProcess'));
+
+                    // Fetch the process information from the API to include the new status
+                    const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+                    piResult.load().then(() => {
+                        storeProcessInfo('ims/slmProcessInfo', piResult);
+
+                        const pi = piResult.processInfo.value;
+                        if(isValid(pi))
+                            t.$router.push(`/slm?v=${pi.version}`);
+                    });
+                }
+            });
+        },
         confirmApproveProcess() {
             this.$refs.approveProcessDialog.showModal();
         },
-        approveProcess() {
-
+        approveProcess(message) {
+            this.approveOrRejectProcess(true, message);
         },
         confirmRejectProcess() {
             this.$refs.rejectProcessDialog.showModal();
         },
-        rejectProcess() {
-
+        rejectProcess(message) {
+            this.approveOrRejectProcess(false, message);
         },
         confirmDeprecateProcess() {
 
