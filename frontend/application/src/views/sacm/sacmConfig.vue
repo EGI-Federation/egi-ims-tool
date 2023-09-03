@@ -21,7 +21,7 @@ export default {
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SACM"), link: "/sacm" },
-                { text: this.$t("navbar.config") },
+                { text: this.$t("ims.config") },
             ],
         }
     },
