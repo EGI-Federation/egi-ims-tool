@@ -206,7 +206,7 @@
         "action": "Action",
         "error": "Error",
         "success": "Success",
-        "newProcessVersion": "New version of the SLM process was created",
+        "newProcessVersion": "New version of the process was created",
         "requestedProcessApproval": "Requested approval of the process changes",
         "approveProcessChange": "You are about to approve the changes to the process. You can also provide some feedback with your approval.",
         "rejectProcessChange": "You are about to reject the changes to the process. Please provide a reason for rejection.",
@@ -219,7 +219,8 @@
         "warnDeprecateProcess": "You are about to deprecate this process. This means procedures can no longer be performed, KPIs can no longer be collected and measured, and reports will not be generated anymore. Are you sure you want to continue?",
         "details": "Details",
         "reviews": "Reviews",
-        "deprecateReason": "Reason for deprecation"
+        "deprecateReason": "Reason for deprecation",
+        "deprecatedProcess": "This process was deprecated"
     },
     "slm": {
         "navbar" : {
