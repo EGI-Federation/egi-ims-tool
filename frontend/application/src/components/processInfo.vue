@@ -1,11 +1,28 @@
 <template>
 <div class="d-flex flex-nowrap content">
-    <div class="d-flex flex-nowrap">
+    <div class="d-flex flex-nowrap section">
         <div class="process">
-            <ims-process-header :edit-mode="false" :info="info" :bidirectional="bidirectional"
-                                @configure="configureProcess" @askForApproval="askForApproval" @review="reviewProcess"
-                                @approve="confirmApproveProcess" @reject="confirmRejectProcess" @deprecate="confirmDeprecateProcess"/>
-            <div class="details">
+            <process-header :edit-mode="false" :info="info" :bidirectional="bidirectional"
+                            @configure="configureProcess" @askForApproval="askForApproval"
+                            @review="reviewProcess" @approve="confirmApproveProcess"
+                            @reject="confirmRejectProcess" @deprecate="confirmDeprecateProcess"/>
+        </div>
+    </div>
+    <div class="details-reviews">
+        <ul class="nav nav-tabs justify-content-end">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#"
+                   ref="showDetails" @click="showDetails">{{ $t('ims.details') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"
+                   ref="showReviews" @click="showReviews">{{ $t('ims.reviews') }}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="d-flex flex-nowrap section">
+        <div class="process">
+            <div v-show="detailsVisible" class="details">
                 <h3>{{ $t('ims.goals') }}</h3>
                 <vue3-markdown-it :source='goals' />
 
@@ -26,6 +43,11 @@
                     <p v-else>{{ $t('ims.notDef') }}</p>
                 </div>
             </div>
+            <div v-show="!detailsVisible" class="reviews">
+                <h3>Process Reviews</h3>
+                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                <p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+            </div>
         </div>
     </div>
     <message id="approveProcessDialog" ref="approveProcessDialog" :collect-message="true" :must-collect-message="false"
@@ -36,6 +58,10 @@
              :title="$t('ims.rejectChange')" :message="$t('ims.rejectProcessChange')"
              :placeholder-collect-message="$t('ims.rejectReason')"
              :confirm-button="$t('ims.reject')" @confirm="rejectProcess" />
+    <message id="warnDeprecateProcess" ref="warnDeprecateProcess" :collect-message="true" :must-collect-message="true"
+             :title="$t('ims.deprecate')" title-style="danger" :message="$t('ims.warnDeprecateProcess')"
+             :placeholder-collect-message="$t('ims.deprecateReason')"
+             :confirm-button="$t('ims.continue')" @confirm="deprecateProcess" />
     <version-history :bidirectional="bidirectional" :version-latest="latest" :version-to-show="current"
                      :filter-to-status="Status.APPROVED.description"/>
 </div>
@@ -51,8 +77,9 @@ import { findUserWithEmail } from "@/roles";
 import { getProcessInfo } from "@/api/getProcessInfo";
 import { markProcessReadyForApproval } from "@/api/readyForProcessApproval";
 import { approveProcess } from "@/api/approveProcess";
+import { deprecateProcess } from "@/api/deprecateProcess";
 import MarkdownIt from 'markdown-it';
-import ImsProcessHeader from "@/components/imsProcessHeader.vue"
+import ProcessHeader from "@/components/processHeader.vue"
 import VersionHistory from "@/components/history.vue"
 import TableControl, { html } from "@/components/table.vue"
 import Message from "@/components/message.vue";
@@ -60,8 +87,8 @@ import Message from "@/components/message.vue";
 var mdRender = new MarkdownIt();
 
 export default {
-    name: 'imsProcessInfo',
-    components: { ImsProcessHeader, TableControl, VersionHistory, Message },
+    name: 'processInfo',
+    components: { ProcessHeader, TableControl, VersionHistory, Message },
     props: {
         info: Object, // { current: Process, approved: Process }
     },
@@ -69,6 +96,7 @@ export default {
         return {
             accessToken: store.state.oidc?.access_token,
             myEmail: store.state.oidc?.user?.email,
+            detailsVisible: true,
             requirementsHeader: [
                 this.$t('ims.code'),
                 {
@@ -170,6 +198,20 @@ export default {
         },
     },
     methods: {
+        showDetails(event) {
+            this.detailsVisible = true;
+            this.$refs['showDetails'].classList.add('active');
+            this.$refs['showReviews'].classList.remove('active');
+            event.preventDefault();
+            event.stopPropagation();
+        },
+        showReviews(event) {
+            this.detailsVisible = false;
+            this.$refs['showDetails'].classList.remove('active');
+            this.$refs['showReviews'].classList.add('active');
+            event.preventDefault();
+            event.stopPropagation();
+        },
         configureProcess() {
             this.$router.push('/slm/config');
         },
@@ -234,13 +276,34 @@ export default {
             this.approveOrRejectProcess(false, message);
         },
         confirmDeprecateProcess() {
-
+            this.$refs.warnDeprecateProcess.showModal();
         },
-        deprecateProcess() {
+        deprecateProcess(message) {
+            // Call API to deprecate process
+            let t = this;
+            let me = findUserWithEmail(this.processCode, this.myEmail);
+            const pdResult = deprecateProcess(this.accessToken, 'SLM', me, this.slmApi);
+            pdResult.request().then(() => {
+                if(isValid(pdResult.error?.value))
+                    t.$root.$refs.toasts.showError(t.$t('ims.error'), pdResult.error.value);
+                else {
+                    console.log("Deprecated the SLM process");
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.deprecatedProcess'));
 
+                    // Fetch the process information from the API to include the new status
+                    const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+                    piResult.load().then(() => {
+                        storeProcessInfo('ims/slmProcessInfo', piResult);
+
+                        const pi = piResult.processInfo.value;
+                        if(isValid(pi))
+                            t.$router.push(`/slm?v=${pi.version}`);
+                    });
+                }
+            });
         },
         reviewProcess() {
-
+            this.$router.push('/slm/review');
         },
     },
     mounted() {
@@ -265,23 +328,48 @@ export default {
     position: relative;
     gap: .5rem;
     width: 100%;
+    flex-direction: column;
     justify-content: center;
 }
-.content > div {
+.content .section {
     width: 100%;
     max-width: 60rem;
     margin: 0 auto 2rem;
 }
+.content .section:first-of-type {
+    margin-bottom: 0;
+}
 .content .process {
+    width: 100%;
+    position: relative;
     margin: 0 auto;
 }
-.process .details {
-    text-align: left;
+.content .details-reviews {
+    width: 100%;
+    margin: 0;
     padding-left: 1rem;
-    padding-right: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    overflow: hidden;
 }
-.process .details h3 {
-    border-bottom: 1px solid #e9ecef;
+.nav-tabs {
+    width: 100%;
+    max-width: 60rem;
+    margin: 0 auto;
+    position: relative;
+    bottom: -1px;
+    --bs-nav-tabs-link-active-bg: var(--bs-tertiary-bg)!important;
+}
+.nav-tabs .active {
+    cursor: default;
+}
+.process .details,
+.process .reviews {
+    text-align: left;
+    padding: 0.5rem 1rem 0;
+}
+.process .details h3,
+.process .reviews h3{
+    border-bottom: 1px solid var(--bs-secondary-bg);
 }
 .gridjs-td > span > :last-child {
     margin-bottom: 0!important;

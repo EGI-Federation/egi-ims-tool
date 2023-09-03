@@ -14,7 +14,8 @@ export const updateProcessInfo = function(accessToken, processCode, processInfo,
                 headers: {
                     "Content-Type": 'application/json',
                     Accept: 'application/json',
-                    Authorization: `Bearer ${accessToken}` }
+                    Authorization: `Bearer ${accessToken}`
+                }
             });
             if(!data.status) {
                 console.error(data.statusText);

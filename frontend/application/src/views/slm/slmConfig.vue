@@ -1,8 +1,8 @@
 <template>
     <bread-crumb :segments="locationSegments"/>
-    <ims-process-edit ref="processEdit"
-                      :info="{ current: currentProcess, approved: approvedProcess }"
-                      :state="editState"/>
+    <process-edit ref="processEdit"
+                  :info="{ current: currentProcess, approved: approvedProcess }"
+                  :state="editState"/>
 </template>
 
 <script>
@@ -11,12 +11,12 @@ import { isValid, findEntityWithStatus } from '@/utils'
 import { store } from "@/store"
 import { Roles, hasRole } from "@/roles";
 import BreadCrumb from "@/components/breadCrumb.vue";
-import ImsProcessEdit from "@/components/imsProcessEdit.vue"
+import ProcessEdit from "@/components/processEdit.vue"
 import {reactive} from "vue";
 
 export default {
     name: 'slmConfig',
-    components:  { BreadCrumb, ImsProcessEdit },
+    components:  { BreadCrumb, ProcessEdit },
     data() {
         return {
             userInfo: store.state.oidc.user,
@@ -27,7 +27,7 @@ export default {
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM"), link: "/slm" },
-                { text: this.$t("navbar.config") },
+                { text: this.$t("ims.config") },
             ],
         }
     },

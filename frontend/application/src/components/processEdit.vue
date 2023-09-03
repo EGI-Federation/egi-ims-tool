@@ -3,8 +3,8 @@
     <div class="d-flex flex-nowrap">
         <form class="needs-validation" novalidate ref="processForm">
         <div class="process">
-            <ims-process-header ref="processHeader" :edit-mode="true" :info="info" :bidirectional="bidirectional"
-                                @save="saveChanges($event)" @cancel="cancelChanges"/>
+            <process-header ref="processHeader" :edit-mode="true" :info="info" :bidirectional="bidirectional"
+                            @save="saveChanges($event)" @cancel="cancelChanges"/>
             <div class="details">
                 <!-- Commit message -->
                 <div class="text-field mb-3">
@@ -236,7 +236,7 @@ import { parseInterfaces, interfaceList } from '@/process'
 import { getProcessInfo } from "@/api/getProcessInfo";
 import { updateProcessInfo } from "@/api/updateProcessInfo";
 import MarkdownIt from 'markdown-it';
-import ImsProcessHeader from "@/components/imsProcessHeader.vue"
+import ProcessHeader from "@/components/processHeader.vue"
 import TextboxWithPreview from "@/components/textboxPreview.vue"
 import TableControl, { html } from "@/components/table.vue"
 import Message from "@/components/message.vue"
@@ -244,8 +244,8 @@ import Message from "@/components/message.vue"
 var mdRender = new MarkdownIt();
 
 export default {
-    name: 'imsProcessEdit',
-    components: { ImsProcessHeader, TextboxWithPreview, TableControl, Message },
+    name: 'processEdit',
+    components: { ProcessHeader, TextboxWithPreview, TableControl, Message },
     props: {
         info: Object,
         state: { // Reactive { hasUnsavedChanges: Boolean, navigateTo: String }
@@ -1226,5 +1226,5 @@ export default {
 </style>
 <script setup>
 import Message from "@/components/message.vue";
-import ImsProcessHeader from "@/components/imsProcessHeader.vue";
+import ImsProcessHeader from "@/components/processHeader.vue";
 </script>

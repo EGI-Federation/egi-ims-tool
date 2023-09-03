@@ -2,7 +2,7 @@
     <div class="d-flex flex-nowrap header">
         <div class="d-flex flex-nowrap flex-column operations">
             <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-            <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.configure') }}</button>
+            <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.config') }}</button>
             <button v-if="!editMode && isLatest && isDraft && isProcessManager" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
             <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
             <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-danger" @click="rejectProcess">{{ $t('ims.reject') }}</button>
@@ -49,7 +49,7 @@ import { Status, isValid, statusPill, formatDate, formatNextEvent } from '@/util
 import { Roles, hasRole, findUsersWithRole } from "@/roles";
 
 export default {
-    name: 'imsProcessHeader',
+    name: 'processHeader',
     props: {
         info: Object,      // { current: Process, approved: Process }
         editMode: Boolean,
@@ -104,14 +104,14 @@ export default {
                    formatDate(this.current.changedOn) : "?"; },
         approvalStatus() {
             if(!isValid(this.approved) ||
-               !isValid(this.approved.approver))
+               !isValid(this.approved.changeBy))
                 return this.$t('ims.no');
 
             let prefix = '';
             if(this.current.version !== this.approved.version)
                 prefix = `${this.$t("ims.version")} ${this.approved.version} ${this.$t("ims.approvedOn")} `;
 
-            return prefix + `${formatDate(this.approved.approvedOn)} ${this.$t("ims.by")} ${this.approved.approver.fullName}`;
+            return prefix + `${formatDate(this.approved.changedOn)} ${this.$t("ims.by")} ${this.approved.changeBy.fullName}`;
         },
         nextReview() {
             return isValid(this.current) ?
@@ -159,8 +159,7 @@ export default {
 .header {
     justify-content: center;
     align-content: flex-start;
-    margin: 0 auto 1rem;
-    position: relative;
+    margin: 0 auto;
 }
 .operations {
     gap: .2rem;
@@ -183,6 +182,7 @@ export default {
     margin: 0 auto;
 }
 .header .info > div {
+    width: 50%!important;
     flex-direction: column;
     flex-wrap: nowrap;
 }

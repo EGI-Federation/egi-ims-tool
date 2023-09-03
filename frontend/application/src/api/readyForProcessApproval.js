@@ -13,7 +13,8 @@ export const markProcessReadyForApproval = function(accessToken, processCode, us
             let data = await axios.patch(url, user,{
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer ${accessToken}` }
+                    Authorization: `Bearer ${accessToken}`
+                }
             });
             if(!data.status) {
                 console.error(data.statusText);

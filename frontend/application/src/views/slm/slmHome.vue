@@ -1,6 +1,6 @@
 <template>
     <bread-crumb :segments="locationSegments"/>
-    <ims-process-info :info="{ current: currentProcess, approved: approvedProcess }"/>
+    <process-info :info="{ current: currentProcess, approved: approvedProcess }"/>
 </template>
 
 <script>
@@ -9,11 +9,11 @@ import { isValid, findEntityWithStatus, findEntityWithVersion } from '@/utils'
 import { store } from "@/store"
 import { Roles, hasRole } from "@/roles";
 import BreadCrumb from "@/components/breadCrumb.vue"
-import ImsProcessInfo from "@/components/imsProcessInfo.vue"
+import ProcessInfo from "@/components/processInfo.vue"
 
 export default {
     name: 'slmHome',
-    components: { BreadCrumb, ImsProcessInfo },
+    components: { BreadCrumb, ProcessInfo },
     props: {
         version: String,
     },

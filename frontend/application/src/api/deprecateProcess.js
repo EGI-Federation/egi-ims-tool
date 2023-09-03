@@ -2,32 +2,33 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const getProcessInfo = function(accessToken, processCode, allVersions, baseUrl) {
-    const processInfo = ref(null);
+export const deprecateProcess = function(accessToken, processCode, user, baseUrl) {
+    const response = ref(null);
     const error = ref(null);
 
-    const load = async function() {
+    const request = async function() {
 
         try {
-            const url = baseUrl + '/process' + (allVersions ? '?allVersions=true' : '');
-            let data = await axios.get(url, {
+            const url = baseUrl + '/process';
+            let data = await axios.delete(url, {
                 headers: {
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
-                }
+                },
+                data: user
             });
             if(!data.status) {
                 console.error(data.statusText);
                 throw Error("Error in request " + url + " : " + data.status);
             }
 
-            processInfo.value = data.data;
+            response.value = data.data;
         }
         catch(err) {
             error.value = err.message;
-            console.error("Error getting " + processCode + " process info");
+            console.error("Error deprecating " + processCode + " process");
         }
     }
 
-    return { processInfo: processInfo, error: error, load: load };
+    return { response: response, error: error, request: request };
 }

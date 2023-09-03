@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div>{{ versionLatest?.changedOn ? formatTime(versionLatest?.changedOn) : '?' }}</div>
-                <div>{{ versionLatest?.changeBy.fullName }}</div>
+                <div>{{ versionLatest?.changeBy ? versionLatest?.changeBy.fullName : '?' }}</div>
                 <div>{{ versionLatest?.changeDescription }}</div>
                 <hr/>
             </div>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <div>{{ ver.changedOn ? formatTime(ver.changedOn) : '?' }}</div>
-                <div>{{ ver.changeBy.fullName }}</div>
+                <div>{{ ver.changeBy ? ver.changeBy.fullName : '?' }}</div>
                 <div>{{ ver.changeDescription }}</div>
                 <hr/>
             </div>

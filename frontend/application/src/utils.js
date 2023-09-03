@@ -151,6 +151,22 @@ export const formatNextEvent = function(frequency, unit, nextEvent, t) {
     return { frequency: f, when: w };
 }
 
+// Reusable sort function, allows sorting by any field and even
+// convert the fields before comparison for sort. Use it like this:
+//      someArray.sort(sortBy('name', true));
+//      someArray.sort(sortBy('price', true, parseInt));
+export const sortBy = function(field, reverse, primer) {
+    const key = primer ?
+        function(x) { return primer(x[field]); } :
+        function(x) { return x[field]; };
+
+    reverse = !reverse ? 1 : -1;
+
+    return function(a, b) {
+        return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+    }
+}
+
 // Find entity with a specific status
 // Parameter current is a Version<T> where T has a history field
 // Returns Version<T> or null if no entity with specified status
@@ -159,7 +175,8 @@ export const findEntityWithStatus = function(current, status) {
         if(status === current.status)
             return current;
 
-        // Attempt to find specified status
+        // Attempt to find the latest version with specified status
+        // Note: This assumes the history is sorted descending by version (should be same as sorted by changedOn)
         const history = current.history;
         if(isValid(history) && isValid(history.versions)) {
             for(let version of history.versions) {

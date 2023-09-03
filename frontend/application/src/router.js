@@ -18,6 +18,7 @@ import systemRoles from "@/views/system/systemRoles.vue";
 import ServiceLevelManagement from './views/slm/slm.vue'
 import slmHome from './views/slm/slmHome.vue'
 import slmConfig from "@/views/slm/slmConfig.vue";
+import slmReview from "@/views/slm/slmReview.vue";
 import slmRoles from './views/slm/slmRoles.vue'
 import slmProcedures from "@/views/slm/slmProcedures.vue";
 import slmKPIs from "@/views/slm/slmKPIs.vue";
@@ -520,6 +521,7 @@ const routes = [
     children: [
       { path: '', name:'slm-home', component: slmHome, props: route => ({ version: route.query.v }) },
       { path: 'config', component: slmConfig },
+      { path: 'review', component: slmReview },
       { path: 'roles', component: slmRoles },
       { path: 'procedures', component: slmProcedures },
       { path: 'kpis', component: slmKPIs },

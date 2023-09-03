@@ -19,7 +19,8 @@ export const approveProcess = function(accessToken, processCode, approve, notes,
                 {
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer ${accessToken}` }
+                    Authorization: `Bearer ${accessToken}`
+                }
             });
             if(!data.status) {
                 console.error(data.statusText);

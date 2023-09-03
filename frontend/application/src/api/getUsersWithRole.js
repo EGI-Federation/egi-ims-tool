@@ -12,7 +12,8 @@ export const getUsersWithRole = function(accessToken, processCode, role, baseUrl
             let data = await axios.get(url, {
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer ${accessToken}` }
+                    Authorization: `Bearer ${accessToken}`
+                }
             });
             if(!data.status) {
                 console.error(data.statusText);

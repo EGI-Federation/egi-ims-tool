@@ -12,7 +12,8 @@ export const getUsers = function(accessToken, processCode, processOnly, baseUrl)
             let data = await axios.get(url, {
                 headers: {
                     Accept: 'application/json',
-                    Authorization: `Bearer ${accessToken}` }
+                    Authorization: `Bearer ${accessToken}`
+                }
             });
             if(!data.status) {
                 console.error(data.statusText);
