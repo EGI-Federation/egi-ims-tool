@@ -8,10 +8,9 @@
 // @ is an alias to /src
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
-import { getProcessInfo } from "@/api/getProcessInfo";
 import { getUsers } from "@/api/getUsers";
 import { getUsersWithRole } from "@/api/getUsersWithRole";
-import { store, storeProcessInfo, storeUsers, storeUsersByRole } from "@/store";
+import { store, storeUsers, storeUsersByRole } from "@/store";
 import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
 
@@ -44,12 +43,6 @@ export default {
             }, 500);
         }
 
-        // Fetch the process information from the API
-        const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
-        piResult.load().then(() => {
-            storeProcessInfo('ims/slmProcessInfo', piResult);
-        });
-
         // Fetch the users participating in SLM from the API
         const upResult = getUsers(this.accessToken, 'SLM', true, this.slmApi);
         upResult.load().then(() => {
@@ -59,7 +52,7 @@ export default {
         // Fetch the users with roles in SLM from the API
         const urResult = getUsersWithRole(this.accessToken, 'SLM', null, this.slmApi);
         urResult.load().then(() => {
-            storeUsersByRole('ims/slmUsersByRole', urResult);
+            storeUsersByRole('ims/slmUsersByRole', 'SLM', urResult);
         });
     },
     mounted() {

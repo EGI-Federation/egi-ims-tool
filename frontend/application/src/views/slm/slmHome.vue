@@ -6,7 +6,8 @@
 <script>
 // @ is an alias to /src
 import { isValid, findEntityWithStatus, findEntityWithVersion } from '@/utils'
-import { store } from "@/store"
+import { getProcessInfo } from "@/api/getProcessInfo";
+import {store, storeProcessInfo } from "@/store"
 import { Roles, hasRole } from "@/roles";
 import BreadCrumb from "@/components/breadCrumb.vue"
 import ProcessInfo from "@/components/processInfo.vue"
@@ -30,11 +31,12 @@ export default {
         }
     },
     computed: {
+        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
         roles() { return store.state.temp.roles; },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
         isReportOwner() { return hasRole(this.roles, Roles.SLM.REPORT_OWNER); },
-        isCatalogManager() { return hasRole(this.roles, Roles.SLM.CATALOG_MANAGER); },
+        isCatalogOwner() { return hasRole(this.roles, Roles.SLM.CATALOG_OWNER); },
         isSLAOwner() { return hasRole(this.roles, Roles.SLM.SLA_OWNER); },
         isOLAOwner() { return hasRole(this.roles, Roles.SLM.OLA_OWNER); },
         isUAOwner() { return hasRole(this.roles, Roles.SLM.UA_OWNER); },
@@ -50,25 +52,31 @@ export default {
     methods: {
     },
     created() {
-        // Process information is already stored in ims/slm/processInfo
-        let current = store.state.ims.slm.processInfo;
-        if(isValid(current)) {
-            // Make sure we know which is the approved version (if any)
-            this.approvedProcess = findEntityWithStatus(current, "APPROVED");
+        // Fetch the process information from the API
+        const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+        piResult.load().then(() => {
+            storeProcessInfo('ims/slmProcessInfo', piResult);
 
-            const requested = this.$props.version;
-            if(isValid(requested) && requested.length > 0) {
-                // Make sure we show the correct version
-                let requestedVersion = findEntityWithVersion(current, requested);
-                if(isValid(requestedVersion))
-                    current = requestedVersion;
-                else
-                    console.log(`Cannot find SLM process v${requested}`);
+            // Process information is already stored in ims/slm/processInfo
+            let current = store.state.ims.slm.processInfo;
+            if(isValid(current)) {
+                // Make sure we know which is the approved version (if any)
+                this.approvedProcess = findEntityWithStatus(current, "APPROVED");
+
+                const requested = this.$props.version;
+                if(isValid(requested) && requested.length > 0) {
+                    // Make sure we show the correct version
+                    let requestedVersion = findEntityWithVersion(current, requested);
+                    if(isValid(requestedVersion))
+                        current = requestedVersion;
+                    else
+                        console.log(`Cannot find SLM process v${requested}`);
+                }
+
+                console.log("Showing SLM process info v" + current.version);
             }
-
-            console.log("Showing SLM process info v" + current.version);
-        }
-        this.currentProcess = current;
+            this.currentProcess = current;
+        });
     },
     mounted() {
     },
