@@ -61,7 +61,7 @@ export default {
     emits: ['configure', 'askForApproval', 'approve', 'reject', 'review', 'deprecate', 'save', 'cancel'],
     expose: [ 'submit' ],
     computed: {
-        latest() { return store.state.ims.slm.processInfo; },
+        latest() { return store.state.ims.slm?.processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
         isLatest() { return this.latest?.version === this.current?.version; },

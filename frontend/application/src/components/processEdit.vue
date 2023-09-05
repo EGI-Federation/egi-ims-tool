@@ -667,7 +667,7 @@ export default {
             return this.requirementsChanged || this.interfacesChanged;
         },
         users() {
-            const users = store.state.temp.usersByProcess.get('SLM');
+            const users = store.state.temp.usersByProcess?.get('SLM');
             return isValid(users) ? users : new Map();
         },
     },
@@ -784,7 +784,7 @@ export default {
             const checkinUserId = Number(el.getAttribute("id"));
             if(el.checked) {
                 // Add user to the responsibles
-                const users = store.state.temp.usersByProcess.get('SLM');
+                const users = store.state.temp.usersByProcess?.get('SLM');
                 const user = users.get(checkinUserId);
                 if(isValid(user))
                     this.reqResponsibles.set(checkinUserId, user);

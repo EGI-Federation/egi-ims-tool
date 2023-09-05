@@ -187,7 +187,7 @@ export default {
                     const itfList = interfaceList(itfWith, this.$t);
                     let row = [
                         isValid(itf.direction) && "in" === itf.direction.toLowerCase() ? _in : _out,
-                        prefix + itfList,
+                        prefix + "<br/>" + itfList,
                         isValid(itf.relevantMaterial) ? itf.relevantMaterial : "",
                         isValid(itf.description) ? itf.description : ""
                     ];
@@ -368,7 +368,7 @@ export default {
     padding: 0.5rem 1rem 0;
 }
 .process .details h3,
-.process .reviews h3{
+.process .reviews h3 {
     border-bottom: 1px solid var(--bs-secondary-bg);
 }
 .gridjs-td > span > :last-child {
