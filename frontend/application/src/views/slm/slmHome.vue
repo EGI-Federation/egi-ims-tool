@@ -1,20 +1,24 @@
 <template>
+    <roles-loader process-code="SLM" :api-base-url="slmApi"
+                  mutation-store-users="ims/slmUsers" mutation-store-users-by-role="ims/slmUsersByRole" />
     <bread-crumb :segments="locationSegments"/>
-    <process-info :info="{ current: currentProcess, approved: approvedProcess }"/>
+    <process-info :info="{ current: currentProcess, approved: approvedProcess }"
+                  :api-base-url="slmApi" process-code="SLM"/>
 </template>
 
 <script>
 // @ is an alias to /src
 import { isValid, findEntityWithStatus, findEntityWithVersion } from '@/utils'
 import { getProcessInfo } from "@/api/getProcessInfo";
-import {store, storeProcessInfo } from "@/store"
+import { store, storeProcessInfo } from "@/store"
 import { Roles, hasRole } from "@/roles";
+import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue"
 import ProcessInfo from "@/components/processInfo.vue"
 
 export default {
     name: 'slmHome',
-    components: { BreadCrumb, ProcessInfo },
+    components: { RolesLoader, BreadCrumb, ProcessInfo },
     props: {
         version: String,
     },
@@ -79,6 +83,7 @@ export default {
         });
     },
     mounted() {
+        scroll(0, 0);
     },
 }
 </script>

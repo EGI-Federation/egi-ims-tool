@@ -186,10 +186,10 @@
                                             </div>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li v-for="[processCode, processName] in itfConnections" class="dropdown-item check-item">
+                                        <li v-for="[pcode, processName] in itfConnections" class="dropdown-item check-item">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" :id="processCode" @change="toggleInterface($event)">
-                                                <label class="form-check-label" :for="processCode">{{ processName }}</label>
+                                                <input class="form-check-input" type="checkbox" :id="pcode" @change="toggleInterface($event)">
+                                                <label class="form-check-label" :for="pcode">{{ processName }}</label>
                                             </div>
                                         </li>
                                     </ul>
@@ -247,8 +247,10 @@ export default {
     name: 'processEdit',
     components: { ProcessHeader, TextboxWithPreview, TableControl, Message },
     props: {
-        info: Object,
-        state: { // Reactive { hasUnsavedChanges: Boolean, navigateTo: String }
+        processCode: String,
+        apiBaseUrl: String,
+        info: Object,   // { current: Process, approved: Process }
+        state: {        // Reactive { hasUnsavedChanges: Boolean, navigateTo: String }
             type: Object,
             default: () => {}
         }
@@ -328,7 +330,6 @@ export default {
     },
     computed: {
         i18n() { return i18n },
-        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
         edited() {
@@ -347,7 +348,6 @@ export default {
 
             return this.processInfo;
         },
-        processCode() { return isValid(this.edited) ? this.edited.code : "SLM"; },
         changeDescription: {
             get() { return isValid(this.edited) ? this.edited.changeDescription : ""; },
             set(value) {
@@ -588,8 +588,8 @@ export default {
                    this.itfWith.process.size !== this.interfaceBeingEdited.itfWith.process.size)
                     return true;
 
-                for(const processCode of this.interfaceBeingEdited.itfWith.process) {
-                    if(!this.itfWith.process.has(processCode))
+                for(const pcode of this.interfaceBeingEdited.itfWith.process) {
+                    if(!this.itfWith.process.has(pcode))
                         return true;
                 }
             }
@@ -635,8 +635,8 @@ export default {
                         itfcWith.process.size !== itfeWith.process.size)
                         return true;
 
-                    for(const processCode of itfcWith.process)
-                        if(!itfeWith.process.has(processCode))
+                    for(const pcode of itfcWith.process)
+                        if(!itfeWith.process.has(pcode))
                             return true;
                 }
             }
@@ -667,7 +667,7 @@ export default {
             return this.requirementsChanged || this.interfacesChanged;
         },
         users() {
-            const users = store.state.temp.usersByProcess?.get('SLM');
+            const users = store.state.temp.usersByProcess?.get(this.$props.processCode);
             return isValid(users) ? users : new Map();
         },
     },
@@ -784,7 +784,7 @@ export default {
             const checkinUserId = Number(el.getAttribute("id"));
             if(el.checked) {
                 // Add user to the responsibles
-                const users = store.state.temp.usersByProcess?.get('SLM');
+                const users = store.state.temp.usersByProcess?.get(this.$props.processCode);
                 const user = users.get(checkinUserId);
                 if(isValid(user))
                     this.reqResponsibles.set(checkinUserId, user);
@@ -904,10 +904,10 @@ export default {
                         if(isValid(el))
                             el.checked = t.itfWith.customer;
 
-                        for(const [processCode, processName] of t.itfConnections) {
-                            let el = document.getElementById(processCode);
+                        for(const [pcode, processName] of t.itfConnections) {
+                            let el = document.getElementById(pcode);
                             if(isValid(el))
-                                el.checked = t.itfWith.process.has(processCode);
+                                el.checked = t.itfWith.process.has(pcode);
                         }
                         t.setupValidation(".interfaces ");
                         scrollTo('interface-title');
@@ -1039,11 +1039,11 @@ export default {
                     this.cancelChanges();
                 else {
                     // We have changes to the process that must be saved as another version
-                    console.log("Saving SLM process info changes");
+                    console.log(`Saving ${this.$props.processCode} process info changes`);
 
                     this.processInfo.goals = this.goalsEditor.text;
                     this.processInfo.scope = this.scopeEditor.text;
-                    this.processInfo.changeBy = findUserWithEmail(this.processCode, this.myEmail);
+                    this.processInfo.changeBy = findUserWithEmail(this.$props.processCode, this.myEmail);
                     if(isValid(this.processInfo.changeBy)) {
                         delete this.processInfo.changeBy['kind'];
                         delete this.processInfo.changeBy['given_name'];
@@ -1053,20 +1053,20 @@ export default {
 
                     // Call API to update the process information
                     let t = this;
-                    const piResult = updateProcessInfo(this.accessToken, 'SLM', this.processInfo, this.slmApi);
+                    const piResult = updateProcessInfo(this.accessToken, this.$props.processCode, this.processInfo, this.$props.apiBaseUrl);
                     piResult.update().then(() => {
                         if(isValid(piResult.error?.value))
                             t.$root.$refs.toasts.showError(t.$t('ims.error'), piResult.error.value);
                         else {
-                            console.log("Created new version of SLM process info");
+                            console.log(`Created new version of ${this.$props.processCode} process info`);
                             t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.newProcessVersion'));
 
                             // Fetch the process information from the API to include the added version
-                            const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+                            const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
                             piResult.load().then(() => {
-                                storeProcessInfo('ims/slmProcessInfo', piResult);
+                                storeProcessInfo(`ims/${this.$props.processCode.toLowerCase()}ProcessInfo`, piResult);
                                 t.forceCancel = true;
-                                t.$router.push('/slm');
+                                t.$router.push(`/${this.$props.processCode.toLowerCase()}`);
                             });
                         }
                     });

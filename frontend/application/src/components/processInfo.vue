@@ -90,6 +90,8 @@ export default {
     name: 'processInfo',
     components: { ProcessHeader, TableControl, VersionHistory, Message },
     props: {
+        processCode: String,
+        apiBaseUrl: String,
         info: Object, // { current: Process, approved: Process }
     },
     data() {
@@ -134,11 +136,9 @@ export default {
     },
     computed: {
         Status() { return Status; },
-        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
-        latest() { return store.state.ims.slm.processInfo; },
+        latest() { return store.state.ims[this.$props.processCode.toLowerCase()].processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
-        processCode() { return isValid(this.current) ? this.current.code : "SLM"; },
         goals() {
             return isValid(this.current) && isValid(this.current.goals) &&
                 this.current.goals.trim().length > 0 ?
@@ -213,28 +213,28 @@ export default {
             event.stopPropagation();
         },
         configureProcess() {
-            this.$router.push('/slm/config');
+            this.$router.push(`/${this.$props.processCode.toLowerCase()}/config`);
         },
         askForApproval() {
             // Call API to ask for process approval
             let t = this;
             let me = findUserWithEmail(this.processCode, this.myEmail);
-            const prfaResult = markProcessReadyForApproval(this.accessToken, 'SLM', me, this.slmApi);
+            const prfaResult = markProcessReadyForApproval(this.accessToken, this.processCode, me, this.$props.apiBaseUrl);
             prfaResult.request().then(() => {
                 if(isValid(prfaResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), prfaResult.error.value);
                 else {
-                    console.log("Requested approval of the SLM process");
+                    console.log(`Requested approval of the ${this.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.requestedProcessApproval'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+                    const piResult = getProcessInfo(this.accessToken, this.processCode, true, this.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo('ims/slmProcessInfo', piResult);
+                        storeProcessInfo(`ims/${this.processCode.toLowerCase()}ProcessInfo`, piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(`/slm?v=${pi.version}`);
+                            t.$router.push(`/${this.processCode.toLowerCase()}?v=${pi.version}`);
                     });
                 }
             });
@@ -242,23 +242,23 @@ export default {
         approveOrRejectProcess(approve, message) {
             // Call API to approve/reject process changes
             let t = this;
-            let me = findUserWithEmail(this.processCode, this.myEmail);
-            const paResult = approveProcess(this.accessToken, 'SLM', approve, message, me, this.slmApi);
+            let me = findUserWithEmail(this.$props.processCode, this.myEmail);
+            const paResult = approveProcess(this.accessToken, this.$props.processCode, approve, message, me, this.$props.apiBaseUrl);
             paResult.request().then(() => {
                 if(isValid(paResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), paResult.error.value);
                 else {
-                    console.log(`${approve ? 'Approved' : 'Rejected'} SLM process changes`);
+                    console.log(`${approve ? 'Approved' : 'Rejected'} ${this.$props.processCode} process changes`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t(approve ? 'ims.approvedProcess' : 'ims.rejectedProcess'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+                    const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo('ims/slmProcessInfo', piResult);
+                        storeProcessInfo(`ims/${this.$props.processCode.toLowerCase()}ProcessInfo`, piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(`/slm?v=${pi.version}`);
+                            t.$router.push(`/${this.$props.processCode.toLowerCase()}?v=${pi.version}`);
                     });
                 }
             });
@@ -281,29 +281,29 @@ export default {
         deprecateProcess(message) {
             // Call API to deprecate process
             let t = this;
-            let me = findUserWithEmail(this.processCode, this.myEmail);
-            const pdResult = deprecateProcess(this.accessToken, 'SLM', me, this.slmApi);
+            let me = findUserWithEmail(this.$props.processCode, this.myEmail);
+            const pdResult = deprecateProcess(this.accessToken, this.$props.processCode, me, this.$props.apiBaseUrl);
             pdResult.request().then(() => {
                 if(isValid(pdResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), pdResult.error.value);
                 else {
-                    console.log("Deprecated the SLM process");
+                    console.log(`Deprecated the ${this.$props.processCode.toLowerCase()} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.deprecatedProcess'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+                    const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo('ims/slmProcessInfo', piResult);
+                        storeProcessInfo(`ims/${this.$props.processCode.toLowerCase()}ProcessInfo`, piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(`/slm?v=${pi.version}`);
+                            t.$router.push(`/${this.$props.processCode.toLowerCase()}?v=${pi.version}`);
                     });
                 }
             });
         },
         reviewProcess() {
-            this.$router.push('/slm/review');
+            this.$router.push(`/${this.$props.processCode.toLowerCase()}/review`);
         },
     },
     mounted() {

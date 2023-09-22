@@ -1,22 +1,25 @@
 <template>
+    <roles-loader process-code="SLM" :api-base-url="slmApi"
+                  mutation-store-users="ims/slmUsers" mutation-store-users-by-role="ims/slmUsersByRole" />
     <bread-crumb :segments="locationSegments"/>
     <process-edit ref="processEdit"
                   :info="{ current: currentProcess, approved: approvedProcess }"
-                  :state="editState"/>
+                  :state="editState" :api-base-url="slmApi" process-code="SLM"/>
 </template>
 
 <script>
 // @ is an alias to /src
+import { reactive } from "vue";
 import { isValid, findEntityWithStatus } from '@/utils'
 import { store } from "@/store"
 import { Roles, hasRole } from "@/roles";
+import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
-import ProcessEdit from "@/components/processEdit.vue"
-import {reactive} from "vue";
+import ProcessEdit from "@/components/processEdit.vue";
 
 export default {
     name: 'slmConfig',
-    components:  { BreadCrumb, ProcessEdit },
+    components:  { RolesLoader, BreadCrumb, ProcessEdit },
     data() {
         return {
             userInfo: store.state.oidc.user,
@@ -32,6 +35,7 @@ export default {
         }
     },
     computed: {
+        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
         roles() { return store.state.temp.roles; },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },

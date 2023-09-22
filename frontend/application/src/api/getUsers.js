@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import axios from 'axios'
+import { isValid } from "@/utils";
 
 export const getUsers = function(accessToken, processCode, processOnly, baseUrl) {
     const users = ref(null);
@@ -24,7 +25,7 @@ export const getUsers = function(accessToken, processCode, processOnly, baseUrl)
         }
         catch(err) {
             error.value = err.message;
-            console.error("Error getting " + processCode + " users");
+            console.error("Error getting " + (isValid(processCode) ? processCode : 'VO') + " users");
         }
     }
 
