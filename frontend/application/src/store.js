@@ -1,11 +1,11 @@
-import {createStore} from 'vuex'
+import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import SecureLS from "secure-ls";
-import {vuexOidcCreateStoreModule} from 'vuex-oidc'
-import {oidcSettings} from '@/config/oidc'
-import i18n, {languageNames} from './locales'
-import {isValid} from "@/utils";
-import {getRoleByName, hasRole, Roles} from "@/roles";
+import { vuexOidcCreateStoreModule } from 'vuex-oidc'
+import { oidcSettings } from '@/config/oidc'
+import i18n, { languageNames } from './locales'
+import { isValid } from "@/utils";
+import { Roles, getRoleByName, hasRole } from "@/roles";
 
 var sls = new SecureLS({ isCompression: false });
 
@@ -18,26 +18,51 @@ export const store = createStore({
             state() {
                 return {
                     roles: new Map(),           // Roles of current user Map<Symbol, { name:String, assigned:boolean, ownedEntities:Set<String> }>
+                    rolesByProcess: new Map(),  // Role definitions for all processes Map<String, Map<Symbol, Role>>
+                    users: new Map(),           // Users in the VO Map<checkinUserId, User>
                     usersByProcess: new Map(),  // Users that are members of processes Map<String, Map<checkinUserId, User>>
                     usersByRole: new Map(),     // Users holding roles in any process Map<Symbol, Map<checkinUserId, User>>
                 }
             },
             mutations: {
                 updateRoles(state, roles) {
-                    console.log(`Store ${roles.size} roles`);
+                    console.log(`Store ${roles.size} roles of current user`);
                     state.roles = roles;
+                },
+                updateRolesByProcess(state, info) {
+                    console.log(`Store ${info.roles.size} role definitions of process ${info.processCode}`);
+                    state.rolesByProcess.set(info.processCode, info.roles);
+                },
+                updateUsers(state, info) {
+                    console.log(`Store ${info.users.size} users in VO`);
+                    state.users = info.users;
                 },
                 updateUsersByProcess(state, info) {
                     console.log(`Store ${info.users.size} users of process ${info.processCode}`);
                     state.usersByProcess.set(info.processCode, info.users);
+
+                    // Add process members to the role map with pseudo-role 'process-staff'
+                    const rolesEnum = Roles[info.processCode];
+                    const role = rolesEnum.PROCESS_STAFF;
+                    let roleUsers = state.usersByRole.get(role);
+                    if(!isValid(roleUsers)) {
+                        roleUsers = new Map();
+                        state.usersByRole.set(role, roleUsers);
+                    }
+
+                    for(let user of info.users.values())
+                        roleUsers.set(user.checkinUserId, user);
                 },
-                updateUsersByRole(state, users) {
-                    console.log(`Store ${users.size} users`);
-                    state.usersByRole = users;
+                updateUsersByRole(state, info) {
+                    console.log(`Store ${info.users.size} users with ${info.processCode} roles and ownerships`);
+                    state.usersByRole = new Map([...state.usersByRole, ...info.users]);
                 },
                 logOut(state) {
                     state.roles = null;
+                    state.rolesByProcess = null;
                     state.users = null;
+                    state.usersByProcess = null;
+                    state.usersByRole = null;
                     console.log("Signed out");
                 }
             },
@@ -55,7 +80,7 @@ export const store = createStore({
                     language: null,
                     notifications: [{isNew: false}, {isNew: true}],
                     slm: {
-                        processInfo: null, // Process
+                        processInfo: null,  // Process information
                     }
                 }
             },
@@ -83,7 +108,7 @@ export const store = createStore({
                     if(!isValid(rootState.roles))
                         return null;
 
-                    const assigned = [...rootState.roles].filter(([k, v]) => v.assigned && "member" !== k.description);
+                    const assigned = [...rootState.roles].filter(([k, v]) => v.assigned && "process-staff" !== k.description);
                     const ar = [];
                     for(const role of assigned)
                         ar.push(role[0]);
@@ -99,7 +124,7 @@ export const store = createStore({
                     if(!isValid(rootState.roles))
                         return null;
 
-                    const members = [...rootState.roles].filter(([k, v]) => v.assigned && "member" === k.description);
+                    const members = [...rootState.roles].filter(([k, v]) => v.assigned && "process-staff" === k.description);
                     const groups = [];
                     for(const role of members)
                         groups.push(role[1].group);
@@ -126,14 +151,19 @@ export const store = createStore({
                     state.slm.processInfo = info.processInfo;
                     state.slm.error = info.error;
                 },
+                slmRoles(state, info) {
+                    info.processCode = 'SLM';
+                    store.commit("updateRolesByProcess", info);
+                    state.slm.error = info.error;
+                },
                 slmUsers(state, info) {
                     info.processCode = 'SLM';
                     store.commit("updateUsersByProcess", info);
                     state.slm.error = info.error;
                 },
                 slmUsersByRole(state, info) {
-                    console.log("Store SLM users with roles");
-                    store.commit("updateUsersByRole", info.users);
+                    info.processCode = 'SLM';
+                    store.commit("updateUsersByRole", info);
                     state.slm.error = info.error;
                 },
                 clearState(state, newLocale) {
@@ -211,23 +241,26 @@ export const storeUsers = function(mutation, upResult) {
 }
 
 // Extract the users then call a mutation on the store to save them
-export const storeUsersByRole = function(mutation, urResult) {
+export const storeUsersByRole = function(mutation, processCode, urResult) {
     let users = new Map();
     if(isValid(urResult.page)) {
         const page = urResult.page.value;
         if(isValid(page) && isValid(page.elements)) {
-            for(let user of page.elements) {
-                for(let roleName of user.roles) {
-                    const roleInfo = getRoleByName(Roles.SLM, roleName);
-                    if(isValid(roleInfo) && roleInfo.assigned) {
-                        // Check if there is a map for this role
-                        let roleUserMap = users.get(roleInfo.role);
-                        if(null == roleUserMap) {
-                            roleUserMap = new Map();
-                            users.set(roleInfo.role, roleUserMap);
-                        }
+            const roleEnum = Roles[processCode];
+            if(isValid(roleEnum)) {
+                for(let user of page.elements) {
+                    for(let roleName of user.roles) {
+                        const roleInfo = getRoleByName(roleEnum, roleName);
+                        if(isValid(roleInfo) && roleInfo.assigned) {
+                            // Check if there is a map for this role
+                            let roleUserMap = users.get(roleInfo.role);
+                            if(null == roleUserMap) {
+                                roleUserMap = new Map();
+                                users.set(roleInfo.role, roleUserMap);
+                            }
 
-                        roleUserMap.set(user.checkinUserId, user);
+                            roleUserMap.set(user.checkinUserId, user);
+                        }
                     }
                 }
             }
@@ -235,3 +268,23 @@ export const storeUsersByRole = function(mutation, urResult) {
     }
     store.commit(mutation, { users: users, error: urResult.error.value });
 }
+
+// Extract the role definitions then call a mutation on the store to save it
+export const storeProcessRoles = function(mutation, processCode, prResult) {
+    let roles = new Map();
+    if(isValid(prResult.page)) {
+        const page = prResult.page.value;
+        if(isValid(page) && isValid(page.elements)) {
+            const roleEnum = Roles[processCode];
+            if(isValid(roleEnum)) {
+                for(let role of page.elements) {
+                    const roleInfo = getRoleByName(roleEnum, role.role);
+                    if(isValid(roleInfo))
+                        roles.set(roleInfo.role, role);
+                }
+            }
+        }
+    }
+    store.commit(mutation, { roles: roles, error: prResult.error.value });
+}
+
