@@ -222,6 +222,16 @@
         "deprecateReason": "Reason for deprecation",
         "deprecatedProcess": "This process was deprecated"
     },
+    "role": {
+        "processRoles": "These are the roles defined in the process",
+        "addRole": "Add Role",
+        "assignedTo": "Assigned to",
+        "tasks": "Tasks",
+        "assign": "Assign",
+        "nobody": "Nobody",
+        "assignedRole": "Assigned {processCode} role {roleName} to {userFullName}",
+        "revokedRole": "Revoked {processCode} role {roleName} from {userFullName}"
+    },
     "slm": {
         "navbar" : {
             "catalogs": "Catalogs",

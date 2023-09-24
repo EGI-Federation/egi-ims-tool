@@ -1088,41 +1088,67 @@ export default {
             this.$refs.processHeader.submit();
         },
         cancelChanges() {
-            this.$router.push('/slm');
+            this.$router.push(`/${this.$props.processCode.toLowerCase()}`);
         },
         warnUnsavedChanges() {
             this.$refs.warnEditProcess.showModal();
         },
         abandonChanges() {
             this.forceCancel = true;
-            this.$router.push(isValid(this.$props.state.navigateTo) ? this.$props.state.navigateTo : '/slm');
+            this.$router.push(isValid(this.$props.state.navigateTo) ?
+                              this.$props.state.navigateTo :
+                              `/${this.$props.processCode.toLowerCase()}`);
         },
     },
     created() {
-        this.itfConnections.set('BA', this.$t('home.BA'));
-        this.itfConnections.set('BDS', this.$t('home.BDS'));
-        this.itfConnections.set('CAPM', this.$t('home.CAPM'));
-        this.itfConnections.set('CHM', this.$t('home.CHM'));
-        this.itfConnections.set('COM', this.$t('home.COM'));
-        this.itfConnections.set('CONFM', this.$t('home.CONFM'));
-        this.itfConnections.set('CSI', this.$t('home.CSI'));
-        this.itfConnections.set('CRM', this.$t('home.CRM'));
-        this.itfConnections.set('CPM', this.$t('home.CPM'));
-        this.itfConnections.set('FA', this.$t('home.FA'));
-        this.itfConnections.set('HR', this.$t('home.HR'));
-        this.itfConnections.set('ISM', this.$t('home.ISM'));
-        this.itfConnections.set('ISRM', this.$t('home.ISRM'));
-        this.itfConnections.set('PPC', this.$t('home.PPC'));
-        this.itfConnections.set('PM', this.$t('home.PM'));
-        this.itfConnections.set('PKM', this.$t('home.PKM'));
-        this.itfConnections.set('PPM', this.$t('home.PPM'));
-        this.itfConnections.set('RDM', this.$t('home.RDM'));
-        this.itfConnections.set('RM', this.$t('home.RM'));
-        this.itfConnections.set('SACM', this.$t('home.SACM'));
-        this.itfConnections.set('SUPPM', this.$t('home.SUPPM'));
-        //this.itfConnections.set('SLM', this.$t('home.SLM'));
-        this.itfConnections.set('SPM', this.$t('home.SPM'));
-        this.itfConnections.set('SRM', this.$t('home.SRM'));
+        if(this.$props.processCode !== 'BA')
+            this.itfConnections.set('BA', this.$t('home.BA'));
+        if(this.$props.processCode !== 'BDS')
+            this.itfConnections.set('BDS', this.$t('home.BDS'));
+        if(this.$props.processCode !== 'CAPM')
+            this.itfConnections.set('CAPM', this.$t('home.CAPM'));
+        if(this.$props.processCode !== 'CHM')
+            this.itfConnections.set('CHM', this.$t('home.CHM'));
+        if(this.$props.processCode !== 'COM')
+            this.itfConnections.set('COM', this.$t('home.COM'));
+        if(this.$props.processCode !== 'CONFM')
+            this.itfConnections.set('CONFM', this.$t('home.CONFM'));
+        if(this.$props.processCode !== 'CSI')
+            this.itfConnections.set('CSI', this.$t('home.CSI'));
+        if(this.$props.processCode !== 'CRM')
+            this.itfConnections.set('CRM', this.$t('home.CRM'));
+        if(this.$props.processCode !== 'CPM')
+            this.itfConnections.set('CPM', this.$t('home.CPM'));
+        if(this.$props.processCode !== 'FA')
+            this.itfConnections.set('FA', this.$t('home.FA'));
+        if(this.$props.processCode !== 'HR')
+            this.itfConnections.set('HR', this.$t('home.HR'));
+        if(this.$props.processCode !== 'ISM')
+            this.itfConnections.set('ISM', this.$t('home.ISM'));
+        if(this.$props.processCode !== 'ISRM')
+            this.itfConnections.set('ISRM', this.$t('home.ISRM'));
+        if(this.$props.processCode !== 'PPC')
+            this.itfConnections.set('PPC', this.$t('home.PPC'));
+        if(this.$props.processCode !== 'PM')
+            this.itfConnections.set('PM', this.$t('home.PM'));
+        if(this.$props.processCode !== 'PKM')
+            this.itfConnections.set('PKM', this.$t('home.PKM'));
+        if(this.$props.processCode !== 'PPM')
+            this.itfConnections.set('PPM', this.$t('home.PPM'));
+        if(this.$props.processCode !== 'RDM')
+            this.itfConnections.set('RDM', this.$t('home.RDM'));
+        if(this.$props.processCode !== 'RM')
+            this.itfConnections.set('RM', this.$t('home.RM'));
+        if(this.$props.processCode !== 'SACM')
+            this.itfConnections.set('SACM', this.$t('home.SACM'));
+        if(this.$props.processCode !== 'SUPPM')
+            this.itfConnections.set('SUPPM', this.$t('home.SUPPM'));
+        if(this.$props.processCode !== 'SLM')
+            this.itfConnections.set('SLM', this.$t('home.SLM'));
+        if(this.$props.processCode !== 'SPM')
+            this.itfConnections.set('SPM', this.$t('home.SPM'));
+        if(this.$props.processCode !== 'SRM')
+            this.itfConnections.set('SRM', this.$t('home.SRM'));
     },
     mounted() {
         // Add halo ring on focus to the date picker
