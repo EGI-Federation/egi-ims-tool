@@ -230,7 +230,9 @@
         "assign": "Assign",
         "nobody": "Nobody",
         "assignedRole": "Assigned {processCode} role {roleName} to {userFullName}",
-        "revokedRole": "Revoked {processCode} role {roleName} from {userFullName}"
+        "revokedRole": "Revoked {processCode} role {roleName} from {userFullName}",
+        "includedInProcess": "Included {userFullName} in the {processCode} process",
+        "excludedFromProcess": "Excluded {userFullName} from the {processCode} process"
     },
     "slm": {
         "navbar" : {

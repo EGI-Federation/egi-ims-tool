@@ -1,23 +1,34 @@
 <template>
+    <roles-loader process-code="SLM" :api-base-url="slmApi"
+                  mutation-store-users="ims/slmUsers" mutation-store-users-by-role="ims/slmUsersByRole" />
     <bread-crumb :segments="locationSegments"/>
-    <div class="about">
-        <br/>
-        <h1>This is the SLM roles page</h1>
+    <p>{{ $t('role.processRoles') }} {{ $t('home.SLM') }}.</p>
+    <div><button type="button" class="btn btn-primary">{{ $t('role.addRole') }}</button></div>
+    <div v-if="roleList" class="d-flex flex-nowrap content">
+        <div class="section">
+            <role-summary v-for="role in roleList" :role="role" :api-base-url="slmApi" process-code="SLM"
+                          mutation-store-users="ims/slmUsers"
+                          mutation-store-users-by-role="ims/slmUsersByRole"/>
+        </div>
     </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import { isValid } from '@/utils'
-import { store } from "@/store"
+import { isValid, deepClone } from '@/utils'
+import { getRoles } from "@/api/getRoles";
+import { store, storeProcessRoles } from "@/store"
+import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
+import RoleSummary from "@/components/roleSummary.vue";
+import ProcessEdit from "@/components/processEdit.vue";
 
 export default {
     name: 'slmRoles',
-    components: { BreadCrumb },
+    components: { ProcessEdit, RolesLoader, BreadCrumb, RoleSummary },
     data() {
         return {
-            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
+            accessToken: store.state.oidc.access_token,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM"), link: "/slm" },
@@ -25,14 +36,45 @@ export default {
             ],
         }
     },
-    methods: {
-        processMenu() {
-            return false;
+    computed: {
+        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
+        roles() { return store.state.temp.rolesByProcess?.get('SLM'); },
+        roleList() {
+            const roleMap = this.roles;
+            return isValid(roleMap) ? [...roleMap].map(([role, roleInfo]) => {
+                roleInfo.role = role; // Change String to Symbol
+                roleInfo.processCode = 'SLM';
+                return roleInfo;
+            }) : [];
         }
-    }
+    },
+    methods: {
+    },
+    created() {
+        // Fetch the process roles from the API
+        const prResult = getRoles(this.accessToken, 'SLM', null, this.slmApi);
+        prResult.load().then(() => {
+            storeProcessRoles('ims/slmRoles', 'SLM', prResult);
+        });
+    },
+    mounted() {
+        scroll(0, 0);
+    },
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
+.content {
+    position: relative;
+    gap: .5rem;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+}
+.content .section {
+    width: 100%;
+    max-width: 60rem;
+    margin: 0 auto 2rem;
+}
 </style>

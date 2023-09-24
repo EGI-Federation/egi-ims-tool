@@ -21,7 +21,7 @@ export const store = createStore({
                     rolesByProcess: new Map(),  // Role definitions for all processes Map<String, Map<Symbol, Role>>
                     users: new Map(),           // Users in the VO Map<checkinUserId, User>
                     usersByProcess: new Map(),  // Users that are members of processes Map<String, Map<checkinUserId, User>>
-                    usersByRole: new Map(),     // Users holding roles in any process Map<Symbol, Map<checkinUserId, User>>
+                    usersByRole: new Map(),     // Users holding roles (including pseudo roles) in any process Map<Symbol, Map<checkinUserId, User>>
                 }
             },
             mutations: {
@@ -41,7 +41,7 @@ export const store = createStore({
                     console.log(`Store ${info.users.size} users of process ${info.processCode}`);
                     state.usersByProcess.set(info.processCode, info.users);
 
-                    // Add process members to the role map with pseudo-role 'process-staff'
+                    // Add process members to the usersByRole map with pseudo-role 'process-staff'
                     const rolesEnum = Roles[info.processCode];
                     const role = rolesEnum.PROCESS_STAFF;
                     let roleUsers = state.usersByRole.get(role);
@@ -55,7 +55,41 @@ export const store = createStore({
                 },
                 updateUsersByRole(state, info) {
                     console.log(`Store ${info.users.size} users with ${info.processCode} roles and ownerships`);
-                    state.usersByRole = new Map([...state.usersByRole, ...info.users]);
+                    state.usersByRole = info.users;
+
+                    // Add process members to the usersByRole map with pseudo-role 'process-staff'
+                    const rolesEnum = Roles[info.processCode];
+                    const role = rolesEnum.PROCESS_STAFF;
+                    let roleUsers = state.usersByRole.get(role);
+                    if(!isValid(roleUsers)) {
+                        roleUsers = new Map();
+                        state.usersByRole.set(role, roleUsers);
+                    }
+
+                    const processUsers = state.usersByProcess?.get(info.processCode);
+                    if(isValid(processUsers))
+                        for(let user of processUsers.values())
+                            roleUsers.set(user.checkinUserId, user);
+                },
+                updateUserRole(state, info) {
+                    const user = state.users.get(info.checkinUserId);
+                    if(!isValid(user))
+                        return false;
+
+                    // Update usersByRole immediately, before a refresh from API by getUsers/getUsersWithRole,
+                    // which in turn calls updateUsersByProcess/updateUsersByRole, has a chance to finish
+                    let roleUsers = state.usersByRole.get(info.role);
+                    if(!isValid(roleUsers) && isValid(info.assign) && info.assign) {
+                        roleUsers = new Map();
+                        state.usersByRole.set(info.role, roleUsers);
+                    }
+
+                    if(isValid(roleUsers)) {
+                        if(isValid(info.assign) && info.assign)
+                            roleUsers.set(user.checkinUserId, user);
+                        else
+                            roleUsers.delete(user.checkinUserId);
+                    }
                 },
                 logOut(state) {
                     state.roles = null;

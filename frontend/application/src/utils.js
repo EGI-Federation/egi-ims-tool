@@ -41,6 +41,8 @@ export const statusPill = function(status, t) {
         return { label: t("ims.statusReadyForApproval"), pillClass: "badge rounded-pill bg-info" };
     else if(Status.APPROVED.description === status)
         return { label: t("ims.statusApproved"), pillClass: "badge rounded-pill bg-success" };
+    else if(Status.IMPLEMENTED.description === status)
+        return { label: t("ims.statusImplemented"), pillClass: "badge rounded-pill bg-success" };
     else if(Status.DEPRECATED.description === status)
         return { label: t("ims.statusDeprecated"), pillClass: "badge rounded-pill bg-danger" };
 
@@ -167,6 +169,17 @@ export const sortBy = function(field, reverse, primer) {
     }
 }
 
+// Format string. Use it like this:
+//      formatString("This {0} is a {1}", "a", "test");
+export const formatString = function(format) {
+    let args = Array.prototype.slice.call(arguments, 1);
+    return format.replace(/{(\d+)}/g, function(match, number) {
+        return typeof args[number] != 'undefined'
+            ? args[number]
+            : match;
+    });
+}
+
 // Find entity with a specific status
 // Parameter current is a Version<T> where T has a history field
 // Returns Version<T> or null if no entity with specified status
@@ -248,7 +261,7 @@ export const deepClone = function(obj, hash = new WeakMap()) {
 }
 
 // Turn an array of strings into a comma separated list
-export const userNames = function(users, separator = " ") {
+export const userNames = function(users, separator = " ", noUsers = "") {
     let userList = "";
     if(isValid(users)) {
         for(let rp of users) {
@@ -257,7 +270,7 @@ export const userNames = function(users, separator = " ") {
             userList += rp.fullName;
         }
     }
-    return userList;
+    return userList.length > 0 ? userList : noUsers;
 }
 
 // Scroll to a specific element

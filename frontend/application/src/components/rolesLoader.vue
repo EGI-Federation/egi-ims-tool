@@ -14,7 +14,7 @@ export default {
     props: {
         processCode: String,
         apiBaseUrl: String,
-        mutationStoreUsers: String,
+        mutationStoreUsers: String, // Group members (aka process staff)
         mutationStoreUsersByRole: String
     },
     data() {
