@@ -12,6 +12,7 @@ export const deprecateProcess = function(accessToken, processCode, user, baseUrl
             const url = baseUrl + '/process';
             let data = await axios.delete(url, {
                 headers: {
+                    "Content-Type": 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 },

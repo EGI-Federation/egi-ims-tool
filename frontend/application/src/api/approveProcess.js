@@ -18,6 +18,7 @@ export const approveProcess = function(accessToken, processCode, approve, notes,
                 },
                 {
                 headers: {
+                    "Content-Type": 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
