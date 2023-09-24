@@ -104,7 +104,7 @@
                                             data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                         {{ $t('ims.users') }}
                                     </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <ul class="dropdown-menu dropdown-menu-end user-list">
                                         <li v-for="[checkinUserId, user] in users" class="dropdown-item check-item">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" :id="checkinUserId" @change="toggleResponsible($event)">
@@ -1248,6 +1248,12 @@ export default {
 .check-item .form-check-input,
 .check-item .form-check-label {
     cursor: pointer;
+}
+.user-list {
+    max-height: 25rem;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
 }
 </style>
 <script setup>
