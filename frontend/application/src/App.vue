@@ -42,4 +42,11 @@ body {
     border-bottom:none;
     border-right:none;
 }
+.form-control-fix {
+    padding-left: 35px!important;
+    padding-right: 30px!important;
+}
+.gridjs-td > span > :last-child {
+    margin-bottom: 0!important;
+}
 </style>
