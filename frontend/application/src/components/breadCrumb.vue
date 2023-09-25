@@ -1,7 +1,7 @@
 <template>
     <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li v-for="segment in segments" :class="'breadcrumb-item' + (null != segment.link ? '' : ' active')">
+        <li v-for="segment in pathSegments" :class="'breadcrumb-item' + (null != segment.link ? '' : ' active')">
             <router-link v-if="null != segment.link" :to="segment.link">{{ segment.text }}</router-link>
             <span v-if="null == segment.link">{{ segment.text }}</span>
         </li>
@@ -11,11 +11,23 @@
 
 <script>
 // @ is an alias to /src
+import { deepClone } from "@/utils";
+
 export default {
     name: 'breadCrumb',
     props: {
         segments: Array // Contains { text, link } elements, the last one does not have link
-    }
+    },
+    data() {
+        return {
+            pathSegments: deepClone(this.$props.segments),
+        }
+    },
+    methods: {
+        update(segments) {
+            this.pathSegments = segments;
+        }
+    },
 }
 </script>
 
