@@ -51,6 +51,7 @@ import { Roles, hasRole, findUsersWithRole } from "@/roles";
 export default {
     name: 'processHeader',
     props: {
+        processCode: String,
         info: Object,      // { current: Process, approved: Process }
         editMode: Boolean,
         bidirectional: {   // Reactive { historyVisible: Boolean, processChanged: Boolean }
@@ -74,8 +75,7 @@ export default {
         roles() { return store.state.temp.roles; },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
-        processCode() { return isValid(this.current) ? this.current.code : "SLM"; },
-        processName() { return this.$t('home.' + this.processCode); },
+        processName() { return this.$t('home.' + this.$props.processCode); },
         contact() {
             return isValid(this.current) && isValid(this.current.contact) &&
                 this.current.contact.trim().length > 0 ?
