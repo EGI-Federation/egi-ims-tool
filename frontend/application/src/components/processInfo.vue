@@ -2,7 +2,7 @@
 <div class="d-flex flex-nowrap content">
     <div class="d-flex flex-nowrap section">
         <div class="process">
-            <process-header :edit-mode="false" :info="info" :bidirectional="bidirectional"
+            <process-header :edit-mode="false" :info="info" :bidirectional="bidirectional" :process-code="processCode"
                             @configure="configureProcess" @askForApproval="askForApproval"
                             @review="reviewProcess" @approve="confirmApproveProcess"
                             @reject="confirmRejectProcess" @deprecate="confirmDeprecateProcess"/>
@@ -323,7 +323,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped>
 .content {
     position: relative;
     gap: .5rem;
@@ -370,9 +370,6 @@ export default {
 .process .details h3,
 .process .reviews h3 {
     border-bottom: 1px solid var(--bs-secondary-bg);
-}
-.gridjs-td > span > :last-child {
-    margin-bottom: 0!important;
 }
 .process .requirements,
 .process .interfaces {

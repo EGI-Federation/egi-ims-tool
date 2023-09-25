@@ -4,7 +4,7 @@
         <form class="needs-validation" novalidate ref="processForm">
         <div class="process">
             <process-header ref="processHeader" :edit-mode="true" :info="info" :bidirectional="bidirectional"
-                            @save="saveChanges($event)" @cancel="cancelChanges"/>
+                            :process-code="processCode" @save="saveChanges($event)" @cancel="cancelChanges"/>
             <div class="details">
                 <!-- Commit message -->
                 <div class="text-field mb-3">
@@ -1175,12 +1175,6 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-.form-control-fix {
-    padding-left: 35px!important;
-    padding-right: 30px!important;
-}
-</style>
 <style scoped>
 .content {
     position: relative;
@@ -1195,6 +1189,7 @@ export default {
 }
 .process {
     margin: 0 auto;
+    position: relative;
 }
 .process .details {
     text-align: left;
@@ -1256,7 +1251,3 @@ export default {
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
 }
 </style>
-<script setup>
-import Message from "@/components/message.vue";
-import ImsProcessHeader from "@/components/processHeader.vue";
-</script>

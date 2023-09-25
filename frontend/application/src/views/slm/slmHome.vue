@@ -11,7 +11,6 @@
 import { isValid, findEntityWithStatus, findEntityWithVersion } from '@/utils'
 import { getProcessInfo } from "@/api/getProcessInfo";
 import { store, storeProcessInfo } from "@/store"
-import { Roles, hasRole } from "@/roles";
 import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue"
 import ProcessInfo from "@/components/processInfo.vue"
@@ -36,22 +35,6 @@ export default {
     },
     computed: {
         slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
-        roles() { return store.state.temp.roles; },
-        isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
-        isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
-        isReportOwner() { return hasRole(this.roles, Roles.SLM.REPORT_OWNER); },
-        isCatalogOwner() { return hasRole(this.roles, Roles.SLM.CATALOG_OWNER); },
-        isSLAOwner() { return hasRole(this.roles, Roles.SLM.SLA_OWNER); },
-        isOLAOwner() { return hasRole(this.roles, Roles.SLM.OLA_OWNER); },
-        isUAOwner() { return hasRole(this.roles, Roles.SLM.UA_OWNER); },
-        isMember() {
-            if(!isValid(this.roles))
-                return false;
-
-            const groups = store.getters["ims/memberInGroups"];
-            const member = groups.filter(group => "SLM" === group);
-            return member.length > 0;
-        },
     },
     methods: {
     },
@@ -62,7 +45,7 @@ export default {
             storeProcessInfo('ims/slmProcessInfo', piResult);
 
             // Process information is already stored in ims/slm/processInfo
-            let current = store.state.ims.slm.processInfo;
+            let current = store.state.ims?.slm?.processInfo;
             if(isValid(current)) {
                 // Make sure we know which is the approved version (if any)
                 this.approvedProcess = findEntityWithStatus(current, "APPROVED");
