@@ -29,5 +29,5 @@ export const getProcessInfo = function(accessToken, processCode, allVersions, ba
         }
     }
 
-    return { processInfo: processInfo, error: error, load: load };
+    return { processInfo: processInfo, processCode: processCode, error: error, load: load };
 }

@@ -29,5 +29,5 @@ export const getUsers = function(accessToken, processCode, processOnly, baseUrl)
         }
     }
 
-    return { page: users, error: error, load: load };
+    return { page: users, processCode: processCode, error: error, load: load };
 }

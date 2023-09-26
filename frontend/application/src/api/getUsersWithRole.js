@@ -28,5 +28,5 @@ export const getUsersWithRole = function(accessToken, processCode, role, baseUrl
         }
     }
 
-    return { page: users, error: error, load: load };
+    return { page: users, processCode: processCode, error: error, load: load };
 }
