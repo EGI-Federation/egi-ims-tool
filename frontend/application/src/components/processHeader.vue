@@ -1,42 +1,44 @@
 <template>
+    <div class="d-flex flex-nowrap flex-column operations">
+        <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
+        <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.config') }}</button>
+        <button v-if="!editMode && isLatest && isDraft && isProcessManager" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
+        <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
+        <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-danger" @click="rejectProcess">{{ $t('ims.reject') }}</button>
+        <button v-if="!editMode && isLatest && isApproved && (isProcessManager || isProcessOwner)" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
+        <button v-if="!editMode && isLatest && isApproved && isProcessOwner" type="button" class="btn btn-danger" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
+        <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!processChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
+        <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
+    </div>
     <div class="d-flex flex-nowrap header">
-        <div class="d-flex flex-nowrap flex-column operations">
-            <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-            <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.config') }}</button>
-            <button v-if="!editMode && isLatest && isDraft && isProcessManager" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
-            <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
-            <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-danger" @click="rejectProcess">{{ $t('ims.reject') }}</button>
-            <button v-if="!editMode && isLatest && isApproved && (isProcessManager || isProcessOwner)" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
-            <button v-if="!editMode && isLatest && isApproved && isProcessOwner" type="button" class="btn btn-danger" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
-            <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!processChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
-            <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
-        </div>
-        <div class="d-flex flex-nowrap flex-column">
+        <div class="d-flex flex-nowrap flex-column entity-title">
             <div class="entity-type">{{ $t('ims.process') }}</div>
             <h2 class="fade-top-border">{{ processName }} ({{ processCode }})</h2>
-            <div class="d-flex flex-nowrap info">
-                <div>
-                    <div>{{ $t('ims.procOwner') }} :</div>
-                    <div>{{ $t('ims.procManager') }} :</div>
-                    <div>{{ $t('ims.version') }} :</div>
-                    <div>{{ $t('ims.status') }} :</div>
-                    <div>{{ $t('ims.changed') }} :</div>
-                    <div>{{ $t('ims.approved') }} :</div>
-                    <div v-if="!editMode">{{ $t('ims.reviewFrequency') }} :</div>
-                    <div v-if="!editMode">{{ $t('ims.reviewNext') }} :</div>
-                    <div v-if="!editMode">{{ $t('ims.contact') }} :</div>
-                </div>
-                <div>
-                    <div>{{ processOwner }}</div>
-                    <div>{{ processManager }}</div>
-                    <div>{{ processVersion }}</div>
-                    <div><span :class="processStatus.pillClass">{{ processStatus.label }}</span></div>
-                    <div>{{ changeDate }}</div>
-                    <div>{{ approvalStatus }}</div>
-                    <div v-if="!editMode">{{ nextReview.frequency }}</div>
-                    <div v-if="!editMode">{{ nextReview.when }}</div>
-                    <div v-if="!editMode">{{ contact }}</div>
-                </div>
+        </div>
+    </div>
+    <div class="d-flex flex-nowrap header">
+        <div class="d-flex flex-nowrap info">
+            <div>
+                <div>{{ $t('ims.procOwner') }} :</div>
+                <div>{{ $t('ims.procManager') }} :</div>
+                <div>{{ $t('ims.version') }} :</div>
+                <div>{{ $t('ims.status') }} :</div>
+                <div>{{ $t('ims.changed') }} :</div>
+                <div>{{ $t('ims.approved') }} :</div>
+                <div v-if="!editMode">{{ $t('ims.reviewFrequency') }} :</div>
+                <div v-if="!editMode">{{ $t('ims.reviewNext') }} :</div>
+                <div v-if="!editMode">{{ $t('ims.contact') }} :</div>
+            </div>
+            <div>
+                <div>{{ processOwner }}</div>
+                <div>{{ processManager }}</div>
+                <div>{{ processVersion }}</div>
+                <div><span :class="processStatus.pillClass">{{ processStatus.label }}</span></div>
+                <div>{{ changeDate }}</div>
+                <div>{{ approvalStatus }}</div>
+                <div v-if="!editMode">{{ nextReview.frequency }}</div>
+                <div v-if="!editMode">{{ nextReview.when }}</div>
+                <div v-if="!editMode">{{ contact }}</div>
             </div>
         </div>
     </div>
@@ -170,14 +172,15 @@ export default {
     margin-left: .5rem;
     margin-bottom: 1rem;
 }
-.entity-type {
+.header .entity-type {
     text-align: left;
     font-family: "Barlow Condensed", sans-serif;
 }
 .header h2 {
     padding-top: .5rem;
 }
-.header .info {
+.header .info,
+.header .entity-title {
     justify-content: center;
     margin: 0 auto;
 }

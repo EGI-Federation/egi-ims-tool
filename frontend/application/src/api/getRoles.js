@@ -24,7 +24,7 @@ export const getRoles = function(accessToken, processCode, role, baseUrl) {
         }
         catch(err) {
             error.value = err.message;
-            console.error("Error getting " + processCode + " role definitions");
+            console.error(`Error getting ${role ? processCode + '.' + role : processCode} role definition${role ? '' : 's'}`);
         }
     }
 

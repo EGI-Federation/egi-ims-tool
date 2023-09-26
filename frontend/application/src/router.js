@@ -20,6 +20,7 @@ import slmHome from './views/slm/slmHome.vue'
 import slmConfig from "@/views/slm/slmConfig.vue";
 import slmReview from "@/views/slm/slmReview.vue";
 import slmRoles from './views/slm/slmRoles.vue'
+import slmRole from './views/slm/slmRole.vue'
 import slmProcedures from "@/views/slm/slmProcedures.vue";
 import slmKPIs from "@/views/slm/slmKPIs.vue";
 import slmCatalogs from "@/views/slm/slmCatalogs.vue";
@@ -523,6 +524,7 @@ const routes = [
       { path: 'config', component: slmConfig },
       { path: 'review', component: slmReview },
       { path: 'roles', component: slmRoles },
+      { path: 'roles/:role', component: slmRole, props: route => ({ version: route.query.v }) },
       { path: 'procedures', component: slmProcedures },
       { path: 'kpis', component: slmKPIs },
       { path: 'catalogs', component: slmCatalogs },
