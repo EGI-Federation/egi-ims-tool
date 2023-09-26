@@ -86,7 +86,7 @@ export const rolesFromEntitlements = function(entitlements, trace) {
             continue;
 
         // Member of the group, which is a prerequisite to holding group roles
-        roles.set(groupRoles.MEMBER, { name: group.toLowerCase() + "-member", assigned: true });
+        roles.set(groupRoles.PROCESS_STAFF, { name: "process-staff", assigned: true });
 
         const regexPrefix = "urn\\:mace\\:egi\\.eu\\:group\\:" + vo + "\\:" + group + "\\:role=";
 
@@ -161,7 +161,7 @@ export const parseRoles = function() {
 // Check is a role is assigned
 export const hasRole = function(roles, role) {
     if('symbol' !== typeof role) {
-        console.log("Role is not a symbol: " + typeof role);
+        console.log("hasRole: role is not a symbol but a " + typeof role);
         return false;
     }
 
@@ -188,7 +188,12 @@ export const hasRole = function(roles, role) {
 // Returns all users that hold a specific role, null if no user with that role
 // Assumes users have been loaded already and store in the root module of the store
 export const findUsersWithRole = function(role, firstOnly = false) {
-    const users = store.state.temp.usersByRole;
+    if('symbol' !== typeof role) {
+        console.log("findUsersWithRole: role is not a symbol but a " + typeof role);
+        return null;
+    }
+
+    const users = store.state.temp?.usersByRole;
     if(isValid(users)) {
         const roleUserMap = users.has(role) ? users.get(role) : null;
         if(isValid(roleUserMap)) {
