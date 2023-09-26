@@ -1,6 +1,6 @@
 <template>
 <div class="role-info">
-    <h3><router-link :to="`/slm/roles/${role.role.description}`">{{ role.name }}</router-link></h3>
+    <h3><router-link :to="`/${processCode.toLowerCase()}/roles/${role.role.description}`">{{ role.name }}</router-link></h3>
     <div class="d-flex flex-nowrap justify-content-between">
         <div class="d-flex flex-nowrap info">
             <div>
@@ -63,8 +63,6 @@ export default {
             type: Object,
             default: {}
         },
-        mutationStoreUsers: String, // Group members (aka process staff)
-        mutationStoreUsersByRole: String
     },
     data() {
         return {
@@ -137,7 +135,7 @@ export default {
                         // Fetch the users with roles in this process from the API
                         const urResult = getUsersWithRole(this.accessToken, processCode, null, this.$props.apiBaseUrl);
                         urResult.load().then(() => {
-                            storeUsersByRole(t.$props.mutationStoreUsersByRole, processCode, urResult);
+                            storeUsersByRole(urResult);
                         });
 
                         console.log(`Assigned ${processCode}.${this.$props.role.role.description} to ${userFullName}`);
@@ -170,7 +168,7 @@ export default {
                         // Fetch the users with roles in this process from the API
                         const urResult = getUsersWithRole(this.accessToken, processCode, null, this.$props.apiBaseUrl);
                         urResult.load().then(() => {
-                            storeUsersByRole(t.$props.mutationStoreUsersByRole, processCode, urResult);
+                            storeUsersByRole(urResult);
                         });
 
                         console.log(`Revoked ${processCode}.${this.$props.role.role.description} from ${userFullName}`);
@@ -208,7 +206,7 @@ export default {
                         // Fetch the users participating in this process from the API
                         const upResult = getUsers(this.accessToken, processCode, true, this.$props.apiBaseUrl);
                         upResult.load().then(() => {
-                            storeUsers(this.$props.mutationStoreUsers, upResult);
+                            storeUsers('ims/updateProcessUsers', upResult);
                         });
 
                         console.log(`Included ${userFullName} in process ${processCode}`);
@@ -238,7 +236,7 @@ export default {
                         // Fetch the users participating in this process from the API
                         const upResult = getUsers(this.accessToken, processCode, true, this.$props.apiBaseUrl);
                         upResult.load().then(() => {
-                            storeUsers(this.$props.mutationStoreUsers, upResult);
+                            storeUsers('ims/updateProcessUsers', upResult);
                         });
 
                         console.log(`Excluded ${userFullName} from ${processCode} process`);

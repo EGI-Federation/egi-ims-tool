@@ -1,14 +1,11 @@
 <template>
-    <roles-loader process-code="SLM" :api-base-url="slmApi"
-                  mutation-store-users="ims/slmUsers" mutation-store-users-by-role="ims/slmUsersByRole" />
+    <roles-loader process-code="SLM" :api-base-url="slmApi"/>
     <bread-crumb :segments="locationSegments"/>
     <p>{{ $t('role.processRoles') }} {{ $t('home.SLM') }}.</p>
     <div><button type="button" class="btn btn-primary">{{ $t('role.addRole') }}</button></div>
     <div v-if="roleList" class="d-flex flex-nowrap content">
         <div class="section">
-            <role-summary v-for="role in roleList" :role="role" :api-base-url="slmApi" process-code="SLM"
-                          mutation-store-users="ims/slmUsers"
-                          mutation-store-users-by-role="ims/slmUsersByRole"/>
+            <role-summary v-for="role in roleList" :role="role" :api-base-url="slmApi" process-code="SLM"/>
         </div>
     </div>
 </template>
@@ -54,7 +51,7 @@ export default {
         // Fetch the process roles from the API
         const prResult = getRoles(this.accessToken, 'SLM', null, this.slmApi);
         prResult.load().then(() => {
-            storeProcessRoles('ims/slmRoles', 'SLM', prResult);
+            storeProcessRoles(prResult);
         });
     },
     mounted() {

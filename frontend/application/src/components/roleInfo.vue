@@ -58,7 +58,7 @@ export default {
     },
     computed: {
         Status() { return Status; },
-        latest() { return store.state.ims[this.$props.processCode.toLowerCase()]?.roleInfo; },
+        latest() { return store.state.ims.roleInfo; },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
         roleName() { return this.current?.name; },
@@ -71,7 +71,7 @@ export default {
     },
     methods: {
         editRole() {
-            this.$router.push(`/${this.$props.processCode.toLowerCase()}/edit`);
+            this.$router.push(`/${this.$props.processCode.toLowerCase()}/roles/${this.$route.params.role}/edit`);
         },
         confirmImplementRole() {
             this.$refs.implementRoleDialog.showModal();
@@ -98,7 +98,7 @@ export default {
             //         // Fetch the process information from the API to include the new status
             //         const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
             //         piResult.load().then(() => {
-            //             storeProcessInfo(`ims/${this.$props.processCode.toLowerCase()}ProcessInfo`, piResult);
+            //             storeProcessInfo(piResult);
             //
             //             const pi = piResult.processInfo.value;
             //             if(isValid(pi))

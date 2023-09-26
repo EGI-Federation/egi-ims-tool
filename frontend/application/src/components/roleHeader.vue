@@ -53,7 +53,7 @@ export default {
     emits: ['edit', 'implement', 'deprecate', 'save', 'cancel'],
     expose: [ 'submit' ],
     computed: {
-        latest() { return store.state.ims[this.$props.processCode.toLowerCase()]?.roleInfo; },
+        latest() { return store.state.ims.roleInfo; },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
         isLatest() { return this.latest?.version === this.current?.version; },

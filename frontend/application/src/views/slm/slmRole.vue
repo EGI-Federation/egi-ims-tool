@@ -1,6 +1,5 @@
 <template>
-    <roles-loader process-code="SLM" :api-base-url="slmApi"
-                  mutation-store-users="ims/slmUsers" mutation-store-users-by-role="ims/slmUsersByRole" />
+    <roles-loader process-code="SLM" :api-base-url="slmApi"/>
     <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
     <role-info :info="{ current: currentRole, implemented: implementedRole }"
                :api-base-url="slmApi" process-code="SLM"/>
@@ -24,8 +23,8 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentRole: store.state.ims?.slm?.roleInfo,  // Role
-            implementedRole: null,                        // Role
+            currentRole: store.state.ims?.roleInfo,  // Role
+            implementedRole: null,                   // Role
         }
     },
     computed: {
@@ -43,10 +42,10 @@ export default {
         // Fetch the role details from the API
         const prResult = getRoles(this.accessToken, 'SLM', this.$route.params.role, this.slmApi);
         prResult.load().then(() => {
-            storeProcessRoles('ims/slmRoles', 'SLM', prResult);
+            storeProcessRoles(prResult);
 
             // Role information is already stored in ims/slm/roleInfo
-            let current = store.state.ims?.slm?.roleInfo;
+            let current = store.state.ims.roleInfo;
             if(isValid(current)) {
                 // Make sure we know which is the implemented version (if any)
                 this.implementedRole = findEntityWithStatus(current, "IMPLEMENTED");

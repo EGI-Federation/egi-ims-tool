@@ -14,8 +14,6 @@ export default {
     props: {
         processCode: String,
         apiBaseUrl: String,
-        mutationStoreUsers: String, // Group members (aka process staff)
-        mutationStoreUsersByRole: String
     },
     data() {
         return {
@@ -38,19 +36,19 @@ export default {
         // Fetch all IMS users from the API
         const uvResult = getUsers(this.accessToken, null, false, this.$props.apiBaseUrl);
         uvResult.load().then(() => {
-            storeUsers('updateUsers', uvResult);
+            storeUsers('updateVoUsers', uvResult);
         });
 
         // Fetch the users participating in this process from the API
         const upResult = getUsers(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
         upResult.load().then(() => {
-            storeUsers(this.$props.mutationStoreUsers, upResult);
+            storeUsers('ims/updateProcessUsers', upResult);
         });
 
         // Fetch the users with roles in this process from the API
         const urResult = getUsersWithRole(this.accessToken, this.$props.processCode, null, this.$props.apiBaseUrl);
         urResult.load().then(() => {
-            storeUsersByRole(this.$props.mutationStoreUsersByRole, this.$props.processCode, urResult);
+            storeUsersByRole(urResult);
         });
     },
 }
