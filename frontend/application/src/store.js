@@ -33,7 +33,7 @@ export const store = createStore({
                     console.log(`Store ${info.roles.size} role definitions of process ${info.processCode}`);
                     state.rolesByProcess.set(info.processCode, info.roles);
                 },
-                updateUsers(state, info) {
+                updateVoUsers(state, info) {
                     console.log(`Store ${info.users.size} users in VO`);
                     state.users = info.users;
                 },
@@ -113,9 +113,12 @@ export const store = createStore({
                 return {
                     language: null,
                     notifications: [{isNew: false}, {isNew: true}],
+                    processInfo: null,  // Process
+                    roleInfo: null,     // Role
                     slm: {
-                        processInfo: null,  // Process information
-                    }
+
+                    },
+                    error: null,
                 }
             },
             getters: {
@@ -180,31 +183,31 @@ export const store = createStore({
                     console.log("Store language: " + newLocale);
                     state.language = newLocale;
                 },
-                slmProcessInfo(state, info) {
-                    console.log("Store SLM process info v" + info.processInfo.version);
-                    state.slm.processInfo = info.processInfo;
-                    state.slm.error = info.error;
+                updateProcessInfo(state, info) {
+                    console.log(`Store ${info.processCode} process info v${info.processInfo.version}`);
+                    state.processInfo = info.processInfo;
+                    state.error = info.error;
                 },
-                slmRoles(state, info) {
-                    info.processCode = 'SLM';
+                updateRoles(state, info) {
                     store.commit("updateRolesByProcess", info);
-                    state.slm.error = info.error;
-                    if(info.roles?.size > 0)
-                        state.slm.roleInfo = info.roles.values().next().value;
+                    state.error = info.error;
+                    if(info.roles?.size > 0) {
+                        const roleInfo = info.roles.values().next().value;
+                        console.log(`Store ${info.processCode} role ${roleInfo.role} v${roleInfo.version}`);
+                        state.roleInfo = roleInfo;
+                    }
                 },
-                slmUsers(state, info) {
-                    info.processCode = 'SLM';
+                updateProcessUsers(state, info) {
                     store.commit("updateUsersByProcess", info);
-                    state.slm.error = info.error;
+                    state.error = info.error;
                 },
-                slmUsersByRole(state, info) {
-                    info.processCode = 'SLM';
+                updateProcessUsersByRole(state, info) {
                     store.commit("updateUsersByRole", info);
-                    state.slm.error = info.error;
+                    state.error = info.error;
                 },
                 clearState(state, newLocale) {
-                    state.slm.processInfo = null;
-                    state.slm.roleInfo = null;
+                    state.processInfo = null;
+                    state.roleInfo = null;
                 },
             },
             actions: {
@@ -255,12 +258,16 @@ export const store = createStore({
 })
 
 // Extract the process information then call a mutation on the store to save it
-export const storeProcessInfo = function(mutation, piResult) {
+export const storeProcessInfo = function(piResult) {
     let latest = {};
-    if(isValid(piResult.processInfo))
+    if(isValid(piResult?.processInfo?.value))
         latest = piResult.processInfo.value;
 
-    store.commit(mutation, { processInfo: latest, error: piResult.error.value });
+    store.commit('ims/updateProcessInfo', {
+        processInfo: latest,
+        processCode: piResult.processCode,
+        error: piResult.error.value
+    });
 }
 
 // Extract the users then call a mutation on the store to save them
@@ -274,16 +281,20 @@ export const storeUsers = function(mutation, upResult) {
             }
         }
     }
-    store.commit(mutation, { users: users, error: upResult.error.value });
+    store.commit(mutation, {
+        users: users,
+        processCode: upResult.processCode,
+        error: upResult.error.value
+    });
 }
 
 // Extract the users then call a mutation on the store to save them
-export const storeUsersByRole = function(mutation, processCode, urResult) {
+export const storeUsersByRole = function(urResult) {
     let users = new Map();
     if(isValid(urResult.page)) {
         const page = urResult.page.value;
         if(isValid(page) && isValid(page.elements)) {
-            const roleEnum = Roles[processCode];
+            const roleEnum = Roles[urResult.processCode];
             if(isValid(roleEnum)) {
                 for(let user of page.elements) {
                     for(let roleName of user.roles) {
@@ -303,16 +314,20 @@ export const storeUsersByRole = function(mutation, processCode, urResult) {
             }
         }
     }
-    store.commit(mutation, { users: users, error: urResult.error.value });
+    store.commit('ims/updateProcessUsersByRole', {
+        users: users,
+        processCode: urResult.processCode,
+        error: urResult.error.value
+    });
 }
 
 // Extract the role definitions then call a mutation on the store to save it
-export const storeProcessRoles = function(mutation, processCode, prResult) {
+export const storeProcessRoles = function(prResult) {
     let roles = new Map();
     if(isValid(prResult.page)) {
         const page = prResult.page.value;
         if(isValid(page) && isValid(page.elements)) {
-            const roleEnum = Roles[processCode];
+            const roleEnum = Roles[prResult.processCode];
             if(isValid(roleEnum)) {
                 for(let role of page.elements) {
                     const roleInfo = getRoleByName(roleEnum, role.role);
@@ -322,6 +337,9 @@ export const storeProcessRoles = function(mutation, processCode, prResult) {
             }
         }
     }
-    store.commit(mutation, { roles: roles, error: prResult.error.value });
+    store.commit('ims/updateRoles', {
+        roles: roles,
+        processCode: prResult.processCode,
+        error: prResult.error.value
+    });
 }
-

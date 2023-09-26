@@ -1,6 +1,5 @@
 <template>
-    <roles-loader process-code="SLM" :api-base-url="slmApi"
-                  mutation-store-users="ims/slmUsers" mutation-store-users-by-role="ims/slmUsersByRole" />
+    <roles-loader process-code="SLM" :api-base-url="slmApi"/>
     <bread-crumb :segments="locationSegments"/>
     <process-info :info="{ current: currentProcess, approved: approvedProcess }"
                   :api-base-url="slmApi" process-code="SLM"/>
@@ -41,10 +40,10 @@ export default {
         // Fetch the process information from the API
         const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
         piResult.load().then(() => {
-            storeProcessInfo('ims/slmProcessInfo', piResult);
+            storeProcessInfo(piResult);
 
             // Process information is already stored in ims/slm/processInfo
-            let current = store.state.ims?.slm?.processInfo;
+            let current = store.state.ims.processInfo;
             if(isValid(current)) {
                 // Make sure we know which is the approved version (if any)
                 this.approvedProcess = findEntityWithStatus(current, "APPROVED");

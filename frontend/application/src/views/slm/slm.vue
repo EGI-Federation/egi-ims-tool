@@ -16,7 +16,7 @@ export default {
     components: { IsmNavbar, IsmFooter },
     data() {
         return {
-            processInfo: store.state.ims.slm.processInfo,
+            processInfo: store.state.ims.processInfo,
         }
     },
     computed: {

@@ -11,7 +11,7 @@
                     <label for="changeDesc" class="form-label">{{ $t('ims.changeDesc') }}:</label>
                     <textarea ref="textarea" class="form-control textarea" id="changeDesc" rows=3
                               v-model="changeDescription" :maxlength=1024 required/>
-                    <div class="invalid-feedback">{{ $t('ims.invalidProcessChange') }}</div>
+                    <div class="invalid-feedback">{{ $t('ims.invalidEntityChange', { entity: $t('ims.process').toLowerCase() }) }}</div>
                 </div>
 
                 <h3>{{ $t('ims.general') }}</h3>
@@ -53,7 +53,7 @@
                                            :clearable="false" placeholder="yyyy"/>
                         </div>
                     </div>
-                    <!-- Contact-->
+                    <!-- Contact -->
                     <div class="input-group">
                         <div class="text-field">
                             <label for="contactEmail" class="form-label">{{ $t('ims.contact') }}:</label>
@@ -670,13 +670,16 @@ export default {
             const users = store.state.temp.usersByProcess?.get(this.$props.processCode);
             return isValid(users) ? users : new Map();
         },
+        returnToRoute() {
+            return `/${this.$props.processCode.toLowerCase()}`;
+        },
     },
     watch: {
         processChanged(changed) {
             this.bidirectional.processChanged = changed;
             this.$props.state.hasUnsavedChanges = changed && !this.forceCancel;
         },
-        forceCancel(changed) {
+        forceCancel() {
             this.$props.state.hasUnsavedChanges = false;
         }
     },
@@ -1064,9 +1067,9 @@ export default {
                             // Fetch the process information from the API to include the added version
                             const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
                             piResult.load().then(() => {
-                                storeProcessInfo(`ims/${this.$props.processCode.toLowerCase()}ProcessInfo`, piResult);
+                                storeProcessInfo(piResult);
                                 t.forceCancel = true;
-                                t.$router.push(`/${this.$props.processCode.toLowerCase()}`);
+                                t.$router.push(this.returnToRoute);
                             });
                         }
                     });
@@ -1088,7 +1091,7 @@ export default {
             this.$refs.processHeader.submit();
         },
         cancelChanges() {
-            this.$router.push(`/${this.$props.processCode.toLowerCase()}`);
+            this.$router.push(this.returnToRoute);
         },
         warnUnsavedChanges() {
             this.$refs.warnEditProcess.showModal();
@@ -1097,7 +1100,7 @@ export default {
             this.forceCancel = true;
             this.$router.push(isValid(this.$props.state.navigateTo) ?
                               this.$props.state.navigateTo :
-                              `/${this.$props.processCode.toLowerCase()}`);
+                              this.returnToRoute);
         },
     },
     created() {

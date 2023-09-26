@@ -1,6 +1,5 @@
 <template>
-    <roles-loader process-code="SLM" :api-base-url="slmApi"
-                  mutation-store-users="ims/slmUsers" mutation-store-users-by-role="ims/slmUsersByRole" />
+    <roles-loader process-code="SLM" :api-base-url="slmApi"/>
     <bread-crumb :segments="locationSegments"/>
     <process-edit ref="processEdit"
                   :info="{ current: currentProcess, approved: approvedProcess }"
@@ -23,8 +22,8 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc.access_token,
-            currentProcess: store.state.ims.slm?.processInfo,   // Process
-            approvedProcess: null,                              // Process
+            currentProcess: store.state.ims?.processInfo,   // Process
+            approvedProcess: null,                          // Process
             editState: reactive({ hasUnsavedChanges: false }),
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },

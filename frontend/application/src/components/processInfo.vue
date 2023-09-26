@@ -136,7 +136,7 @@ export default {
     },
     computed: {
         Status() { return Status; },
-        latest() { return store.state.ims[this.$props.processCode.toLowerCase()].processInfo; },
+        latest() { return store.state.ims.processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
         goals() {
@@ -230,7 +230,7 @@ export default {
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcessInfo(this.accessToken, this.processCode, true, this.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo(`ims/${this.processCode.toLowerCase()}ProcessInfo`, piResult);
+                        storeProcessInfo(piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
@@ -254,7 +254,7 @@ export default {
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo(`ims/${this.$props.processCode.toLowerCase()}ProcessInfo`, piResult);
+                        storeProcessInfo(piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
@@ -294,7 +294,7 @@ export default {
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo(`ims/${this.$props.processCode.toLowerCase()}ProcessInfo`, piResult);
+                        storeProcessInfo(piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
