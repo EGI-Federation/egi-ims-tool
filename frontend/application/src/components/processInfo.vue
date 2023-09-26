@@ -288,7 +288,8 @@ export default {
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), pdResult.error.value);
                 else {
                     console.log(`Deprecated the ${this.$props.processCode.toLowerCase()} process`);
-                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.deprecatedProcess'));
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
+                                                     t.$t('ims.deprecatedEntity', { entity: t.$t('ims.process').toLowerCase() } ));
 
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
@@ -329,8 +330,15 @@ export default {
     gap: .5rem;
     width: 100%;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
 }
+
+@media screen and (min-width: 765px) {
+    .content {
+        min-height: calc(100vh - var(--navbar-height) - var(--breadcrumb-height) - var(--footer-horizontal-height));
+    }
+}
+
 .content .section {
     width: 100%;
     max-width: 60rem;

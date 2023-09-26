@@ -114,6 +114,12 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+:root {
+    --footer-horizontal-width: 765px;
+    --footer-horizontal-height: 22.375rem;
+}
+</style>
 <style scoped>
 .footer {
     font-size: medium;

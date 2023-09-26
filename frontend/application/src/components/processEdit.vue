@@ -1180,8 +1180,15 @@ export default {
     position: relative;
     gap: .5rem;
     width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
 }
+
+@media screen and (min-width: 765px) {
+    .content {
+        min-height: calc(100vh - var(--navbar-height) - var(--breadcrumb-height) - var(--footer-horizontal-height));
+    }
+}
+
 .content > div {
     width: 100%;
     max-width: 60rem;

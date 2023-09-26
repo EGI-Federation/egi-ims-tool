@@ -32,6 +32,11 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+:root {
+    --breadcrumb-height: 3rem;
+}
+</style>
 <style scoped>
 nav:has(> .breadcrumb) {
     display: flex;

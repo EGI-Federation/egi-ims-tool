@@ -261,6 +261,11 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+:root {
+    --navbar-height: 3.5rem;
+}
+</style>
 <style scoped>
 .navbar {
     flex-wrap: nowrap;
