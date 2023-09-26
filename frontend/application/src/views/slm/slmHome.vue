@@ -23,7 +23,6 @@ export default {
     },
     data() {
         return {
-            userInfo: store.state.oidc?.user,
             accessToken: store.state.oidc?.access_token,
             currentProcess: store.state.ims?.slm?.processInfo,  // Process
             approvedProcess: null,                              // Process

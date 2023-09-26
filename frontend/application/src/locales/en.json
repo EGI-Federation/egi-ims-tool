@@ -131,6 +131,8 @@
         "changed": "Changed",
         "approved": "Approved",
         "approvedOn": "approved on",
+        "implemented": "Implemented",
+        "implementedOn": "implemented on",
         "by": "by",
         "reviewFrequency": "Review frequency",
         "reviewNext": "Next review",
@@ -166,6 +168,7 @@
         "reject": "Reject",
         "review": "Review",
         "deprecate": "Deprecate",
+        "implement": "Implement",
         "saveChanges": "Save Changes",
         "ok": "OK",
         "continue": "Continue",
@@ -220,7 +223,9 @@
         "details": "Details",
         "reviews": "Reviews",
         "deprecateReason": "Reason for deprecation",
-        "deprecatedProcess": "This process was deprecated"
+        "deprecatedEntity": "This {entity} was deprecated",
+        "implementEntity": "Implement {entity}",
+        "implementationDetails": "Implementation details"
     },
     "role": {
         "processRoles": "These are the roles defined in the process",
@@ -232,7 +237,9 @@
         "assignedRole": "Assigned {processCode} role {roleName} to {userFullName}",
         "revokedRole": "Revoked {processCode} role {roleName} from {userFullName}",
         "includedInProcess": "Included {userFullName} in the {processCode} process",
-        "excludedFromProcess": "Excluded {userFullName} from the {processCode} process"
+        "excludedFromProcess": "Excluded {userFullName} from the {processCode} process",
+        "implementRoleChanges": "Please confirm that all changes required to fully support this version of the {processCode} role {roleName} have been implemented.",
+        "warnDeprecateRole": "You are about to deprecate this role. The role will be revoked from all users and will not be assignable to users anymore. Are you sure you want to continue?"
     },
     "slm": {
         "navbar" : {
@@ -251,7 +258,9 @@
         "versionHistory": "Version History",
         "showHistory": "Show History",
         "hideHistory": "Hide History",
-        "approvedOnly": "Approved versions only"
+        "filteredOnly": "{status} versions only",
+        "approved": "Approved",
+        "implemented": "Implemented"
     },
     "textbox": {
         "useMarkdown": "using markdown language",

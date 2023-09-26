@@ -63,7 +63,7 @@
              :placeholder-collect-message="$t('ims.deprecateReason')"
              :confirm-button="$t('ims.continue')" @confirm="deprecateProcess" />
     <version-history :bidirectional="bidirectional" :version-latest="latest" :version-to-show="current"
-                     :filter-to-status="Status.APPROVED.description"/>
+                     :filter-to-title="$t('history.approved')" :filter-to-status="Status.APPROVED.description"/>
 </div>
 </template>
 

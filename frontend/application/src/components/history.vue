@@ -12,7 +12,7 @@
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="filterHistory" v-model="applyFilter">
                 <label class="form-check-label" for="filterHistory">
-                    {{ $t('history.approvedOnly') }}
+                    {{ $t('history.filteredOnly', { status: filterToTitle }) }}
                 </label>
             </div>
             <hr/>
@@ -64,6 +64,7 @@ export default {
         },
         versionLatest: Object, // Latest version of entity, with history field filled in
         versionToShow: Object, // Latest version of entity, with history field filled in
+        filterToTitle: String,
         filterToStatus: String,
     },
     data() {
@@ -156,6 +157,8 @@ export default {
 }
 .filter .form-check {
     display: flex;
+    justify-content: center;
+    padding: 0 10px 0 0;
 }
 .filter input[type=checkbox] {
     margin-left: .5rem;

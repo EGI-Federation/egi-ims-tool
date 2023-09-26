@@ -189,6 +189,8 @@ export const store = createStore({
                     info.processCode = 'SLM';
                     store.commit("updateRolesByProcess", info);
                     state.slm.error = info.error;
+                    if(info.roles?.size > 0)
+                        state.slm.roleInfo = info.roles.values().next().value;
                 },
                 slmUsers(state, info) {
                     info.processCode = 'SLM';
@@ -202,6 +204,7 @@ export const store = createStore({
                 },
                 clearState(state, newLocale) {
                     state.slm.processInfo = null;
+                    state.slm.roleInfo = null;
                 },
             },
             actions: {
