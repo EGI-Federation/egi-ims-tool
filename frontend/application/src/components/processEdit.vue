@@ -1,6 +1,6 @@
 <template>
-<div class="d-flex flex-nowrap content">
-    <div class="d-flex flex-nowrap">
+<div class="content">
+    <div>
         <form class="needs-validation" novalidate ref="processForm">
         <div class="process">
             <process-header ref="processHeader" :edit-mode="true" :info="info" :bidirectional="bidirectional"
@@ -1183,7 +1183,6 @@ export default {
     position: relative;
     gap: .5rem;
     width: 100%;
-    justify-content: flex-start;
 }
 
 @media screen and (min-width: 765px) {
@@ -1201,12 +1200,12 @@ export default {
     margin: 0 auto;
     position: relative;
 }
-.process .details {
+.details {
     text-align: left;
     padding-left: 1rem;
     padding-right: 1rem;
 }
-.process .details h3 {
+.details h3 {
     border-bottom: 1px solid #e9ecef;
 }
 .details .frequency {
