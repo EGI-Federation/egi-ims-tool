@@ -1,7 +1,7 @@
 <template>
     <roles-loader process-code="SLM" :api-base-url="slmApi"/>
     <bread-crumb :segments="locationSegments"/>
-    <process-info :info="{ current: currentProcess, approved: approvedProcess }"
+    <process-info v-if="currentProcess" :info="{ current: currentProcess, approved: approvedProcess }"
                   :api-base-url="slmApi" process-code="SLM"/>
 </template>
 
