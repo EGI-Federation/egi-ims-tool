@@ -15,6 +15,7 @@ export default {
         processCode: String,
         apiBaseUrl: String,
     },
+    emits: ['loadedVoUsers', 'loadedProcessUsers', 'loadedUsersWithRoles'],
     data() {
         return {
             accessToken: store.state.oidc.access_token,
@@ -37,18 +38,21 @@ export default {
         const uvResult = getUsers(this.accessToken, null, false, this.$props.apiBaseUrl);
         uvResult.load().then(() => {
             storeUsers('updateVoUsers', uvResult);
+            this.$emit('loadedVoUsers');
         });
 
         // Fetch the users participating in this process from the API
         const upResult = getUsers(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
         upResult.load().then(() => {
             storeUsers('ims/updateProcessUsers', upResult);
+            this.$emit('loadedProcessUsers');
         });
 
         // Fetch the users with roles in this process from the API
         const urResult = getUsersWithRole(this.accessToken, this.$props.processCode, null, this.$props.apiBaseUrl);
         urResult.load().then(() => {
             storeUsersByRole(urResult);
+            this.$emit('loadedUsersWithRoles');
         });
     },
 }
