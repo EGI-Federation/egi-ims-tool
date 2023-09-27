@@ -3,7 +3,7 @@
         <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
         <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="editRole">{{ $t('ims.edit') }}</button>
         <button v-if="!editMode && isLatest && !isImplemented && isProcessManager" type="button" class="btn btn-primary" @click="implementRole">{{ $t('ims.implement') }}</button>
-        <button v-if="!editMode && isLatest && isImplemented && isProcessManager" type="button" class="btn btn-danger" @click="deprecateRole">{{ $t('ims.deprecate') }}</button>
+        <button v-if="!editMode && isLatest && isImplemented && canDeprecate && isProcessManager" type="button" class="btn btn-danger" @click="deprecateRole">{{ $t('ims.deprecate') }}</button>
         <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!roleChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
         <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
     </div>
@@ -62,6 +62,7 @@ export default {
         isDraft() { return isValid(this.current) && Status.DRAFT.description === this.current.status; },
         isImplemented() { return isValid(this.current) && Status.IMPLEMENTED.description === this.current.status; },
         isDeprecated() { return isValid(this.current) && Status.DEPRECATED.description === this.current.status; },
+        canDeprecate() { return this.$route.params.role !== Roles[this.$props.processCode].PROCESS_STAFF.description; },
         roles() { return store.state.temp.roles; },
         assignees() {
             let roleSymbol = null;
