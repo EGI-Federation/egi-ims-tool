@@ -42,7 +42,9 @@
         "kpis": "Key Performance Indicators",
         "reports": "Reports",
         "settings": "Settings",
-        "logout": "Sign Out"
+        "logout": "Sign Out",
+        "lowAssurance": "Level of Assurance is low",
+        "highAssurance": "Level of Assurance is substantial"
     },
     "footer": {
         "termsUse": "Terms of Use",
@@ -104,7 +106,7 @@
         "SPM": "Service Portfolio Management",
         "SRM": "Service Reporting Management",
         "needAuth": "To access the EGI Integrated Management System you need to authenticate.",
-        "clickAuth": "Click the EGI Check-in logo below to sign in using with an identity from your home organisation.",
+        "clickAuth": "Click the EGI Check-in logo below to sign in with an identity from your home organisation.",
         "authCheckin": "Login with EGI Check-in",
         "pleaseNote": "Please note",
         "voMember": "You must be a member of the EGI Tools virtual organisation (VO) to access this system.",
@@ -179,7 +181,7 @@
         "reviewFreq": "Review frequency",
         "nextReview": "Next review on",
         "linkProcessDiagram": "Link to process diagram",
-        "invalidProcessChange": "Please describe the changes you did to the process configuration.",
+        "invalidEntityChange": "Please describe the changes you did to the {entity}.",
         "edit": "Edit",
         "remove": "Remove",
         "addRequirement": "Add Requirement",
@@ -238,6 +240,7 @@
         "revokedRole": "Revoked {processCode} role {roleName} from {userFullName}",
         "includedInProcess": "Included {userFullName} in the {processCode} process",
         "excludedFromProcess": "Excluded {userFullName} from the {processCode} process",
+        "tasksLabel": "Describe the tasks of users holding this role",
         "implementRoleChanges": "Please confirm that all changes required to fully support this version of the {processCode} role {roleName} have been implemented.",
         "warnDeprecateRole": "You are about to deprecate this role. The role will be revoked from all users and will not be assignable to users anymore. Are you sure you want to continue?"
     },

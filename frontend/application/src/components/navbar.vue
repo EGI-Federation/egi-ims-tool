@@ -130,7 +130,7 @@
                     <i class="bi bi-bell"/>
                 </a>
             </div>
-            <div class="d-flex flex-nowrap user-info">
+            <div class="d-flex flex-nowrap user-info" id="userInfo">
                 <a class="bg-body-secondary dropdown" id="userProfile" role="button" aria-expanded="false"
                    data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" href="#">
                     <i class="bi bi-sliders"/>
@@ -142,7 +142,8 @@
                             <!-- Avatar -->
                             <div class="avatar me-3">
                                 <i class="bi bi-person-circle"/>
-                                <i :class="highAssurance ? 'bi bi-shield-fill-plus badge-assurance high' : 'bi bi-shield-fill-minus badge-assurance low'"></i>
+                                <i :class="highAssurance ? 'bi bi-shield-fill-plus badge-assurance high' : 'bi bi-shield-fill-minus badge-assurance low'"
+                                   data-bs-toggle='tooltip' :data-bs-title="$t(highAssurance ? 'navbar.highAssurance' : 'navbar.lowAssurance')" ></i>
                             </div>
                             <div>
                                 <p class="h5 mb-1 user-details">{{ userFullName }}</p>
@@ -172,6 +173,7 @@
 import { isValid } from '@/utils'
 import { Roles, hasRole } from "@/roles";
 import { store } from "@/store"
+import { Tooltip } from "bootstrap";
 import baMenu from "@/components/menus/baMenu.vue";
 import bdsMenu from "@/components/menus/bdsMenu.vue";
 import comMenu from "@/components/menus/comMenu.vue";
@@ -202,7 +204,7 @@ export default {
     components: {
         SrmMenu, SpmMenu, SuppmMenu, SacmMenu, RmMenu, RdmMenu, PmMenu, IsrmMenu, IsmMenu,
         CrmMenu, CsiMenu, ConfmMenu, ChmMenu, CapmMenu, PpmMenu, PpcMenu, PkmMenu, CpmMenu,
-        baMenu, bdsMenu, comMenu, faMenu, hrMenu, slmMenu },
+        baMenu, bdsMenu, comMenu, faMenu, hrMenu, slmMenu, Tooltip },
     props: {
         moduleName: String,
     },
@@ -212,6 +214,7 @@ export default {
             accessToken: store.state.oidc.access_token,
             userInfo: store.state.oidc.user,
             userEmail: store.state.oidc.user ? store.state.oidc.user.email : "",
+            tooltips: [],
         }
     },
     computed: {
@@ -255,8 +258,29 @@ export default {
                 this.$refs.governanceSubMenu.style.display = "none";
             if(isValid(this.$refs.projectsSubMenu))
                 this.$refs.projectsSubMenu.style.display = "none";
-        }
-    }
+        },
+        hideTooltips() {
+            for(let tooltip of this.tooltips)
+                tooltip.hide();
+        },
+    },
+    mounted() {
+        let t = this;
+        const profileDropdown = document.getElementById('userProfile')
+        profileDropdown.addEventListener('show.bs.dropdown', event => {
+            // User profile shown, init the LoA tooltip
+            const tooltipTriggers = document.querySelectorAll(`#userInfo [data-bs-toggle='tooltip']`);
+            t.tooltips = [...tooltipTriggers].map(tooltipTrigger =>
+                new Tooltip(tooltipTrigger, {
+                    delay: { "show": 1000, "hide": 100 },
+                    trigger: 'hover'
+                }));
+        });
+        profileDropdown.addEventListener('hide.bs.dropdown', event => {
+            // User profile hiding, cleanup LoA tooltip
+            t.hideTooltips();
+        });
+    },
 }
 </script>
 
