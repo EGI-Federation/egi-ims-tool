@@ -9,19 +9,20 @@
 <script>
 // @ is an alias to /src
 import { reactive } from "vue";
-import { isValid, findEntityWithStatus } from '@/utils'
-import { store } from "@/store"
+import {isValid, findEntityWithStatus, findEntityWithVersion} from '@/utils'
+import {store, storeProcessInfo} from "@/store"
 import { Roles, hasRole } from "@/roles";
 import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
 import ProcessEdit from "@/components/processEdit.vue";
+import {getProcessInfo} from "@/api/getProcessInfo";
 
 export default {
     name: 'slmConfig',
     components:  { RolesLoader, BreadCrumb, ProcessEdit },
     data() {
         return {
-            accessToken: store.state.oidc.access_token,
+            accessToken: store.state.oidc?.access_token,
             currentProcess: store.state.ims?.processInfo,   // Process
             approvedProcess: null,                          // Process
             editState: reactive({ hasUnsavedChanges: false }),
@@ -39,12 +40,18 @@ export default {
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
     },
     created() {
-        // Process information is already stored in ims/slm/processInfo
-        if(isValid(this.currentProcess)) {
-            // Make sure we know which is the approved version (if any)
-            this.approvedProcess = findEntityWithStatus(this.currentProcess, "APPROVED");
-            console.log("Editing SLM process info v" + this.currentProcess.version);
-        }
+        // Fetch the process information from the API
+        const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+        piResult.load().then(() => {
+            storeProcessInfo(piResult);
+
+            this.currentProcess = store.state.ims.processInfo;
+            if(isValid(this.currentProcess)) {
+                // Make sure we know which is the approved version (if any)
+                this.approvedProcess = findEntityWithStatus(this.currentProcess, "APPROVED");
+                console.log("Editing SLM process v" + this.currentProcess.version);
+            }
+        });
     },
     mounted() {
         if(!this.isProcessOwner && !this.isProcessManager)

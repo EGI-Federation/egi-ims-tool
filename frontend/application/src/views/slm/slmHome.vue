@@ -23,8 +23,8 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentProcess: store.state.ims?.slm?.processInfo,  // Process
-            approvedProcess: null,                              // Process
+            currentProcess: store.state.ims?.processInfo,  // Process
+            approvedProcess: null,                         // Process
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM") },
@@ -42,7 +42,6 @@ export default {
         piResult.load().then(() => {
             storeProcessInfo(piResult);
 
-            // Process information is already stored in ims/slm/processInfo
             let current = store.state.ims.processInfo;
             if(isValid(current)) {
                 // Make sure we know which is the approved version (if any)
@@ -58,7 +57,7 @@ export default {
                         console.log(`Cannot find SLM process v${requested}`);
                 }
 
-                console.log("Showing SLM process info v" + current.version);
+                console.log("Showing SLM process v" + current.version);
             }
             this.currentProcess = current;
         });
