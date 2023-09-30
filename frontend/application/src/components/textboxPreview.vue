@@ -7,7 +7,6 @@
         <textarea ref="textarea" class="form-control textarea" id="processGoals"
                   :rows="rows" :required="required" :maxlength="maxLength ? maxLength : (1024*1024*10).toString()"
                   v-model="textarea"/>
-        <div class="sizer" ref="sizer">&nbsp;</div>
         <div v-if="showPreview" class="preview">
             <vue3-markdown-it :source='textarea'/>
         </div>
@@ -40,6 +39,10 @@ export default {
             type: Boolean,
             default: false
         },
+        preview: {
+            type: Boolean,
+            default: false
+        },
         required: {
             type: Boolean,
             default: false
@@ -51,15 +54,14 @@ export default {
     },
     data() {
         return {
-            preview: false,
-            observer: null,
+            previewVisible: this.$props.preview,
             overhead: 30,
         }
     },
     computed: {
         showPreview: {
-            get() { return this.preview; },
-            set(value) { this.preview = value; }
+            get() { return this.previewVisible; },
+            set(value) { this.previewVisible = value; }
         },
         textarea: {
             get() { return this.$props.text.text; },
@@ -69,39 +71,11 @@ export default {
     methods: {
         togglePreview() {
             this.showPreview = !this.showPreview;
-
-            const sizer = this.$refs.sizer;
-            const taElement = this.$refs['textarea'];
-            if(!isValid(taElement) || !isValid(sizer))
-                return;
-
-            sizer.style.width = this.showPreview ? "50%!important" : "100%";
-
-            const delayedSizeAdjust = setTimeout(function() {
-                // Resize width of floating textarea to be half/full row
-                const sizerSize = sizer.getBoundingClientRect();
-                taElement.style.width = sizerSize.width + "px";
-                clearTimeout(delayedSizeAdjust);
-            }, 100);
+            if(this.showPreview)
+                this.$refs.textarea. style.width = "calc((100% - .5rem) / 2)";
+            else
+                this.$refs.textarea. style.width = "100%";
         },
-        onResize() {
-            const ta = this.$refs.textarea;
-            if(!isValid(ta))
-                return;
-
-            const taSize = ta.getBoundingClientRect();
-            this.$refs['row'].style.height = taSize.height + "px";
-        },
-    },
-    mounted() {
-        // Watch resize of text area
-        this.observer = new ResizeObserver(this.onResize);
-        this.observer.observe(this.$refs.textarea);
-    },
-    beforeDestroy() {
-        // Cleanup
-        if(isValid(this.observer))
-            this.observer.disconnect();
     },
 }
 </script>
@@ -118,14 +92,10 @@ export default {
     background-color: #f8f9fa;
 }
 .textarea {
-    position: absolute;
-    z-index: 1;
-}
-.sizer {
-    width: 100%;
-    height: 100%;
+    min-width: 15rem;
 }
 .preview {
+    width: calc((100% - .5rem) / 2);
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
