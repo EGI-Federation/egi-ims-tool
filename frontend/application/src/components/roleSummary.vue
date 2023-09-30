@@ -12,7 +12,7 @@
                 <div>{{ assigneeNames }}</div>
             </div>
         </div>
-        <div v-if="isProcessManager || isProcessOwner" class="dropdown">
+        <div v-if="assignable && (isProcessManager || isProcessOwner)" class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ $t('role.assign') }}
             </button>
@@ -41,7 +41,7 @@
 <script>
 // @ is an alias to /src
 import MarkdownIt from "markdown-it";
-import { isValid, statusPill, userNames } from "@/utils";
+import {findEntityWithStatus, isValid, statusPill, userNames} from "@/utils";
 import { Roles, hasRole } from "@/roles";
 import { store, storeUsers, storeUsersByRole } from "@/store";
 import { assignRole } from "@/api/assignRole";
@@ -89,6 +89,10 @@ export default {
             }
 
             return isValid(users) ? users : new Map();
+        },
+        assignable() {
+            let implementedRole = findEntityWithStatus(this.$props.role, "IMPLEMENTED");
+            return isValid(implementedRole);
         },
         assignees() {
             const roleSymbol = this.$props.role.role;
@@ -204,7 +208,7 @@ export default {
                     }
                     else {
                         // Fetch the users participating in this process from the API
-                        const upResult = getUsers(this.accessToken, processCode, true, this.$props.apiBaseUrl);
+                        const upResult = getUsers(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                         upResult.load().then(() => {
                             storeUsers('ims/updateProcessUsers', upResult);
                         });
@@ -234,7 +238,7 @@ export default {
                     }
                     else {
                         // Fetch the users participating in this process from the API
-                        const upResult = getUsers(this.accessToken, processCode, true, this.$props.apiBaseUrl);
+                        const upResult = getUsers(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                         upResult.load().then(() => {
                             storeUsers('ims/updateProcessUsers', upResult);
                         });
