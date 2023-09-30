@@ -1,7 +1,7 @@
 <template>
     <roles-loader process-code="SLM" :api-base-url="slmApi"/>
     <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
-    <role-info :info="{ current: currentRole, implemented: implementedRole }"
+    <role-info v-if="currentRole" :info="{ current: currentRole, implemented: implementedRole }"
                :api-base-url="slmApi" process-code="SLM"/>
 </template>
 
@@ -44,7 +44,6 @@ export default {
         prResult.load().then(() => {
             storeProcessRoles(prResult);
 
-            // Role information is already stored in ims/slm/roleInfo
             let current = store.state.ims.roleInfo;
             if(isValid(current)) {
                 // Make sure we know which is the implemented version (if any)

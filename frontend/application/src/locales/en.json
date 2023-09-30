@@ -211,7 +211,7 @@
         "action": "Action",
         "error": "Error",
         "success": "Success",
-        "newProcessVersion": "New version of the process was created",
+        "newEntityVersion": "New version of the {entity} was created",
         "requestedProcessApproval": "Requested approval of the process changes",
         "approveProcessChange": "You are about to approve the changes to the process. You can also provide some feedback with your approval.",
         "rejectProcessChange": "You are about to reject the changes to the process. Please provide a reason for rejection.",

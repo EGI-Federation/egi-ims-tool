@@ -2,15 +2,15 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const updateProcessInfo = function(accessToken, processCode, processInfo, baseUrl) {
+export const updateRole = function(accessToken, processCode, roleInfo, baseUrl) {
     const response = ref(null);
     const error = ref(null);
 
     const update = async function() {
 
         try {
-            const url = baseUrl + '/process';
-            let data = await axios.put(url, processInfo,{
+            const url = baseUrl + "/role";
+            let data = await axios.put(url, roleInfo,{
                 headers: {
                     "Content-Type": 'application/json',
                     Accept: 'application/json',
@@ -26,7 +26,7 @@ export const updateProcessInfo = function(accessToken, processCode, processInfo,
         }
         catch(err) {
             error.value = err.message;
-            console.error("Error updating " + processCode + " process info");
+            console.error(`Error updating ${processCode}.${roleInfo.role.description} role definition`);
         }
     }
 

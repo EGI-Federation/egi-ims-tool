@@ -25,7 +25,7 @@ export default {
     components: { ProcessEdit, RolesLoader, BreadCrumb, RoleSummary },
     data() {
         return {
-            accessToken: store.state.oidc.access_token,
+            accessToken: store.state.oidc?.access_token,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM"), link: "/slm" },
