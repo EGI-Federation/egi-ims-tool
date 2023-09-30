@@ -234,7 +234,7 @@ import { isValid, strEqual, deepClone, userNames, scrollTo } from '@/utils'
 import { findUserWithEmail } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
 import { getProcessInfo } from "@/api/getProcessInfo";
-import { updateProcessInfo } from "@/api/updateProcessInfo";
+import { updateProcess } from "@/api/updateProcess";
 import MarkdownIt from 'markdown-it';
 import ProcessHeader from "@/components/processHeader.vue"
 import TextboxWithPreview from "@/components/textboxPreview.vue"
@@ -1056,20 +1056,21 @@ export default {
 
                     // Call API to update the process information
                     let t = this;
-                    const piResult = updateProcessInfo(this.accessToken, this.$props.processCode, this.processInfo, this.$props.apiBaseUrl);
+                    const piResult = updateProcess(this.accessToken, this.$props.processCode, this.processInfo, this.$props.apiBaseUrl);
                     piResult.update().then(() => {
                         if(isValid(piResult.error?.value))
                             t.$root.$refs.toasts.showError(t.$t('ims.error'), piResult.error.value);
                         else {
-                            console.log(`Created new version of ${this.$props.processCode} process info`);
-                            t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.newProcessVersion'));
+                            console.log(`Created new version of ${t.$props.processCode} process info`);
+                            t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
+                                                             t.$t('ims.newEntityVersion', { entity: t.$t('ims.process').toLowerCase() }));
 
                             // Fetch the process information from the API to include the added version
-                            const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
+                            const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true, t.$props.apiBaseUrl);
                             piResult.load().then(() => {
                                 storeProcessInfo(piResult);
                                 t.forceCancel = true;
-                                t.$router.push(this.returnToRoute);
+                                t.$router.push(t.returnToRoute);
                             });
                         }
                     });
