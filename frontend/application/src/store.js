@@ -193,7 +193,6 @@ export const store = createStore({
                     state.error = info.error;
                     if(info.roles?.size > 0) {
                         const roleInfo = info.roles.values().next().value;
-                        console.log(`Store ${info.processCode} role ${roleInfo.role} v${roleInfo.version}`);
                         state.roleInfo = roleInfo;
                     }
                 },

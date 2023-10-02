@@ -10,8 +10,12 @@ export const markProcessReadyForApproval = function(accessToken, processCode, us
 
         try {
             const url = baseUrl + '/process/readyforapproval';
-            let data = await axios.patch(url, user,{
-                headers: {
+            let data = await axios.patch(url,
+                {
+                    changeBy: user
+                },
+                {
+                    headers: {
                     "Content-Type": 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`

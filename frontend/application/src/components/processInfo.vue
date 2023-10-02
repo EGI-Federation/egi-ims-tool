@@ -196,6 +196,9 @@ export default {
             }
             return i;
         },
+        returnToRoute() {
+            return `/${this.processCode.toLowerCase()}`;
+        },
     },
     methods: {
         showDetails(event) {
@@ -213,13 +216,14 @@ export default {
             event.stopPropagation();
         },
         configureProcess() {
-            this.$router.push(`/${this.$props.processCode.toLowerCase()}/config`);
+            this.$router.push(this.returnToRoute + '/config');
         },
         askForApproval() {
             // Call API to ask for process approval
             let t = this;
             let me = findUserWithEmail(this.processCode, this.myEmail);
-            const prfaResult = markProcessReadyForApproval(this.accessToken, this.processCode, me, this.$props.apiBaseUrl);
+            const prfaResult = markProcessReadyForApproval(this.accessToken, this.processCode, me,
+                                                           this.$props.apiBaseUrl);
             prfaResult.request().then(() => {
                 if(isValid(prfaResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), prfaResult.error.value);
@@ -228,13 +232,14 @@ export default {
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.requestedProcessApproval'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, this.processCode, true, this.$props.apiBaseUrl);
+                    const piResult = getProcessInfo(this.accessToken, this.processCode, true,
+                                                    this.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(`/${this.processCode.toLowerCase()}?v=${pi.version}`);
+                            t.$router.push(this.returnToRoute + `?v=${pi.version}`);
                     });
                 }
             });
@@ -243,22 +248,25 @@ export default {
             // Call API to approve/reject process changes
             let t = this;
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            const paResult = approveProcess(this.accessToken, this.$props.processCode, approve, message, me, this.$props.apiBaseUrl);
+            const paResult = approveProcess(this.accessToken, this.$props.processCode, approve, me, message,
+                                            this.$props.apiBaseUrl);
             paResult.request().then(() => {
                 if(isValid(paResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), paResult.error.value);
                 else {
                     console.log(`${approve ? 'Approved' : 'Rejected'} ${this.$props.processCode} process changes`);
-                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t(approve ? 'ims.approvedProcess' : 'ims.rejectedProcess'));
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
+                                                     t.$t(approve ? 'ims.approvedProcess' : 'ims.rejectedProcess'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
+                    const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true,
+                                                    this.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(`/${this.$props.processCode.toLowerCase()}?v=${pi.version}`);
+                            t.$router.push(this.returnToRoute + `?v=${pi.version}`);
                     });
                 }
             });
@@ -282,29 +290,32 @@ export default {
             // Call API to deprecate process
             let t = this;
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            const pdResult = deprecateProcess(this.accessToken, this.$props.processCode, me, this.$props.apiBaseUrl);
+            const pdResult = deprecateProcess(this.accessToken, this.$props.processCode, me, message,
+                                              this.$props.apiBaseUrl);
             pdResult.request().then(() => {
                 if(isValid(pdResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), pdResult.error.value);
                 else {
-                    console.log(`Deprecated the ${this.$props.processCode.toLowerCase()} process`);
+                    console.log(`Deprecated the ${this.$props.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                     t.$t('ims.deprecatedEntity', { entity: t.$t('ims.process').toLowerCase() } ));
+                                                     t.$t('ims.deprecatedEntity',
+                                                         { entity: t.$t('ims.process').toLowerCase() } ));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
+                    const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true,
+                                                    this.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
 
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(`/${this.$props.processCode.toLowerCase()}?v=${pi.version}`);
+                            t.$router.push(this.returnToRoute + `?v=${pi.version}`);
                     });
                 }
             });
         },
         reviewProcess() {
-            this.$router.push(`/${this.$props.processCode.toLowerCase()}/review`);
+            this.$router.push(this.returnToRoute + '/review');
         },
     },
     mounted() {
