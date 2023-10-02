@@ -236,7 +236,6 @@ export default {
                                                     this.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
-
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
                             t.$router.push(this.returnToRoute + `?v=${pi.version}`);
@@ -263,7 +262,6 @@ export default {
                                                     this.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
-
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
                             t.$router.push(this.returnToRoute + `?v=${pi.version}`);
@@ -306,7 +304,6 @@ export default {
                                                     this.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
-
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
                             t.$router.push(this.returnToRoute + `?v=${pi.version}`);

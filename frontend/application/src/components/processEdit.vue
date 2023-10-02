@@ -11,7 +11,8 @@
                     <label for="changeDesc" class="form-label">{{ $t('ims.changeDesc') }}:</label>
                     <textarea ref="textarea" class="form-control textarea" id="changeDesc" rows=3
                               v-model="changeDescription" :maxlength=1024 required/>
-                    <div class="invalid-feedback">{{ $t('ims.invalidEntityChange', { entity: $t('ims.process').toLowerCase() }) }}</div>
+                    <div class="invalid-feedback">{{ $t('ims.invalidEntityChange',
+                                                        { entity: $t('ims.process').toLowerCase() }) }}</div>
                 </div>
 
                 <h3>{{ $t('ims.general') }}</h3>
@@ -21,13 +22,24 @@
                     <div class="input-group flex-column flex-nowrap frequency">
                         <label for="reviewFrequency" class="form-label">{{ $t('ims.reviewFreq') }}:</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="reviewFrequency" v-model="reviewFrequency" required>
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <input type="text" class="form-control" id="reviewFrequency"
+                                   v-model="reviewFrequency" required>
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ reviewFrequencyUnitName }}</button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('day', $event)">{{ $t('ims.days') }}</a></li>
-                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('month', $event)">{{ $t('ims.months') }}</a></li>
-                                <li><a class="dropdown-item" href="#" @click="updateReviewFrequencyUnit('year', $event)">{{ $t('ims.years') }}</a></li>
+                                <li><a class="dropdown-item" href="#"
+                                       @click="updateReviewFrequencyUnit('day', $event)">
+                                    {{ $t('ims.days') }}
+                                </a></li>
+                                <li><a class="dropdown-item" href="#"
+                                       @click="updateReviewFrequencyUnit('month', $event)">
+                                    {{ $t('ims.months') }}
+                                </a></li>
+                                <li><a class="dropdown-item" href="#"
+                                       @click="updateReviewFrequencyUnit('year', $event)">
+                                    {{ $t('ims.years') }}
+                                </a></li>
                             </ul>
                         </div>
                     </div>
@@ -38,18 +50,21 @@
                             <VueDatePicker v-if="reviewFrequencyUnit === 'day'" id="nextReview" v-model="nextReview"
                                            text-input auto-apply class="focus-ring" required :enable-time-picker="false"
                                            month-name-format="long" :locale="i18n.global.locale"
-                                           :action-row="{ showSelect: false, showCancel: false, showNow: false, showPreview: false }"
+                                           :action-row="{ showSelect: false, showCancel: false,
+                                                          showNow: false, showPreview: false }"
                                            :clearable="false" placeholder="dd/MM/yyyy" format="dd/MM/yyyy"/>
 
                             <VueDatePicker v-if="reviewFrequencyUnit === 'month'" id="nextReview" v-model="nextReview"
                                            month-picker text-input auto-apply
                                            month-name-format="long" :locale="i18n.global.locale"
-                                           :action-row="{ showSelect: false, showCancel: false, showNow: false, showPreview: false }"
+                                           :action-row="{ showSelect: false, showCancel: false,
+                                                          showNow: false, showPreview: false }"
                                            :clearable="false" placeholder="MM/yyyy"/>
 
                             <VueDatePicker v-if="reviewFrequencyUnit === 'year'" id="nextReview" v-model="nextReview"
                                            year-picker text-input auto-apply :locale="i18n.global.locale"
-                                           :action-row="{ showSelect: false, showCancel: false, showNow: false, showPreview: false }"
+                                           :action-row="{ showSelect: false, showCancel: false,
+                                                          showNow: false, showPreview: false }"
                                            :clearable="false" placeholder="yyyy"/>
                         </div>
                     </div>
@@ -84,30 +99,40 @@
                                     @edit="editRequirement" @remove="removeRequirement"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
                     <div class="d-flex flex-nowrap justify-content-end">
-                        <button v-if="!addingRequirement && !editingRequirement" type="button" class="btn btn-primary" @click="addRequirement">{{ $t('ims.addRequirement') }}</button>
+                        <button v-if="!addingRequirement && !editingRequirement"
+                                type="button" class="btn btn-primary" @click="addRequirement">
+                            {{ $t('ims.addRequirement') }}
+                        </button>
                     </div>
                     <!-- Requirement edit start -->
-                    <form v-if="addingRequirement || editingRequirement" class="needs-validation" novalidate ref="reqForm">
-                        <h5 id="requirement-title">{{ $t(addingRequirement ? 'ims.newRequirement' : 'ims.editRequirement') }}</h5>
+                    <form v-if="addingRequirement || editingRequirement"
+                          class="needs-validation" novalidate ref="reqForm">
+                        <h5 id="requirement-title">
+                            {{ $t(addingRequirement ? 'ims.newRequirement' : 'ims.editRequirement') }}
+                        </h5>
                         <div class="input-group pt-3 mb-3 flex-nowrap gap-2 fade-top-border">
                             <!-- Code -->
                             <div class="text-field code">
                                 <label for="reqCode" class="form-label">{{ $t('ims.code') }}:</label>
-                                <input type="text" class="form-control" id="reqCode" v-model="requirementCode" maxlength="10">
+                                <input type="text" class="form-control" id="reqCode"
+                                       v-model="requirementCode" maxlength="10">
                             </div>
                             <!-- Responsible -->
                             <div class="input-group flex-column flex-nowrap responsible">
                                 <label for="reqResponsibles" class="form-label">{{ $t('ims.responsible') }}:</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="reqResponsibles" v-model="requirementResponsibles" readonly>
+                                    <input type="text" class="form-control" id="reqResponsibles"
+                                           v-model="requirementResponsibles" readonly>
                                     <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                            aria-expanded="false">
                                         {{ $t('ims.users') }}
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end user-list">
                                         <li v-for="[checkinUserId, user] in users" class="dropdown-item check-item">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" :id="checkinUserId" @change="toggleResponsible($event)">
+                                                <input class="form-check-input" type="checkbox"
+                                                       :id="checkinUserId" @change="toggleResponsible($event)">
                                                 <label class="form-check-label" :for="checkinUserId">
                                                     {{ user.fullName }}
                                                 </label>
@@ -118,14 +143,19 @@
                             </div>
                         </div>
                         <!-- Description -->
-                        <textbox-with-preview class="mt-1" :label="$t('ims.describeRequirement')" :text="reqDescriptionEditor" :rows="5" :max-length=2048 required/>
+                        <textbox-with-preview class="mt-1" :label="$t('ims.describeRequirement')"
+                                              :text="reqDescriptionEditor" :rows="5" :max-length=2048 required/>
                         <!-- Source -->
-                        <textbox-with-preview class="mt-1" :label="$t('ims.indicateSource')" :text="reqSourceEditor" :rows="3" :max-length=1024 required/>
+                        <textbox-with-preview class="mt-1" :label="$t('ims.indicateSource')"
+                                              :text="reqSourceEditor" :rows="3" :max-length=1024 required/>
                         <div class="d-flex flex-nowrap justify-content-end gap-1">
-                            <button type="submit" class="btn btn-primary" @click="saveRequirement($event)" :disabled="!requirementChanged">
+                            <button type="submit" class="btn btn-primary"
+                                    @click="saveRequirement($event)" :disabled="!requirementChanged">
                                 {{ $t(addingRequirement ? 'ims.addRequirement' : 'ims.saveRequirement') }}
                             </button>
-                            <button type="button" class="btn btn-secondary" @click="cancelRequirementEditing">{{ $t('ims.cancel') }}</button>
+                            <button type="button" class="btn btn-secondary" @click="cancelRequirementEditing">
+                                {{ $t('ims.cancel') }}
+                            </button>
                         </div>
                     </form>
                     <!-- Requirement edit end -->
@@ -139,57 +169,86 @@
                                    @edit="editInterface" @remove="removeInterface"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
                     <div class="d-flex flex-nowrap justify-content-end">
-                        <button v-if="!addingInterface && !editingInterface" type="button" class="btn btn-primary" @click="addInterface">{{ $t('ims.addInterface') }}</button>
+                        <button v-if="!addingInterface && !editingInterface" type="button"
+                                class="btn btn-primary" @click="addInterface">
+                            {{ $t('ims.addInterface') }}
+                        </button>
                     </div>
                     <!-- Interface edit start -->
                     <form v-if="addingInterface || editingInterface" class="needs-validation" novalidate ref="itfForm">
-                        <h5 id="interface-title">{{ $t(addingInterface ? 'ims.newInterface' : 'ims.editInterface') }}</h5>
+                        <h5 id="interface-title">
+                            {{ $t(addingInterface ? 'ims.newInterface' : 'ims.editInterface') }}
+                        </h5>
                         <div class="input-group pt-3 mb-3 flex-nowrap gap-2 fade-top-border">
                             <!-- Direction -->
                             <div class="input-group flex-column flex-nowrap direction">
                                 <label for="direction" class="form-label">{{ $t('ims.type') }}:</label>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
                                         {{ interfaceDirection }}</button>
                                     <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#" @click="updateInterfaceDirection('In', $event)">{{ $t('ims.in') }}</a></li>
-                                        <li><a class="dropdown-item" href="#" @click="updateInterfaceDirection('Out', $event)">{{ $t('ims.out') }}</a></li>
+                                        <li><a class="dropdown-item" href="#"
+                                               @click="updateInterfaceDirection('In', $event)">
+                                            {{ $t('ims.in') }}
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#"
+                                               @click="updateInterfaceDirection('Out', $event)">
+                                            {{ $t('ims.out') }}
+                                        </a></li>
                                     </ul>
                                 </div>
                             </div>
                             <!-- Interfaces with -->
                             <div class="input-group flex-column flex-nowrap interfaces-with">
-                                <label for="interfaceWith" class="form-label">{{ interfaceDirectionPrefix }}:</label>
+                                <label for="interfaceWith" class="form-label">
+                                    {{ interfaceDirectionPrefix }}:
+                                </label>
                                 <div class="input-group dropup">
-                                    <input type="text" class="form-control" id="interfaceWith" v-model="interfaceWith" readonly>
+                                    <input type="text" class="form-control" id="interfaceWith"
+                                           v-model="interfaceWith" readonly>
                                     <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                            data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                            data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                                            aria-expanded="false">
                                         {{ $t('ims.interfaces') }}
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li class="dropdown-item check-item">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="Internal" @change="toggleInterface($event)">
-                                                <label class="form-check-label" for="Internal">{{ $t('ims.internal') }}</label>
+                                                <input class="form-check-input" type="checkbox"
+                                                       id="Internal" @change="toggleInterface($event)">
+                                                <label class="form-check-label" for="Internal">
+                                                    {{ $t('ims.internal') }}
+                                                </label>
                                             </div>
                                         </li>
                                         <li class="dropdown-item check-item">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="External" @change="toggleInterface($event)">
-                                                <label class="form-check-label" for="External">{{ $t('ims.external') }}</label>
+                                                <input class="form-check-input" type="checkbox"
+                                                       id="External" @change="toggleInterface($event)">
+                                                <label class="form-check-label" for="External">
+                                                    {{ $t('ims.external') }}
+                                                </label>
                                             </div>
                                         </li>
                                         <li class="dropdown-item check-item">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="Customer" @change="toggleInterface($event)">
-                                                <label class="form-check-label" for="Customer">{{ $t('ims.customer') }}</label>
+                                                <input class="form-check-input" type="checkbox"
+                                                       id="Customer" @change="toggleInterface($event)">
+                                                <label class="form-check-label" for="Customer">
+                                                    {{ $t('ims.customer') }}
+                                                </label>
                                             </div>
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li v-for="[pcode, processName] in itfConnections" class="dropdown-item check-item">
+                                        <li v-for="[pcode, processName] in itfConnections"
+                                            class="dropdown-item check-item">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" :id="pcode" @change="toggleInterface($event)">
-                                                <label class="form-check-label" :for="pcode">{{ processName }}</label>
+                                                <input class="form-check-input" type="checkbox"
+                                                       :id="pcode" @change="toggleInterface($event)">
+                                                <label class="form-check-label" :for="pcode">
+                                                    {{ processName }}
+                                                </label>
                                             </div>
                                         </li>
                                     </ul>
@@ -197,14 +256,19 @@
                             </div>
                         </div>
                         <!-- Relevant material -->
-                        <textbox-with-preview class="mt-1" :label="$t('ims.provideRelevantMaterial')" :text="itfRelevantMaterialEditor" :rows="5" :max-length=2048 required/>
+                        <textbox-with-preview class="mt-1" :label="$t('ims.provideRelevantMaterial')"
+                                              :text="itfRelevantMaterialEditor" :rows="5" :max-length=2048 required/>
                         <!-- Source -->
-                        <textbox-with-preview class="mt-1" :label="$t('ims.describeInterface')" :text="itfDescriptionEditor" :rows="5" :max-length=2048 required/>
+                        <textbox-with-preview class="mt-1" :label="$t('ims.describeInterface')"
+                                              :text="itfDescriptionEditor" :rows="5" :max-length=2048 required/>
                         <div class="d-flex flex-nowrap justify-content-end gap-1">
-                            <button type="submit" class="btn btn-primary" @click="saveInterface($event)" :disabled="!interfaceChanged">
+                            <button type="submit" class="btn btn-primary"
+                                    @click="saveInterface($event)" :disabled="!interfaceChanged">
                                 {{ $t(addingInterface ? 'ims.addInterface' : 'ims.saveInterface') }}
                             </button>
-                            <button type="button" class="btn btn-secondary" @click="cancelInterfaceEditing">{{ $t('ims.cancel') }}</button>
+                            <button type="button" class="btn btn-secondary" @click="cancelInterfaceEditing">
+                                {{ $t('ims.cancel') }}
+                            </button>
                         </div>
                     </form>
                     <!-- Interface edit end -->
@@ -1056,17 +1120,20 @@ export default {
 
                     // Call API to update the process information
                     let t = this;
-                    const piResult = updateProcess(this.accessToken, this.$props.processCode, this.processInfo, this.$props.apiBaseUrl);
+                    const piResult = updateProcess(this.accessToken, this.$props.processCode, this.processInfo,
+                                                   this.$props.apiBaseUrl);
                     piResult.update().then(() => {
                         if(isValid(piResult.error?.value))
                             t.$root.$refs.toasts.showError(t.$t('ims.error'), piResult.error.value);
                         else {
                             console.log(`Created new version of ${t.$props.processCode} process info`);
                             t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                             t.$t('ims.newEntityVersion', { entity: t.$t('ims.process').toLowerCase() }));
+                                                             t.$t('ims.newEntityVersion',
+                                                                 { entity: t.$t('ims.process').toLowerCase() }));
 
                             // Fetch the process information from the API to include the added version
-                            const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true, t.$props.apiBaseUrl);
+                            const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
+                                                            t.$props.apiBaseUrl);
                             piResult.load().then(() => {
                                 storeProcessInfo(piResult);
                                 t.forceCancel = true;
