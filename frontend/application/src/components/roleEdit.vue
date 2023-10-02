@@ -11,7 +11,9 @@
                     <label for="changeDesc" class="form-label">{{ $t('ims.changeDesc') }}:</label>
                     <textarea ref="textarea" class="form-control textarea" id="changeDesc" rows=3
                               v-model="changeDescription" :maxlength=1024 required/>
-                    <div class="invalid-feedback">{{ $t('ims.invalidEntityChange', { entity: $t('ims.role').toLowerCase() }) }}</div>
+                    <div class="invalid-feedback">
+                        {{ $t('ims.invalidEntityChange', { entity: $t('ims.role').toLowerCase() }) }}
+                    </div>
                 </div>
 
                 <!-- Tasks -->
@@ -154,19 +156,20 @@ export default {
 
                     // Call API to update the role
                     let t = this;
-                    let ri = deepClone(this.roleInfo);
-                    ri.role = ri.role.description;
-                    const piResult = updateRole(this.accessToken, this.$props.processCode, ri, this.$props.apiBaseUrl);
+                    const piResult = updateRole(this.accessToken, this.$props.processCode, this.roleInfo,
+                                                this.$props.apiBaseUrl);
                     piResult.update().then(() => {
                         if(isValid(piResult.error?.value))
                             t.$root.$refs.toasts.showError(t.$t('ims.error'), piResult.error.value);
                         else {
                             console.log(`Created new version of role ${t.$props.processCode}.${t.$route.params.role}`);
                             t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                             t.$t('ims.newEntityVersion', { entity: t.$t('ims.role').toLowerCase() }));
+                                                             t.$t('ims.newEntityVersion',
+                                                                 { entity: t.$t('ims.role').toLowerCase() }));
 
                             // Fetch the role details from the API to include the added version
-                            const prResult = getRoles(t.accessToken, 'SLM', t.$route.params.role, t.$props.apiBaseUrl);
+                            const prResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
+                                                      t.$props.apiBaseUrl);
                             prResult.load().then(() => {
                                 storeProcessRoles(prResult);
                                 t.forceCancel = true;
