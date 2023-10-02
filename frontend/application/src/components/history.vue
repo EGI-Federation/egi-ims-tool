@@ -66,6 +66,7 @@ export default {
         versionToShow: Object, // Latest version of entity, with history field filled in
         filterToTitle: String,
         filterToStatus: String,
+        viewUrl: String,
     },
     data() {
         return {
@@ -104,7 +105,7 @@ export default {
             this.showHistory = false;
         },
         showVersion(version) {
-            this.$router.push({ name: 'slm-home', query: { v: version } })
+            this.$router.push(this.$props.viewUrl + `?v=${version}`)
         },
     },
 }

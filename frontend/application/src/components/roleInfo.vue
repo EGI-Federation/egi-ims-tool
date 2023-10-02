@@ -23,21 +23,25 @@
              :message="$t('role.implementRoleChanges', { processCode: processCode, roleName: roleName })"
              :placeholder-collect-message="$t('ims.implementationDetails')"
              :confirm-button="$t('ims.implement')" @confirm="implementRole" />
-    <version-history :bidirectional="bidirectional" :version-latest="latest" :version-to-show="current"
-                     :filter-to-title="$t('history.implemented')" :filter-to-status="Status.IMPLEMENTED.description"/>
+    <version-history :bidirectional="bidirectional" :view-url="`/slm/roles/${this.$route.params.role}`"
+                     :version-latest="latest" :version-to-show="current"
+                     :filter-to-title="$t('history.implemented')"
+                     :filter-to-status="Status.IMPLEMENTED.description"/>
 </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import { reactive } from 'vue';
-import { store, storeProcessInfo } from "@/store";
+import {store, storeProcessInfo, storeProcessRoles} from "@/store";
 import { Status, isValid, userNames } from '@/utils'
 import { findUserWithEmail } from "@/roles";
 import MarkdownIt from 'markdown-it';
 import RoleHeader from "@/components/roleHeader.vue"
 import VersionHistory from "@/components/history.vue"
 import Message from "@/components/message.vue";
+import {implementRole} from "@/api/implementRole";
+import {getRoles} from "@/api/getRoles";
 
 var mdRender = new MarkdownIt();
 
@@ -68,16 +72,41 @@ export default {
                 this.current.tasks :
                 this.$t('ims.notSet');
         },
+        returnToRoute() {
+            return `/${this.$props.processCode.toLowerCase()}/roles/${this.$route.params.role}`;
+        },
     },
     methods: {
         editRole() {
-            this.$router.push(`/${this.$props.processCode.toLowerCase()}/roles/${this.$route.params.role}/edit`);
+            this.$router.push(this.returnToRoute + "/edit");
         },
         confirmImplementRole() {
             this.$refs.implementRoleDialog.showModal();
         },
         implementRole(message) {
-            console.log("implement role: " + message);
+            // Call API to implement role
+            let t = this;
+            let me = findUserWithEmail(this.$props.processCode, this.myEmail);
+            const riResult = implementRole(this.accessToken, this.$props.processCode, this.$route.params.role,
+                                           me, message, this.$props.apiBaseUrl);
+            riResult.implement().then(() => {
+                if(isValid(riResult.error?.value))
+                    t.$root.$refs.toasts.showError(t.$t('ims.error'), riResult.error.value);
+                else {
+                    console.log(`Implemented role ${t.$props.processCode}.${t.$route.params.role}`);
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
+                                                     t.$t('ims.implementedEntity',
+                                                         { entity: t.$t('ims.role').toLowerCase() } ));
+
+                    // Fetch the role definition from the API to include the new status
+                    const rrResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
+                                              t.$props.apiBaseUrl);
+                    rrResult.load().then(() => {
+                        storeProcessRoles(rrResult);
+                        t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
+                    });
+                }
+            });
         },
         confirmDeprecateRole() {
             this.$refs.warnDeprecateRole.showModal();
@@ -91,18 +120,17 @@ export default {
             //     if(isValid(pdResult.error?.value))
             //         t.$root.$refs.toasts.showError(t.$t('ims.error'), pdResult.error.value);
             //     else {
-            //         console.log(`Deprecated the ${this.$props.processCode.toLowerCase()} role`);
+            //         console.log(`Deprecated the role ${this.$props.processCode}.${t.$route.params.role}`);
             //         t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-            //                                          t.$t('ims.deprecatedEntity', { entity: t.$t('ims.role').toLowerCase() } ));
+            //                                          t.$t('ims.deprecatedEntity',
+            //                                              { entity: t.$t('ims.role').toLowerCase() } ));
             //
-            //         // Fetch the process information from the API to include the new status
-            //         const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
-            //         piResult.load().then(() => {
-            //             storeProcessInfo(piResult);
-            //
-            //             const pi = piResult.processInfo.value;
-            //             if(isValid(pi))
-            //                 t.$router.push(`/${this.$props.processCode.toLowerCase()}?v=${pi.version}`);
+            //         // Fetch the role definition from the API to include the new status
+            //         const rrResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
+            //             t.$props.apiBaseUrl);
+            //         rrResult.load().then(() => {
+            //             storeProcessRoles(rrResult);
+            //             t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
             //         });
             //     }
             // });

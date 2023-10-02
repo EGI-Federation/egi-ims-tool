@@ -62,7 +62,8 @@
              :title="$t('ims.deprecate')" title-style="danger" :message="$t('ims.warnDeprecateProcess')"
              :placeholder-collect-message="$t('ims.deprecateReason')"
              :confirm-button="$t('ims.continue')" @confirm="deprecateProcess" />
-    <version-history :bidirectional="bidirectional" :version-latest="latest" :version-to-show="current"
+    <version-history :bidirectional="bidirectional" view-url="/slm"
+                     :version-latest="latest" :version-to-show="current"
                      :filter-to-title="$t('history.approved')" :filter-to-status="Status.APPROVED.description"/>
 </div>
 </template>
@@ -228,17 +229,17 @@ export default {
                 if(isValid(prfaResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), prfaResult.error.value);
                 else {
-                    console.log(`Requested approval of the ${this.processCode} process`);
+                    console.log(`Requested approval of the ${t.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.requestedProcessApproval'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, this.processCode, true,
-                                                    this.$props.apiBaseUrl);
+                    const piResult = getProcessInfo(t.accessToken, t.processCode, true,
+                                                    t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(this.returnToRoute + `?v=${pi.version}`);
+                            t.$router.push(t.returnToRoute + `?v=${pi.version}`);
                     });
                 }
             });
@@ -253,18 +254,18 @@ export default {
                 if(isValid(paResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), paResult.error.value);
                 else {
-                    console.log(`${approve ? 'Approved' : 'Rejected'} ${this.$props.processCode} process changes`);
+                    console.log(`${approve ? 'Approved' : 'Rejected'} ${t.$props.processCode} process changes`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                      t.$t(approve ? 'ims.approvedProcess' : 'ims.rejectedProcess'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true,
-                                                    this.$props.apiBaseUrl);
+                    const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
+                                                    t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(this.returnToRoute + `?v=${pi.version}`);
+                            t.$router.push(t.returnToRoute + `?v=${pi.version}`);
                     });
                 }
             });
@@ -294,19 +295,19 @@ export default {
                 if(isValid(pdResult.error?.value))
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), pdResult.error.value);
                 else {
-                    console.log(`Deprecated the ${this.$props.processCode} process`);
+                    console.log(`Deprecated the ${t.$props.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                      t.$t('ims.deprecatedEntity',
                                                          { entity: t.$t('ims.process').toLowerCase() } ));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(this.accessToken, this.$props.processCode, true,
-                                                    this.$props.apiBaseUrl);
+                    const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
+                                                    t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         storeProcessInfo(piResult);
                         const pi = piResult.processInfo.value;
                         if(isValid(pi))
-                            t.$router.push(this.returnToRoute + `?v=${pi.version}`);
+                            t.$router.push(t.returnToRoute + `?v=${pi.version}`);
                     });
                 }
             });
