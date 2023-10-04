@@ -297,8 +297,10 @@ export default {
                 else {
                     console.log(`Deprecated the ${t.$props.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                     t.$t('ims.deprecatedEntity',
-                                                         { entity: t.$t('ims.process').toLowerCase() } ));
+                                                     t.$t('ims.deprecatedEntity', {
+                                                         processCode: t.$props.processCode,
+                                                         type: t.$t('ims.process').toLowerCase(),
+                                                         entity: '' } ));
 
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,

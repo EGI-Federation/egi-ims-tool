@@ -32,5 +32,5 @@ export const revokeRole = function(accessToken, processCode, role, checkinUserId
         }
     }
 
-    return { response: response, error: error, revoke: revoke };
+    return { response: response, processCode: processCode, error: error, revoke: revoke };
 }

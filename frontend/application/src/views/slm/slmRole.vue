@@ -40,9 +40,9 @@ export default {
     },
     created() {
         // Fetch the role details from the API
-        const prResult = getRoles(this.accessToken, 'SLM', this.$route.params.role, this.slmApi);
-        prResult.load().then(() => {
-            storeProcessRoles(prResult);
+        const rrResult = getRoles(this.accessToken, 'SLM', this.$route.params.role, this.slmApi);
+        rrResult.load().then(() => {
+            storeProcessRoles(rrResult);
 
             let current = store.state.ims.roleInfo;
             if(isValid(current)) {
@@ -56,10 +56,10 @@ export default {
                     if(isValid(requestedVersion))
                         current = requestedVersion;
                     else
-                        console.log(`Cannot find SLM role ${this.$route.params.role} v${requested}`);
+                        console.log(`Cannot find role SLM.${this.$route.params.role} v${requested}`);
                 }
 
-                console.log(`Showing SLM role ${this.$route.params.role} v${current.version}`);
+                console.log(`Showing role SLM.${this.$route.params.role} v${current.version}`);
             }
             this.currentRole = current;
             this.$refs.breadCrumb.update(this.locationSegments);

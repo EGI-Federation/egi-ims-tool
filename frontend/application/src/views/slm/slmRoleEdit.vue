@@ -51,7 +51,7 @@ export default {
             if(isValid(this.currentRole)) {
                 // Make sure we know which is the implemented version (if any)
                 this.implementedRole = findEntityWithStatus(this.currentRole, "IMPLEMENTED");
-                console.log(`Editing SLM role ${this.$route.params.role} v${this.currentRole.version}`);
+                console.log(`Editing role SLM.${this.$route.params.role} v${this.currentRole.version}`);
             }
             this.$refs.breadCrumb.update(this.locationSegments);
         });

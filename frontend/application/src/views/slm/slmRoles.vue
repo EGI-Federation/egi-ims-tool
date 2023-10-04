@@ -49,9 +49,9 @@ export default {
     },
     created() {
         // Fetch the process roles from the API
-        const prResult = getRoles(this.accessToken, 'SLM', null, this.slmApi);
-        prResult.load().then(() => {
-            storeProcessRoles(prResult);
+        const rrResult = getRoles(this.accessToken, 'SLM', null, this.slmApi);
+        rrResult.load().then(() => {
+            storeProcessRoles(rrResult);
         });
     },
     mounted() {

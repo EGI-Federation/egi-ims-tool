@@ -2,7 +2,7 @@
     <div class="d-flex flex-nowrap flex-column operations">
         <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
         <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="editRole">{{ $t('ims.edit') }}</button>
-        <button v-if="!editMode && isLatest && !isImplemented && isProcessManager" type="button" class="btn btn-primary" @click="implementRole">{{ $t('ims.implement') }}</button>
+        <button v-if="!editMode && isLatest && isDraft && isProcessManager" type="button" class="btn btn-primary" @click="implementRole">{{ $t('ims.implement') }}</button>
         <button v-if="!editMode && isLatest && isImplemented && canDeprecate && isProcessManager" type="button" class="btn btn-danger" @click="deprecateRole">{{ $t('ims.deprecate') }}</button>
         <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!roleChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
         <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>

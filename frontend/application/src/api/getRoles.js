@@ -8,7 +8,7 @@ export const getRoles = function(accessToken, processCode, role, baseUrl) {
     const load = async function() {
 
         try {
-            const url = baseUrl + "/roles" + (role ? `?role=${role}` : '');
+            const url = baseUrl + "/role/definitions" + (role ? `?role=${role}` : '');
             let data = await axios.get(url, {
                 headers: {
                     Accept: 'application/json',

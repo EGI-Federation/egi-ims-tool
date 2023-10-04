@@ -33,15 +33,17 @@
 <script>
 // @ is an alias to /src
 import { reactive } from 'vue';
-import {store, storeProcessInfo, storeProcessRoles} from "@/store";
-import { Status, isValid, userNames } from '@/utils'
-import { findUserWithEmail } from "@/roles";
+import {store, storeProcessRoles} from "@/store";
+import { Status, isValid } from '@/utils'
+import { Roles, findUserWithEmail, getRoleByName } from "@/roles";
+import { getRoles } from "@/api/getRoles";
+import { implementRole } from "@/api/implementRole";
+import { deprecateRole } from "@/api/deprecateRole";
+import { revokeRole } from "@/api/revokeRole";
 import MarkdownIt from 'markdown-it';
 import RoleHeader from "@/components/roleHeader.vue"
 import VersionHistory from "@/components/history.vue"
 import Message from "@/components/message.vue";
-import {implementRole} from "@/api/implementRole";
-import {getRoles} from "@/api/getRoles";
 
 var mdRender = new MarkdownIt();
 
@@ -72,6 +74,16 @@ export default {
                 this.current.tasks :
                 this.$t('ims.notSet');
         },
+        assignees() {
+            let roleSymbol = null;
+            if(isValid(this.current) && isValid(this.current.role)) {
+                if("string" === typeof this.current.role)
+                    this.current.role = getRoleByName(Roles[this.$props.processCode], this.current.role).role;
+                roleSymbol = this.current.role;
+            }
+            let usersWithRole = store.state.temp?.usersByRole?.get(roleSymbol);
+            return isValid(usersWithRole) ? usersWithRole : new Map();
+        },
         returnToRoute() {
             return `/${this.$props.processCode.toLowerCase()}/roles/${this.$route.params.role}`;
         },
@@ -95,14 +107,16 @@ export default {
                 else {
                     console.log(`Implemented role ${t.$props.processCode}.${t.$route.params.role}`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                     t.$t('ims.implementedEntity',
-                                                         { entity: t.$t('ims.role').toLowerCase() } ));
+                                                     t.$t('ims.implementedEntity', {
+                                                         processCode: t.$props.processCode,
+                                                         type: t.$t('ims.role').toLowerCase(),
+                                                         entity: ` ${t.latest.name}` } ));
 
                     // Fetch the role definition from the API to include the new status
-                    const rrResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
+                    const riResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
                                               t.$props.apiBaseUrl);
-                    rrResult.load().then(() => {
-                        storeProcessRoles(rrResult);
+                    riResult.load().then(() => {
+                        storeProcessRoles(riResult);
                         t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
                     });
                 }
@@ -115,29 +129,71 @@ export default {
             // Call API to deprecate role
             let t = this;
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            // const pdResult = deprecateProcess(this.accessToken, this.$props.processCode, me, this.$props.apiBaseUrl);
-            // pdResult.request().then(() => {
-            //     if(isValid(pdResult.error?.value))
-            //         t.$root.$refs.toasts.showError(t.$t('ims.error'), pdResult.error.value);
-            //     else {
-            //         console.log(`Deprecated the role ${this.$props.processCode}.${t.$route.params.role}`);
-            //         t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-            //                                          t.$t('ims.deprecatedEntity',
-            //                                              { entity: t.$t('ims.role').toLowerCase() } ));
-            //
-            //         // Fetch the role definition from the API to include the new status
-            //         const rrResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
-            //             t.$props.apiBaseUrl);
-            //         rrResult.load().then(() => {
-            //             storeProcessRoles(rrResult);
-            //             t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
-            //         });
-            //     }
-            // });
+            const rdResult = deprecateRole(this.accessToken, this.$props.processCode, this.$route.params.role,
+                                           me, message, this.$props.apiBaseUrl);
+            rdResult.deprecate().then(() => {
+                if(isValid(rdResult.error?.value))
+                    t.$root.$refs.toasts.showError(t.$t('ims.error'), rdResult.error.value);
+                else {
+                    // Update UI immediately
+                    t.current.status = "DEPRECATED";
+
+                    const processCode = t.$props.processCode;
+                    const role = t.$route.params.role;
+                    const roleName = t.current.name;
+                    const successTitle = t.$t('ims.success');
+                    const errorTitle = t.$t('ims.error');
+
+                    console.log(`Deprecated role ${processCode}.${role}`);
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
+                                                     t.$t('ims.deprecatedEntity', {
+                                                         processCode: processCode,
+                                                         type: t.$t('ims.role').toLowerCase(),
+                                                         entity: ` ${roleName}` } ));
+
+                    // Revoke the role from all users
+                    let toRevoke = [];
+                    for(const user of t.assignees.values()) {
+                        let rrResult = revokeRole(t.accessToken, processCode, role, user.checkinUserId,
+                                                  t.$props.apiBaseUrl);
+                        rrResult.logMessage = `Revoked ${processCode}.${role} from ${user.fullName}`;
+                        rrResult.successTitle = successTitle;
+                        rrResult.errorTitle = errorTitle;
+                        rrResult.toastMessage = t.$t('role.revokedRole', {
+                            processCode: processCode,
+                            roleName: roleName,
+                            userFullName: user.fullName
+                        });
+                        rrResult.toasts = t.$root.$refs.toasts;
+                        toRevoke.push(rrResult);
+                    }
+
+                    let apiCalls = toRevoke.map(rrResult => {
+                        return rrResult.revoke().then(() => {
+                            if(isValid(rrResult.error?.value))
+                                rrResult.toasts.showError(rrResult.errorTitle, rrResult.error.value);
+                            else {
+                                console.log(rrResult.logMessage);
+                                rrResult.toasts.showSuccess(rrResult.successTitle, rrResult.toastMessage);
+                            }
+                        });
+                    });
+
+                    // Wait until all API calls to revoke the role finish
+                    Promise.allSettled(apiCalls).then((results) => {
+                        // Fetch the role definition from the API to include the new status
+                        console.log(`Role ${processCode}.${role} was revoked from all users`)
+                        const riResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
+                                                  t.$props.apiBaseUrl);
+                        riResult.load().then(() => {
+                            storeProcessRoles(riResult);
+                            t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
+                        });
+                    });
+                }
+            });
         },
     },
-    mounted() {
-    }
 }
 </script>
 

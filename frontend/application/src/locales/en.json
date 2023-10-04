@@ -225,9 +225,10 @@
         "details": "Details",
         "reviews": "Reviews",
         "deprecateReason": "Reason for deprecation",
-        "deprecatedEntity": "This {entity} was deprecated",
+        "deprecatedEntity": "The {processCode} {type}{entity} was deprecated",
         "implementEntity": "Implement {entity}",
-        "implementationDetails": "Implementation details"
+        "implementationDetails": "Implementation details",
+        "implementedEntity": "The {processCode} {type}{entity} was marked as implemented"
     },
     "role": {
         "processRoles": "These are the roles defined in the process",
