@@ -16,9 +16,19 @@ export const markProcessReadyForApproval = function(accessToken, processCode, us
                 },
                 {
                     headers: {
-                    "Content-Type": 'application/json',
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${accessToken}`
+                        "Content-Type": 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                }
+            ).catch(function(e) {
+                if(e.response) {
+                    error.value = {
+                        data: e.response.data,
+                        status: e.response.status,
+                        message: e.response.statusText,
+                        headers: e.response.headers,
+                    }
                 }
             });
             if(!data.status) {
@@ -29,7 +39,6 @@ export const markProcessReadyForApproval = function(accessToken, processCode, us
             response.value = data.data;
         }
         catch(err) {
-            error.value = err.message;
             console.error("Error requesting " + processCode + " process approval");
         }
     }

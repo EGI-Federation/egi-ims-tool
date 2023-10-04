@@ -18,6 +18,15 @@ export const revokeRole = function(accessToken, processCode, role, checkinUserId
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
+            }).catch(function(e) {
+                if(e.response) {
+                    error.value = {
+                        data: e.response.data,
+                        status: e.response.status,
+                        message: e.response.statusText,
+                        headers: e.response.headers,
+                    }
+                }
             });
             if(!data.status) {
                 console.error(data.statusText);
@@ -27,7 +36,6 @@ export const revokeRole = function(accessToken, processCode, role, checkinUserId
             response.value = data.data;
         }
         catch(err) {
-            error.value = err.message;
             console.error(`Error revoking role ${processCode}.${role} from user ${checkinUserId}`);
         }
     }

@@ -20,6 +20,15 @@ export const updateRole = function(accessToken, processCode, roleInfo, baseUrl) 
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
+            }).catch(function(e) {
+                if(e.response) {
+                    error.value = {
+                        data: e.response.data,
+                        status: e.response.status,
+                        message: e.response.statusText,
+                        headers: e.response.headers,
+                    }
+                }
             });
             if(!data.status) {
                 console.error(data.statusText);
@@ -29,7 +38,6 @@ export const updateRole = function(accessToken, processCode, roleInfo, baseUrl) 
             response.value = data.data;
         }
         catch(err) {
-            error.value = err.message;
             console.error(`Error updating ${processCode}.${ri.role} role definition`);
         }
     }

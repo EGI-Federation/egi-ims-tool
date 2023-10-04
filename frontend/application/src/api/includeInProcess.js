@@ -14,6 +14,15 @@ export const includeInProcess = function(accessToken, processCode, checkinUserId
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
+            }).catch(function(e) {
+                if(e.response) {
+                    error.value = {
+                        data: e.response.data,
+                        status: e.response.status,
+                        message: e.response.statusText,
+                        headers: e.response.headers,
+                    }
+                }
             });
             if(!data.status) {
                 console.error(data.statusText);
@@ -23,7 +32,6 @@ export const includeInProcess = function(accessToken, processCode, checkinUserId
             response.value = data.data;
         }
         catch(err) {
-            error.value = err.message;
             console.error(`Error including user ${checkinUserId} in process ${processCode}`);
         }
     }
