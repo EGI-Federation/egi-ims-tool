@@ -26,7 +26,8 @@ export const deprecateRole = function(accessToken, processCode, role, user, mess
                     error.value = {
                         data: e.response.data,
                         status: e.response.status,
-                        message: e.response.statusText,
+                        statusText: e.response.statusText,
+                        message: e.message,
                         headers: e.response.headers,
                     }
                 }
@@ -43,5 +44,5 @@ export const deprecateRole = function(accessToken, processCode, role, user, mess
         }
     }
 
-    return { response: response, error: error, deprecate: deprecate };
+    return { response: response, processCode: processCode, error: error, deprecate: deprecate };
 }

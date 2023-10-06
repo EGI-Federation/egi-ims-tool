@@ -28,7 +28,8 @@ export const implementRole = function(accessToken, processCode, role, user, mess
                     error.value = {
                         data: e.response.data,
                         status: e.response.status,
-                        message: e.response.statusText,
+                        statusText: e.response.statusText,
+                        message: e.message,
                         headers: e.response.headers,
                     }
                 }
@@ -45,5 +46,5 @@ export const implementRole = function(accessToken, processCode, role, user, mess
         }
     }
 
-    return { response: response, error: error, implement: implement };
+    return { response: response, processCode: processCode, error: error, implement: implement };
 }

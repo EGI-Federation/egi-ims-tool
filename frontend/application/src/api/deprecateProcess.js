@@ -25,7 +25,8 @@ export const deprecateProcess = function(accessToken, processCode, user, message
                     error.value = {
                         data: e.response.data,
                         status: e.response.status,
-                        message: e.response.statusText,
+                        statusText: e.response.statusText,
+                        message: e.message,
                         headers: e.response.headers,
                     }
                 }
@@ -42,5 +43,5 @@ export const deprecateProcess = function(accessToken, processCode, user, message
         }
     }
 
-    return { response: response, error: error, request: request };
+    return { response: response, processCode: processCode, error: error, request: request };
 }

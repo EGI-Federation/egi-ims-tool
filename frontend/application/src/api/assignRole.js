@@ -23,7 +23,8 @@ export const assignRole = function(accessToken, processCode, role, checkinUserId
                     error.value = {
                         data: e.response.data,
                         status: e.response.status,
-                        message: e.response.statusText,
+                        statusText: e.response.statusText,
+                        message: e.message,
                         headers: e.response.headers,
                     }
                 }
@@ -40,5 +41,5 @@ export const assignRole = function(accessToken, processCode, role, checkinUserId
         }
     }
 
-    return { response: response, error: error, assign: assign };
+    return { response: response, processCode: processCode, error: error, assign: assign };
 }

@@ -26,7 +26,8 @@ export const markProcessReadyForApproval = function(accessToken, processCode, us
                     error.value = {
                         data: e.response.data,
                         status: e.response.status,
-                        message: e.response.statusText,
+                        statusText: e.response.statusText,
+                        message: e.message,
                         headers: e.response.headers,
                     }
                 }
@@ -43,5 +44,5 @@ export const markProcessReadyForApproval = function(accessToken, processCode, us
         }
     }
 
-    return { response: response, error: error, request: request };
+    return { response: response, processCode: processCode, error: error, request: request };
 }

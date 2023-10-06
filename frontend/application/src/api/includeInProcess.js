@@ -19,7 +19,8 @@ export const includeInProcess = function(accessToken, processCode, checkinUserId
                     error.value = {
                         data: e.response.data,
                         status: e.response.status,
-                        message: e.response.statusText,
+                        statusText: e.response.statusText,
+                        message: e.message,
                         headers: e.response.headers,
                     }
                 }
@@ -36,5 +37,5 @@ export const includeInProcess = function(accessToken, processCode, checkinUserId
         }
     }
 
-    return { response: response, error: error, include: include };
+    return { response: response, processCode: processCode, error: error, include: include };
 }

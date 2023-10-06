@@ -19,7 +19,8 @@ export const getRoles = function(accessToken, processCode, role, baseUrl) {
                     error.value = {
                         data: e.response.data,
                         status: e.response.status,
-                        message: e.response.statusText,
+                        statusText: e.response.statusText,
+                        message: e.message,
                         headers: e.response.headers,
                     }
                 }
