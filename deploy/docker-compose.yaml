@@ -75,10 +75,11 @@ services:
     build:
       context: ../backend/service-level-management/src/main/docker
     environment:
+      - QUARKUS_PROFILE=${QUARKUS_PROFILE:-prod}
       - EGI_IMS_VO=${EGI_VO}
-      - QUARKUS_SMALLRYE_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/slm
-      - QUARKUS_LOG_FILE_PATH=/deployments/logs/slm-api.json
+      - EGI_CHECKIN_PASSWORD=${EGI_CHECKIN_PASSWORD}
       - QUARKUS_OIDC_AUTH_SERVER_URL=${EGI_CHECKIN_SERVER}/auth/realms/egi
+      - QUARKUS_DATASOURCE_REACTIVE_URL=postgresql://ims-db:5432/ims
       - QUARKUS_DATASOURCE_USERNAME=${EGI_IMS_DB_USER:-ims}
       - QUARKUS_DATASOURCE_PASSWORD=${EGI_IMS_DB_PASSWORD}
       - QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
@@ -86,6 +87,8 @@ services:
       - QUARKUS_HTTP_CORS_ORIGINS=/${CORS_ORIGINS:-.*}/
       - QUARKUS_HTTP_CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
       - QUARKUS_HTTP_CORS_METHODS=${CORS_METHODS:-GET,POST,PUT,DELETE,OPTIONS}
+      - QUARKUS_SMALLRYE_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/slm
+      - QUARKUS_LOG_FILE_PATH=/deployments/logs/slm-api.json
     volumes:
       - logs:/deployments/logs:rw
     restart: unless-stopped
@@ -93,32 +96,24 @@ services:
       - "9081:8081"
     depends_on:
       - otelcol
-      - db
+      - ims-db
 
   # ************************
   # Backend components
   # ************************
-  db:
+  ims-db:
     image: postgres:15.4
+    container_name: ims-db
     environment:
       - POSTGRES_USER=${EGI_IMS_DB_USER}
       - POSTGRES_PASSWORD=${EGI_IMS_DB_PASSWORD}
       - POSTGRES_DB=ims
     volumes:
       - database:/var/lib/postgresql/data
+      - ./postgres:/docker-entrypoint-initdb.d/
     restart: always
     ports:
       - "5432:5432"
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=ims@egi.eu
-      - PGADMIN_DEFAULT_PASSWORD=admin
-      - PGADMIN_LISTEN_PORT=5050
-    ports:
-      - "5050:5050"
 
   # ************************
   # Telemetry components
