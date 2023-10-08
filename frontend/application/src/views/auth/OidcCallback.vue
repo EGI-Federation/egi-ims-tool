@@ -13,8 +13,6 @@ export default {
         ])
     },
     created () {
-        console.log('oidcCallback : ' + this.$router.currentRoute?.value.fullPath)
-
         this.oidcSignInCallback()
           .then((redirectPath) => {
               this.$router.replace(redirectPath);
