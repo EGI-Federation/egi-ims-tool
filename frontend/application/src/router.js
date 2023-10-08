@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
 import { store } from "@/store"
 
+import LevyTest from "@/views/auth/levyTest.vue";
 import OidcCallback from "@/views/auth/OidcCallback.vue";
 import OidcCallbackPopup from "@/views/auth/OidcCallbackPopup.vue";
 import OidcCallbackError from "@/views/auth/OidcCallbackError.vue";
@@ -196,6 +197,14 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
+    meta: {
+      isPublic: true
+    }
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: LevyTest,
     meta: {
       isPublic: true
     }
