@@ -41,8 +41,8 @@
 <script>
 // @ is an alias to /src
 import MarkdownIt from "markdown-it";
-import {findEntityWithStatus, isValid, statusPill, userNames} from "@/utils";
-import { Roles, hasRole } from "@/roles";
+import {findEntityWithStatus, isValid, Status, statusPill, userNames} from "@/utils";
+import {Roles, hasRole, findUsersWithRole} from "@/roles";
 import { store, storeUsers, storeUsersByRole } from "@/store";
 import { assignRole } from "@/api/assignRole";
 import { revokeRole } from "@/api/revokeRole";
@@ -66,15 +66,20 @@ export default {
     },
     data() {
         return {
-            accessToken: store.state.oidc.access_token,
+            accessToken: store.state.oidc?.access_token,
         }
     },
     computed: {
         status() {
             return statusPill(this.$props.role.status, this.$t);
         },
-        usersByRole() {
-            return store.state.temp?.usersByRole;
+        roleCode() {
+            if(!isValid(this.$props.role?.role))
+                return null;
+
+            return 'symbol' === typeof this.$props.role.role ?
+                   this.$props.role.role.description :
+                   this.$props.role.role;
         },
         usersByProcess() {
             return store.state.temp?.usersByProcess;
@@ -82,24 +87,26 @@ export default {
         users() {
             let users = null;
             if(isValid(this.$props.role)) {
-                if(this.$props.role.role.description === "process-staff")
+                if(this.roleCode === Roles[this.$props.processCode].PROCESS_STAFF.description)
+                    // Any VO user can be included in the process
                     users = store.state.temp.users;
-                else
-                    users = this.usersByProcess?.get(this.$props.role.processCode);
+                else {
+                    const roleKey = `${this.$props.processCode}.${this.roleCode}`;
+                    users = this.usersByProcess?.get(roleKey);
+                }
             }
 
             return isValid(users) ? users : new Map();
         },
         assignable() {
-            if(this.$props.role.status === "DEPRECATED")
+            if(this.$props.role.status === Status.DEPRECATED.description)
                 return false;
 
-            let implementedRole = findEntityWithStatus(this.$props.role, "IMPLEMENTED");
+            let implementedRole = findEntityWithStatus(this.$props.role, Status.IMPLEMENTED.description);
             return isValid(implementedRole);
         },
         assignees() {
-            const roleSymbol = this.$props.role.role;
-            let usersWithRole = this.usersByRole?.get(roleSymbol);
+            const usersWithRole = findUsersWithRole(this.$props.processCode, this.$props.role.role);
             return isValid(usersWithRole) ? usersWithRole : new Map();
         },
         assigneeNames() {
@@ -111,7 +118,7 @@ export default {
     },
     methods: {
         toggleAssignment(event) {
-            if(this.$props.role.role.description === "process-staff")
+            if(this.roleCode === Roles[this.$props.processCode].PROCESS_STAFF.description)
                 this.toggleProcessMembership(event);
             else
                 this.toggleRoleAssignment(event);
@@ -124,19 +131,17 @@ export default {
             const processCode = this.$props.processCode;
             if(el.checked) {
                 // Update UI immediately
-                let info = { role: this.$props.role.role, checkinUserId: checkinUserId, assign: true };
+                let info = { processCode: processCode, roleCode: t.roleCode, checkinUserId: checkinUserId, assign: true };
                 store.commit('updateUserRole', info);
 
                 // Call API to assign role to user
-                const arResult = assignRole(this.accessToken, processCode,
-                                            this.$props.role.role.description, checkinUserId,
-                                            this.$props.apiBaseUrl);
-                arResult.logMessage = `Assigned ${processCode}.${this.$props.role.role.description} to ${userFullName}`;
+                const arResult = assignRole(t.accessToken, processCode, t.roleCode, checkinUserId, t.$props.apiBaseUrl);
+                arResult.logMessage = `Assigned ${processCode}.${t.roleCode} to ${userFullName}`;
                 arResult.toastTitle = t.$t('ims.success');
                 arResult.errorTitle = t.$t('ims.error');
                 arResult.toastMessage = t.$t('role.assignedRole', {
                     processCode: processCode,
-                    roleName: this.$props.role.name,
+                    roleName: t.$props.role.name,
                     userFullName: userFullName
                 });
                 arResult.toasts = t.$root.$refs.toasts;
@@ -145,7 +150,11 @@ export default {
                         el.checked = !el.checked;
                         info.assign = false;
                         store.commit('updateUserRole', info);
-                        arResult.toasts.showError(arResult.errorTitle, arResult.error.value);
+
+                        let message = isValid(arResult.error.value.data?.description) ?
+                            arResult.error.value.data.description :
+                            arResult.error.value.message;
+                        t.$root.$refs.toasts.showError(arResult.errorTitle, message);
                     }
                     else {
                         // Fetch the users with roles in this process from the API
@@ -161,14 +170,12 @@ export default {
             }
             else {
                 // Update UI immediately
-                let info = { role: this.$props.role.role, checkinUserId: checkinUserId, assign: false };
+                let info = { processCode: processCode, roleCode: t.roleCode, checkinUserId: checkinUserId, assign: false };
                 store.commit('updateUserRole', info);
 
                 // Call API to revoke role from user
-                const rrResult = revokeRole(this.accessToken, processCode,
-                                            this.$props.role.role.description, checkinUserId,
-                                            this.$props.apiBaseUrl);
-                rrResult.logMessage = `Revoked ${processCode}.${t.$props.role.role.description} from ${userFullName}`;
+                const rrResult = revokeRole(t.accessToken, processCode, t.roleCode, checkinUserId, t.$props.apiBaseUrl);
+                rrResult.logMessage = `Revoked ${processCode}.${t.roleCode} from ${userFullName}`;
                 rrResult.successTitle = t.$t('ims.success');
                 rrResult.errorTitle = t.$t('ims.error');
                 rrResult.toastMessage = t.$t('role.revokedRole', {
@@ -182,11 +189,15 @@ export default {
                         el.checked = !el.checked;
                         info.assign = true;
                         store.commit('updateUserRole', info);
-                        rrResult.toasts.showError(rrResult.errorTitle, rrResult.error.value);
+
+                        let message = isValid(rrResult.error.value.data?.description) ?
+                            rrResult.error.value.data.description :
+                            rrResult.error.value.message;
+                        t.$root.$refs.toasts.showError(rrResult.errorTitle, message);
                     }
                     else {
                         // Fetch the users with roles in this process from the API
-                        const urResult = getUsersWithRole(this.accessToken, processCode, null, t.$props.apiBaseUrl);
+                        const urResult = getUsersWithRole(t.accessToken, processCode, null, t.$props.apiBaseUrl);
                         urResult.load().then(() => {
                             storeUsersByRole(urResult);
                         });
@@ -205,11 +216,11 @@ export default {
             const processCode = this.$props.processCode;
             if(el.checked) {
                 // Update UI immediately
-                let info = { role: this.$props.role.role, checkinUserId: checkinUserId, assign: true };
+                let info = { processCode: processCode, roleCode: t.roleCode, checkinUserId: checkinUserId, assign: true };
                 store.commit('updateUserRole', info);
 
                 // Call API to include user in process
-                const irResult = includeInProcess(this.accessToken, processCode, checkinUserId, this.$props.apiBaseUrl);
+                const irResult = includeInProcess(t.accessToken, processCode, checkinUserId, t.$props.apiBaseUrl);
                 irResult.logMessage = `Included ${userFullName} in process ${processCode}`;
                 irResult.successTitle = t.$t('ims.success');
                 irResult.errorTitle = t.$t('ims.error');
@@ -223,7 +234,11 @@ export default {
                         el.checked = !el.checked;
                         info.assign = false;
                         store.commit('updateUserRole', info);
-                        irResult.toasts.showError(irResult.errorTitle, irResult.error.value);
+
+                        let message = isValid(irResult.error.value.data?.description) ?
+                            irResult.error.value.data.description :
+                            irResult.error.value.message;
+                        t.$root.$refs.toasts.showError(irResult.errorTitle, message);
                     }
                     else {
                         // Fetch the users participating in this process from the API
@@ -239,11 +254,11 @@ export default {
             }
             else {
                 // Update UI immediately
-                let info = { role: this.$props.role.role, checkinUserId: checkinUserId, assign: false };
+                let info = { processCode: processCode, roleCode: t.roleCode, checkinUserId: checkinUserId, assign: false };
                 store.commit('updateUserRole', info);
 
                 // Call API to exclude user from process
-                const erResult = excludeFromProcess(this.accessToken, processCode, checkinUserId, this.$props.apiBaseUrl);
+                const erResult = excludeFromProcess(t.accessToken, processCode, checkinUserId, t.$props.apiBaseUrl);
                 erResult.logMessage = `Excluded ${userFullName} from ${processCode} process`;
                 erResult.successTitle = t.$t('ims.success');
                 erResult.errorTitle = t.$t('ims.error');
@@ -257,7 +272,11 @@ export default {
                         el.checked = !el.checked;
                         info.assign = true;
                         store.commit('updateUserRole', info);
-                        erResult.toasts.showError(erResult.errorTitle, erResult.error.value);
+
+                        let message = isValid(erResult.error.value.data?.description) ?
+                            erResult.error.value.data.description :
+                            erResult.error.value.message;
+                        t.$root.$refs.toasts.showError(erResult.errorTitle, message);
                     }
                     else {
                         // Fetch the users participating in this process from the API

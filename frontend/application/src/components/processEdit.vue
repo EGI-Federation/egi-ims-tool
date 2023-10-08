@@ -1106,7 +1106,7 @@ export default {
                     this.cancelChanges();
                 else {
                     // We have changes to the process that must be saved as another version
-                    console.log(`Saving ${this.$props.processCode} process info changes`);
+                    console.log(`Saving ${this.$props.processCode} process changes`);
 
                     this.processInfo.goals = this.goalsEditor.text;
                     this.processInfo.scope = this.scopeEditor.text;
@@ -1123,13 +1123,19 @@ export default {
                     const piResult = updateProcess(this.accessToken, this.$props.processCode, this.processInfo,
                                                    this.$props.apiBaseUrl);
                     piResult.update().then(() => {
-                        if(isValid(piResult.error?.value))
-                            t.$root.$refs.toasts.showError(t.$t('ims.error'), piResult.error.value);
+                        if(isValid(piResult.error?.value)) {
+                            let message = isValid(piResult.error.value.data?.description) ?
+                                piResult.error.value.data.description :
+                                piResult.error.value.message;
+                            t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
+                        }
                         else {
-                            console.log(`Created new version of ${t.$props.processCode} process info`);
+                            console.log(`Created new version of ${t.$props.processCode} process`);
                             t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                             t.$t('ims.newEntityVersion',
-                                                                 { entity: t.$t('ims.process').toLowerCase() }));
+                                                             t.$t('ims.newEntityVersion', {
+                                                                 processCode: t.$props.processCode,
+                                                                 entity: t.$t('ims.process').toLowerCase()
+                                                             }));
 
                             // Fetch the process information from the API to include the added version
                             const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,

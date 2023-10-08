@@ -17,6 +17,18 @@
                 </div>
 
                 <!-- Tasks -->
+                <h3 v-if="isNew">{{ $t('ims.general') }}</h3>
+
+                <!-- Name -->
+                <div v-if="isNew" class="text-field mb-3">
+                    <label for="roleName" class="form-label">{{ $t('role.newRoleName') }}:</label>
+                    <input type="text" class="form-control" id="roleName" v-model="roleName" required/>
+                    <div class="invalid-feedback">
+                        {{ $t(roleName.length > 0 ? 'role.invalidRoleName' : 'role.missingRoleName') }}
+                    </div>
+                </div>
+
+                <!-- Tasks -->
                 <h3>{{ $t('role.tasks') }}</h3>
                 <textbox-with-preview class="mt-1" :label="$t('role.tasksLabel')" :text="tasksEditor"
                                       :rows="5" :max-length=4096 required/>
@@ -34,14 +46,15 @@
 // @ is an alias to /src
 import i18n from "@/locales";
 import { reactive } from 'vue';
-import {store, storeProcessInfo, storeProcessRoles} from "@/store";
+import { store, extractProcessRoles, storeProcessRoles } from "@/store";
 import { isValid, strEqual, deepClone } from '@/utils'
 import { findUserWithEmail } from "@/roles";
+import { getRoles } from "@/api/getRoles";
 import { updateRole } from "@/api/updateRole";
+import { addRole } from "@/api/addRole";
 import RoleHeader from "@/components/roleHeader.vue"
 import TextboxWithPreview from "@/components/textboxPreview.vue"
 import Message from "@/components/message.vue"
-import {getRoles} from "@/api/getRoles";
 
 export default {
     name: 'roleEdit',
@@ -62,7 +75,8 @@ export default {
             myName: store.state.oidc?.user?.name,
             myEmail: store.state.oidc?.user?.email,
             bidirectional: reactive({ roleChanged: false }),
-            roleInfo: null, // Role
+            roleInfo: null,     // Role
+            existingRoles: [],  // Strings
             tasksEditor: reactive({ text: isValid(this.edited) ? this.edited.tasks : "" }),
             forceCancel: false,
         }
@@ -86,6 +100,23 @@ export default {
 
             return this.roleInfo;
         },
+        isNew() { return 'new' === this.$route.params.role; },
+        roleCode() {
+            if(!isValid(this.edited) && !this.isNew)
+                return this.$route.params.role;
+
+            return ('symbol' === typeof this.edited.role) ? this.edited.role.description : this.edited.role;
+        },
+        roleName: {
+            get() { return isValid(this.edited) ? this.edited.name : ""; },
+            set(value) {
+                if(isValid(this.edited))
+                    this.edited.name = value;
+            },
+        },
+        roleValueFromName() {
+            return this.roleInfo?.name.trim().toLowerCase().replace(/\s/g, "-");
+        },
         changeDescription: {
             get() { return isValid(this.edited) ? this.edited.changeDescription : ""; },
             set(value) {
@@ -101,6 +132,8 @@ export default {
             const pe = this.edited;
 
             if(!strEqual(pc.tasks, this.tasksEditor.text) ||
+               !strEqual(pc.name, pe.name) ||
+               !strEqual(pc.roleCode, pe.roleCode) ||
                 pc.status !== pe.status)
                 return true;
 
@@ -111,6 +144,9 @@ export default {
             return isValid(users) ? users : new Map();
         },
         returnToRoute() {
+            if(this.isNew)
+                return `/${this.$props.processCode.toLowerCase()}/roles`;
+
             return `/${this.$props.processCode.toLowerCase()}/roles/${this.$route.params.role}`;
         },
     },
@@ -138,12 +174,30 @@ export default {
             })
         },
         saveChanges(event) {
-            if(this.$refs.roleForm.checkValidity()) {
+            const formIsValid = this.$refs.roleForm.checkValidity();
+            if(this.isNew) {
+                let roleNameField = document.querySelector("#roleName");
+                if(isValid(roleNameField)) {
+                    roleNameField.setCustomValidity('');
+                    this.roleInfo.role = this.roleValueFromName;
+                    for(let role of this.existingRoles) {
+                        if('symbol' === typeof role)
+                            role = role.description;
+                        if(role === this.roleInfo.role) {
+                            // There is already a role with this code
+                            roleNameField.setCustomValidity('role-name-not-unique');
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if(formIsValid) {
                 if(!this.roleChanged)
                     this.cancelChanges();
                 else {
-                    // We have changes to the process that must be saved as another version
-                    console.log(`Saving ${this.$props.processCode}.${this.$route.params.role} role changes`);
+                    // We have changes that must be saved
+                    console.log(`Saving ${this.$props.processCode}.${this.roleCode} role changes`);
 
                     this.roleInfo.tasks = this.tasksEditor.text;
                     this.roleInfo.changeBy = findUserWithEmail(this.$props.processCode, this.myEmail);
@@ -154,29 +208,70 @@ export default {
                         delete this.roleInfo.changeBy['email_verified'];
                     }
 
-                    // Call API to update the role
                     let t = this;
-                    const piResult = updateRole(this.accessToken, this.$props.processCode, this.roleInfo,
-                                                this.$props.apiBaseUrl);
-                    piResult.update().then(() => {
-                        if(isValid(piResult.error?.value))
-                            t.$root.$refs.toasts.showError(t.$t('ims.error'), piResult.error.value);
-                        else {
-                            console.log(`Created new version of role ${t.$props.processCode}.${t.$route.params.role}`);
-                            t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                             t.$t('ims.newEntityVersion',
-                                                                 { entity: t.$t('ims.role').toLowerCase() }));
+                    const processCode = this.$props.processCode;
+                    if(this.isNew) {
+                        // Call API to add a new role
+                        const arResult = addRole(this.accessToken, processCode, this.roleInfo,
+                                                 this.$props.apiBaseUrl);
+                        arResult.add().then(() => {
+                            if(isValid(arResult.error?.value)) {
+                                let message = isValid(arResult.error.value.data?.description) ?
+                                    arResult.error.value.data.description :
+                                    arResult.error.value.message;
+                                t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
+                            }
+                            else {
+                                console.log(`Added new role ${processCode}.${t.roleCode}`);
+                                t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
+                                    t.$t('ims.newEntity', {
+                                        processCode: processCode,
+                                        entity: t.$t('ims.role').toLowerCase(),
+                                        name: " " + t.roleName
+                                    }));
 
-                            // Fetch the role details from the API to include the added version
-                            const prResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
-                                                      t.$props.apiBaseUrl);
-                            prResult.load().then(() => {
-                                storeProcessRoles(prResult);
-                                t.forceCancel = true;
-                                t.$router.push(t.returnToRoute);
-                            });
-                        }
-                    });
+                                // Fetch the role details from the API to include the added version
+                                const prResult = getRoles(t.accessToken, processCode, t.roleCode,
+                                                          t.$props.apiBaseUrl);
+                                prResult.load().then(() => {
+                                    storeProcessRoles(prResult);
+                                    t.forceCancel = true;
+                                    t.$router.push(`/${processCode.toLowerCase()}/roles/${t.roleCode}`);
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        // Call API to update the role
+                        const urResult = updateRole(this.accessToken, processCode, this.roleInfo,
+                                                    this.$props.apiBaseUrl);
+                        urResult.update().then(() => {
+                            if(isValid(urResult.error?.value)) {
+                                let message = isValid(urResult.error.value.data?.description) ?
+                                    urResult.error.value.data.description :
+                                    urResult.error.value.message;
+                                t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
+                            }
+                            else {
+                                console.log(`Created new version of role ${processCode}.${t.$route.params.role}`);
+                                t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
+                                                                 t.$t('ims.newEntityVersion', {
+                                                                     processCode: processCode,
+                                                                     entity: t.$t('ims.role').toLowerCase(),
+                                                                     name: " " + t.roleName
+                                                                 }));
+
+                                // Fetch the role details from the API to include the added version
+                                const prResult = getRoles(t.accessToken, processCode, t.$route.params.role,
+                                                          t.$props.apiBaseUrl);
+                                prResult.load().then(() => {
+                                    storeProcessRoles(prResult);
+                                    t.forceCancel = true;
+                                    t.$router.push(t.returnToRoute);
+                                });
+                            }
+                        });
+                    }
                 }
                 event.preventDefault();
                 event.stopPropagation();
@@ -196,9 +291,14 @@ export default {
         },
     },
     created() {
-        let isValidRole = true;
-        if(!isValidRole)
-            this.$router.push(this.returnToRoute);
+        if(this.isNew) {
+            // Fetch the process roles from the API
+            let t = this;
+            const rrResult = getRoles(this.accessToken, this.$props.processCode, null, this.$props.apiBaseUrl);
+            rrResult.load().then(() => {
+                t.existingRoles = Array.from(extractProcessRoles(rrResult).keys());
+            });
+        }
     },
     mounted() {
         this.setupValidation();

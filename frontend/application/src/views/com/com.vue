@@ -27,7 +27,7 @@ export default {
             let router = this.$router;
             const delayedRoleCheck = setTimeout(function() {
                 clearTimeout(delayedRoleCheck);
-                if(!hasRole(store.state.temp.roles, Roles.VO.MEMBER))
+                if(!hasRole(store.state.temp.roles, 'VO', Roles.VO.MEMBER.description))
                     // Non VO members to the homepage
                     router.replace('/');
             }, 500);

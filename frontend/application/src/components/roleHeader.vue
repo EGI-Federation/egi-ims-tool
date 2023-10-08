@@ -37,7 +37,7 @@
 // @ is an alias to /src
 import { store } from "@/store";
 import { Status, isValid, statusPill, formatDate, userNames } from '@/utils'
-import {Roles, hasRole, getRoleByName} from "@/roles";
+import {Roles, hasRole, getRoleByName, findUsersWithRole} from "@/roles";
 
 export default {
     name: 'processHeader',
@@ -56,6 +56,7 @@ export default {
         latest() { return store.state.ims.roleInfo; },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
+        isNew() { return 'new' === this.$route.params.role; },
         isLatest() { return this.latest?.version === this.current?.version; },
         showHistory() { return this.$props.bidirectional?.historyVisible; },
         roleChanged() { return this.$props.bidirectional?.roleChanged; },
@@ -65,16 +66,13 @@ export default {
         canDeprecate() { return this.$route.params.role !== Roles[this.$props.processCode].PROCESS_STAFF.description; },
         roles() { return store.state.temp.roles; },
         assignees() {
-            let roleSymbol = null;
-            if(isValid(this.current) && isValid(this.current.role)) {
-                if("string" === typeof this.current.role)
-                    this.current.role = getRoleByName(Roles[this.$props.processCode], this.current.role).role;
-                roleSymbol = this.current.role;
-            }
-            let usersWithRole = store.state.temp?.usersByRole?.get(roleSymbol);
+            const usersWithRole = findUsersWithRole(this.$props.processCode, this.current.role);
             return isValid(usersWithRole) ? usersWithRole : new Map();
         },
         assigneeNames() {
+            if(this.isNew)
+                return this.$t('role.nobody');
+
             const users = this.assignees.values();
             let names = userNames(users, " ", this.$t('role.nobody'));
             return names;
@@ -85,10 +83,13 @@ export default {
         roleVersion() { return isValid(this.current) ? this.current.version : "?"; },
         roleStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
         changeDate() {
-            return isValid(this.current) && isValid(this.current.changedOn) ?
-                   formatDate(this.current.changedOn) : "?"; },
+            return this.isNew ? this.$t("ims.now") : (
+                   isValid(this.current) && isValid(this.current.changedOn) ?
+                   formatDate(this.current.changedOn) : "?");
+        },
         implementedStatus() {
-            if(!isValid(this.implemented) ||
+            if(this.isNew ||
+               !isValid(this.implemented) ||
                !isValid(this.implemented.changeBy))
                 return this.$t('ims.no');
 

@@ -7,7 +7,7 @@
 
 <script>
 // @ is an alias to /src
-import { isValid, findEntityWithStatus, findEntityWithVersion } from '@/utils'
+import {isValid, findEntityWithStatus, findEntityWithVersion, Status} from '@/utils'
 import { getProcessInfo } from "@/api/getProcessInfo";
 import { store, storeProcessInfo } from "@/store"
 import RolesLoader from "@/components/rolesLoader.vue";
@@ -45,7 +45,7 @@ export default {
             let current = store.state.ims.processInfo;
             if(isValid(current)) {
                 // Make sure we know which is the approved version (if any)
-                this.approvedProcess = findEntityWithStatus(current, "APPROVED");
+                this.approvedProcess = findEntityWithStatus(current, Status.APPROVED.description);
 
                 const requested = this.$props.version;
                 if(isValid(requested) && requested.length > 0) {

@@ -33,16 +33,25 @@ export const Roles = {
 };
 
 // Takes in a role name such as "process-owner", returns details of the role, including its role constant (Symbol)
-export const getRoleByName = function(roleEnum, roleName) {
+export const getRoleByName = function(processCode, role) {
+    const roleCode = ('symbol' == typeof role) ? role.description : role;
 
+    // Try implemented roles first
+    const roleEnum = Roles[processCode];
     for(let name in roleEnum) {
         const role = roleEnum[name];
-        const regexRole = role.description.replace("-", "\\-") + "(?:\\-([^\\#]+))?";
+        const regexRole = "(" + name.replace("-", "\\-") + ")(?:\\-([^\\#]+))?";
         let regex = new RegExp(regexRole, "ig");
-        let matches = regex.exec(roleName);
+        let matches = regex.exec(roleCode);
         if(isValid(matches)) {
-            let roleInfo = { role: role };
-            const objectId = matches[1];
+            let roleInfo = {
+                role: role,
+                roleCode: roleCode,
+                roleKey: `${processCode}.${roleCode}`,
+                processCode: processCode
+            };
+
+            const objectId = matches[2];
             if(isValid(objectId))
                 roleInfo.objectId = objectId;
             else
@@ -52,10 +61,13 @@ export const getRoleByName = function(roleEnum, roleName) {
         }
     }
 
-    return null;
+    // If we get here, this role is not yet implemented (field role will be missing)
+    // Note: No object ownership for such roles
+    return { roleCode: roleCode, roleKey: `${processCode}.${roleCode}`, processCode: processCode, assigned: true };
 }
 
 // Parse user roles from the entitlements the user has
+// Note: Ignores roles that are not yet implemented
 export const rolesFromEntitlements = function(entitlements, trace) {
     console.log("Parsing roles...");
 
@@ -129,15 +141,12 @@ export const rolesFromEntitlements = function(entitlements, trace) {
     if(trace || process.env.TRACE_ROLES) {
         const assigned = [...roles].filter(([k, v]) => v.assigned && "member" !== k.description);
         console.log("Got " + assigned.length + " roles" + (roles.size > 0 ? ":" : ""));
-        for(const role of roles) {
-            // role is array with [key, value]
-            const roleDetails = role[1];
+        for(const roleDetails of roles.values()) {
             if(roleDetails.assigned)
                 console.log("\t" + roleDetails.name);
             if(isValid(roleDetails.ownedEntities) && roleDetails.ownedEntities.size > 0) {
-                for(const objectId of roleDetails.ownedEntities) {
+                for(const objectId of roleDetails.ownedEntities)
                     console.log("\t\t" + roleDetails.name + "-" + objectId);
-                }
             }
         }
     }
@@ -145,7 +154,7 @@ export const rolesFromEntitlements = function(entitlements, trace) {
     return roles;
 }
 
-// Extract roles
+// Extract roles of current user
 export const parseRoles = function() {
     if(isValid(store.state.oidc.is_checked) && isValid(store.state.oidc.user)) {
         const user = store.state.oidc.user;
@@ -158,44 +167,40 @@ export const parseRoles = function() {
     }
 }
 
-// Check is a role is assigned
+// Check if a role is assigned
 export const hasRole = function(roles, role) {
     if('symbol' !== typeof role) {
-        console.log("hasRole: role is not a symbol but a " + typeof role);
+        console.log("hasRole: role is not a string but a " + typeof role);
         return false;
     }
-
-    const trace = process.env.TRACE_ROLES;
 
     if(!isValid(roles)) {
         console.log("Cannot check for role, roles not loaded!");
         return false;
     }
 
+    const trace = process.env.TRACE_ROLES;
     if(!roles.has(role)) {
         if(trace)
-            console.log("Check for role " + role.description + ", nope");
+            console.log(`Check for role ${role.description}, nope`);
         return false;
     }
 
     const roleDetails = roles.get(role);
     if(trace)
-        console.log("Check for role " + role.description + ", " + (roleDetails.assigned ? "assigned" : "nope, but owns objects"));
+        console.log(`Check for role ${role.description}, ${roleDetails.assigned ? "assigned" : "nope, but owns objects"}`);
 
-    return roleDetails.assigned;
+    return isValid(roleDetails.assigned) && roleDetails.assigned;
 }
 
 // Returns all users that hold a specific role, null if no user with that role
-// Assumes users have been loaded already and store in the root module of the store
-export const findUsersWithRole = function(role, firstOnly = false) {
-    if('symbol' !== typeof role) {
-        console.log("findUsersWithRole: role is not a symbol but a " + typeof role);
-        return null;
-    }
-
+// Assumes users have been loaded and stored in the root module of the store
+export const findUsersWithRole = function(processCode, role, firstOnly = false) {
+    const roleCode = ('symbol' == typeof role) ? role.description : role;
+    const roleKey = `${processCode}.${roleCode}`;
     const users = store.state.temp?.usersByRole;
     if(isValid(users)) {
-        const roleUserMap = users.has(role) ? users.get(role) : null;
+        const roleUserMap = users.get(roleKey);
         if(isValid(roleUserMap)) {
             const users = Array.from(roleUserMap.values());
             return firstOnly ? users.slice(0, 1) : users;
@@ -210,7 +215,7 @@ export const findUsersWithRole = function(role, firstOnly = false) {
 export const findUserWithEmail = function(processCode, email) {
     const users = store.state.temp.usersByProcess?.get(processCode);
     if(isValid(users) && isValid(email)) {
-        for(const [checkinUserId, user] of users) {
+        for(const user of users.values()) {
             if(email === user.email)
                 return user;
         }

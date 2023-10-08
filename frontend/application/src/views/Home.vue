@@ -174,7 +174,7 @@ export default {
     computed: {
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
         roles() { return store.state.temp.roles; },
-        canUseTool() { return hasRole(this.roles, Roles.VO.MEMBER); },
+        canUseTool() { return hasRole(this.roles, Roles.VO.MEMBER))
     },
     methods: {
         ...mapActions('oidc', [

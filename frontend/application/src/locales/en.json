@@ -126,6 +126,7 @@
         "months": "Months",
         "year": "year",
         "years": "Years",
+        "now": "Now",
         "procOwner": "Process owner",
         "procManager": "Process manager",
         "version": "@:history.version",
@@ -211,7 +212,8 @@
         "action": "Action",
         "error": "Error",
         "success": "Success",
-        "newEntityVersion": "New version of the {entity} was created",
+        "newEntity": "Added new {processCode} {entity}{name}",
+        "newEntityVersion": "New version of the {processCode} {entity}{name} was created",
         "requestedProcessApproval": "Requested approval of the process changes",
         "approveProcessChange": "You are about to approve the changes to the process. You can also provide some feedback with your approval.",
         "rejectProcessChange": "You are about to reject the changes to the process. Please provide a reason for rejection.",
@@ -243,7 +245,11 @@
         "excludedFromProcess": "Excluded {userFullName} from the {processCode} process",
         "tasksLabel": "Describe the tasks of users holding this role",
         "implementRoleChanges": "Please confirm that all changes required to fully support this version of the {processCode} role {roleName} have been implemented.",
-        "warnDeprecateRole": "You are about to deprecate this role. The role will be revoked from all users and will not be assignable to users anymore. Are you sure you want to continue?"
+        "warnDeprecateRole": "You are about to deprecate this role. The role will be revoked from all users and will not be assignable to users anymore. Are you sure you want to continue?",
+        "newRole": "New Role",
+        "newRoleName": "Name of the new role",
+        "invalidRoleName": "A role with this name already exists",
+        "missingRoleName": "Please provide a name for the new role"
     },
     "slm": {
         "navbar" : {

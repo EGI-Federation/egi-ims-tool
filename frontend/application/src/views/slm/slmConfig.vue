@@ -9,7 +9,7 @@
 <script>
 // @ is an alias to /src
 import { reactive } from "vue";
-import {isValid, findEntityWithStatus, findEntityWithVersion} from '@/utils'
+import {isValid, findEntityWithStatus, findEntityWithVersion, Status} from '@/utils'
 import {store, storeProcessInfo} from "@/store"
 import { Roles, hasRole } from "@/roles";
 import RolesLoader from "@/components/rolesLoader.vue";
@@ -48,7 +48,7 @@ export default {
             this.currentProcess = store.state.ims.processInfo;
             if(isValid(this.currentProcess)) {
                 // Make sure we know which is the approved version (if any)
-                this.approvedProcess = findEntityWithStatus(this.currentProcess, "APPROVED");
+                this.approvedProcess = findEntityWithStatus(this.currentProcess, Status.APPROVED.description);
                 console.log("Editing SLM process v" + this.currentProcess.version);
             }
         });

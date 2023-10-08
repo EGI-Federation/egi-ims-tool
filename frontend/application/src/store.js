@@ -18,10 +18,10 @@ export const store = createStore({
             state() {
                 return {
                     roles: new Map(),           // Roles of current user Map<Symbol, { name:String, assigned:boolean, ownedEntities:Set<String> }>
-                    rolesByProcess: new Map(),  // Role definitions for all processes Map<String, Map<Symbol, Role>>
+                    rolesByProcess: new Map(),  // Role definitions for all processes Map<String, Map<String, Role>>
                     users: new Map(),           // Users in the VO Map<checkinUserId, User>
                     usersByProcess: new Map(),  // Users that are members of processes Map<String, Map<checkinUserId, User>>
-                    usersByRole: new Map(),     // Users holding roles (including pseudo roles) in any process Map<Symbol, Map<checkinUserId, User>>
+                    usersByRole: new Map(),     // Users holding roles (including pseudo roles) in any process Map<String, Map<checkinUserId, User>>
                 }
             },
             mutations: {
@@ -44,10 +44,11 @@ export const store = createStore({
                     // Add process members to the usersByRole map with pseudo-role 'process-staff'
                     const rolesEnum = Roles[info.processCode];
                     const role = rolesEnum.PROCESS_STAFF;
-                    let roleUsers = state.usersByRole.get(role);
+                    const roleKey = `${info.processCode}.${role.description}`;
+                    let roleUsers = state.usersByRole.get(roleKey);
                     if(!isValid(roleUsers)) {
                         roleUsers = new Map();
-                        state.usersByRole.set(role, roleUsers);
+                        state.usersByRole.set(roleKey, roleUsers);
                     }
 
                     for(let user of info.users.values())
@@ -60,10 +61,11 @@ export const store = createStore({
                     // Add process members to the usersByRole map with pseudo-role 'process-staff'
                     const rolesEnum = Roles[info.processCode];
                     const role = rolesEnum.PROCESS_STAFF;
-                    let roleUsers = state.usersByRole.get(role);
+                    const roleKey = `${info.processCode}.${role.description}`;
+                    let roleUsers = state.usersByRole.get(roleKey);
                     if(!isValid(roleUsers)) {
                         roleUsers = new Map();
-                        state.usersByRole.set(role, roleUsers);
+                        state.usersByRole.set(roleKey, roleUsers);
                     }
 
                     const processUsers = state.usersByProcess?.get(info.processCode);
@@ -76,12 +78,13 @@ export const store = createStore({
                     if(!isValid(user))
                         return false;
 
-                    // Update usersByRole immediately, before a refresh from API by getUsers/getUsersWithRole,
-                    // which in turn calls updateUsersByProcess/updateUsersByRole, has a chance to finish
-                    let roleUsers = state.usersByRole.get(info.role);
+                    // Update usersByRole immediately, before an API call getUsers/getUsersWithRole
+                    // (which in turn calls updateUsersByProcess/updateUsersByRole) has a chance to finish
+                    const roleKey = `${info.processCode}.${info.roleCode}`;
+                    let roleUsers = state.usersByRole.get(roleKey);
                     if(!isValid(roleUsers) && isValid(info.assign) && info.assign) {
                         roleUsers = new Map();
-                        state.usersByRole.set(info.role, roleUsers);
+                        state.usersByRole.set(roleKey, roleUsers);
                     }
 
                     if(isValid(roleUsers)) {
@@ -116,7 +119,6 @@ export const store = createStore({
                     processInfo: null,  // Process
                     roleInfo: null,     // Role
                     slm: {
-
                     },
                     error: null,
                 }
@@ -141,31 +143,11 @@ export const store = createStore({
                     }
                     return name;
                 },
-                assignedRoles(state, getters, rootState) {
-                    if(!isValid(rootState.roles))
-                        return null;
-
-                    const assigned = [...rootState.roles].filter(([k, v]) => v.assigned && "process-staff" !== k.description);
-                    const ar = [];
-                    for(const role of assigned)
-                        ar.push(role[0]);
-                    return ar;
-                },
                 isAdmin(state, getters, rootState) {
                     return isValid(rootState.roles) &&
                           (hasRole(rootState.roles, Roles.IMS.IMS_OWNER) ||
                            hasRole(rootState.roles, Roles.IMS.IMS_MANAGER) ||
                            hasRole(rootState.roles, Roles.IMS.IMS_COORDINATOR));
-                },
-                memberInGroups(state, getters, rootState) {
-                    if(!isValid(rootState.roles))
-                        return null;
-
-                    const members = [...rootState.roles].filter(([k, v]) => v.assigned && "process-staff" === k.description);
-                    const groups = [];
-                    for(const role of members)
-                        groups.push(role[1].group);
-                    return groups;
                 },
                 allNotifications(state) {
                     return state.notifications;
@@ -188,7 +170,7 @@ export const store = createStore({
                     state.processInfo = info.processInfo;
                     state.error = info.error;
                 },
-                updateRoles(state, info) {
+                updateProcessRoles(state, info) {
                     store.commit("updateRolesByProcess", info);
                     state.error = info.error;
                     if(info.roles?.size > 0) {
@@ -293,21 +275,18 @@ export const storeUsersByRole = function(urResult) {
     if(isValid(urResult.page)) {
         const page = urResult.page.value;
         if(isValid(page) && isValid(page.elements)) {
-            const roleEnum = Roles[urResult.processCode];
-            if(isValid(roleEnum)) {
-                for(let user of page.elements) {
-                    for(let roleName of user.roles) {
-                        const roleInfo = getRoleByName(roleEnum, roleName);
-                        if(isValid(roleInfo) && roleInfo.assigned) {
-                            // Check if there is a map for this role
-                            let roleUserMap = users.get(roleInfo.role);
-                            if(null == roleUserMap) {
-                                roleUserMap = new Map();
-                                users.set(roleInfo.role, roleUserMap);
-                            }
-
-                            roleUserMap.set(user.checkinUserId, user);
+            for(let user of page.elements) {
+                for(let roleCode of user.roles) {
+                    const roleInfo = getRoleByName(urResult.processCode, roleCode);
+                    if(isValid(roleInfo) && roleInfo.assigned) {
+                        // Check if there is a map for this role
+                        let roleUserMap = users.get(roleInfo.roleKey);
+                        if(null == roleUserMap) {
+                            roleUserMap = new Map();
+                            users.set(roleInfo.roleKey, roleUserMap);
                         }
+
+                        roleUserMap.set(user.checkinUserId, user);
                     }
                 }
             }
@@ -321,22 +300,29 @@ export const storeUsersByRole = function(urResult) {
 }
 
 // Extract the role definitions then call a mutation on the store to save it
-export const storeProcessRoles = function(prResult) {
+export const extractProcessRoles = function(prResult) {
     let roles = new Map();
     if(isValid(prResult.page)) {
         const page = prResult.page.value;
         if(isValid(page) && isValid(page.elements)) {
-            const roleEnum = Roles[prResult.processCode];
-            if(isValid(roleEnum)) {
-                for(let role of page.elements) {
-                    const roleInfo = getRoleByName(roleEnum, role.role);
-                    if(isValid(roleInfo))
-                        roles.set(roleInfo.role, role);
+            for(let role of page.elements) {
+                const roleInfo = getRoleByName(prResult.processCode, role.role);
+                if(isValid(roleInfo)) {
+                    role.roleCode = roleInfo.roleCode;
+                    if(isValid(roleInfo.role))
+                        role.role = roleInfo.role; // Change String to Symbol
+                    roles.set(roleInfo.roleCode, role);
                 }
             }
         }
     }
-    store.commit('ims/updateRoles', {
+    return roles;
+}
+
+// Extract the role definitions then call a mutation on the store to save it
+export const storeProcessRoles = function(prResult) {
+    let roles = extractProcessRoles(prResult);
+    store.commit('ims/updateProcessRoles', {
         roles: roles,
         processCode: prResult.processCode,
         error: prResult.error.value

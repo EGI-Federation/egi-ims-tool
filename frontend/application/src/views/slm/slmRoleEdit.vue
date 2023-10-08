@@ -9,8 +9,8 @@
 <script>
 // @ is an alias to /src
 import { reactive } from "vue";
-import { isValid, findEntityWithStatus } from '@/utils'
 import { store, storeProcessRoles } from "@/store"
+import { Status, isValid, findEntityWithStatus } from '@/utils'
 import { Roles, hasRole } from "@/roles";
 import { getRoles } from "@/api/getRoles";
 import RolesLoader from "@/components/rolesLoader.vue";
@@ -31,30 +31,49 @@ export default {
     computed: {
         slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
         roles() { return store.state.temp.roles; },
+        isNew() { return 'new' === this.$route.params.role; },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
         locationSegments() { return [
             { text: this.$t("home.home"), link:"/" },
             { text: this.$t("home.SLM"), link: "/slm" },
             { text: this.$t("navbar.roles"), link: "/slm/roles" },
-            { text: this.currentRole.name, link: `/slm/roles/${this.$route.params.role}` },
+            { text: this.currentRole.name, link: this.isNew ? null : `/slm/roles/${this.$route.params.role}` },
             { text: this.$t("ims.edit") },
         ]},
     },
     created() {
-        // Fetch the role details from the API
-        const prResult = getRoles(this.accessToken, 'SLM', this.$route.params.role, this.slmApi);
-        prResult.load().then(() => {
-            storeProcessRoles(prResult);
+        if(this.isNew) {
+            this.currentRole = {
+                version: 1,
+                name: this.$t("role.newRole"),
+                role: 'new-role',
+                tasks: '',
+                status: 'DRAFT'
+            };
+        }
+        else {
+            // Fetch the role details from the API
+            let t = this;
+            const rrResult = getRoles(this.accessToken, 'SLM', this.$route.params.role, this.slmApi);
+            rrResult.load().then(() => {
+                if(isValid(rrResult.error?.value)) {
+                    if(404 === rrResult.error?.value.status)
+                        t.$router.push('/slm/roles');
+                }
+                else {
+                    storeProcessRoles(rrResult);
 
-            this.currentRole = store.state.ims.roleInfo;
-            if(isValid(this.currentRole)) {
-                // Make sure we know which is the implemented version (if any)
-                this.implementedRole = findEntityWithStatus(this.currentRole, "IMPLEMENTED");
-                console.log(`Editing role SLM.${this.$route.params.role} v${this.currentRole.version}`);
-            }
-            this.$refs.breadCrumb.update(this.locationSegments);
-        });
+                    this.currentRole = store.state.ims.roleInfo;
+                    if(isValid(t.currentRole)) {
+                        // Make sure we know which is the implemented version (if any)
+                        this.implementedRole = findEntityWithStatus(t.currentRole, Status.IMPLEMENTED.description);
+                        console.log(`Editing role SLM.${t.$route.params.role} v${t.currentRole.version}`);
+                    }
+                    this.$refs.breadCrumb.update(t.locationSegments);
+                }
+            });
+        }
     },
     mounted() {
         if(!this.isProcessOwner && !this.isProcessManager)

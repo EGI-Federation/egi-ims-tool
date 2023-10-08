@@ -226,8 +226,12 @@ export default {
             const prfaResult = markProcessReadyForApproval(this.accessToken, this.processCode, me,
                                                            this.$props.apiBaseUrl);
             prfaResult.request().then(() => {
-                if(isValid(prfaResult.error?.value))
-                    t.$root.$refs.toasts.showError(t.$t('ims.error'), prfaResult.error.value);
+                if(isValid(prfaResult.error?.value)) {
+                    let message = isValid(prfaResult.error.value.data?.description) ?
+                        prfaResult.error.value.data.description :
+                        prfaResult.error.value.message;
+                    t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
+                }
                 else {
                     console.log(`Requested approval of the ${t.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.requestedProcessApproval'));
@@ -251,8 +255,12 @@ export default {
             const paResult = approveProcess(this.accessToken, this.$props.processCode, approve, me, message,
                                             this.$props.apiBaseUrl);
             paResult.request().then(() => {
-                if(isValid(paResult.error?.value))
-                    t.$root.$refs.toasts.showError(t.$t('ims.error'), paResult.error.value);
+                if(isValid(paResult.error?.value)) {
+                    let message = isValid(paResult.error.value.data?.description) ?
+                        paResult.error.value.data.description :
+                        paResult.error.value.message;
+                    t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
+                }
                 else {
                     console.log(`${approve ? 'Approved' : 'Rejected'} ${t.$props.processCode} process changes`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
@@ -292,8 +300,12 @@ export default {
             const pdResult = deprecateProcess(this.accessToken, this.$props.processCode, me, message,
                                               this.$props.apiBaseUrl);
             pdResult.request().then(() => {
-                if(isValid(pdResult.error?.value))
-                    t.$root.$refs.toasts.showError(t.$t('ims.error'), pdResult.error.value);
+                if(isValid(pdResult.error?.value)) {
+                    let message = isValid(pdResult.error.value.data?.description) ?
+                        pdResult.error.value.data.description :
+                        pdResult.error.value.message;
+                    t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
+                }
                 else {
                     console.log(`Deprecated the ${t.$props.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),

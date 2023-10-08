@@ -33,9 +33,9 @@
 <script>
 // @ is an alias to /src
 import { reactive } from 'vue';
-import {store, storeProcessRoles} from "@/store";
+import { store, storeProcessRoles } from "@/store";
 import { Status, isValid } from '@/utils'
-import { Roles, findUserWithEmail, getRoleByName } from "@/roles";
+import { findUserWithEmail, findUsersWithRole } from "@/roles";
 import { getRoles } from "@/api/getRoles";
 import { implementRole } from "@/api/implementRole";
 import { deprecateRole } from "@/api/deprecateRole";
@@ -68,6 +68,12 @@ export default {
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
         roleName() { return this.current?.name; },
+        roleCode() {
+            if(!isValid(this.current))
+                return this.$route.params.role;
+
+            return ('symbol' === typeof this.current.role) ? this.current.role.description : this.current.role;
+        },
         tasks() {
             return isValid(this.current) && isValid(this.current.tasks) &&
                 this.current.tasks.trim().length > 0 ?
@@ -75,13 +81,7 @@ export default {
                 this.$t('ims.notSet');
         },
         assignees() {
-            let roleSymbol = null;
-            if(isValid(this.current) && isValid(this.current.role)) {
-                if("string" === typeof this.current.role)
-                    this.current.role = getRoleByName(Roles[this.$props.processCode], this.current.role).role;
-                roleSymbol = this.current.role;
-            }
-            let usersWithRole = store.state.temp?.usersByRole?.get(roleSymbol);
+            const usersWithRole = findUsersWithRole(this.$props.processCode, this.current.role);
             return isValid(usersWithRole) ? usersWithRole : new Map();
         },
         returnToRoute() {
@@ -99,22 +99,30 @@ export default {
             // Call API to implement role
             let t = this;
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            const riResult = implementRole(this.accessToken, this.$props.processCode, this.$route.params.role,
-                                           me, message, this.$props.apiBaseUrl);
+            const processCode = this.$props.processCode;
+            const riResult = implementRole(t.accessToken, processCode, t.roleCode, me, message, t.$props.apiBaseUrl);
+            riResult.logMessage = `Implemented role ${processCode}.${t.roleCode}`;
+            riResult.successTitle = t.$t('ims.success');
+            riResult.errorTitle = t.$t('ims.error');
+            riResult.toastMessage = t.$t('ims.implementedEntity', {
+                processCode: processCode,
+                type: t.$t('ims.role').toLowerCase(),
+                entity: ` ${t.latest.name}`
+            });
+            riResult.toasts = t.$root.$refs.toasts;
             riResult.implement().then(() => {
-                if(isValid(riResult.error?.value))
-                    t.$root.$refs.toasts.showError(t.$t('ims.error'), riResult.error.value);
+                if(isValid(riResult.error?.value)) {
+                    let message = isValid(riResult.error.value.data?.description) ?
+                        riResult.error.value.data.description :
+                        riResult.error.value.message;
+                    t.$root.$refs.toasts.showError(riResult.errorTitle, message);
+                }
                 else {
-                    console.log(`Implemented role ${t.$props.processCode}.${t.$route.params.role}`);
-                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                     t.$t('ims.implementedEntity', {
-                                                         processCode: t.$props.processCode,
-                                                         type: t.$t('ims.role').toLowerCase(),
-                                                         entity: ` ${t.latest.name}` } ));
+                    console.log(riResult.logMessage);
+                    riResult.toasts.showSuccess(riResult.successTitle, riResult.toastMessage);
 
                     // Fetch the role definition from the API to include the new status
-                    const riResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
-                                              t.$props.apiBaseUrl);
+                    const riResult = getRoles(t.accessToken, processCode, t.roleCode, t.$props.apiBaseUrl);
                     riResult.load().then(() => {
                         storeProcessRoles(riResult);
                         t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
@@ -129,34 +137,37 @@ export default {
             // Call API to deprecate role
             let t = this;
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            const rdResult = deprecateRole(this.accessToken, this.$props.processCode, this.$route.params.role,
-                                           me, message, this.$props.apiBaseUrl);
+            const processCode = this.$props.processCode;
+            const roleCode = this.roleCode;
+            const successTitle = t.$t('ims.success');
+            const errorTitle = t.$t('ims.error');
+
+            const rdResult = deprecateRole(t.accessToken, processCode, roleCode, me, message, t.$props.apiBaseUrl);
             rdResult.deprecate().then(() => {
-                if(isValid(rdResult.error?.value))
-                    t.$root.$refs.toasts.showError(t.$t('ims.error'), rdResult.error.value);
+                if(isValid(rdResult.error?.value)) {
+                    let message = isValid(rdResult.error.value.data?.description) ?
+                        rdResult.error.value.data.description :
+                        rdResult.error.value.message;
+                    t.$root.$refs.toasts.showError(errorTitle, message);
+                }
                 else {
+                    console.log(`Deprecated role ${processCode}.${roleCode}`);
+                    t.$root.$refs.toasts.showSuccess(successTitle, t.$t('ims.deprecatedEntity', {
+                        processCode: processCode,
+                        type: t.$t('ims.role').toLowerCase(),
+                        entity: ` ${t.latest.roleName}`
+                    }));
+
                     // Update UI immediately
-                    t.current.status = "DEPRECATED";
-
-                    const processCode = t.$props.processCode;
-                    const role = t.$route.params.role;
-                    const roleName = t.current.name;
-                    const successTitle = t.$t('ims.success');
-                    const errorTitle = t.$t('ims.error');
-
-                    console.log(`Deprecated role ${processCode}.${role}`);
-                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                     t.$t('ims.deprecatedEntity', {
-                                                         processCode: processCode,
-                                                         type: t.$t('ims.role').toLowerCase(),
-                                                         entity: ` ${roleName}` } ));
+                    t.current.status = Status.DEPRECATED.description;
 
                     // Revoke the role from all users
+                    const roleName = t.latest.roleName;
                     let toRevoke = [];
                     for(const user of t.assignees.values()) {
-                        let rrResult = revokeRole(t.accessToken, processCode, role, user.checkinUserId,
+                        let rrResult = revokeRole(t.accessToken, processCode, roleCode, user.checkinUserId,
                                                   t.$props.apiBaseUrl);
-                        rrResult.logMessage = `Revoked ${processCode}.${role} from ${user.fullName}`;
+                        rrResult.logMessage = `Revoked ${processCode}.${roleCode} from ${user.fullName}`;
                         rrResult.successTitle = successTitle;
                         rrResult.errorTitle = errorTitle;
                         rrResult.toastMessage = t.$t('role.revokedRole', {
@@ -170,8 +181,12 @@ export default {
 
                     let apiCalls = toRevoke.map(rrResult => {
                         return rrResult.revoke().then(() => {
-                            if(isValid(rrResult.error?.value))
-                                rrResult.toasts.showError(rrResult.errorTitle, rrResult.error.value);
+                            if(isValid(rrResult.error?.value)) {
+                                let message = isValid(rrResult.error.value.data?.description) ?
+                                    rrResult.error.value.data.description :
+                                    rrResult.error.value.message;
+                                rrResult.toasts.showError(rrResult.errorTitle, message);
+                            }
                             else {
                                 console.log(rrResult.logMessage);
                                 rrResult.toasts.showSuccess(rrResult.successTitle, rrResult.toastMessage);
@@ -182,9 +197,8 @@ export default {
                     // Wait until all API calls to revoke the role finish
                     Promise.allSettled(apiCalls).then((results) => {
                         // Fetch the role definition from the API to include the new status
-                        console.log(`Role ${processCode}.${role} was revoked from all users`)
-                        const riResult = getRoles(t.accessToken, 'SLM', t.$route.params.role,
-                                                  t.$props.apiBaseUrl);
+                        console.log(`Role ${processCode}.${roleCode} was revoked from all users`)
+                        const riResult = getRoles(t.accessToken, processCode, roleCode, t.$props.apiBaseUrl);
                         riResult.load().then(() => {
                             storeProcessRoles(riResult);
                             t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);

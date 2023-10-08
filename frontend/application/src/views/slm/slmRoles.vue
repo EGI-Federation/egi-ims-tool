@@ -2,7 +2,7 @@
     <roles-loader process-code="SLM" :api-base-url="slmApi"/>
     <bread-crumb :segments="locationSegments"/>
     <p>{{ $t('role.processRoles') }} {{ $t('home.SLM') }}.</p>
-    <div><button type="button" class="btn btn-primary">{{ $t('role.addRole') }}</button></div>
+    <div><button type="button" class="btn btn-primary" @click="addRole">{{ $t('role.addRole') }}</button></div>
     <div v-if="roleList" class="d-flex flex-nowrap content">
         <div class="section">
             <role-summary v-for="role in roleList" :role="role" :api-base-url="slmApi" process-code="SLM"/>
@@ -12,9 +12,9 @@
 
 <script>
 // @ is an alias to /src
-import { isValid, deepClone } from '@/utils'
+import { isValid } from '@/utils'
 import { getRoles } from "@/api/getRoles";
-import { store, storeProcessRoles } from "@/store"
+import { store, storeProcessRoles  } from "@/store"
 import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
 import RoleSummary from "@/components/roleSummary.vue";
@@ -38,14 +38,13 @@ export default {
         roles() { return store.state.temp.rolesByProcess?.get('SLM'); },
         roleList() {
             const roleMap = this.roles;
-            return isValid(roleMap) ? [...roleMap].map(([role, roleInfo]) => {
-                roleInfo.role = role; // Change String to Symbol
-                roleInfo.processCode = 'SLM';
-                return roleInfo;
-            }) : [];
+            return isValid(roleMap) ? Array.from(roleMap.values()) : [];
         }
     },
     methods: {
+        addRole() {
+            this.$router.push('/slm/roles/new/edit');
+        },
     },
     created() {
         // Fetch the process roles from the API
