@@ -86,7 +86,7 @@ export default {
         processVersion() { return isValid(this.current) ? this.current.version : "?"; },
         processStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
         processOwner() {
-            let pos = findUsersWithRole(Roles.SLM.PROCESS_OWNER, true);
+            let pos = findUsersWithRole(this.$props.processCode, Roles.SLM.PROCESS_OWNER, true);
             if(isValid(pos) && pos.length > 0) {
                 let po = pos[0];
                 return po.fullName;
@@ -94,7 +94,7 @@ export default {
             return this.$t('ims.notSet');
         },
         processManager() {
-            let pms = findUsersWithRole(Roles.SLM.PROCESS_MANAGER, true);
+            let pms = findUsersWithRole(this.$props.processCode, Roles.SLM.PROCESS_MANAGER, true);
             if(isValid(pms) && pms.length > 0) {
                 let pm = pms[0];
                 return pm.fullName;
