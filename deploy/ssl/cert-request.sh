@@ -6,8 +6,7 @@ fi
 
 if [ -n "$DOMAIN" ] && [ "$DOMAIN" != "localhost" ] && [ "$DOMAIN" != "test.local" ]; then
 	certbot certonly \
-			--config-dir ${LETSENCRYPT_DIR:-/etc/letsencrypt} \
-			--dry-run \
+			--config-dir ${LETSENCRYPT_DIR:-/etc/letsencrypt} ${LETSENCRYPT_DRYRUN:---dry-run} \
 			--agree-tos \
 			--domains "$DOMAIN" \
 			--email $EMAIL \
@@ -15,7 +14,7 @@ if [ -n "$DOMAIN" ] && [ "$DOMAIN" != "localhost" ] && [ "$DOMAIN" != "test.loca
 			--noninteractive \
 			--webroot \
 			--webroot-path /var/www/html \
-			$OPTIONS || true
+			$SSL_CERT_OPTIONS || true
 
 	if [ -f ${LETSENCRYPT_DIR:-/etc/letsencrypt}/live/$DOMAIN/privkey.pem ]; then
 		chmod +rx ${LETSENCRYPT_DIR:-/etc/letsencrypt}/live

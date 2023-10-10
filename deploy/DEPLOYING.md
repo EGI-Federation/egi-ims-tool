@@ -59,17 +59,11 @@ Steps to run the API in a container:
 
 2. Run the command `build.sh` (or `build.cmd` on Windows) to build and run the containers.
 
-3. The SSL terminator will automatically use [Let's Encrypt](https://letsencrypt.org)
-   to request an SSL certificate for HTTPS.
-
-After the SSL terminator container is deployed and working properly, connect to it and
-make sure it is requesting an actual HTTPS certificate. By default, it will use a self-signed
-certificate and will only do dry runs for requesting a certificate to avoid the
-[rate limits](https://letsencrypt.org/docs/rate-limits/) of Let's Encrypt. To do this:
-
-- Run the command `sudo docker exec -it ims-ssl /bin/sh` then
-- In the container change directory `cd /opt`
-- Edit the file `request.sh` and remove the `certbot` parameter `--dry-run`
+> By default, the SSL terminator will use a self-signed certificate and will only do
+> dry runs for requesting a certificate to avoid the
+> [rate limits](https://letsencrypt.org/docs/rate-limits/) of Let's Encrypt. Once you are
+> satisfied that everything is running as expected, you can comment out the
+> setting `LETSENCRYPT_DRYRUN` in the `.env` file.
 
 > In case you remove the containers of the EGI IMS Tools service, retain the volume `certificates`,
 > which contains the SSL certificate. This will avoid requesting a new one for the same domain,

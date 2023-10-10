@@ -31,12 +31,16 @@ services:
         - CORS_ORIGINS=${CORS_ORIGINS:-.*}
         - CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
         - CORS_METHODS=${CORS_METHODS:-GET,POST,PUT,DELETE,OPTIONS}
+        - SSL_CERT_OPTIONS=${SSL_CERT_OPTIONS}
+        - SSL_CERT_RENEW_INTERVAL=${SSL_CERT_RENEW_INTERVAL}
+        - LETSENCRYPT_DIR=${LETSENCRYPT_DIR}
+        - LETSENCRYPT_DRYRUN=${LETSENCRYPT_DRYRUN}
     links:
       - ims-ui
       - ims-slm-api
       - grafana
     volumes:
-      - certificates:/etc/letsencrypt
+      - certificates:${LETSENCRYPT_DIR}
     healthcheck:
       test: ['CMD', '/opt/status.sh']
       start_period: 30s
