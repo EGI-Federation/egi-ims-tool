@@ -82,7 +82,7 @@ export default {
         },
         assignees() {
             const usersWithRole = findUsersWithRole(this.$props.processCode, this.current.role);
-            return isValid(usersWithRole) ? usersWithRole : new Map();
+            return isValid(usersWithRole) ? usersWithRole : new Array();
         },
         returnToRoute() {
             return `/${this.$props.processCode.toLowerCase()}/roles/${this.$route.params.role}`;
@@ -164,7 +164,7 @@ export default {
                     // Revoke the role from all users
                     const roleName = t.latest.roleName;
                     let toRevoke = [];
-                    for(const user of t.assignees.values()) {
+                    for(const user of t.assignees) {
                         let rrResult = revokeRole(t.accessToken, processCode, roleCode, user.checkinUserId,
                                                   t.$props.apiBaseUrl);
                         rrResult.logMessage = `Revoked ${processCode}.${roleCode} from ${user.fullName}`;

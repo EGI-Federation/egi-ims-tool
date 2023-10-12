@@ -1,6 +1,6 @@
 <template>
 <div class="role-info">
-    <h3><router-link :to="`/${processCode.toLowerCase()}/roles/${role.role.description}`">{{ role.name }}</router-link></h3>
+    <h3><router-link :to="`/${processCode.toLowerCase()}/roles/${role.roleCode}`">{{ role.name }}</router-link></h3>
     <div class="d-flex flex-nowrap justify-content-between">
         <div class="d-flex flex-nowrap info">
             <div>
@@ -22,7 +22,7 @@
                         <input class="form-check-input" type="checkbox" :id="role.role?.description + '-' + checkinUserId"
                                :data-checkinUserId="checkinUserId"
                                :data-user="user.fullName"
-                               :checked="assignees.has(checkinUserId)"
+                               :checked="assignedTo(checkinUserId)"
                                @change="toggleAssignment($event)">
                         <label class="form-check-label" :for="role.role?.description + '-' + checkinUserId">
                             {{ user.fullName }}
@@ -107,16 +107,23 @@ export default {
         },
         assignees() {
             const usersWithRole = findUsersWithRole(this.$props.processCode, this.$props.role.role);
-            return isValid(usersWithRole) ? usersWithRole : new Map();
+            return isValid(usersWithRole) ? usersWithRole : new Array();
         },
         assigneeNames() {
-            return userNames(this.assignees.values(), " ", this.$t('role.nobody'));
+            return userNames(this.assignees, " ", this.$t('role.nobody'));
         },
         roles() { return store.state.temp?.roles; },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
     },
     methods: {
+        assignedTo(checkinUserId) {
+            for(const user of this.assignees) {
+                if(checkinUserId === user.checkinUserId)
+                    return true;
+            }
+            return false;
+        },
         toggleAssignment(event) {
             if(this.roleCode === Roles[this.$props.processCode].PROCESS_STAFF.description)
                 this.toggleProcessMembership(event);

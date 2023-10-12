@@ -67,14 +67,13 @@ export default {
         roles() { return store.state.temp.roles; },
         assignees() {
             const usersWithRole = findUsersWithRole(this.$props.processCode, this.current.role);
-            return isValid(usersWithRole) ? usersWithRole : new Map();
+            return isValid(usersWithRole) ? usersWithRole : new Array();
         },
         assigneeNames() {
             if(this.isNew)
                 return this.$t('role.nobody');
 
-            const users = this.assignees.values();
-            let names = userNames(users, " ", this.$t('role.nobody'));
+            let names = userNames(this.assignees, " ", this.$t('role.nobody'));
             return names;
         },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
