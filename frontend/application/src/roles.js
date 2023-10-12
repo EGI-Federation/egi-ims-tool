@@ -72,7 +72,7 @@ export const rolesFromEntitlements = function(entitlements, trace) {
     console.log("Parsing roles...");
 
     let roles = new Map();
-    const vo = process.env.EGI_VO || "vo.tools.egi.eu";
+    const vo = process.env.EGI_VO;
     const voPrefix = "urn:mace:egi.eu:group:" + vo + ":";
     const suffix = "#aai.egi.eu";
 

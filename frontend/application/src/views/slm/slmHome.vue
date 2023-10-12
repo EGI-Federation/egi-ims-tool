@@ -32,7 +32,9 @@ export default {
         }
     },
     computed: {
-        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
+        slmApi() {
+            const api = import.meta.env.IMS_SLM_API;
+            return api || 'http://localhost:8081'; },
     },
     methods: {
     },

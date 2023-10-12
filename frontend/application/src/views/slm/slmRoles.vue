@@ -34,7 +34,7 @@ export default {
         }
     },
     computed: {
-        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
+        slmApi() { return process.env.SLM_API; },
         roles() { return store.state.temp.rolesByProcess?.get('SLM'); },
         roleList() {
             const roleMap = this.roles;

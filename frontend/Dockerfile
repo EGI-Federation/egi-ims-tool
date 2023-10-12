@@ -16,7 +16,8 @@ RUN npm install
 COPY application/ .
 
 # Build app for production with minification
-RUN npm run build
+RUN envsubst '${EGI_CHECKIN_SERVER}${EGI_VO}${EGI_VO_ENROLL_URL}${LOCALE}${FALLBACK_LOCALE}${TRACE_ROLES}${SLM_API}' < /app/.env.template > /app/.env && \
+    npm run build
 
 EXPOSE 8080
 CMD [ "http-server", "dist" ]

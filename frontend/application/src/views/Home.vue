@@ -156,7 +156,7 @@ import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/imsModule.vue";
 import IsmFooter from "@/components/footer.vue";
 
-const voEnrollUrl = process.env.EGI_VO_ENROLL_URL || "https://aai.egi.eu/registry/co_petitions/start/coef:643";
+const voEnrollUrl = process.env.EGI_VO_ENROLL_URL;
 
 export default {
     name: 'Home',

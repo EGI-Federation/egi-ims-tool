@@ -30,20 +30,21 @@ services:
         - TELEMETRY_URL=${OTEL_COLLECTOR_ADDR}
         - CORS_ORIGINS=${CORS_ORIGINS:-.*}
         - CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
-        - CORS_METHODS=${CORS_METHODS:-GET,POST,PUT,DELETE,OPTIONS}
-        - SSL_CERT_OPTIONS=${SSL_CERT_OPTIONS}
-        - SSL_CERT_RENEW_INTERVAL=${SSL_CERT_RENEW_INTERVAL}
-        - LETSENCRYPT_DIR=${LETSENCRYPT_DIR}
-        - LETSENCRYPT_DRYRUN=${LETSENCRYPT_DRYRUN}
+        - CORS_METHODS=${CORS_METHODS:-GET,POST,PUT,PATCH,DELETE,OPTIONS}
+        - SSL_CERT_ORG=${SSL_CERT_ORG}
+        - SSL_CERT_OPTIONS=${SSL_CERT_OPTIONS:-}
+        - SSL_CERT_RENEW_INTERVAL=${SSL_CERT_RENEW_INTERVAL:-12h}
+        - LETSENCRYPT_DIR=${LETSENCRYPT_DIR:-/etc/letsencrypt}
+        - LETSENCRYPT_DRYRUN=${LETSENCRYPT_DRYRUN:- }
     links:
       - ims-ui
       - ims-slm-api
       - grafana
     volumes:
-      - certificates:${LETSENCRYPT_DIR}
+      - certificates:${LETSENCRYPT_DIR:-/etc/letsencrypt}
     healthcheck:
       test: ['CMD', '/opt/status.sh']
-      start_period: 30s
+      start_period: 5s
       interval: 1m
       timeout: 5s
     restart: unless-stopped
@@ -62,10 +63,10 @@ services:
       - EGI_CHECKIN_SERVER=${EGI_CHECKIN_SERVER}
       - EGI_VO=${EGI_VO}
       - EGI_VO_ENROLL_URL=${EGI_VO_ENROLL_URL}
-      - EGI_IMS_LOCALE=${EGI_IMS_LOCALE:-en}
-      - EGI_IMS_FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
+      - LOCALE=${EGI_IMS_LOCALE:-en}
+      - FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
       - TRACE_ROLES=${EGI_IMS_TRACE_ROLES:-false}
-      - IMS_SLM_API=http://ims-slm-api:8081
+      - SLM_API=http://ims-slm-api:8081
     restart: unless-stopped
     ports:
       - "9080:8080"
@@ -98,15 +99,17 @@ services:
     restart: unless-stopped
     ports:
       - "9081:8081"
-    depends_on:
+    links:
       - otelcol
-      - ims-db
+    depends_on:
+      ims-db:
+          condition: service_healthy
 
   # ************************
   # Backend components
   # ************************
   ims-db:
-    image: postgres:15.4
+    image: postgres:16-alpine
     container_name: ims-db
     environment:
       - POSTGRES_USER=${EGI_IMS_DB_USER}
@@ -115,7 +118,9 @@ services:
     volumes:
       - database:/var/lib/postgresql/data
       - ./postgres:/docker-entrypoint-initdb.d/
-    restart: always
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${EGI_IMS_DB_USER}", "-d", "${EGI_IMS_DB_PASSWORD}" ]
     ports:
       - "5432:5432"
 

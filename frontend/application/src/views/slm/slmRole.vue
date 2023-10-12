@@ -28,7 +28,7 @@ export default {
         }
     },
     computed: {
-        slmApi() { return process.env.IMS_SLM_API || 'http://localhost:8081'; },
+        slmApi() { return process.env.SLM_API; },
         locationSegments() { return [
             { text: this.$t("home.home"), link:"/" },
             { text: this.$t("home.SLM"), link: "/slm" },
