@@ -2,6 +2,7 @@
 
 export DOMAIN=${DOMAIN}
 export EMAIL=${EMAIL}
+export SSL_CERT_OPTIONS=${SSL_CERT_OPTIONS}
 export LETSENCRYPT_DIR=${LETSENCRYPT_DIR}
 export LETSENCRYPT_DRYRUN=${LETSENCRYPT_DRYRUN}
 
@@ -16,13 +17,14 @@ if [ ! -f /usr/share/nginx/certificates/fullchain.pem ]; then
     echo "Generating self-signed certificate"
     openssl genrsa -out /usr/share/nginx/certificates/privkey.pem 4096
     openssl req -new -key /usr/share/nginx/certificates/privkey.pem -out /usr/share/nginx/certificates/cert.csr -nodes -subj \
-    "/C=PT/ST=World/L=World/O=$DOMAIN/CN=$DOMAIN"
+    "/C=PT/ST=World/L=World/O=$SSL_CERT_ORG/CN=$DOMAIN"
     openssl x509 -req -days 365 -in /usr/share/nginx/certificates/cert.csr -signkey /usr/share/nginx/certificates/privkey.pem -out /usr/share/nginx/certificates/fullchain.pem
 fi
 
-if [ -n "$DOMAIN" ] && [ "$DOMAIN" != "localhost" ] && [ "$DOMAIN" != "test.local" ]; then
+if [ -n "$DOMAIN" ] && [ "$DOMAIN" != "localhost" ]; then
     ### Send certbot emission/renewal to background
-    $(while :; do /opt/request.sh; sleep "${SSL_CERT_RENEW_INTERVAL:-12h}"; done;) &
+    echo "Scheduling periodic check if certificate should be renewed"
+    $(while :; do /opt/request.sh; sleep "${SSL_CERT_RENEW_INTERVAL}"; done;) &
 
     ### Check for changes in the certificate (i.e renewals or first start) in the background
     $(while inotifywait -e close_write /usr/share/nginx/certificates; do echo "Reloading nginx with new certificate"; nginx -s reload; done) &

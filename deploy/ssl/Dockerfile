@@ -1,4 +1,4 @@
-FROM nginx:1.25-alpine
+FROM nginx:1.23.0
 
 MAINTAINER Levente Farkas (levente.farkas@egi.eu)
 
@@ -13,6 +13,7 @@ ARG GRAFANA_URL
 ARG CORS_ORIGINS
 ARG CORS_HEADERS
 ARG CORS_METHODS
+ARG SSL_CERT_ORG
 ARG SSL_CERT_OPTIONS
 ARG SSL_CERT_RENEW_INTERVAL
 ARG LETSENCRYPT_DIR
@@ -21,24 +22,27 @@ ARG LETSENCRYPT_DRYRUN
 # Run-time environment variables
 ENV EMAIL ${SERVICE_EMAIL}
 ENV DOMAIN ${SERVICE_DOMAIN}
+ENV SSL_CERT_ORG=${SSL_CERT_ORG}
 ENV SSL_CERT_OPTIONS=${SSL_CERT_OPTIONS}
 ENV SSL_CERT_RENEW_INTERVAL=${SSL_CERT_RENEW_INTERVAL}
 ENV LETSENCRYPT_DIR=${LETSENCRYPT_DIR}
 ENV LETSENCRYPT_DRYRUN=${LETSENCRYPT_DRYRUN}
+ENV NGINX_DIR=/etc/nginx
 
 # Install certbot and openssl
 # Using inotifywait to watch our certificates and trigger actions on change
-RUN apk update --no-cache && \
-    apk upgrade --no-cache && \
-    apk add --no-cache openssl inotify-tools certbot
+RUN apt-get -q -y update && \
+    apt-get -q -y install inotify-tools openssl certbot gettext-base vim && \
+    apt-get -q clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Configure website
 COPY ssl/ /etc/ssl-options
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY default.conf /etc/nginx/conf.d/default.conf.template
-RUN envsubst '${DOMAIN}${SERVICE_UI}${SERVICE_SLM}${SERVICE_CAPM}${GRAFANA_URL}${CORS_ORIGINS}${CORS_METHODS}${CORS_HEADERS}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && \
-    rm -f /etc/nginx/conf.d/default.conf.template && \
-    rm -f /etc/nginx/sites-enabled/default && \
+COPY nginx.conf $NGINX_DIR/nginx.conf
+COPY default.conf $NGINX_DIR/conf.d/default.conf.template
+RUN envsubst '${DOMAIN}${SERVICE_UI}${SERVICE_SLM}${SERVICE_CAPM}${GRAFANA_URL}${CORS_ORIGINS}${CORS_METHODS}${CORS_HEADERS}' < $NGINX_DIR/conf.d/default.conf.template > $NGINX_DIR/conf.d/default.conf && \
+    rm -f $NGINX_DIR/conf.d/default.conf.template && \
+    rm -f $NGINX_DIR/sites-enabled/default && \
     mkdir -p /var/cache/nginx/proxycache && \
     mkdir -p /var/cache/nginx/proxytemp
 
@@ -53,7 +57,7 @@ RUN ./install.sh
 
 WORKDIR /opt
 COPY telemetry.conf telemetry.conf
-RUN envsubst '${TELEMETRY_URL}' < /opt/telemetry.conf > /etc/nginx/conf.d/opentelemetry_module.conf && \
+RUN envsubst '${TELEMETRY_URL}' < /opt/telemetry.conf > $NGINX_DIR/conf.d/opentelemetry_module.conf && \
     rm -f telemetry.conf
 
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/opentelemetry-webserver-sdk/sdk_lib/lib
