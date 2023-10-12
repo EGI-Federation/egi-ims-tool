@@ -34,7 +34,7 @@ export default {
         }
     },
     computed: {
-        slmApi() { return process.env.SLM_API; },
+        slmApi() { return process.env.VUE_APP_IMS_SLM_API; },
         roles() { return store.state.temp.roles; },
         isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
         isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },

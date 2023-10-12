@@ -1,5 +1,23 @@
 FROM node:20-alpine
 
+ARG EGI_CHECKIN_SERVER
+ARG EGI_VO
+ARG EGI_VO_ENROLL_URL
+ARG LOCALE
+ARG FALLBACK_LOCALE
+ARG TRACE_ROLES
+ARG SLM_API
+
+# Install envsubst
+ENV BUILD_DEPS="gettext"
+ENV RUNTIME_DEPS="libintl"
+
+RUN set -x && \
+    apk add --update $RUNTIME_DEPS && \
+    apk add --virtual build_deps $BUILD_DEPS &&  \
+    cp /usr/bin/envsubst /usr/local/bin/envsubst && \
+    apk del build_deps
+
 # Install simple http server for serving static content
 RUN npm install -g http-server
 

@@ -72,7 +72,7 @@ export const rolesFromEntitlements = function(entitlements, trace) {
     console.log("Parsing roles...");
 
     let roles = new Map();
-    const vo = process.env.EGI_VO;
+    const vo = process.env.VUE_APP_EGI_VO;
     const voPrefix = "urn:mace:egi.eu:group:" + vo + ":";
     const suffix = "#aai.egi.eu";
 
@@ -138,7 +138,7 @@ export const rolesFromEntitlements = function(entitlements, trace) {
             roles.set(roleDetails.role, { name: roleDetails.name, assigned: roleDetails.assigned, ownedEntities: roleDetails.ownedEntities });
     }
 
-    if(trace || process.env.TRACE_ROLES) {
+    if(trace || process.env.VUE_APP_IMS_TRACE_ROLES) {
         const assigned = [...roles].filter(([k, v]) => v.assigned && "member" !== k.description);
         console.log("Got " + assigned.length + " roles" + (roles.size > 0 ? ":" : ""));
         for(const roleDetails of roles.values()) {
@@ -179,7 +179,7 @@ export const hasRole = function(roles, role) {
         return false;
     }
 
-    const trace = process.env.TRACE_ROLES;
+    const trace = process.env.VUE_APP_IMS_TRACE_ROLES;
     if(!roles.has(role)) {
         if(trace)
             console.log(`Check for role ${role.description}, nope`);
@@ -193,7 +193,7 @@ export const hasRole = function(roles, role) {
     return isValid(roleDetails.assigned) && roleDetails.assigned;
 }
 
-// Returns all users that hold a specific role, null if no user with that role
+// Returns array of users that hold a specific role, null if role is not assigned to anyone
 // Assumes users have been loaded and stored in the root module of the store
 export const findUsersWithRole = function(processCode, role, firstOnly = false) {
     const roleCode = ('symbol' == typeof role) ? role.description : role;

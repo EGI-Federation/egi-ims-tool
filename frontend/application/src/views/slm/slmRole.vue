@@ -28,7 +28,7 @@ export default {
         }
     },
     computed: {
-        slmApi() { return process.env.SLM_API; },
+        slmApi() { return process.env.VUE_APP_IMS_SLM_API; },
         locationSegments() { return [
             { text: this.$t("home.home"), link:"/" },
             { text: this.$t("home.SLM"), link: "/slm" },

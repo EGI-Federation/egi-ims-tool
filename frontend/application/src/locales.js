@@ -39,7 +39,7 @@ function browserLanguage() {
     return matched;
 }
 
-export const defaultLocale = browserLanguage() || process.env.LOCALE;
+export const defaultLocale = browserLanguage() || process.env.VUE_APP_IMS_LOCALE;
 
 console.log("Default language: " + defaultLocale);
 
@@ -47,7 +47,7 @@ export const languages = Object.getOwnPropertyNames(loadLocaleMessages());
 export const languageNames = { en: "English", it: "Italiano" };
 export default createI18n({
     locale: defaultLocale,
-    fallbackLocale: process.env.FALLBACK_LOCALE,
+    fallbackLocale: process.env.VUE_APP_IMS_FALLBACK_LOCALE,
     messages: loadLocaleMessages(),
     globalInjection: true,
     legacy: true

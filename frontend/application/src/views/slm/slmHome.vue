@@ -8,9 +8,9 @@
 <script>
 // @ is an alias to /src
 import {isValid, findEntityWithStatus, findEntityWithVersion, Status} from '@/utils'
-import { getProcessInfo } from "@/api/getProcessInfo";
+import { getProcessInfo } from "@/api/getProcessInfo"
 import { store, storeProcessInfo } from "@/store"
-import RolesLoader from "@/components/rolesLoader.vue";
+import RolesLoader from "@/components/rolesLoader.vue"
 import BreadCrumb from "@/components/breadCrumb.vue"
 import ProcessInfo from "@/components/processInfo.vue"
 
@@ -32,9 +32,7 @@ export default {
         }
     },
     computed: {
-        slmApi() {
-            const api = import.meta.env.IMS_SLM_API;
-            return api || 'http://localhost:8081'; },
+        slmApi() { return process.env.VUE_APP_IMS_SLM_API; },
     },
     methods: {
     },

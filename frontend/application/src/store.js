@@ -205,7 +205,7 @@ export const store = createStore({
         },
         // Contains OIDC state
         oidc: vuexOidcCreateStoreModule(
-            oidcSettings,
+            oidcSettings(),
             // Optional OIDC store settings
             {
                 namespaced: true,

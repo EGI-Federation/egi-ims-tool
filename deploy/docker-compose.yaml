@@ -59,14 +59,14 @@ services:
     image: egi/ims-ui:latest
     build:
       context: ../frontend/
-    environment:
-      - EGI_CHECKIN_SERVER=${EGI_CHECKIN_SERVER}
-      - EGI_VO=${EGI_VO}
-      - EGI_VO_ENROLL_URL=${EGI_VO_ENROLL_URL}
-      - LOCALE=${EGI_IMS_LOCALE:-en}
-      - FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
-      - TRACE_ROLES=${EGI_IMS_TRACE_ROLES:-false}
-      - SLM_API=http://ims-slm-api:8081
+      args:
+        - EGI_CHECKIN_SERVER=${EGI_CHECKIN_SERVER}/auth/realms/egi
+        - EGI_VO=${EGI_VO}
+        - EGI_VO_ENROLL_URL=${EGI_VO_ENROLL_URL}
+        - LOCALE=${EGI_IMS_LOCALE:-en}
+        - FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
+        - TRACE_ROLES=${EGI_IMS_TRACE_ROLES:-false}
+        - SLM_API=http://ims-slm-api:8081
     restart: unless-stopped
     ports:
       - "9080:8080"

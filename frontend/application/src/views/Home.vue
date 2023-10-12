@@ -156,7 +156,7 @@ import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/imsModule.vue";
 import IsmFooter from "@/components/footer.vue";
 
-const voEnrollUrl = process.env.EGI_VO_ENROLL_URL;
+const voEnrollUrl = process.env.VUE_APP_EGI_VO_ENROLL_URL;
 
 export default {
     name: 'Home',
