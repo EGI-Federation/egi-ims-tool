@@ -66,7 +66,7 @@ services:
         - LOCALE=${EGI_IMS_LOCALE:-en}
         - FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
         - TRACE_ROLES=${EGI_IMS_TRACE_ROLES:-false}
-        - SLM_API=http://ims-slm-api:8081
+        - SLM_API=https://ims-slm-api:8181
     restart: unless-stopped
     ports:
       - "9080:8080"
@@ -89,16 +89,20 @@ services:
       - QUARKUS_DATASOURCE_PASSWORD=${EGI_IMS_DB_PASSWORD}
       - QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
       - QUARKUS_OPENTELEMETRY_TRACER_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=data-transfer
-      - QUARKUS_HTTP_CORS_ORIGINS=/${CORS_ORIGINS:-.*}/
-      - QUARKUS_HTTP_CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
-      - QUARKUS_HTTP_CORS_METHODS=${CORS_METHODS:-GET,POST,PUT,DELETE,OPTIONS}
       - QUARKUS_SMALLRYE_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/slm
       - QUARKUS_LOG_FILE_PATH=/deployments/logs/slm-api.json
+      - QUARKUS_HTTP_CORS_ORIGINS=/${CORS_ORIGINS:-.*}/
+      - QUARKUS_HTTP_CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
+      - QUARKUS_HTTP_CORS_METHODS=${CORS_METHODS:-HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS}
+      - QUARKUS_HTTP_ACCESS_LOG_ENABLED=${HTTP_ACCESS_LOG:-false}
+      #- QUARKUS_HTTP_SSL_CERTIFICATE_KEY_STORE_FILE=<key-store-file>
+      #- QUARKUS_HTTP_SSL_CERTIFICATE_KEY_STORE_PASSWORD=<password>
     volumes:
       - logs:/deployments/logs:rw
     restart: unless-stopped
     ports:
       - "9081:8081"
+      - "9181:8181"
     links:
       - otelcol
     depends_on:
