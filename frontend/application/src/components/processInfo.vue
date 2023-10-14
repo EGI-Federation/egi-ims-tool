@@ -252,13 +252,13 @@ export default {
             // Call API to approve/reject process changes
             let t = this;
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            const paResult = approveProcess(this.accessToken, this.$props.processCode, approve, me, message,
+            const apResult = approveProcess(this.accessToken, this.$props.processCode, approve, me, message,
                                             this.$props.apiBaseUrl);
-            paResult.request().then(() => {
-                if(isValid(paResult.error?.value)) {
-                    let message = isValid(paResult.error.value.data?.description) ?
-                        paResult.error.value.data.description :
-                        paResult.error.value.message;
+            apResult.request().then(() => {
+                if(isValid(apResult.error?.value)) {
+                    let message = isValid(apResult.error.value.data?.description) ?
+                        apResult.error.value.data.description :
+                        apResult.error.value.message;
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
                 }
                 else {
@@ -297,13 +297,13 @@ export default {
             // Call API to deprecate process
             let t = this;
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            const pdResult = deprecateProcess(this.accessToken, this.$props.processCode, me, message,
+            const dpResult = deprecateProcess(this.accessToken, this.$props.processCode, me, message,
                                               this.$props.apiBaseUrl);
-            pdResult.request().then(() => {
-                if(isValid(pdResult.error?.value)) {
-                    let message = isValid(pdResult.error.value.data?.description) ?
-                        pdResult.error.value.data.description :
-                        pdResult.error.value.message;
+            dpResult.request().then(() => {
+                if(isValid(dpResult.error?.value)) {
+                    let message = isValid(dpResult.error.value.data?.description) ?
+                        dpResult.error.value.data.description :
+                        dpResult.error.value.message;
                     t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
                 }
                 else {

@@ -101,26 +101,26 @@ export default {
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
             const processCode = this.$props.processCode;
 
-            let riResult = implementRole(t.accessToken, processCode, t.roleCode, me, message, t.$props.apiBaseUrl);
-            riResult.logMessage = `Implemented role ${processCode}.${t.roleCode}`;
-            riResult.successTitle = t.$t('ims.success');
-            riResult.errorTitle = t.$t('ims.error');
-            riResult.toastMessage = t.$t('ims.implementedEntity', {
+            let irResult = implementRole(t.accessToken, processCode, t.roleCode, me, message, t.$props.apiBaseUrl);
+            irResult.logMessage = `Implemented role ${processCode}.${t.roleCode}`;
+            irResult.successTitle = t.$t('ims.success');
+            irResult.errorTitle = t.$t('ims.error');
+            irResult.toastMessage = t.$t('ims.implementedEntity', {
                 processCode: processCode,
                 type: t.$t('ims.role').toLowerCase(),
                 entity: ` ${t.latest.name}`
             });
-            riResult.toasts = t.$root.$refs.toasts;
-            riResult.implement().then(() => {
-                if(isValid(riResult.error?.value)) {
-                    let message = isValid(riResult.error.value.data?.description) ?
-                        riResult.error.value.data.description :
-                        riResult.error.value.message;
-                    t.$root.$refs.toasts.showError(riResult.errorTitle, message);
+            irResult.toasts = t.$root.$refs.toasts;
+            irResult.implement().then(() => {
+                if(isValid(irResult.error?.value)) {
+                    let message = isValid(irResult.error.value.data?.description) ?
+                        irResult.error.value.data.description :
+                        irResult.error.value.message;
+                    t.$root.$refs.toasts.showError(irResult.errorTitle, message);
                 }
                 else {
-                    console.log(riResult.logMessage);
-                    riResult.toasts.showSuccess(riResult.successTitle, riResult.toastMessage);
+                    console.log(irResult.logMessage);
+                    irResult.toasts.showSuccess(irResult.successTitle, irResult.toastMessage);
 
                     // Fetch the role definition from the API to include the new status
                     const riResult = getRoles(t.accessToken, processCode, t.roleCode, t.$props.apiBaseUrl);
@@ -143,12 +143,12 @@ export default {
             const successTitle = t.$t('ims.success');
             const errorTitle = t.$t('ims.error');
 
-            let rdResult = deprecateRole(t.accessToken, processCode, roleCode, me, message, t.$props.apiBaseUrl);
-            rdResult.deprecate().then(() => {
-                if(isValid(rdResult.error?.value)) {
-                    let message = isValid(rdResult.error.value.data?.description) ?
-                        rdResult.error.value.data.description :
-                        rdResult.error.value.message;
+            let drResult = deprecateRole(t.accessToken, processCode, roleCode, me, message, t.$props.apiBaseUrl);
+            drResult.deprecate().then(() => {
+                if(isValid(drResult.error?.value)) {
+                    let message = isValid(drResult.error.value.data?.description) ?
+                        drResult.error.value.data.description :
+                        drResult.error.value.message;
                     t.$root.$refs.toasts.showError(errorTitle, message);
                 }
                 else {
