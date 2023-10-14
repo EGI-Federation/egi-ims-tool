@@ -65,8 +65,8 @@
         "allValue": "",
         "current": {
           "selected": false,
-          "text": "api:8081",
-          "value": "api:8081"
+          "text": "api:8083",
+          "value": "api:8083"
         },
         "datasource": {
           "type": "prometheus",

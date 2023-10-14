@@ -37,5 +37,8 @@ nb-configuration.xml
 *.orig
 *.rej
 
+# Draw.io
+*.bkp
+
 # Local environment
 .env
