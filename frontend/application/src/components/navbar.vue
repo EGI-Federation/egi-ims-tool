@@ -378,17 +378,17 @@ export default {
 }
 .navbar-toggler {
     border: none;
-    background-color: var(--bs-secondary-bg);
+    background-color: var(--menu-item-color);
+}
+.offcanvas-header {
+    background-color: var(--menu-item-color);
 }
 .dropdown-menu,
 .offcanvas-body {
-    background-color: var(--bs-tertiary-bg);
-}
-.offcanvas-header {
-    background-color: var(--bs-secondary-bg);
+    background-color: var(--menu-background-color);
 }
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus {
-    background-color: var(--bs-secondary-bg);
+    background-color: var(--menu-item-color);
 }
 </style>

@@ -49,4 +49,8 @@ body {
 .gridjs-td > span > :last-child {
     margin-bottom: 0!important;
 }
+:root {
+    --menu-background-color: var(--bs-tertiary-bg);
+    --menu-item-color: var(--bs-secondary-bg);
+}
 </style>

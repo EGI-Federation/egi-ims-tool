@@ -13,7 +13,7 @@
             </div>
         </div>
         <div v-if="assignable && (isProcessManager || isProcessOwner)" class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ $t('role.assign') }}
             </button>
             <ul class="dropdown-menu user-list">
@@ -373,5 +373,12 @@ label.form-check-label {
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+.dropdown-menu {
+    background-color: var(--menu-background-color);
+}
+.dropdown-menu > li:hover,
+.dropdown-menu > li:focus {
+    background-color: var(--menu-item-color);
 }
 </style>

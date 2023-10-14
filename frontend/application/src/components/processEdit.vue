@@ -1333,4 +1333,13 @@ export default {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
 }
+.dropdown-menu {
+    background-color: var(--menu-background-color);
+}
+.dropdown-menu > li:hover,
+.dropdown-menu > li:focus,
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    background-color: var(--menu-item-color);
+}
 </style>
