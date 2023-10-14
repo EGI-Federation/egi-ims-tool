@@ -17,14 +17,14 @@
                 {{ $t('role.assign') }}
             </button>
             <ul class="dropdown-menu user-list">
-                <li v-for="[checkinUserId, user] in users" class="dropdown-item check-item">
+                <li v-for="user in users" class="dropdown-item check-item">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" :id="role.role?.description + '-' + checkinUserId"
-                               :data-checkinUserId="checkinUserId"
+                        <input class="form-check-input" type="checkbox" :id="role.roleCode + '-' + user.checkinUserId"
+                               :data-checkinUserId="user.checkinUserId"
                                :data-user="user.fullName"
-                               :checked="assignedTo(checkinUserId)"
+                               :checked="assignedTo(user.checkinUserId)"
                                @change="toggleAssignment($event)">
-                        <label class="form-check-label" :for="role.role?.description + '-' + checkinUserId">
+                        <label class="form-check-label" :for="role.roleCode + '-' + user.checkinUserId">
                             {{ user.fullName }}
                         </label>
                     </div>
@@ -87,16 +87,15 @@ export default {
         users() {
             let users = null;
             if(isValid(this.$props.role)) {
-                if(this.roleCode === Roles[this.$props.processCode].PROCESS_STAFF.description)
+                const roleEnum = Roles[this.$props.processCode];
+                if(this.roleCode === roleEnum.PROCESS_STAFF.description)
                     // Any VO user can be included in the process
                     users = store.state.temp.users;
-                else {
-                    const roleKey = `${this.$props.processCode}.${this.roleCode}`;
-                    users = this.usersByProcess?.get(roleKey);
-                }
+                else
+                    users = this.usersByProcess?.get(this.$props.processCode);
             }
 
-            return isValid(users) ? users : new Map();
+            return isValid(users) ? Array.from(users.values()) : new Array();
         },
         assignable() {
             if(this.$props.role.status === Status.DEPRECATED.description)
@@ -125,7 +124,8 @@ export default {
             return false;
         },
         toggleAssignment(event) {
-            if(this.roleCode === Roles[this.$props.processCode].PROCESS_STAFF.description)
+            const roleEnum = Roles[this.$props.processCode];
+            if(this.roleCode === roleEnum.PROCESS_STAFF.description)
                 this.toggleProcessMembership(event);
             else
                 this.toggleRoleAssignment(event);

@@ -100,7 +100,8 @@ export default {
             let t = this;
             let me = findUserWithEmail(this.$props.processCode, this.myEmail);
             const processCode = this.$props.processCode;
-            const riResult = implementRole(t.accessToken, processCode, t.roleCode, me, message, t.$props.apiBaseUrl);
+
+            let riResult = implementRole(t.accessToken, processCode, t.roleCode, me, message, t.$props.apiBaseUrl);
             riResult.logMessage = `Implemented role ${processCode}.${t.roleCode}`;
             riResult.successTitle = t.$t('ims.success');
             riResult.errorTitle = t.$t('ims.error');
@@ -142,7 +143,7 @@ export default {
             const successTitle = t.$t('ims.success');
             const errorTitle = t.$t('ims.error');
 
-            const rdResult = deprecateRole(t.accessToken, processCode, roleCode, me, message, t.$props.apiBaseUrl);
+            let rdResult = deprecateRole(t.accessToken, processCode, roleCode, me, message, t.$props.apiBaseUrl);
             rdResult.deprecate().then(() => {
                 if(isValid(rdResult.error?.value)) {
                     let message = isValid(rdResult.error.value.data?.description) ?
