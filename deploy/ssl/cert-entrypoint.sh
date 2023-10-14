@@ -17,7 +17,7 @@ if [ ! -f /usr/share/nginx/certificates/fullchain.pem ]; then
     echo "Generating self-signed certificate"
     openssl genrsa -out /usr/share/nginx/certificates/privkey.pem 4096
     openssl req -new -key /usr/share/nginx/certificates/privkey.pem -out /usr/share/nginx/certificates/cert.csr -nodes -subj \
-    "/C=PT/ST=World/L=World/O=$SSL_CERT_ORG/CN=$DOMAIN"
+    "/C=PT/ST=World/L=World/O=EGI Foundation/CN=$DOMAIN"
     openssl x509 -req -days 365 -in /usr/share/nginx/certificates/cert.csr -signkey /usr/share/nginx/certificates/privkey.pem -out /usr/share/nginx/certificates/fullchain.pem
 fi
 
