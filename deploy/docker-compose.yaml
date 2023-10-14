@@ -85,8 +85,8 @@ services:
       - EGI_CHECKIN_PASSWORD=${EGI_CHECKIN_PASSWORD}
       - QUARKUS_OIDC_AUTH_SERVER_URL=${EGI_CHECKIN_SERVER}/auth/realms/egi
       - QUARKUS_DATASOURCE_REACTIVE_URL=postgresql://ims-db:5432/ims
-      - QUARKUS_DATASOURCE_USERNAME=${EGI_IMS_DB_USER:-ims}
-      - QUARKUS_DATASOURCE_PASSWORD=${EGI_IMS_DB_PASSWORD}
+      - QUARKUS_DATASOURCE_USERNAME=${IMS_DB_USER:-ims}
+      - QUARKUS_DATASOURCE_PASSWORD=${IMS_DB_PASSWORD}
       - QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
       - QUARKUS_OPENTELEMETRY_TRACER_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=data-transfer
       - QUARKUS_SMALLRYE_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/slm
@@ -113,15 +113,15 @@ services:
     image: postgres:16-alpine
     container_name: ims-db
     environment:
-      - POSTGRES_USER=${EGI_IMS_DB_USER}
-      - POSTGRES_PASSWORD=${EGI_IMS_DB_PASSWORD}
+      - POSTGRES_USER=${IMS_DB_USER}
+      - POSTGRES_PASSWORD=${IMS_DB_PASSWORD}
       - POSTGRES_DB=ims
     volumes:
       - database:/var/lib/postgresql/data
       - ./postgres:/docker-entrypoint-initdb.d/
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "${EGI_IMS_DB_USER}", "-d", "${EGI_IMS_DB_PASSWORD}" ]
+      test: [ "CMD", "pg_isready", "-U", "${IMS_DB_USER}", "-d", "${IMS_DB_PASSWORD}" ]
     ports:
       - "5432:5432"
 
