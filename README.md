@@ -28,7 +28,10 @@ With [EGI IMS Tools](https://ims.egi.eu) you can:
 - Perform procedures in ISM processes in the same way time after time.
 - Use APIs to programmatically query IMS information and perform operations.
 - Run ISM procedures on a schedule, without human intervention.
-- Monitor IMS processes in real-time for all IT services offered with the help of the EGI IMS.
+- Generate reports on a schedule, share, and archive them without human intervention.
+- Notify IMS participants about changes relevant to their roles and tasks they have to perform periodically.
+- Define KPIs and collect measurements in a uniform, formal, and automated way.
+- Monitor IMS processes and their KPIs in real-time for all the IT services offered with the help of the EGI IMS.
 - Centrally control access to all aspects of ISM with role-based policies.
 
 ## Processes
