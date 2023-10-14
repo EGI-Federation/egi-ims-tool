@@ -63,10 +63,10 @@ services:
         - EGI_CHECKIN_SERVER=${EGI_CHECKIN_SERVER}/auth/realms/egi
         - EGI_VO=${EGI_VO}
         - EGI_VO_ENROLL_URL=${EGI_VO_ENROLL_URL}
-        - LOCALE=${EGI_IMS_LOCALE:-en}
-        - FALLBACK_LOCALE=${EGI_IMS_FALLBACK_LOCALE:-it}
-        - TRACE_ROLES=${EGI_IMS_TRACE_ROLES:-false}
-        - SLM_API=https://ims-slm-api:8181
+        - LOCALE=${IMS_LOCALE:-en}
+        - FALLBACK_LOCALE=${IMS_FALLBACK_LOCALE:-it}
+        - TRACE_ROLES=${IMS_TRACE_ROLES:-false}
+        - SLM_API=https://${SERVICE_DOMAIN}/api/slm
     restart: unless-stopped
     ports:
       - "9080:8080"
@@ -95,14 +95,11 @@ services:
       - QUARKUS_HTTP_CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
       - QUARKUS_HTTP_CORS_METHODS=${CORS_METHODS:-HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS}
       - QUARKUS_HTTP_ACCESS_LOG_ENABLED=${HTTP_ACCESS_LOG:-false}
-      #- QUARKUS_HTTP_SSL_CERTIFICATE_KEY_STORE_FILE=<key-store-file>
-      #- QUARKUS_HTTP_SSL_CERTIFICATE_KEY_STORE_PASSWORD=<password>
     volumes:
       - logs:/deployments/logs:rw
     restart: unless-stopped
     ports:
       - "9081:8081"
-      - "9181:8181"
     links:
       - otelcol
     depends_on:
