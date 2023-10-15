@@ -2,7 +2,7 @@
 # EGI Integrated Management System Tools
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/EGI-Federation/egi-ims-tool?color=darkcyan&label=Release)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/EGI-Federation/egi-ims-tool?color=darkcyan&label=Release&include_prereleases)
 ![GitHub issues](https://img.shields.io/github/issues/EGI-Federation/egi-ims-tool?label=Issues)
 ![GitHub issue custom search in repo](https://img.shields.io/github/issues-search/EGI-Federation/egi-ims-tool?label=Bugs&color=red&query=is%3Aopen%20label%3Abug)
 
