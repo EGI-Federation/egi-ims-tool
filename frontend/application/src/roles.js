@@ -5,7 +5,7 @@ import { store } from "@/store";
 export const Roles = {
 
     VO: makeEnum(['member']),
-    IMS: makeEnum(['process-staff','ims-owner','ims-manager','ims-coordinator','ims-developer']),
+    IMS: makeEnum(['process-staff','ims-owner','ims-manager','ims-developer', 'strategy-coordinator', 'operations-coordinator']),
     BA: makeEnum(['process-staff','process-owner','process-manager','process-developer','report-owner']),
     BDS: makeEnum(['process-staff','process-owner','process-manager','process-developer','report-owner']),
     CAPM: makeEnum(['process-staff','process-owner','process-manager','process-developer','report-owner']),
