@@ -7,7 +7,7 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 1.0.37
-- Added pages for all processes and for Management System (SYS process) 
+- Added pages for all processes and for Management System (SYS process)
 - Added sign-in with EGI Check-in
 - Added Postgres DB connection
 - Process management complete

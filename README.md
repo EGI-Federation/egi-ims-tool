@@ -22,7 +22,7 @@ sequence time after time, as required for repeatable processes prescribed by ITS
 
 The EGI IMS Tools service alleviates this pain by offering an easy-to-use web interface dedicated to the EGI IMS.
 
-With [EGI IMS Tools](https://ims.egi.eu) you can: 
+With [EGI IMS Tools](https://ims.egi.eu) you can:
 
 - Perform procedures in ISM processes easily, with enforced step-by-step workflows.
 - Perform procedures in ISM processes in the same way time after time.
