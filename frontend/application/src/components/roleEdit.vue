@@ -22,7 +22,7 @@
                 <!-- Name -->
                 <div v-if="isNew" class="text-field mb-3">
                     <label for="roleName" class="form-label">{{ $t('role.newRoleName') }}:</label>
-                    <input type="text" class="form-control" id="roleName" v-model="roleName" required/>
+                    <input type="text" class="form-control" id="roleName" v-model="roleName" :maxlength=50 required/>
                     <div class="invalid-feedback">
                         {{ $t(roleName.length > 0 ? 'role.invalidRoleName' : 'role.missingRoleName') }}
                     </div>
@@ -316,13 +316,13 @@ export default {
 
 @media screen and (min-width: 765px) {
     .content {
-        min-height: calc(100vh - var(--navbar-height) - var(--breadcrumb-height) - var(--footer-horizontal-height));
+        min-height: calc(100vh - var(--navbar-height) - var(--breadcrumb-height));
     }
 }
 
 .content > div {
     width: 100%;
-    max-width: 60rem;
+    max-width: var(--max-content-width);
     margin: 0 auto 2rem;
 }
 .role {

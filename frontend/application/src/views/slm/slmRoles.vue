@@ -70,7 +70,7 @@ export default {
 }
 .content .section {
     width: 100%;
-    max-width: 60rem;
+    max-width: var(--max-content-width);
     margin: 0 auto 2rem;
 }
 </style>

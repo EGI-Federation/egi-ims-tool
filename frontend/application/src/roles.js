@@ -68,7 +68,7 @@ export const getRoleByName = function(processCode, role) {
 
 // Parse user roles from the entitlements the user has
 // Note: Ignores roles that are not yet implemented
-export const rolesFromEntitlements = function(entitlements, trace) {
+export const rolesFromEntitlements = function(entitlements, traceRoles) {
     console.log("Parsing roles...");
 
     let roles = new Map();
@@ -138,7 +138,10 @@ export const rolesFromEntitlements = function(entitlements, trace) {
             roles.set(roleDetails.role, { name: roleDetails.name, assigned: roleDetails.assigned, ownedEntities: roleDetails.ownedEntities });
     }
 
-    if(trace || process.env.VUE_APP_IMS_TRACE_ROLES) {
+    if(!isValid(traceRoles))
+        traceRoles = process.env.VUE_APP_IMS_TRACE_ROLES;
+
+    if(traceRoles) {
         const assigned = [...roles].filter(([k, v]) => v.assigned && "member" !== k.description);
         console.log("Got " + assigned.length + " roles" + (roles.size > 0 ? ":" : ""));
         for(const roleDetails of roles.values()) {
@@ -181,7 +184,7 @@ export const hasRole = function(roles, role) {
 
     const trace = process.env.VUE_APP_IMS_TRACE_ROLES;
     if(!roles.has(role)) {
-        if(trace)
+        if(true === trace)
             console.log(`Check for role ${role.description}, nope`);
         return false;
     }

@@ -130,7 +130,7 @@ export default {
     margin-top: auto;
 }
 .footer .info {
-    max-width: 55rem;
+    max-width: var(--max-content-width);
     margin: 3rem auto 1rem;
 }
 .footer .logo {
@@ -178,7 +178,7 @@ export default {
     flex-direction: row;
     margin: auto auto 1rem;
     padding: 1rem;
-    max-width: 55rem;
+    max-width: var(--max-content-width);
 }
 .footer .language {
     margin-left: .7rem;

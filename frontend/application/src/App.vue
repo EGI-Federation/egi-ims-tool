@@ -52,5 +52,6 @@ body {
 :root {
     --menu-background-color: var(--bs-tertiary-bg);
     --menu-item-color: var(--bs-secondary-bg);
+    --max-content-width: 55rem;
 }
 </style>

@@ -358,13 +358,13 @@ export default {
 
 @media screen and (min-width: 765px) {
     .content {
-        min-height: calc(100vh - var(--navbar-height) - var(--breadcrumb-height) - var(--footer-horizontal-height));
+        min-height: calc(100vh - var(--navbar-height) - var(--breadcrumb-height));
     }
 }
 
 .content .section {
     width: 100%;
-    max-width: 60rem;
+    max-width: calc(2rem + var(--max-content-width));
     margin: 0 auto 2rem;
 }
 .content .section:first-of-type {
@@ -384,7 +384,7 @@ export default {
 }
 .nav-tabs {
     width: 100%;
-    max-width: 60rem;
+    max-width: var(--max-content-width);
     margin: 0 auto;
     position: relative;
     bottom: -1px;
