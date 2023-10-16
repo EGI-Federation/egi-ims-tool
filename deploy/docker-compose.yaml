@@ -38,6 +38,7 @@ services:
         - LETSENCRYPT_DRYRUN=${LETSENCRYPT_DRYRUN:- }
     links:
       - ims-ui
+      - ims-sys-api
       - ims-slm-api
       - grafana
     volumes:
@@ -72,7 +73,41 @@ services:
     ports:
       - "9080:8080"
     depends_on:
+      - ims-sys-api
       - ims-slm-api
+
+  # SYS API
+  ims-sys-api:
+    container_name: sys-api
+    image: egi/ims-sys-api:latest
+    build:
+      context: ../backend/management-system/src/main/docker
+    environment:
+      - QUARKUS_PROFILE=${QUARKUS_PROFILE:-prod}
+      - EGI_IMS_VO=${EGI_VO}
+      - EGI_CHECKIN_PASSWORD=${EGI_CHECKIN_PASSWORD}
+      - QUARKUS_OIDC_AUTH_SERVER_URL=${EGI_CHECKIN_SERVER}/auth/realms/egi
+      - QUARKUS_DATASOURCE_REACTIVE_URL=postgresql://ims-db:5432/ims
+      - QUARKUS_DATASOURCE_USERNAME=${IMS_DB_USER:-ims}
+      - QUARKUS_DATASOURCE_PASSWORD=${IMS_DB_PASSWORD}
+      - QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
+      - QUARKUS_OPENTELEMETRY_TRACER_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=data-transfer
+      - QUARKUS_SMALLRYE_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/sys
+      - QUARKUS_LOG_FILE_PATH=/deployments/logs/sys-api.json
+      - QUARKUS_HTTP_CORS_ORIGINS=/${CORS_ORIGINS:-.*}/
+      - QUARKUS_HTTP_CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
+      - QUARKUS_HTTP_CORS_METHODS=${CORS_METHODS:-HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS}
+      - QUARKUS_HTTP_ACCESS_LOG_ENABLED=${HTTP_ACCESS_LOG:-false}
+    volumes:
+      - logs:/deployments/logs:rw
+    restart: unless-stopped
+    ports:
+      - "9081:8081"
+    links:
+      - otelcol
+    depends_on:
+      ims-db:
+        condition: service_healthy
 
   # SLM API
   ims-slm-api:
