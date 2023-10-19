@@ -139,7 +139,7 @@ export const rolesFromEntitlements = function(entitlements, traceRoles) {
     }
 
     if(!isValid(traceRoles))
-        traceRoles = process.env.VUE_APP_IMS_TRACE_ROLES;
+        traceRoles = Boolean(process.env.VUE_APP_IMS_TRACE_ROLES);
 
     if(traceRoles) {
         const assigned = [...roles].filter(([k, v]) => v.assigned && "member" !== k.description);
@@ -182,15 +182,15 @@ export const hasRole = function(roles, role) {
         return false;
     }
 
-    const trace = process.env.VUE_APP_IMS_TRACE_ROLES;
+    const traceRoles = Boolean(process.env.VUE_APP_IMS_TRACE_ROLES);
     if(!roles.has(role)) {
-        if(true === trace)
+        if(traceRoles)
             console.log(`Check for role ${role.description}, nope`);
         return false;
     }
 
     const roleDetails = roles.get(role);
-    if(trace)
+    if(traceRoles)
         console.log(`Check for role ${role.description}, ${roleDetails.assigned ? "assigned" : "nope, but owns objects"}`);
 
     return isValid(roleDetails.assigned) && roleDetails.assigned;
