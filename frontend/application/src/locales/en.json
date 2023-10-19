@@ -249,7 +249,9 @@
         "newRole": "New Role",
         "newRoleName": "Name of the new role",
         "invalidRoleName": "A role with this name already exists",
-        "missingRoleName": "Please provide a name for the new role"
+        "missingRoleName": "Please provide a name for the new role",
+        "logs": "Logs",
+        "logsTitle": "Assignment Log"
     },
     "slm": {
         "navbar" : {

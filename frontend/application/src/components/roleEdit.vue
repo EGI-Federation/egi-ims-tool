@@ -200,7 +200,6 @@ export default {
                     console.log(`Saving ${this.$props.processCode}.${this.roleCode} role changes`);
 
                     this.roleInfo.tasks = this.tasksEditor.text;
-                    this.roleInfo.changeBy = findUserWithEmail(this.$props.processCode, this.myEmail);
                     if(isValid(this.roleInfo.changeBy)) {
                         delete this.roleInfo.changeBy['kind'];
                         delete this.roleInfo.changeBy['given_name'];

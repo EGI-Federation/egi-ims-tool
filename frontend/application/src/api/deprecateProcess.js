@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const deprecateProcess = function(accessToken, processCode, user, message, baseUrl) {
+export const deprecateProcess = function(accessToken, processCode, changeDescription, baseUrl) {
     const response = ref(null);
     const error = ref(null);
 
@@ -17,8 +17,7 @@ export const deprecateProcess = function(accessToken, processCode, user, message
                     Authorization: `Bearer ${accessToken}`
                 },
                 data: {
-                    changeBy: user,
-                    changeDescription: message,
+                    changeDescription: changeDescription,
                 }
             }).catch(function(e) {
                 if(e.response) {

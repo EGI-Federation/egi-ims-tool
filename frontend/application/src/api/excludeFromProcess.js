@@ -1,16 +1,18 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-export const excludeFromProcess = function(accessToken, processCode, checkinUserId, baseUrl) {
+export const excludeFromProcess = function(accessToken, processCode, user, baseUrl) {
     const response = ref(null);
     const error = ref(null);
 
     const exclude = async function() {
 
         try {
-            const url = baseUrl + '/process/' + checkinUserId;
+            const url = baseUrl + '/process/' + user?.checkinUserId;
             let data = await axios.delete(url, {
+                data: user,
                 headers: {
+                    'Content-Type': 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -33,7 +35,7 @@ export const excludeFromProcess = function(accessToken, processCode, checkinUser
             response.value = data.data;
         }
         catch(err) {
-            console.error(`Error excluding user ${checkinUserId} from process ${processCode}`);
+            console.error(`Error excluding user ${user?.fullName} from process ${processCode}`);
         }
     }
 

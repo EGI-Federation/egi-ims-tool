@@ -1,16 +1,17 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-export const includeInProcess = function(accessToken, processCode, checkinUserId, baseUrl) {
+export const includeInProcess = function(accessToken, processCode, user, baseUrl) {
     const response = ref(null);
     const error = ref(null);
 
     const include = async function() {
 
         try {
-            const url = baseUrl + '/process/' + checkinUserId;
-            let data = await axios.post(url, {},{
+            const url = baseUrl + '/process/' + user?.checkinUserId;
+            let data = await axios.post(url, user,{
                 headers: {
+                    'Content-Type': 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -33,7 +34,7 @@ export const includeInProcess = function(accessToken, processCode, checkinUserId
             response.value = data.data;
         }
         catch(err) {
-            console.error(`Error including user ${checkinUserId} in process ${processCode}`);
+            console.error(`Error including user ${user?.fullName} in process ${processCode}`);
         }
     }
 

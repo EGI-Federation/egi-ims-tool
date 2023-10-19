@@ -226,3 +226,4 @@ export const findUserWithEmail = function(processCode, email) {
 
     return null;
 }
+

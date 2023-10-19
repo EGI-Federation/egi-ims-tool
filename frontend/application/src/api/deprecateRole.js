@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const deprecateRole = function(accessToken, processCode, role, user, message, baseUrl) {
+export const deprecateRole = function(accessToken, processCode, role, changeDescription, baseUrl) {
     const response = ref(null);
     const error = ref(null);
     const role_ = 'symbol' === typeof role ? role.description : role;
@@ -18,8 +18,7 @@ export const deprecateRole = function(accessToken, processCode, role, user, mess
                     Authorization: `Bearer ${accessToken}`
                 },
                 data: {
-                    changeBy: user,
-                    changeDescription: message,
+                    changeDescription: changeDescription,
                 }
             }).catch(function(e) {
                 if(e.response) {

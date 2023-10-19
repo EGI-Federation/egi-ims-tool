@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-export const assignRole = function(accessToken, processCode, role, checkinUserId, baseUrl) {
+export const assignRole = function(accessToken, processCode, role, roleHolder, baseUrl) {
     const response = ref(null);
     const error = ref(null);
     const role_ = 'symbol' === typeof role ? role.description : role;
@@ -9,12 +9,14 @@ export const assignRole = function(accessToken, processCode, role, checkinUserId
     const assign = async function() {
 
         try {
-            const url = baseUrl + '/role/' + checkinUserId;
-            let data = await axios.post(url, {},{
-                params: {
-                    'role': role_
+            const url = baseUrl + '/role/' + roleHolder?.checkinUserId;
+            let data = await axios.post(url, {
+                    role: role_,
+                    roleHolder: roleHolder
                 },
+                {
                 headers: {
+                    "Content-Type": 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -37,7 +39,7 @@ export const assignRole = function(accessToken, processCode, role, checkinUserId
             response.value = data.data;
         }
         catch(err) {
-            console.error(`Error assigning role ${processCode}.${role_} to user ${checkinUserId}`);
+            console.error(`Error assigning role ${processCode}.${role_} to user ${roleHolder?.fullName}`);
         }
     }
 

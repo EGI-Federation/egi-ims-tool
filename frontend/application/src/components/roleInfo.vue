@@ -6,11 +6,28 @@
                          @edit="editRole" @implement="confirmImplementRole" @deprecate="confirmDeprecateRole"/>
         </div>
     </div>
+    <div class="details-logs">
+        <ul class="nav nav-tabs justify-content-end">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#"
+                   ref="showDetails" @click="showDetails">{{ $t('ims.details') }}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#"
+                   ref="showLogs" @click="showLogs">{{ $t('role.logs') }}</a>
+            </li>
+        </ul>
+    </div>
     <div class="d-flex flex-nowrap section">
         <div class="role">
-            <div class="details">
+            <div v-show="detailsVisible" class="details">
                 <h3>{{ $t('role.tasks') }}</h3>
                 <vue3-markdown-it :source='tasks' />
+            </div>
+            <div v-show="!detailsVisible" class="logs">
+                <h3>{{ $t('role.logsTitle') }}</h3>
+                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                <p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
             </div>
         </div>
     </div>
@@ -59,6 +76,7 @@ export default {
         return {
             accessToken: store.state.oidc?.access_token,
             myEmail: store.state.oidc?.user?.email,
+            detailsVisible: true,
             bidirectional: reactive({ historyVisible: false }),
         }
     },
@@ -89,6 +107,20 @@ export default {
         },
     },
     methods: {
+        showDetails(event) {
+            this.detailsVisible = true;
+            this.$refs['showDetails'].classList.add('active');
+            this.$refs['showLogs'].classList.remove('active');
+            event.preventDefault();
+            event.stopPropagation();
+        },
+        showLogs(event) {
+            this.detailsVisible = false;
+            this.$refs['showDetails'].classList.remove('active');
+            this.$refs['showLogs'].classList.add('active');
+            event.preventDefault();
+            event.stopPropagation();
+        },
         editRole() {
             this.$router.push(this.returnToRoute + "/edit");
         },
@@ -98,7 +130,7 @@ export default {
         implementRole(message) {
             // Call API to implement role
             let t = this;
-            let me = findUserWithEmail(this.$props.processCode, this.myEmail);
+            const me = findUserWithEmail(this.$props.processCode, this.myEmail);
             const processCode = this.$props.processCode;
 
             let irResult = implementRole(t.accessToken, processCode, t.roleCode, me, message, t.$props.apiBaseUrl);
@@ -137,13 +169,12 @@ export default {
         deprecateRole(message) {
             // Call API to deprecate role
             let t = this;
-            let me = findUserWithEmail(this.$props.processCode, this.myEmail);
             const processCode = this.$props.processCode;
             const roleCode = this.roleCode;
             const successTitle = t.$t('ims.success');
             const errorTitle = t.$t('ims.error');
 
-            let drResult = deprecateRole(t.accessToken, processCode, roleCode, me, message, t.$props.apiBaseUrl);
+            let drResult = deprecateRole(t.accessToken, processCode, roleCode, message, t.$props.apiBaseUrl);
             drResult.deprecate().then(() => {
                 if(isValid(drResult.error?.value)) {
                     let message = isValid(drResult.error.value.data?.description) ?
@@ -166,8 +197,7 @@ export default {
                     const roleName = t.latest.roleName;
                     let toRevoke = [];
                     for(const user of t.assignees) {
-                        let rrResult = revokeRole(t.accessToken, processCode, roleCode, user.checkinUserId,
-                                                  t.$props.apiBaseUrl);
+                        let rrResult = revokeRole(t.accessToken, processCode, roleCode, user, t.$props.apiBaseUrl);
                         rrResult.logMessage = `Revoked ${processCode}.${roleCode} from ${user.fullName}`;
                         rrResult.successTitle = successTitle;
                         rrResult.errorTitle = errorTitle;
@@ -224,13 +254,13 @@ export default {
 
 @media screen and (min-width: 765px) {
     .content {
-        min-height: calc(100vh - var(--navbar-height) - var(--breadcrumb-height) - var(--footer-horizontal-height));
+        min-height: calc(100vh - var(--navbar-height) - var(--breadcrumb-height));
     }
 }
 
 .content .section {
     width: 100%;
-    max-width: 60rem;
+    max-width: calc(2rem + var(--max-content-width));
     margin: 0 auto 2rem;
 }
 .content .section:first-of-type {
@@ -241,9 +271,16 @@ export default {
     position: relative;
     margin: 0 auto;
 }
+.content .details-logs {
+    width: 100%;
+    margin: 0;
+    padding-left: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    overflow: hidden;
+}
 .nav-tabs {
     width: 100%;
-    max-width: 60rem;
+    max-width: var(--max-content-width);
     margin: 0 auto;
     position: relative;
     bottom: -1px;
@@ -252,11 +289,13 @@ export default {
 .nav-tabs .active {
     cursor: default;
 }
-.role .details {
+.role .details,
+.role .logs {
     text-align: left;
     padding: 0.5rem 1rem 0;
 }
-.role .details h3 {
+.role .details h3,
+.role .logs h3 {
     border-bottom: 1px solid var(--bs-secondary-bg);
 }
 </style>

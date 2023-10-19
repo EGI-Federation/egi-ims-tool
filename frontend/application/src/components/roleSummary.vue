@@ -22,6 +22,7 @@
                         <input class="form-check-input" type="checkbox" :id="role.roleCode + '-' + user.checkinUserId"
                                :data-checkinUserId="user.checkinUserId"
                                :data-user="user.fullName"
+                               :data-email="user.email"
                                :checked="assignedTo(user.checkinUserId)"
                                @change="toggleAssignment($event)">
                         <label class="form-check-label" :for="role.roleCode + '-' + user.checkinUserId">
@@ -42,7 +43,7 @@
 // @ is an alias to /src
 import MarkdownIt from "markdown-it";
 import {findEntityWithStatus, isValid, Status, statusPill, userNames} from "@/utils";
-import {Roles, hasRole, findUsersWithRole} from "@/roles";
+import {Roles, hasRole, findUsersWithRole, findUserWithEmail} from "@/roles";
 import { store, storeUsers, storeUsersByRole } from "@/store";
 import { assignRole } from "@/api/assignRole";
 import { revokeRole } from "@/api/revokeRole";
@@ -67,6 +68,7 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
+            myEmail: store.state.oidc?.user?.email,
         }
     },
     computed: {
@@ -133,28 +135,32 @@ export default {
         toggleRoleAssignment(event) {
             let t = this;
             let el = event.target;
-            const checkinUserId = Number(el.getAttribute("data-checkinUserId"));
-            const userFullName = el.getAttribute("data-user");
             const processCode = this.$props.processCode;
+            const checkinUserId = el.getAttribute("data-checkinUserId");
+            const roleHolder = {
+                checkinUserId: checkinUserId,
+                fullName: el.getAttribute("data-user"),
+                email: el.getAttribute("data-email")
+            };
             if(el.checked) {
                 // Update UI immediately
                 let info = { processCode: processCode, roleCode: t.roleCode, checkinUserId: checkinUserId, assign: true };
                 store.commit('updateUserRole', info);
 
                 // Call API to assign role to user
-                const arResult = assignRole(t.accessToken, processCode, t.roleCode, checkinUserId, t.$props.apiBaseUrl);
-                arResult.logMessage = `Assigned ${processCode}.${t.roleCode} to ${userFullName}`;
+                const arResult = assignRole(t.accessToken, processCode, t.roleCode, roleHolder, t.$props.apiBaseUrl);
+                arResult.logMessage = `Assigned ${processCode}.${t.roleCode} to ${roleHolder.fullName}`;
                 arResult.toastTitle = t.$t('ims.success');
                 arResult.errorTitle = t.$t('ims.error');
                 arResult.toastMessage = t.$t('role.assignedRole', {
                     processCode: processCode,
                     roleName: t.$props.role.name,
-                    userFullName: userFullName
+                    userFullName: roleHolder.fullName
                 });
                 arResult.toasts = t.$root.$refs.toasts;
                 arResult.assign().then(() => {
                     if(isValid(arResult.error?.value)) {
-                        el.checked = !el.checked;
+                        el.checked = false;
                         info.assign = false;
                         store.commit('updateUserRole', info);
 
@@ -181,19 +187,19 @@ export default {
                 store.commit('updateUserRole', info);
 
                 // Call API to revoke role from user
-                const rrResult = revokeRole(t.accessToken, processCode, t.roleCode, checkinUserId, t.$props.apiBaseUrl);
-                rrResult.logMessage = `Revoked ${processCode}.${t.roleCode} from ${userFullName}`;
+                const rrResult = revokeRole(t.accessToken, processCode, t.roleCode, roleHolder, t.$props.apiBaseUrl);
+                rrResult.logMessage = `Revoked ${processCode}.${t.roleCode} from ${roleHolder.fullName}`;
                 rrResult.successTitle = t.$t('ims.success');
                 rrResult.errorTitle = t.$t('ims.error');
                 rrResult.toastMessage = t.$t('role.revokedRole', {
                     processCode: processCode,
                     roleName: t.$props.role.name,
-                    userFullName: userFullName
+                    userFullName: roleHolder.fullName
                 });
                 rrResult.toasts = t.$root.$refs.toasts;
                 rrResult.revoke().then(() => {
                     if(isValid(rrResult.error?.value)) {
-                        el.checked = !el.checked;
+                        el.checked = true;
                         info.assign = true;
                         store.commit('updateUserRole', info);
 
@@ -218,27 +224,31 @@ export default {
         toggleProcessMembership(event) {
             let t = this;
             let el = event.target;
-            const checkinUserId = Number(el.getAttribute("data-checkinUserId"));
-            const userFullName = el.getAttribute("data-user");
             const processCode = this.$props.processCode;
+            const checkinUserId = el.getAttribute("data-checkinUserId");
+            const roleHolder = {
+                checkinUserId: checkinUserId,
+                fullName: el.getAttribute("data-user"),
+                email: el.getAttribute("data-email")
+            };
             if(el.checked) {
                 // Update UI immediately
                 let info = { processCode: processCode, roleCode: t.roleCode, checkinUserId: checkinUserId, assign: true };
                 store.commit('updateUserRole', info);
 
                 // Call API to include user in process
-                const irResult = includeInProcess(t.accessToken, processCode, checkinUserId, t.$props.apiBaseUrl);
-                irResult.logMessage = `Included ${userFullName} in process ${processCode}`;
+                const irResult = includeInProcess(t.accessToken, processCode, roleHolder, t.$props.apiBaseUrl);
+                irResult.logMessage = `Included ${roleHolder.fullName} in process ${processCode}`;
                 irResult.successTitle = t.$t('ims.success');
                 irResult.errorTitle = t.$t('ims.error');
                 irResult.toastMessage = t.$t('role.includedInProcess', {
                     processCode: processCode,
-                    userFullName: userFullName
+                    userFullName: roleHolder.fullName
                 });
                 irResult.toasts = t.$root.$refs.toasts;
                 irResult.include().then(() => {
                     if(isValid(irResult.error?.value)) {
-                        el.checked = !el.checked;
+                        el.checked = false;
                         info.assign = false;
                         store.commit('updateUserRole', info);
 
@@ -265,18 +275,18 @@ export default {
                 store.commit('updateUserRole', info);
 
                 // Call API to exclude user from process
-                const erResult = excludeFromProcess(t.accessToken, processCode, checkinUserId, t.$props.apiBaseUrl);
-                erResult.logMessage = `Excluded ${userFullName} from ${processCode} process`;
+                const erResult = excludeFromProcess(t.accessToken, processCode, roleHolder, t.$props.apiBaseUrl);
+                erResult.logMessage = `Excluded ${roleHolder.fullName} from ${processCode} process`;
                 erResult.successTitle = t.$t('ims.success');
                 erResult.errorTitle = t.$t('ims.error');
                 erResult.toastMessage = t.$t('role.excludedFromProcess', {
                     processCode: processCode,
-                    userFullName: userFullName
+                    userFullName: roleHolder.fullName
                 });
                 erResult.toasts = t.$root.$refs.toasts;
                 erResult.exclude().then(() => {
                     if(isValid(erResult.error?.value)) {
-                        el.checked = !el.checked;
+                        el.checked = true;
                         info.assign = true;
                         store.commit('updateUserRole', info);
 
@@ -355,7 +365,7 @@ export default {
     white-space: unset;
 }
 .info .badge {
-    padding-bottom: 2px!important;
+    padding-bottom: 1px!important;
 }
 button.btn {
     max-height: 2.35rem;

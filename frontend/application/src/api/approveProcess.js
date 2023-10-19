@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const approveProcess = function(accessToken, processCode, approve, user, message, baseUrl) {
+export const approveProcess = function(accessToken, processCode, approve, changeDescription, baseUrl) {
     const response = ref(null);
     const error = ref(null);
 
@@ -13,8 +13,7 @@ export const approveProcess = function(accessToken, processCode, approve, user, 
             let data = await axios.patch(url,
                 {
                     operation: approve ? 'Approve' : 'Reject',
-                    changeDescription: message,
-                    changeBy: user
+                    changeDescription: changeDescription
                 },
                 {
                 headers: {

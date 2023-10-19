@@ -195,6 +195,6 @@ export default {
     background-color: rgba(233, 236, 239, 0.55);
 }
 .history-item .badge {
-    padding-bottom: 2px!important;
+    padding-bottom: 1px!important;
 }
 </style>

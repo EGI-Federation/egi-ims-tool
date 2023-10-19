@@ -203,6 +203,6 @@ export default {
     font-size: smaller;
 }
 .header .info .badge {
-    padding-bottom: 2px!important;
+    padding-bottom: 1px!important;
 }
 </style>

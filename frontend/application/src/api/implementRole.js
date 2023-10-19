@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const implementRole = function(accessToken, processCode, role, user, message, baseUrl) {
+export const implementRole = function(accessToken, processCode, role, changeBy, changeDescription, baseUrl) {
     const response = ref(null);
     const error = ref(null);
     const role_ = 'symbol' === typeof role ? role.description : role;
@@ -13,8 +13,8 @@ export const implementRole = function(accessToken, processCode, role, user, mess
             const url = baseUrl + '/role/definition/' + role_;
             let data = await axios.patch(url,
                 {
-                    changeBy: user,
-                    changeDescription: message
+                    changeBy: changeBy,
+                    changeDescription: changeDescription
                 },
                 {
                     headers: {

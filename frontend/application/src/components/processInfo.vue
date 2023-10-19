@@ -222,9 +222,7 @@ export default {
         askForApproval() {
             // Call API to ask for process approval
             let t = this;
-            let me = findUserWithEmail(this.processCode, this.myEmail);
-            const prfaResult = markProcessReadyForApproval(this.accessToken, this.processCode, me,
-                                                           this.$props.apiBaseUrl);
+            const prfaResult = markProcessReadyForApproval(this.accessToken, this.processCode, this.$props.apiBaseUrl);
             prfaResult.request().then(() => {
                 if(isValid(prfaResult.error?.value)) {
                     let message = isValid(prfaResult.error.value.data?.description) ?
@@ -251,8 +249,7 @@ export default {
         approveOrRejectProcess(approve, message) {
             // Call API to approve/reject process changes
             let t = this;
-            let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            const apResult = approveProcess(this.accessToken, this.$props.processCode, approve, me, message,
+            const apResult = approveProcess(this.accessToken, this.$props.processCode, approve, message,
                                             this.$props.apiBaseUrl);
             apResult.request().then(() => {
                 if(isValid(apResult.error?.value)) {
@@ -296,8 +293,7 @@ export default {
         deprecateProcess(message) {
             // Call API to deprecate process
             let t = this;
-            let me = findUserWithEmail(this.$props.processCode, this.myEmail);
-            const dpResult = deprecateProcess(this.accessToken, this.$props.processCode, me, message,
+            const dpResult = deprecateProcess(this.accessToken, this.$props.processCode, message,
                                               this.$props.apiBaseUrl);
             dpResult.request().then(() => {
                 if(isValid(dpResult.error?.value)) {

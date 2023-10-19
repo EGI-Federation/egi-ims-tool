@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-export const revokeRole = function(accessToken, processCode, role, checkinUserId, baseUrl) {
+export const revokeRole = function(accessToken, processCode, role, roleHolder, baseUrl) {
     const response = ref(null);
     const error = ref(null);
     const role_ = role;
@@ -9,12 +9,14 @@ export const revokeRole = function(accessToken, processCode, role, checkinUserId
     const revoke = async function() {
 
         try {
-            const url = baseUrl + '/role/' + checkinUserId;
+            const url = baseUrl + '/role/' + roleHolder?.checkinUserId;
             let data = await axios.delete(url, {
-                params: {
-                    'role': role_
+                data: {
+                    role: role_,
+                    roleHolder: roleHolder
                 },
                 headers: {
+                    "Content-Type": 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -37,7 +39,7 @@ export const revokeRole = function(accessToken, processCode, role, checkinUserId
             response.value = data.data;
         }
         catch(err) {
-            console.error(`Error revoking role ${processCode}.${role} from user ${checkinUserId}`);
+            console.error(`Error revoking role ${processCode}.${role} from user ${roleHolder?.fullName}`);
         }
     }
 

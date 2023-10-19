@@ -848,7 +848,7 @@ export default {
         },
         toggleResponsible(event) {
             let el = event.target;
-            const checkinUserId = Number(el.getAttribute("id"));
+            const checkinUserId = el.getAttribute("id");
             if(el.checked) {
                 // Add user to the responsibles
                 const users = store.state.temp.usersByProcess?.get(this.$props.processCode);
@@ -1110,7 +1110,6 @@ export default {
 
                     this.processInfo.goals = this.goalsEditor.text;
                     this.processInfo.scope = this.scopeEditor.text;
-                    this.processInfo.changeBy = findUserWithEmail(this.$props.processCode, this.myEmail);
                     if(isValid(this.processInfo.changeBy)) {
                         delete this.processInfo.changeBy['kind'];
                         delete this.processInfo.changeBy['given_name'];
