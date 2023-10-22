@@ -1,7 +1,7 @@
 <template>
     <roles-loader process-code="SLM" :api-base-url="slmApi"/>
     <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
-    <role-info v-if="currentRole" :info="{ current: currentRole, implemented: implementedRole }"
+    <role-info v-if="role.current" :info="role"
                :api-base-url="slmApi" process-code="SLM"/>
 </template>
 
@@ -13,6 +13,7 @@ import { store, storeProcessRoles } from "@/store"
 import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
 import RoleInfo from "@/components/roleInfo.vue";
+import {reactive} from "vue";
 
 export default {
     name: 'slmRole',
@@ -23,8 +24,10 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentRole: store.state.ims?.roleInfo,  // Role
-            implementedRole: null,                   // Role
+            role: reactive({
+                current: null,      // Role
+                implemented: null,  // Role
+            }),
         }
     },
     computed: {
@@ -33,7 +36,7 @@ export default {
             { text: this.$t("home.home"), link:"/" },
             { text: this.$t("home.SLM"), link: "/slm" },
             { text: this.$t("navbar.roles"), link: "/slm/roles" },
-            { text: isValid(this.currentRole) ? this.currentRole.name : this.$route.params.role },
+            { text: isValid(this.role?.current) ? this.role.current.name : this.$route.params.role },
         ]},
     },
     methods: {
@@ -53,7 +56,7 @@ export default {
                 let current = store.state.ims.roleInfo;
                 if(isValid(current)) {
                     // Make sure we know which is the implemented version (if any)
-                    this.implementedRole = findEntityWithStatus(current, Status.IMPLEMENTED.description);
+                    t.role.implemented = findEntityWithStatus(current, Status.IMPLEMENTED.description);
 
                     const requested = this.$props.version;
                     if(isValid(requested) && requested.length > 0) {
@@ -67,8 +70,8 @@ export default {
 
                     console.log(`Showing role SLM.${t.$route.params.role} v${current.version}`);
                 }
-                this.currentRole = current;
-                this.$refs.breadCrumb.update(t.locationSegments);
+                t.role.current = current;
+                t.$refs.breadCrumb.update(t.locationSegments);
             }
         });
     },

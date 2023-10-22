@@ -1,6 +1,6 @@
 <template>
 <div class="role-info">
-    <h3><router-link :to="`/${processCode.toLowerCase()}/roles/${role.roleCode}`">{{ role.name }}</router-link></h3>
+    <h3><router-link :to="`/${processCode.toLowerCase()}/roles/${roleCode}`">{{ role.name }}</router-link></h3>
     <div class="d-flex flex-nowrap justify-content-between">
         <div class="d-flex flex-nowrap info">
             <div>
@@ -76,12 +76,7 @@ export default {
             return statusPill(this.$props.role.status, this.$t);
         },
         roleCode() {
-            if(!isValid(this.$props.role?.role))
-                return null;
-
-            return 'symbol' === typeof this.$props.role.role ?
-                   this.$props.role.role.description :
-                   this.$props.role.role;
+            return this.$props.role.roleCode;
         },
         usersByProcess() {
             return store.state.temp?.usersByProcess;
@@ -307,8 +302,6 @@ export default {
                     }
                 });
             }
-        },
-        mounted() {
         },
     },
 }

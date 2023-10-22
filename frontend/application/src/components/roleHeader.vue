@@ -43,9 +43,12 @@ export default {
     name: 'processHeader',
     props: {
         processCode: String,
-        info: Object,      // { current: Role, implemented: Role }
+        info: { // Reactive { current: Role, implemented: Role }
+            type: Object,
+            default: () => {}
+        },
         editMode: Boolean,
-        bidirectional: {   // Reactive { historyVisible: Boolean, roleChanged: Boolean }
+        bidirectional: { // Reactive { historyVisible: Boolean, roleChanged: Boolean }
             type: Object,
             default: () => {}
         },
@@ -66,7 +69,7 @@ export default {
         canDeprecate() { return this.$route.params.role !== Roles[this.$props.processCode].PROCESS_STAFF.description; },
         roles() { return store.state.temp.roles; },
         assignees() {
-            const usersWithRole = findUsersWithRole(this.$props.processCode, this.current.role);
+            const usersWithRole = findUsersWithRole(this.$props.processCode, this.current?.role);
             return isValid(usersWithRole) ? usersWithRole : new Array();
         },
         assigneeNames() {

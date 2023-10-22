@@ -26,8 +26,31 @@
             </div>
             <div v-show="!detailsVisible" class="logs">
                 <h3>{{ $t('role.logsTitle') }}</h3>
-                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-                <p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                <role-log v-if="logsToday.logs.length" :title="$t('role.today')" :logs="logsToday" />
+                <role-log v-if="logsYesterday.logs.length" :title="$t('role.yesterday')" :logs="logsYesterday" />
+                <role-log v-if="logsFriday.logs.length" :title="$t('role.fri')" :logs="logsFriday" />
+                <role-log v-if="logsThursday.logs.length" :title="$t('role.fri')" :logs="logsThursday" />
+                <role-log v-if="logsWednesday.logs.length" :title="$t('role.fri')" :logs="logsWednesday" />
+                <role-log v-if="logsTuesday.logs.length" :title="$t('role.fri')" :logs="logsTuesday" />
+                <role-log v-if="logsMonday.logs.length" :title="$t('role.fri')" :logs="logsMonday" />
+                <role-log v-if="logsThisMonth.logs.length" :title="$t('role.thisMonth')" :logs="logsMonday" />
+                <role-log v-if="logsNovember.logs.length" :title="$t('role.nov')" :logs="logsNovember" />
+                <role-log v-if="logsOctober.logs.length" :title="$t('role.oct')" :logs="logsOctober" />
+                <role-log v-if="logsSeptember.logs.length" :title="$t('role.sep')" :logs="logsSeptember" />
+                <role-log v-if="logsAugust.logs.length" :title="$t('role.aug')" :logs="logsAugust" />
+                <role-log v-if="logsJuly.logs.length" :title="$t('role.jul')" :logs="logsJuly" />
+                <role-log v-if="logsJune.logs.length" :title="$t('role.jun')" :logs="logsJune" />
+                <role-log v-if="logsMay.logs.length" :title="$t('role.may')" :logs="logsMay" />
+                <role-log v-if="logsApril.logs.length" :title="$t('role.apr')" :logs="logsApril" />
+                <role-log v-if="logsMarch.logs.length" :title="$t('role.mar')" :logs="logsMarch" />
+                <role-log v-if="logsFebruary.logs.length" :title="$t('role.feb')" :logs="logsFebruary" />
+                <role-log v-if="logsJanuary.logs.length" :title="$t('role.jan')" :logs="logsJanuary" />
+                <div v-for="[year, logs] in logsYears">
+                    <role-log :title="`${strCapitalize($t('ims.year'))} ${year}`" :logs="reactive({ logs: logs })" />
+                </div>
+                <div v-if="!roleLogsEnd" class="more">
+                    <button type="button" class="btn btn-secondary" @click="loadRoleLogs">{{ $t('role.loadMore') }}</button>
+                </div>
             </div>
         </div>
     </div>
@@ -51,32 +74,62 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store, storeProcessRoles } from "@/store";
-import { Status, isValid } from '@/utils'
+import { Status, isValid, formatTime, getWeek, getDayOfYear, getDayOfWeek, strCapitalize } from '@/utils'
 import { findUserWithEmail, findUsersWithRole } from "@/roles";
 import { getRoles } from "@/api/getRoles";
+import { getRoleLogs } from "@/api/getRoleLogs";
 import { implementRole } from "@/api/implementRole";
 import { deprecateRole } from "@/api/deprecateRole";
 import { revokeRole } from "@/api/revokeRole";
 import MarkdownIt from 'markdown-it';
 import RoleHeader from "@/components/roleHeader.vue"
+import RoleLog from "@/components/roleLog.vue"
 import VersionHistory from "@/components/history.vue"
 import Message from "@/components/message.vue";
 
 var mdRender = new MarkdownIt();
+const logPageSize = 50;
 
 export default {
     name: 'roleInfo',
-    components: { RoleHeader, VersionHistory, Message },
+    components: { RoleHeader, RoleLog, VersionHistory, Message },
     props: {
         processCode: String,
         apiBaseUrl: String,
-        info: Object, // { current: Role, implemented: Role }
+        info: { // Reactive { current: Role, implemented: Role }
+            type: Object,
+            default: () => {}
+        },
     },
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
             myEmail: store.state.oidc?.user?.email,
             detailsVisible: true,
+            roleLogs: [],
+            roleLogsEnd: false,
+            oldestRoleLogFrom: "now",
+            logsToday: reactive({ logs: [] }),
+            logsYesterday: reactive({ logs: [] }),
+            logsFriday: reactive({ logs: [] }),
+            logsThursday: reactive({ logs: [] }),
+            logsWednesday: reactive({ logs: [] }),
+            logsTuesday: reactive({ logs: [] }),
+            logsMonday: reactive({ logs: [] }),
+            logsLastWeek: reactive({ logs: [] }),
+            logsThisMonth: reactive({ logs: [] }),
+            logsNovember: reactive({ logs: [] }),
+            logsOctober: reactive({ logs: [] }),
+            logsSeptember: reactive({ logs: [] }),
+            logsAugust: reactive({ logs: [] }),
+            logsJuly: reactive({ logs: [] }),
+            logsJune: reactive({ logs: [] }),
+            logsMay: reactive({ logs: [] }),
+            logsApril: reactive({ logs: [] }),
+            logsMarch: reactive({ logs: [] }),
+            logsFebruary: reactive({ logs: [] }),
+            logsJanuary: reactive({ logs: [] }),
+            logsYears: new Map(), // Map<year, logs[]>
             bidirectional: reactive({ historyVisible: false }),
         }
     },
@@ -107,6 +160,8 @@ export default {
         },
     },
     methods: {
+        strCapitalize,
+        reactive,
         showDetails(event) {
             this.detailsVisible = true;
             this.$refs['showDetails'].classList.add('active');
@@ -115,6 +170,9 @@ export default {
             event.stopPropagation();
         },
         showLogs(event) {
+            if(!isValid(this.roleLogs))
+                this.loadRoleLogs();
+
             this.detailsVisible = false;
             this.$refs['showDetails'].classList.remove('active');
             this.$refs['showLogs'].classList.add('active');
@@ -238,6 +296,140 @@ export default {
                 }
             });
         },
+        loadRoleLogs() {
+            // Fetch the role assignment logs from the API
+            let t = this;
+            const rlResult = getRoleLogs(this.accessToken, this.$props.processCode, this.roleCode,
+                                         this.oldestRoleLogFrom, logPageSize, this.$props.apiBaseUrl);
+            rlResult.load().then(() => {
+                t.appendRoleLogs(rlResult);
+            });
+        },
+        appendRoleLogs(rlResult) {
+            if(isValid(rlResult.page)) {
+                const page = rlResult.page.value;
+                if(isValid(page) && isValid(page.elements)) {
+                    if('true' === process.env.VUE_APP_IMS_TRACE_ROLES)
+                        console.log(`Loaded ${page.count} assignment logs for ${this.$props.processCode}.${this.roleCode}`);
+
+                    // Assumes log entries are in reverse chronological order (newest first)
+                    const lastLog = page.elements[page.elements.length - 1];
+                    this.oldestRoleLogFrom = lastLog.changedOn;
+                    this.roleLogsEnd = page.count < logPageSize;
+                    this.roleLogs.push(...page.elements);
+
+                    const now = new Date();
+                    const day = now.getDate() ;
+                    const month = now.getMonth(); // 0-based
+                    const year = now.getFullYear();
+                    const week = getWeek(now);
+                    const doy = getDayOfYear(now);
+
+                    const yesterday = new Date(new Date().setDate(day - 1));
+                    const dayY = yesterday.getDate() ;
+                    const monthY = yesterday.getMonth(); // 0-based
+                    const yearY = yesterday.getFullYear();
+
+                    this.logsToday.logs = [];
+                    this.logsYesterday.logs = [];
+                    this.logsFriday.logs = [];
+                    this.logsThursday.logs = [];
+                    this.logsWednesday.logs = [];
+                    this.logsTuesday.logs = [];
+                    this.logsMonday.logs = [];
+                    this.logsLastWeek.logs = [];
+                    this.logsThisMonth.logs = [];
+                    this.logsNovember.logs = [];
+                    this.logsOctober.logs = [];
+                    this.logsSeptember.logs = [];
+                    this.logsAugust.logs = [];
+                    this.logsJuly.logs = [];
+                    this.logsJune.logs = [];
+                    this.logsMay.logs = [];
+                    this.logsApril.logs = [];
+                    this.logsMarch.logs = [];
+                    this.logsFebruary.logs = [];
+                    this.logsJanuary.logs = [];
+                    this.logsYears = new Map();
+
+                    for(const log of this.roleLogs) {
+                        const changedOn = new Date(log.changedOn);
+                        const dayL = changedOn.getDate();
+                        const monthL = changedOn.getMonth();
+                        const yearL = changedOn.getFullYear();
+
+                        // Today
+                        if(day === dayL && month === monthL && year === yearL) {
+                            this.logsToday.logs.push(log);
+                            continue;
+                        }
+
+                        // Yesterday
+                        if(dayY === dayL && monthY === monthL && yearY === yearL) {
+                            this.logsYesterday.logs.push(log);
+                            continue;
+                        }
+
+                        // This week
+                        if(year === yearL && week === getWeek(changedOn)) {
+                            const dow = getDayOfWeek(changedOn);
+                            switch(dow) {
+                                case 4: this.logsFriday.logs.push(log); break;
+                                case 3: this.logsThursday.logs.push(log); break;
+                                case 2: this.logsWednesday.logs.push(log); break;
+                                case 1: this.logsTuesday.logs.push(log); break;
+                                case 0: this.logsMonday.logs.push(log); break;
+                            }
+                            continue;
+                        }
+
+                        // This month
+                        if(month === monthL && year === yearL) {
+                            this.logsThisMonth.logs.push(log);
+                            continue;
+                        }
+
+                        // This year
+                        if(year === yearL) {
+                            switch(monthL) {
+                                case 10: this.logsNovember.logs.push(log); break;
+                                case  9: this.logsOctober.logs.push(log); break;
+                                case  8: this.logsSeptember.logs.push(log); break;
+                                case  7: this.logsAugust.logs.push(log); break;
+                                case  6: this.logsJuly.logs.push(log); break;
+                                case  5: this.logsJune.logs.push(log); break;
+                                case  4: this.logsMay.logs.push(log); break;
+                                case  3: this.logsApril.logs.push(log); break;
+                                case  2: this.logsMarch.logs.push(log); break;
+                                case  1: this.logsFebruary.logs.push(log); break;
+                                case  0: this.logsJanuary.logs.push(log); break;
+                            }
+                            continue;
+                        }
+
+                        // Older by year
+                        let yearLogs = this.logsYears.get(yearL);
+                        if(!isValid(yearLogs)) {
+                            yearLogs = [];
+                            this.logsYears.set(yearL, yearLogs);
+                        }
+
+                        yearLogs.push(log);
+                    }
+                }
+            }
+        },
+        logInfo(log) {
+            return {
+                pillClass: "badge rounded-pill " + (log.assigned ? "bg-success" : "bg-danger"),
+                pillLabel: this.$t(log.assigned ? "role.assigned" : "role.revoked"),
+                opDesc: `${this.$t(log.assigned ? "ims.to" : "ims.from").toLowerCase()} ${log.user.fullName} ${this.$t('ims.by')} ${log.changeBy.fullName}`,
+                opTime: formatTime(log.changedOn)
+            };
+        }
+    },
+    created() {
+        this.loadRoleLogs();
     },
 }
 </script>
@@ -297,5 +489,9 @@ export default {
 .role .details h3,
 .role .logs h3 {
     border-bottom: 1px solid var(--bs-secondary-bg);
+}
+.more {
+    margin-top: 1rem;
+    text-align: center;
 }
 </style>

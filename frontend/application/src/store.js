@@ -51,7 +51,7 @@ export const store = createStore({
                         state.usersByRole.set(roleKey, roleUsers);
                     }
 
-                    for(let user of info.users.values())
+                    for(const user of info.users.values())
                         roleUsers.set(user.checkinUserId, user);
                 },
                 updateUsersByRole(state, info) {
@@ -70,7 +70,7 @@ export const store = createStore({
 
                     const processUsers = state.usersByProcess?.get(info.processCode);
                     if(isValid(processUsers))
-                        for(let user of processUsers.values())
+                        for(const user of processUsers.values())
                             roleUsers.set(user.checkinUserId, user);
                 },
                 updateUserRole(state, info) {

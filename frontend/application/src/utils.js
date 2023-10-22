@@ -16,6 +16,14 @@ export const strEqual = function(text1, text2) {
     return text1 === text2;
 }
 
+// Make the first character of a string uppercase
+export const strCapitalize = function(text) {
+    if(isValid(text) && text.length > 0)
+        return text.charAt(0).toUpperCase() + text.slice(1);
+
+    return text;
+}
+
 // Create an enum from a list of values
 // Use it like this:
 //      const Colors = makeEnum(["red","green","blue"]);
@@ -47,6 +55,55 @@ export const statusPill = function(status, t) {
         return { label: t("ims.statusDeprecated"), pillClass: "badge rounded-pill bg-danger" };
 
     return { label: t("ims.statusDraft"), pillClass: "badge bg-secondary" };
+}
+
+
+// Check if a date is in a leap year
+export const isLeapYear = function(someDate) {
+    const year = someDate.getFullYear();
+    if((year & 3) != 0)
+        return false;
+
+    return ((year % 100) != 0 || (year % 400) == 0);
+};
+
+// Get day of the year (January 1st is 1)
+export const getDayOfYear = function(someDate) {
+    var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    const mn = someDate.getMonth();
+    const dn = someDate.getDate();
+    let dayOfYear = dayCount[mn] + dn;
+    if(mn > 1 && isLeapYear(someDate))
+        dayOfYear++;
+
+    return dayOfYear;
+};
+
+// Returns the ISO week number
+// Source: https://weeknumber.net/how-to/javascript
+export const getWeek = function(someDate) {
+    let date = new Date(someDate.getTime());
+    date.setHours(0, 0, 0, 0);
+
+    // Thursday in current week decides the year
+    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+
+    // January 4 is always in week 1
+    let week1 = new Date(date.getFullYear(), 0, 4);
+
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1
+    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+// Returns the day of the week, 0 is Monday
+export const getDayOfWeek = function(someDate) {
+    let dow= new Date(someDate.getTime()).getDay();
+    if(0 === dow)
+        dow = 6;
+    else
+        dow--;
+
+    return dow;
 }
 
 // Format a date and time as a string
