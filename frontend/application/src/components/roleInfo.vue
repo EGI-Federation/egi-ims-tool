@@ -51,6 +51,7 @@
                 <div v-if="!roleLogsEnd" class="more">
                     <button type="button" class="btn btn-secondary" @click="loadRoleLogs">{{ $t('role.loadMore') }}</button>
                 </div>
+                <p v-if="roleLogsEnd && 0 === roleLogs.length">{{ $t('role.noLogs') }}</p>
             </div>
         </div>
     </div>
@@ -308,114 +309,151 @@ export default {
         appendRoleLogs(rlResult) {
             if(isValid(rlResult.page)) {
                 const page = rlResult.page.value;
-                if(isValid(page) && isValid(page.elements)) {
-                    if('true' === process.env.VUE_APP_IMS_TRACE_ROLES)
-                        console.log(`Loaded ${page.count} assignment logs for ${this.$props.processCode}.${this.roleCode}`);
+                if(isValid(page)) {
+                    if(isValid(page.elements)) {
+                        if('true' === process.env.VUE_APP_IMS_TRACE_ROLES)
+                            console.log(`Loaded ${page.count} assignment logs for ${this.$props.processCode}.${this.roleCode}`);
 
-                    // Assumes log entries are in reverse chronological order (newest first)
-                    const lastLog = page.elements[page.elements.length - 1];
-                    this.oldestRoleLogFrom = lastLog.changedOn;
-                    this.roleLogsEnd = page.count < logPageSize;
-                    this.roleLogs.push(...page.elements);
+                        // Assumes log entries are in reverse chronological order (newest first)
+                        const lastLog = page.elements[page.elements.length - 1];
+                        this.oldestRoleLogFrom = lastLog.changedOn;
+                        this.roleLogs.push(...page.elements);
+                        this.roleLogsEnd = page.count < logPageSize;
 
-                    const now = new Date();
-                    const day = now.getDate() ;
-                    const month = now.getMonth(); // 0-based
-                    const year = now.getFullYear();
-                    const week = getWeek(now);
-                    const doy = getDayOfYear(now);
+                        const now = new Date();
+                        const day = now.getDate();
+                        const month = now.getMonth(); // 0-based
+                        const year = now.getFullYear();
+                        const week = getWeek(now);
+                        const doy = getDayOfYear(now);
 
-                    const yesterday = new Date(new Date().setDate(day - 1));
-                    const dayY = yesterday.getDate() ;
-                    const monthY = yesterday.getMonth(); // 0-based
-                    const yearY = yesterday.getFullYear();
+                        const yesterday = new Date(new Date().setDate(day - 1));
+                        const dayY = yesterday.getDate();
+                        const monthY = yesterday.getMonth(); // 0-based
+                        const yearY = yesterday.getFullYear();
 
-                    this.logsToday.logs = [];
-                    this.logsYesterday.logs = [];
-                    this.logsFriday.logs = [];
-                    this.logsThursday.logs = [];
-                    this.logsWednesday.logs = [];
-                    this.logsTuesday.logs = [];
-                    this.logsMonday.logs = [];
-                    this.logsLastWeek.logs = [];
-                    this.logsThisMonth.logs = [];
-                    this.logsNovember.logs = [];
-                    this.logsOctober.logs = [];
-                    this.logsSeptember.logs = [];
-                    this.logsAugust.logs = [];
-                    this.logsJuly.logs = [];
-                    this.logsJune.logs = [];
-                    this.logsMay.logs = [];
-                    this.logsApril.logs = [];
-                    this.logsMarch.logs = [];
-                    this.logsFebruary.logs = [];
-                    this.logsJanuary.logs = [];
-                    this.logsYears = new Map();
+                        this.logsToday.logs = [];
+                        this.logsYesterday.logs = [];
+                        this.logsFriday.logs = [];
+                        this.logsThursday.logs = [];
+                        this.logsWednesday.logs = [];
+                        this.logsTuesday.logs = [];
+                        this.logsMonday.logs = [];
+                        this.logsLastWeek.logs = [];
+                        this.logsThisMonth.logs = [];
+                        this.logsNovember.logs = [];
+                        this.logsOctober.logs = [];
+                        this.logsSeptember.logs = [];
+                        this.logsAugust.logs = [];
+                        this.logsJuly.logs = [];
+                        this.logsJune.logs = [];
+                        this.logsMay.logs = [];
+                        this.logsApril.logs = [];
+                        this.logsMarch.logs = [];
+                        this.logsFebruary.logs = [];
+                        this.logsJanuary.logs = [];
+                        this.logsYears = new Map();
 
-                    for(const log of this.roleLogs) {
-                        const changedOn = new Date(log.changedOn);
-                        const dayL = changedOn.getDate();
-                        const monthL = changedOn.getMonth();
-                        const yearL = changedOn.getFullYear();
+                        for(const log of this.roleLogs) {
+                            const changedOn = new Date(log.changedOn);
+                            const dayL = changedOn.getDate();
+                            const monthL = changedOn.getMonth();
+                            const yearL = changedOn.getFullYear();
 
-                        // Today
-                        if(day === dayL && month === monthL && year === yearL) {
-                            this.logsToday.logs.push(log);
-                            continue;
-                        }
-
-                        // Yesterday
-                        if(dayY === dayL && monthY === monthL && yearY === yearL) {
-                            this.logsYesterday.logs.push(log);
-                            continue;
-                        }
-
-                        // This week
-                        if(year === yearL && week === getWeek(changedOn)) {
-                            const dow = getDayOfWeek(changedOn);
-                            switch(dow) {
-                                case 4: this.logsFriday.logs.push(log); break;
-                                case 3: this.logsThursday.logs.push(log); break;
-                                case 2: this.logsWednesday.logs.push(log); break;
-                                case 1: this.logsTuesday.logs.push(log); break;
-                                case 0: this.logsMonday.logs.push(log); break;
+                            // Today
+                            if(day === dayL && month === monthL && year === yearL) {
+                                this.logsToday.logs.push(log);
+                                continue;
                             }
-                            continue;
-                        }
 
-                        // This month
-                        if(month === monthL && year === yearL) {
-                            this.logsThisMonth.logs.push(log);
-                            continue;
-                        }
-
-                        // This year
-                        if(year === yearL) {
-                            switch(monthL) {
-                                case 10: this.logsNovember.logs.push(log); break;
-                                case  9: this.logsOctober.logs.push(log); break;
-                                case  8: this.logsSeptember.logs.push(log); break;
-                                case  7: this.logsAugust.logs.push(log); break;
-                                case  6: this.logsJuly.logs.push(log); break;
-                                case  5: this.logsJune.logs.push(log); break;
-                                case  4: this.logsMay.logs.push(log); break;
-                                case  3: this.logsApril.logs.push(log); break;
-                                case  2: this.logsMarch.logs.push(log); break;
-                                case  1: this.logsFebruary.logs.push(log); break;
-                                case  0: this.logsJanuary.logs.push(log); break;
+                            // Yesterday
+                            if(dayY === dayL && monthY === monthL && yearY === yearL) {
+                                this.logsYesterday.logs.push(log);
+                                continue;
                             }
-                            continue;
-                        }
 
-                        // Older by year
-                        let yearLogs = this.logsYears.get(yearL);
-                        if(!isValid(yearLogs)) {
-                            yearLogs = [];
-                            this.logsYears.set(yearL, yearLogs);
-                        }
+                            // This week
+                            if(year === yearL && week === getWeek(changedOn)) {
+                                const dow = getDayOfWeek(changedOn);
+                                switch(dow) {
+                                    case 4:
+                                        this.logsFriday.logs.push(log);
+                                        break;
+                                    case 3:
+                                        this.logsThursday.logs.push(log);
+                                        break;
+                                    case 2:
+                                        this.logsWednesday.logs.push(log);
+                                        break;
+                                    case 1:
+                                        this.logsTuesday.logs.push(log);
+                                        break;
+                                    case 0:
+                                        this.logsMonday.logs.push(log);
+                                        break;
+                                }
+                                continue;
+                            }
 
-                        yearLogs.push(log);
+                            // This month
+                            if(month === monthL && year === yearL) {
+                                this.logsThisMonth.logs.push(log);
+                                continue;
+                            }
+
+                            // This year
+                            if(year === yearL) {
+                                switch(monthL) {
+                                    case 10:
+                                        this.logsNovember.logs.push(log);
+                                        break;
+                                    case  9:
+                                        this.logsOctober.logs.push(log);
+                                        break;
+                                    case  8:
+                                        this.logsSeptember.logs.push(log);
+                                        break;
+                                    case  7:
+                                        this.logsAugust.logs.push(log);
+                                        break;
+                                    case  6:
+                                        this.logsJuly.logs.push(log);
+                                        break;
+                                    case  5:
+                                        this.logsJune.logs.push(log);
+                                        break;
+                                    case  4:
+                                        this.logsMay.logs.push(log);
+                                        break;
+                                    case  3:
+                                        this.logsApril.logs.push(log);
+                                        break;
+                                    case  2:
+                                        this.logsMarch.logs.push(log);
+                                        break;
+                                    case  1:
+                                        this.logsFebruary.logs.push(log);
+                                        break;
+                                    case  0:
+                                        this.logsJanuary.logs.push(log);
+                                        break;
+                                }
+                                continue;
+                            }
+
+                            // Older by year
+                            let yearLogs = this.logsYears.get(yearL);
+                            if(!isValid(yearLogs)) {
+                                yearLogs = [];
+                                this.logsYears.set(yearL, yearLogs);
+                            }
+
+                            yearLogs.push(log);
+                        }
                     }
+                    else
+                        // No logs returned
+                        this.roleLogsEnd = true;
                 }
             }
         },
