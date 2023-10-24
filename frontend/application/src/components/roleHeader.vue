@@ -1,9 +1,9 @@
 <template>
     <div class="d-flex flex-nowrap flex-column operations">
         <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-        <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="editRole">{{ $t('ims.edit') }}</button>
-        <button v-if="!editMode && isLatest && isDraft && isProcessDeveloper" type="button" class="btn btn-primary" @click="implementRole">{{ $t('ims.implement') }}</button>
-        <button v-if="!editMode && isLatest && isImplemented && canDeprecate && isProcessOwner" type="button" class="btn btn-danger" @click="deprecateRole">{{ $t('ims.deprecate') }}</button>
+        <button v-if="!editMode && !isDeprecated && (isImsManager || isProcessManager)" type="button" class="btn btn-primary" @click="editRole">{{ $t('ims.edit') }}</button>
+        <button v-if="!editMode && isLatest && isDraft && (isImsDeveloper || isProcessDeveloper)" type="button" class="btn btn-primary" @click="implementRole">{{ $t('ims.implement') }}</button>
+        <button v-if="!editMode && isLatest && isImplemented && canDeprecate && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger" @click="deprecateRole">{{ $t('ims.deprecate') }}</button>
         <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!roleChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
         <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
     </div>
@@ -79,9 +79,30 @@ export default {
             let names = userNames(this.assignees, " ", this.$t('role.nobody'));
             return names;
         },
-        isProcessOwner() { return hasRole(this.roles, Roles[this.$props.processCode].PROCESS_OWNER); },
-        isProcessManager() { return hasRole(this.roles, Roles[this.$props.processCode].PROCESS_MANAGER); },
-        isProcessDeveloper() { return hasRole(this.roles, Roles[this.$props.processCode].PROCESS_DEVELOPER); },
+        isImsOwner() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_OWNER);
+        },
+        isImsManager() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_MANAGER);
+        },
+        isImsDeveloper() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_DEVELOPER);
+        },
+        isProcessOwner() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_OWNER);
+        },
+        isProcessManager() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
+        },
+        isProcessDeveloper() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_DEVELOPER);
+        },
         roleName() { return this.current?.name; },
         roleVersion() { return isValid(this.current) ? this.current.version : "?"; },
         roleStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },

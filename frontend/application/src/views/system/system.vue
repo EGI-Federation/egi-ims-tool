@@ -1,40 +1,26 @@
 <template>
-    <ism-navbar/>
-    <router-view/>
-    <ism-footer :module-name="$t('navbar.manageSys')" :module-version="systemVersion"/>
+    <ism-navbar module-name="IMS"/>
+    <router-view :key="$route.fullPath"/>
+    <ism-footer module-name="IMS" :module-version="imsVersion"/>
 </template>
 
 <script>
 // @ is an alias to /src
-import { isValid } from "@/utils";
-import { Roles, parseRoles, hasRole } from "@/roles";
-import { store } from "@/store";
+import { store, storeUsers, storeUsersByRole } from "@/store";
 import IsmNavbar from "@/components/navbar.vue";
 import IsmFooter from "@/components/footer.vue";
+
 
 export default {
     name: 'systemHome',
     components: { IsmNavbar, IsmFooter },
     data() {
         return {
-            systemVersion: "1.0.0",
+            processInfo: store.state.ims.processInfo,
         }
     },
-    created() {
-        if(!isValid(store.state.temp.roles) || 0 === store.state.temp.roles.size) {
-            parseRoles();
-
-            let router = this.$router;
-            const delayedRoleCheck = setTimeout(function() {
-                clearTimeout(delayedRoleCheck);
-                if(!hasRole(store.state.temp.roles, Roles.VO.MEMBER))
-                    // Non VO members to the homepage
-                    router.replace('/');
-            }, 500);
-        }
-    },
-    mounted() {
-        scroll(0, 0);
+    computed: {
+        imsVersion() { return this.processInfo ? this.processInfo.apiVersion : "1.0.0" },
     },
 }
 </script>

@@ -5,14 +5,16 @@
         <div class="d-flex flex-nowrap info">
             <div>
                 <div>{{ $t('ims.status') }} :</div>
-                <div>{{ $t('role.assignedTo') }} :</div>
+                <div>{{ $t('role.assignable') }} :</div>
+                <div v-if="assignable.assignable">{{ $t('role.assignedTo') }} :</div>
             </div>
             <div>
                 <div><span :class="status.pillClass">{{ status.label }}</span></div>
-                <div>{{ assigneeNames }}</div>
+                <div>{{ assignable.explain }}</div>
+                <div v-if="assignable.assignable">{{ assigneeNames }}</div>
             </div>
         </div>
-        <div v-if="assignable && (isProcessManager || isProcessOwner)" class="dropdown">
+        <div v-if="assignable.assignable && (isImsOwner || isImsManager || isProcessManager || isProcessOwner)" class="dropdown">
             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ $t('role.assign') }}
             </button>
@@ -78,28 +80,42 @@ export default {
         roleCode() {
             return this.$props.role.roleCode;
         },
+        roleProcessStaff() {
+            const roleEnum = Roles[this.$props.processCode];
+            return this.roleCode === roleEnum.PROCESS_STAFF.description;
+        },
         usersByProcess() {
             return store.state.temp?.usersByProcess;
         },
         users() {
             let users = null;
             if(isValid(this.$props.role)) {
-                const roleEnum = Roles[this.$props.processCode];
-                if(this.roleCode === roleEnum.PROCESS_STAFF.description)
+                if(this.roleProcessStaff)
                     // Any VO user can be included in the process
                     users = store.state.temp.users;
                 else
                     users = this.usersByProcess?.get(this.$props.processCode);
             }
 
-            return isValid(users) ? Array.from(users.values()) : new Array();
+            return isValid(users) ? Array.from(users.values()) : [];
         },
         assignable() {
-            if(this.$props.role.status === Status.DEPRECATED.description)
-                return false;
+            if(this.roleProcessStaff)
+                return { assignable: true, explain: this.$t('ims.yes') };
 
-            let implementedRole = findEntityWithStatus(this.$props.role, Status.IMPLEMENTED.description);
-            return isValid(implementedRole);
+            if(isValid(this.$props.role.assignable)) {
+                // IMS process
+                if(true !== this.$props.role?.assignable)
+                    return { assignable: false, explain: this.$t('role.notAssignable') };
+            }
+
+            // All other processes
+            if(this.$props.role.status === Status.DEPRECATED.description)
+                return { assignable: false, explain: this.$t('role.notAssignableAnymore') };
+
+            const implementedRole = findEntityWithStatus(this.$props.role, Status.IMPLEMENTED.description);
+            return { assignable: isValid(implementedRole),
+                     explain: isValid(implementedRole) ? this.$t('ims.yes') : this.$t('role.notAssignableYet') };
         },
         assignees() {
             const usersWithRole = findUsersWithRole(this.$props.processCode, this.$props.role.role);
@@ -109,8 +125,22 @@ export default {
             return userNames(this.assignees, " ", this.$t('role.nobody'));
         },
         roles() { return store.state.temp?.roles; },
-        isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
-        isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
+        isImsOwner() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_OWNER);
+        },
+        isImsManager() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_MANAGER);
+        },
+        isProcessOwner() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_OWNER);
+        },
+        isProcessManager() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
+        },
     },
     methods: {
         assignedTo(checkinUserId) {
@@ -121,8 +151,7 @@ export default {
             return false;
         },
         toggleAssignment(event) {
-            const roleEnum = Roles[this.$props.processCode];
-            if(this.roleCode === roleEnum.PROCESS_STAFF.description)
+            if(this.roleProcessStaff)
                 this.toggleProcessMembership(event);
             else
                 this.toggleRoleAssignment(event);

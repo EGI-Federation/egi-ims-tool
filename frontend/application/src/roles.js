@@ -173,7 +173,7 @@ export const parseRoles = function() {
 // Check if a role is assigned
 export const hasRole = function(roles, role) {
     if('symbol' !== typeof role) {
-        console.log("hasRole: role is not a string but a " + typeof role);
+        console.log(`hasRole: role is not a symbol but ${typeof role} ${isValid(role) ? ("(" + role + ")") : ""}`);
         return false;
     }
 

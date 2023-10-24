@@ -185,7 +185,7 @@ export default {
         if(!isValid(this.roles) || 0 === this.roles.size)
             parseRoles();
 
-        console.log(`SYS API is ${process.env.VUE_APP_IMS_SYS_API}`);
+        console.log(`IMS API is ${process.env.VUE_APP_IMS_IMS_API}`);
         console.log(`SLM API is ${process.env.VUE_APP_IMS_SLM_API}`);
     },
     mounted() {

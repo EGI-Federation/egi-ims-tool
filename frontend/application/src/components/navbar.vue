@@ -30,9 +30,9 @@
                             {{ $t('navbar.manageSys') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="systemMenu">
-                            <li><router-link class="dropdown-item" to="/system">{{ $t('navbar.overview') }}</router-link></li>
-                            <li><router-link class="dropdown-item" to="/system/roles">{{ $t('navbar.roles') }}</router-link></li>
-                            <li><router-link class="dropdown-item" to="/system/plans">{{ $t('navbar.plans') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/ims">{{ $t('navbar.overview') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/ims/roles">{{ $t('navbar.roles') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/ims/plans">{{ $t('navbar.plans') }}</router-link></li>
                         </ul>
                     </li>
                     <!-- Other Processes menu -->

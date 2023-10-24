@@ -75,8 +75,22 @@ export default {
         isReady() { return isValid(this.current) && Status.READY_FOR_APPROVAL.description === this.current.status; },
         isDeprecated() { return isValid(this.current) && Status.DEPRECATED.description === this.current.status; },
         roles() { return store.state.temp.roles; },
-        isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
-        isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
+        isImsOwner() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_OWNER);
+        },
+        isImsManager() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_MANAGER);
+        },
+        isProcessOwner() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_OWNER);
+        },
+        isProcessManager() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
+        },
         processName() { return this.$t('home.' + this.$props.processCode); },
         contact() {
             return isValid(this.current) && isValid(this.current.contact) &&
@@ -86,7 +100,7 @@ export default {
         processVersion() { return isValid(this.current) ? this.current.version : "?"; },
         processStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
         processOwner() {
-            let pos = findUsersWithRole(this.$props.processCode, Roles.SLM.PROCESS_OWNER, true);
+            let pos = findUsersWithRole(this.$props.processCode, Roles[this.$props.processCode].PROCESS_OWNER, true);
             if(isValid(pos) && pos.length > 0) {
                 let po = pos[0];
                 return po.fullName;
@@ -94,7 +108,7 @@ export default {
             return this.$t('ims.notSet');
         },
         processManager() {
-            let pms = findUsersWithRole(this.$props.processCode, Roles.SLM.PROCESS_MANAGER, true);
+            let pms = findUsersWithRole(this.$props.processCode, Roles[this.$props.processCode].PROCESS_MANAGER, true);
             if(isValid(pms) && pms.length > 0) {
                 let pm = pms[0];
                 return pm.fullName;

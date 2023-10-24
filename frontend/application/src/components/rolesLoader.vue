@@ -35,24 +35,25 @@ export default {
         }
 
         // Fetch all IMS users from the API
-        const uvResult = getUsers(this.accessToken, null, false, this.$props.apiBaseUrl);
+        let t = this;
+        let uvResult = getUsers(this.accessToken, null, false, this.$props.apiBaseUrl);
         uvResult.load().then(() => {
             storeUsers('updateVoUsers', uvResult);
-            this.$emit('loadedVoUsers');
+            t.$emit('loadedVoUsers');
         });
 
         // Fetch the users participating in this process from the API
         const upResult = getUsers(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
         upResult.load().then(() => {
             storeUsers('ims/updateProcessUsers', upResult);
-            this.$emit('loadedProcessUsers');
+            t.$emit('loadedProcessUsers');
         });
 
         // Fetch the users with roles in this process from the API
         const urResult = getUsersWithRole(this.accessToken, this.$props.processCode, null, this.$props.apiBaseUrl);
         urResult.load().then(() => {
             storeUsersByRole(urResult);
-            this.$emit('loadedUsersWithRoles');
+            t.$emit('loadedUsersWithRoles');
         });
     },
 }

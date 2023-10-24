@@ -146,8 +146,7 @@ export const store = createStore({
                 isAdmin(state, getters, rootState) {
                     return isValid(rootState.roles) &&
                           (hasRole(rootState.roles, Roles.IMS.IMS_OWNER) ||
-                           hasRole(rootState.roles, Roles.IMS.IMS_MANAGER) ||
-                           hasRole(rootState.roles, Roles.IMS.IMS_COORDINATOR));
+                           hasRole(rootState.roles, Roles.IMS.IMS_MANAGER));
                 },
                 allNotifications(state) {
                     return state.notifications;

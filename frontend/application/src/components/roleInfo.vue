@@ -76,7 +76,7 @@
 import { reactive } from 'vue';
 import { store, storeProcessRoles } from "@/store";
 import { Status, isValid, formatTime, getWeek, getDayOfYear, getDayOfWeek, strCapitalize } from '@/utils'
-import { findUserWithEmail, findUsersWithRole } from "@/roles";
+import {findUserWithEmail, findUsersWithRole, hasRole, Roles} from "@/roles";
 import { getRoles } from "@/api/getRoles";
 import { getRoleLogs } from "@/api/getRoleLogs";
 import { implementRole } from "@/api/implementRole";
@@ -145,6 +145,23 @@ export default {
                 return this.$route.params.role;
 
             return ('symbol' === typeof this.current.role) ? this.current.role.description : this.current.role;
+        },
+        roles() { return store.state.temp.roles; },
+        isImsOwner() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_OWNER);
+        },
+        isImsManager() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_MANAGER);
+        },
+        isProcessOwner() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_OWNER);
+        },
+        isProcessManager() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
         },
         tasks() {
             return isValid(this.current) && isValid(this.current.tasks) &&

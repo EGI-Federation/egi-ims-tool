@@ -105,6 +105,7 @@
         "SLM": "Service Level Management",
         "SPM": "Service Portfolio Management",
         "SRM": "Service Reporting Management",
+        "IMS": "Management System",
         "needAuth": "To access the EGI Integrated Management System you need to authenticate.",
         "clickAuth": "Click the EGI Check-in logo below to sign in with an identity from your home organisation.",
         "authCheckin": "Login with EGI Check-in",
@@ -233,9 +234,14 @@
         "implementedEntity": "The {processCode} {type}{entity} was marked as implemented"
     },
     "role": {
+        "systemRoles": "These are the global roles defined in the Management System",
         "processRoles": "These are the roles defined in the process",
         "addRole": "Add Role",
         "assignedTo": "Assigned to",
+        "assignable": "Assignable",
+        "notAssignable": "No, can only be inherited by roles in other processes",
+        "notAssignableYet": "No, implement first",
+        "notAssignableAnymore": "No, was deprecated",
         "tasks": "Tasks",
         "assign": "Assign",
         "nobody": "Nobody",
