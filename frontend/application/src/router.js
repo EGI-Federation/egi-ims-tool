@@ -12,10 +12,15 @@ import Logout from "@/views/Logout.vue";
 import System from './views/system/system.vue'
 import systemHome from "@/views/system/systemHome.vue";
 import systemConfig from "@/views/system/systemConfig.vue";
-import systemPlans from "@/views/system/systemPlans.vue";
+import systemPlan from "@/views/system/systemPlan.vue";
 import systemRoles from "@/views/system/systemRoles.vue";
 import systemRole from './views/system/systemRole.vue'
 import systemRoleEdit from './views/system/systemRoleEdit.vue'
+import systemPolicies from "@/views/system/systemPolicies.vue";
+import systemReports from "@/views/system/systemReports.vue";
+import systemProcedures from "@/views/system/systemProcedures.vue";
+import systemProjects from "@/views/system/systemProjects.vue";
+import systemEvents from "@/views/system/systemEvents.vue";
 
 import ServiceLevelManagement from './views/slm/slm.vue'
 import slmHome from './views/slm/slmHome.vue'
@@ -238,10 +243,15 @@ const routes = [
     children: [
       { path: '', name:'system-home', component: systemHome },
       { path: 'config', component: systemConfig },
-      { path: 'plans', component: systemPlans },
-      { path: 'roles', component: systemRoles },
-      { path: 'roles/:role', component: systemRole, props: route => ({ version: route.query.v }) },
-      { path: 'roles/:role/edit', component: systemRoleEdit },
+      { path: 'plan', component: systemPlan },
+      { path: 'plan/roles', component: systemRoles },
+      { path: 'plan/roles/:role', component: systemRole, props: route => ({ version: route.query.v }) },
+      { path: 'plan/roles/:role/edit', component: systemRoleEdit },
+      { path: 'policies', component: systemPolicies },
+      { path: 'procedures', component: systemProcedures },
+      { path: 'reports', component: systemReports },
+      { path: 'projects', component: systemProjects },
+      { path: 'events', component: systemEvents },
     ]
   },
   {

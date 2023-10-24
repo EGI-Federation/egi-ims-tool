@@ -350,6 +350,7 @@ export default {
     width: 100%;
     flex-direction: column;
     justify-content: flex-start;
+    min-height: unset;
 }
 
 @media screen and (min-width: 765px) {

@@ -64,7 +64,7 @@
              :message="$t('role.implementRoleChanges', { processCode: processCode, roleName: roleName })"
              :placeholder-collect-message="$t('ims.implementationDetails')"
              :confirm-button="$t('ims.implement')" @confirm="implementRole" />
-    <version-history :bidirectional="bidirectional" :view-url="`/slm/roles/${this.$route.params.role}`"
+    <version-history :bidirectional="bidirectional" :view-url="`${this.baseUrl}/${this.$route.params.role}`"
                      :version-latest="latest" :version-to-show="current"
                      :filter-to-title="$t('history.implemented')"
                      :filter-to-status="Status.IMPLEMENTED.description"/>
@@ -96,6 +96,7 @@ export default {
     components: { RoleHeader, RoleLog, VersionHistory, Message },
     props: {
         processCode: String,
+        pageBaseUrl: String,
         apiBaseUrl: String,
         info: { // Reactive { current: Role, implemented: Role }
             type: Object,
@@ -136,6 +137,11 @@ export default {
     },
     computed: {
         Status() { return Status; },
+        baseUrl() {
+            return isValid(this.$props.pageBaseUrl) ?
+                this.$props.pageBaseUrl :
+                `/${this.$props.processCode.toLowerCase()}/roles`;
+        },
         latest() { return store.state.ims.roleInfo; },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
@@ -174,7 +180,7 @@ export default {
             return isValid(usersWithRole) ? usersWithRole : new Array();
         },
         returnToRoute() {
-            return `/${this.$props.processCode.toLowerCase()}/roles/${this.$route.params.role}`;
+            return `${this.baseUrl}/${this.$route.params.role}`;
         },
     },
     methods: {
@@ -497,6 +503,7 @@ export default {
     width: 100%;
     flex-direction: column;
     justify-content: flex-start;
+    min-height: unset;
 }
 
 @media screen and (min-width: 765px) {

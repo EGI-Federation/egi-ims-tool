@@ -1,6 +1,6 @@
 <template>
 <div class="role-info">
-    <h3><router-link :to="`/${processCode.toLowerCase()}/roles/${roleCode}`">{{ role.name }}</router-link></h3>
+    <h3><router-link :to="`${baseUrl}/${roleCode}`">{{ role.name }}</router-link></h3>
     <div class="d-flex flex-nowrap justify-content-between">
         <div class="d-flex flex-nowrap info">
             <div>
@@ -61,6 +61,7 @@ export default {
     components: { },
     props: {
         processCode: String,
+        pageBaseUrl: String,
         apiBaseUrl: String,
         role: { // Role
             type: Object,
@@ -74,6 +75,11 @@ export default {
         }
     },
     computed: {
+        baseUrl() {
+            return isValid(this.$props.pageBaseUrl) ?
+                   this.$props.pageBaseUrl :
+                   `/${this.$props.processCode.toLowerCase()}/roles`;
+        },
         status() {
             return statusPill(this.$props.role.status, this.$t);
         },

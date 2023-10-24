@@ -31,8 +31,21 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="systemMenu">
                             <li><router-link class="dropdown-item" to="/ims">{{ $t('navbar.overview') }}</router-link></li>
-                            <li><router-link class="dropdown-item" to="/ims/roles">{{ $t('navbar.roles') }}</router-link></li>
-                            <li><router-link class="dropdown-item" to="/ims/plans">{{ $t('navbar.plans') }}</router-link></li>
+                            <li class="dropdown-submenu dropend">
+                                <a class="dropdown-item dropdown-toggle" id="planSubMenu" aria-haspopup="true" aria-expanded="false"
+                                   data-bs-toggle="dropdown" @click="togglePlanSubMenu" href="#">
+                                    {{ $t('navbar.plan') }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="planSubMenu" ref="projectsSubMenu">
+                                    <li><router-link class="dropdown-item" to="/ims/plan">{{ $t('navbar.overview') }}</router-link></li>
+                                    <li><router-link class="dropdown-item" to="/ims/plan/roles">{{ $t('navbar.roles') }}</router-link></li>
+                                </ul>
+                            </li>
+                            <li><router-link class="dropdown-item" to="/ims/policies">{{ $t('navbar.policies') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/ims/procedures">{{ $t('navbar.procedures') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/ims/projects">{{ $t('navbar.projects') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/ims/events">{{ $t('navbar.events') }}</router-link></li>
+                            <li><router-link class="dropdown-item" to="/ims/reports">{{ $t('navbar.reports') }}</router-link></li>
                         </ul>
                     </li>
                     <!-- Other Processes menu -->
@@ -232,9 +245,19 @@ export default {
         },
         unreadNotificationCount() { return store.getters["ims/unreadNotificationCount"]; },
         isAdmin() { return store.getters["ims/isAdmin"]; },
-        isProcess() { return isValid(this.$props.moduleName) && this.$props.moduleName.length > 0; },
+        isProcess() {
+            return isValid(this.$props.moduleName) &&
+                   this.$props.moduleName.length > 0 &&
+                   this.$props.moduleName !== "IMS" ; },
     },
     methods: {
+        togglePlanSubMenu(event) {
+            event.stopPropagation();
+            if(isValid(this.$refs.planSubMenu)) {
+                const display = this.$refs.planSubMenu.style.display;
+                this.$refs.planSubMenu.style.display = "block" === display ? "none" : "block";
+            }
+        },
         toggleGovernanceSubMenu(event) {
             event.stopPropagation();
             if(isValid(this.$refs.projectsSubMenu))
@@ -254,6 +277,8 @@ export default {
             }
         },
         closeSubMenus(event) {
+            if(isValid(this.$refs.planSubMenu))
+                this.$refs.planSubMenu.style.display = "none";
             if(isValid(this.$refs.governanceSubMenu))
                 this.$refs.governanceSubMenu.style.display = "none";
             if(isValid(this.$refs.projectsSubMenu))

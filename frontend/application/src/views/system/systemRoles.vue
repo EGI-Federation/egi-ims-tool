@@ -5,7 +5,8 @@
     <div><button type="button" class="btn btn-primary" @click="addRole">{{ $t('role.addRole') }}</button></div>
     <div v-if="roleList" class="d-flex flex-nowrap content">
         <div class="section">
-            <role-summary v-for="role in roleList" :role="role" :api-base-url="imsApi" process-code="IMS"/>
+            <role-summary v-for="role in roleList" :role="role" process-code="IMS"
+                          :page-base-url="baseUrl" :api-base-url="imsApi"/>
         </div>
     </div>
 </template>
@@ -29,11 +30,13 @@ export default {
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("navbar.manageSys"), link: "/ims" },
+                { text: this.$t("navbar.plan"), link: "/ims/plan" },
                 { text: this.$t("navbar.roles") },
             ],
         }
     },
     computed: {
+        baseUrl() { return "/ims/plan/roles"; },
         imsApi() { return process.env.VUE_APP_IMS_IMS_API; },
         roles() { return store.state.temp.rolesByProcess?.get('IMS'); },
         roleList() {
@@ -43,7 +46,7 @@ export default {
     },
     methods: {
         addRole() {
-            this.$router.push('/ims/roles/new/edit');
+            this.$router.push(`${this.baseUrl}/new/edit`);
         },
     },
     created() {

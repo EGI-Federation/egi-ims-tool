@@ -5,7 +5,7 @@
     <div><button type="button" class="btn btn-primary" @click="addRole">{{ $t('role.addRole') }}</button></div>
     <div v-if="roleList" class="d-flex flex-nowrap content">
         <div class="section">
-            <role-summary v-for="role in roleList" :role="role" :api-base-url="slmApi" process-code="SLM"/>
+            <role-summary v-for="role in roleList" :role="role" process-code="SLM" :api-base-url="slmApi"/>
         </div>
     </div>
 </template>
@@ -43,7 +43,7 @@ export default {
     },
     methods: {
         addRole() {
-            this.$router.push('/slm/roles/new/edit');
+            this.$router.push("/slm/roles/new/edit");
         },
     },
     created() {

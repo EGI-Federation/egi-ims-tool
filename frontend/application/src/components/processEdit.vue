@@ -1256,6 +1256,7 @@ export default {
     position: relative;
     gap: .5rem;
     width: 100%;
+    min-height: unset;
 }
 
 @media screen and (min-width: 765px) {

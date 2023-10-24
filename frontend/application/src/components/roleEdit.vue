@@ -61,6 +61,7 @@ export default {
     components: { RoleHeader, TextboxWithPreview, Message },
     props: {
         processCode: String,
+        pageBaseUrl: String,
         apiBaseUrl: String,
         info: Object,   // { current: Role, implemented: Role }
         state: {        // Reactive { hasUnsavedChanges: Boolean, navigateTo: String }
@@ -83,6 +84,11 @@ export default {
     },
     computed: {
         i18n() { return i18n },
+        baseUrl() {
+            return isValid(this.$props.pageBaseUrl) ?
+                this.$props.pageBaseUrl :
+                `/${this.$props.processCode.toLowerCase()}/roles`;
+        },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
         edited() {
@@ -145,9 +151,9 @@ export default {
         },
         returnToRoute() {
             if(this.isNew)
-                return `/${this.$props.processCode.toLowerCase()}/roles`;
+                return this.baseUrl;
 
-            return `/${this.$props.processCode.toLowerCase()}/roles/${this.$route.params.role}`;
+            return `${this.baseUrl}/${this.$route.params.role}`;
         },
     },
     watch: {
@@ -311,6 +317,7 @@ export default {
     position: relative;
     gap: .5rem;
     width: 100%;
+    min-height: unset;
 }
 
 @media screen and (min-width: 765px) {

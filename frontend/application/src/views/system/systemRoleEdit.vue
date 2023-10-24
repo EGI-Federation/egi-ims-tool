@@ -3,7 +3,8 @@
     <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
     <role-edit ref="roleEdit"
                   :info="{ current: currentRole, implemented: implementedRole }"
-                  :state="editState" :api-base-url="imsApi" process-code="IMS"/>
+                  :state="editState" process-code="IMS"
+                  :page-base-url="baseUrl" :api-base-url="imsApi"/>
 </template>
 
 <script>
@@ -16,10 +17,11 @@ import { getRoles } from "@/api/getRoles";
 import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
 import RoleEdit from "@/components/roleEdit.vue";
+import RoleInfo from "@/components/roleInfo.vue";
 
 export default {
     name: 'systemRoleEdit',
-    components: { RolesLoader, BreadCrumb, RoleEdit },
+    components: {RoleInfo, RolesLoader, BreadCrumb, RoleEdit },
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
@@ -29,6 +31,7 @@ export default {
         }
     },
     computed: {
+        baseUrl() { return "/ims/plan/roles"; },
         imsApi() { return process.env.VUE_APP_IMS_IMS_API; },
         roles() { return store.state.temp.roles; },
         isNew() { return 'new' === this.$route.params.role; },
@@ -37,8 +40,9 @@ export default {
         locationSegments() { return [
             { text: this.$t("home.home"), link:"/" },
             { text: this.$t("navbar.manageSys"), link: "/ims" },
-            { text: this.$t("navbar.roles"), link: "/ims/roles" },
-            { text: this.currentRole.name, link: this.isNew ? null : `/ims/roles/${this.$route.params.role}` },
+            { text: this.$t("navbar.plan"), link: "/ims/plan" },
+            { text: this.$t("navbar.roles"), link: "/ims/plan/roles" },
+            { text: this.currentRole.name, link: this.isNew ? null : `/ims/plan/roles/${this.$route.params.role}` },
             { text: this.$t("ims.edit") },
         ]},
     },
@@ -59,7 +63,7 @@ export default {
             rrResult.load().then(() => {
                 if(isValid(rrResult.error?.value)) {
                     if(404 === rrResult.error?.value.status)
-                        t.$router.push('/ims/roles');
+                        t.$router.push(this.baseUrl);
                 }
                 else {
                     storeProcessRoles(rrResult);
@@ -77,7 +81,7 @@ export default {
     },
     mounted() {
         if(!this.isImsOwner && !this.isImsManager)
-            this.$router.push('/ims/roles');
+            this.$router.push('/ims/plan/roles');
     },
     beforeRouteLeave(to, from, next) {
         // Navigating away from this view
