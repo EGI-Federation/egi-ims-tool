@@ -28,7 +28,7 @@
         "search": "Search",
         "toggle": "Toggle navigation",
         "offcanvas": "EGI IMS Menu",
-        "manageSys": "Management System",
+        "manageSys": "@:home.IMS",
         "overview": "Overview",
         "plan": "Management Plan",
         "events": "Events",
