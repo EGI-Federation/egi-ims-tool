@@ -33,7 +33,6 @@
         "plan": "Management Plan",
         "events": "Events",
         "policies": "Policies",
-
         "thisProcess": "This Process",
         "otherProcesses": "Other Processes",
         "gov": "Governance",
@@ -41,6 +40,7 @@
         "process": "@:ims.process",
         "processes": "Processes",
         "roles": "Roles",
+        "rolesResp": "Roles and Responsibilities",
         "procedures": "Procedures",
         "kpis": "Key Performance Indicators",
         "reports": "Reports",

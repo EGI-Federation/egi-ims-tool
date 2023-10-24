@@ -31,14 +31,14 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="systemMenu">
                             <li><router-link class="dropdown-item" to="/ims">{{ $t('navbar.overview') }}</router-link></li>
-                            <li class="dropdown-submenu dropend">
+                            <li :class="'dropdown-submenu ' + (isProcess ? 'dropend' : 'dropstart')">
                                 <a class="dropdown-item dropdown-toggle" id="planSubMenu" aria-haspopup="true" aria-expanded="false"
                                    data-bs-toggle="dropdown" @click="togglePlanSubMenu" href="#">
                                     {{ $t('navbar.plan') }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="planSubMenu" ref="projectsSubMenu">
                                     <li><router-link class="dropdown-item" to="/ims/plan">{{ $t('navbar.overview') }}</router-link></li>
-                                    <li><router-link class="dropdown-item" to="/ims/plan/roles">{{ $t('navbar.roles') }}</router-link></li>
+                                    <li><router-link class="dropdown-item" to="/ims/plan/roles">{{ $t('navbar.rolesResp') }}</router-link></li>
                                 </ul>
                             </li>
                             <li><router-link class="dropdown-item" to="/ims/policies">{{ $t('navbar.policies') }}</router-link></li>
