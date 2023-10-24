@@ -24,7 +24,8 @@
                 <h3>{{ $t('role.tasks') }}</h3>
                 <vue3-markdown-it :source='tasks' />
             </div>
-            <div v-show="!detailsVisible" class="logs">
+            <div v-if="isImsOwner || isImsManager || isProcessOwner || isProcessManager"
+                 v-show="!detailsVisible" class="logs">
                 <h3>{{ $t('role.logsTitle') }}</h3>
                 <role-log v-if="logsToday.logs.length" :title="$t('role.today')" :logs="logsToday" />
                 <role-log v-if="logsYesterday.logs.length" :title="$t('role.yesterday')" :logs="logsYesterday" />
@@ -321,13 +322,16 @@ export default {
             });
         },
         loadRoleLogs() {
-            // Fetch the role assignment logs from the API
-            let t = this;
-            const rlResult = getRoleLogs(this.accessToken, this.$props.processCode, this.roleCode,
-                                         this.oldestRoleLogFrom, logPageSize, this.$props.apiBaseUrl);
-            rlResult.load().then(() => {
-                t.appendRoleLogs(rlResult);
-            });
+            // Only load role assignment logs when viewed by process owners/managers
+            if(this.isImsOwner || this.isImsManager || this.isProcessOwner || this.isProcessManager) {
+                // Fetch the role assignment logs from the API
+                let t = this;
+                const rlResult = getRoleLogs(this.accessToken, this.$props.processCode, this.roleCode,
+                    this.oldestRoleLogFrom, logPageSize, this.$props.apiBaseUrl);
+                rlResult.load().then(() => {
+                    t.appendRoleLogs(rlResult);
+                });
+            }
         },
         appendRoleLogs(rlResult) {
             if(isValid(rlResult.page)) {
