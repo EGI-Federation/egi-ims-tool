@@ -13,7 +13,7 @@ import { store } from "@/store"
 import BreadCrumb from "@/components/breadCrumb.vue";
 
 export default {
-    name: 'systemPlan',
+    name: 'systemGovernance',
     components: { BreadCrumb },
     data() {
         return {
@@ -21,7 +21,7 @@ export default {
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("navbar.manageSys"), link:"/ims" },
-                { text: this.$t("navbar.plan") },
+                { text: this.$t("navbar.governance") },
             ],
         }
     },
