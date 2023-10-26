@@ -12,7 +12,7 @@ import Logout from "@/views/Logout.vue";
 import System from './views/system/system.vue'
 import systemHome from "@/views/system/systemHome.vue";
 import systemConfig from "@/views/system/systemConfig.vue";
-import systemPlan from "@/views/system/systemPlan.vue";
+import systemGovernance from "@/views/system/systemGovernance.vue";
 import systemRoles from "@/views/system/systemRoles.vue";
 import systemRole from './views/system/systemRole.vue'
 import systemRoleEdit from './views/system/systemRoleEdit.vue'
@@ -243,7 +243,7 @@ const routes = [
     children: [
       { path: '', name:'system-home', component: systemHome },
       { path: 'config', component: systemConfig },
-      { path: 'plan', component: systemPlan },
+      { path: 'plan', component: systemGovernance },
       { path: 'plan/roles', component: systemRoles },
       { path: 'plan/roles/:role', component: systemRole, props: route => ({ version: route.query.v }) },
       { path: 'plan/roles/:role/edit', component: systemRoleEdit },

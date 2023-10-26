@@ -2,7 +2,7 @@
     <bread-crumb :segments="locationSegments"/>
     <div class="about">
         <br/>
-        <h1>This is the Management Plan page</h1>
+        <h1>This is the Governance page</h1>
     </div>
 </template>
 

@@ -37,7 +37,7 @@
                                     {{ $t('navbar.plan') }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="planSubMenu" ref="projectsSubMenu">
-                                    <li><router-link class="dropdown-item" to="/ims/plan">{{ $t('navbar.overview') }}</router-link></li>
+                                    <li><router-link class="dropdown-item" to="/ims/plan">{{ $t('navbar.governance') }}</router-link></li>
                                     <li><router-link class="dropdown-item" to="/ims/plan/roles">{{ $t('navbar.rolesResp') }}</router-link></li>
                                 </ul>
                             </li>
