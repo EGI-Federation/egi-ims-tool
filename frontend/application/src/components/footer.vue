@@ -127,7 +127,7 @@ export default {
 </style>
 <style scoped>
 .footer {
-    font-size: medium;
+    font-size: calc(var(--font-scale) * var(--bs-dropdown-font-size));
     background-color: #282a2d;
     color: #5b5d5b;
     min-height: 15rem;
@@ -194,6 +194,9 @@ export default {
 }
 .footer .social {
     font-size: larger;
+}
+.dropdown-menu {
+    font-size: calc(var(--font-scale) * var(--bs-dropdown-font-size));
 }
 
 @media screen and (max-width: 765px) {

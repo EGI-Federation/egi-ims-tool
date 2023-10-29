@@ -1333,6 +1333,7 @@ export default {
 }
 .dropdown-menu {
     background-color: var(--menu-background-color);
+    font-size: calc(var(--font-scale) * var(--bs-dropdown-font-size));
 }
 .dropdown-menu > li:hover,
 .dropdown-menu > li:focus,

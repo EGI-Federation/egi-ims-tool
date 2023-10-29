@@ -153,12 +153,12 @@
                     <li class="px-3">
                         <div class="d-flex align-items-center">
                             <!-- Avatar -->
-                            <div class="avatar me-3">
+                            <div class="avatar">
                                 <i class="bi bi-person-circle"/>
                                 <i :class="highAssurance ? 'bi bi-shield-fill-plus badge-assurance high' : 'bi bi-shield-fill-minus badge-assurance low'"
                                    data-bs-toggle='tooltip' :data-bs-title="$t(highAssurance ? 'navbar.highAssurance' : 'navbar.lowAssurance')" ></i>
                             </div>
-                            <div>
+                            <div class="ms-3">
                                 <p class="h5 mb-1 user-details">{{ userFullName }}</p>
                                 <p class="small m-0 text-secondary user-details">{{ userEmail }}</p>
                             </div>
@@ -353,17 +353,22 @@ export default {
     top: -2px;
 }
 .avatar {
+    --avatar-height: calc(5 * var(--font-scale) * var(--bs-body-font-size));
+    position: relative;
     font-weight: bold;
-    font-size: 4rem;
-    max-height: 5rem;
+    font-size: var(--avatar-height);
+    max-height: calc(1.2 * var(--avatar-height));
     color: #2790ee;
 }
 .user-details {
   white-space: nowrap;
 }
+h5.user-details {
+    font-size: calc(1.25 * var(--font-scale) * var(--bs-dropdown-font-size));
+}
 .navbar .right .user-info > a,
 .navbar-toggler {
-    font-size: x-large;
+    font-size: calc(1.7 * var(--font-scale) * var(--bs-body-font-size));
     font-weight: bolder;
     color: #707070;
 }
@@ -386,10 +391,10 @@ export default {
     z-index: 1;
 }
 .badge-assurance {
-    font-size: 1.5rem;
+    font-size: calc(1.75 * var(--font-scale) * var(--bs-body-font-size));
     position: absolute;
-    top: 55px;
-    left: 65px;
+    bottom: -5px;
+    right: -8px;
     z-index: 1;
 }
 .badge-assurance.high {
@@ -411,6 +416,7 @@ export default {
 .dropdown-menu,
 .offcanvas-body {
     background-color: var(--menu-background-color);
+    font-size: calc(var(--font-scale) * var(--bs-dropdown-font-size));
 }
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus {

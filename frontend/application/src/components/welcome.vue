@@ -123,7 +123,7 @@ export default {
 }
 .welcome .title {
     font-family: Anton, sans-serif;
-    font-size: 2.7rem;
+    font-size: calc(2.7 * var(--bs-body-font-size));
 }
 .fade-top-border {
     border: 1px solid;

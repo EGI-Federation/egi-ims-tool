@@ -48,7 +48,7 @@ export default {
     border-bottom-right-radius: .5rem;
 }
 .card-body,
-.scope{
+.scope {
     font-size: smaller;
 }
 </style>

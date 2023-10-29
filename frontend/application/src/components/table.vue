@@ -164,7 +164,7 @@ export default {
 .btn-action {
     cursor: pointer;
     text-decoration: none;
-    font-size: 1.5rem;
+    font-size: calc(1.5 * var(--bs-body-font-size));
     font-weight: bolder;
     color: black;
     opacity: 50%;

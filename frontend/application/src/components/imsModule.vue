@@ -42,8 +42,9 @@ export default {
     pointer-events: none;
 }
 .card {
-    width: 5rem;
-    min-width: 12rem;
+    --card-font-size: calc(5 * var(--font-scale) * var(--bs-body-font-size));
+    width: 4.5rem;
+    min-width: 10rem;
     margin: 0 auto;
     border-radius: 1rem;
     background-color: #00004b;
@@ -64,15 +65,14 @@ a {
 }
 .card-icon {
     font-weight: bold;
-    font-size: 5rem;
+    font-size: var(--card-font-size);
     align-content: center;
-    min-height: 4rem;
-    margin: 1.7rem 0;
+    margin: 1.5rem 0;
 }
 .card-icon,
 .card-text {
     color: white;
-    min-height: 4.5rem;
+    min-height: calc(4.5 * var(--card-font-size)/5);
     margin: 0 auto;
 }
 </style>
