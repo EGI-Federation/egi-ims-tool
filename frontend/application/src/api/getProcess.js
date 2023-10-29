@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const getProcessInfo = function(accessToken, processCode, allVersions, baseUrl) {
+export const getProcess = function(accessToken, processCode, allVersions, baseUrl) {
     const processInfo = ref(null);
     const error = ref(null);
 
@@ -34,7 +34,7 @@ export const getProcessInfo = function(accessToken, processCode, allVersions, ba
             processInfo.value = data.data;
         }
         catch(err) {
-            console.error("Error getting " + processCode + " process info");
+            console.error("Error getting " + processCode + " process");
         }
     }
 

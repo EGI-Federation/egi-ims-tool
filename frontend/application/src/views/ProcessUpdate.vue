@@ -9,7 +9,7 @@
 <script>
 // @ is an alias to /src
 import { reactive } from "vue";
-import { getProcessInfo } from "@/api/getProcessInfo";
+import { getProcess } from "@/api/getProcess";
 import {Status, isValid, findEntityWithStatus, findEntityWithVersion} from '@/utils'
 import { store, storeProcessInfo } from "@/store"
 import { Roles, hasRole } from "@/roles";

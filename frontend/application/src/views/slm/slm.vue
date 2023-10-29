@@ -9,7 +9,7 @@
 <script>
 // @ is an alias to /src
 import { isValid, isSuccess } from "@/utils";
-import { getProcessInfo } from "@/api/getProcessInfo";
+import { getProcess } from "@/api/getProcess";
 import { store, storeProcessInfo } from "@/store";
 import imsNavbar from "@/components/navbar.vue";
 import imsFooter from "@/components/footer.vue";
@@ -31,7 +31,7 @@ export default {
         let again = false;
         if(!isValid(this.processInfo) || !isValid(this.processInfo.code) || this.processInfo.code !== 'SLM') {
             // Fetch the process information from the API
-            const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
+            const piResult = getProcess(this.accessToken, 'SLM', true, this.slmApi);
             piResult.load().then(() => {
                 if(isSuccess(t, piResult)) {
                     // Success
@@ -70,11 +70,6 @@ export default {
             }, 100);
         }
     },
-    mounted() {
-        let page = this.$refs.page;
-        if(isValid(page) && isValid(page.updateProcessInfo))
-            page.updateProcessInfo();
-    }
 }
 </script>
 

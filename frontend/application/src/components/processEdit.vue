@@ -297,7 +297,7 @@ import { store, storeProcessInfo } from "@/store";
 import {isValid, strEqual, deepClone, userNames, scrollTo, isSuccess} from '@/utils'
 import { findUserWithEmail } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
-import { getProcessInfo } from "@/api/getProcessInfo";
+import { getProcess } from "@/api/getProcess";
 import { updateProcess } from "@/api/updateProcess";
 import MarkdownIt from 'markdown-it';
 import ProcessHeader from "@/components/processHeader.vue"
@@ -1132,7 +1132,7 @@ export default {
                                                              }));
 
                             // Fetch the process information from the API to include the added version
-                            const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
+                            const piResult = getProcess(t.accessToken, t.$props.processCode, true,
                                                             t.$props.apiBaseUrl);
                             piResult.load().then(() => {
                                 if(isSuccess(t, apResult)) {
