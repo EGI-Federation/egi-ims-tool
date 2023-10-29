@@ -63,7 +63,7 @@ export default {
         },
     },
     watch: {
-        // whenever question changes, this function will run
+        // Whenever question changes, this function will run
         'notifications.length'(newLen, oldLen) {
             if(oldLen < newLen) {
                 // Wait for the toast to render on the page before activating it
