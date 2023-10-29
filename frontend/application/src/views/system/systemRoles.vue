@@ -24,12 +24,16 @@ import ProcessEdit from "@/components/processEdit.vue";
 export default {
     name: 'systemRoles',
     components: { ProcessEdit, RolesLoader, BreadCrumb, RoleSummary },
+    props: {
+        processCode: String,
+        processApi: String,
+    },
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
-                { text: this.$t("navbar.manageSys"), link: "/ims" },
+                { text: this.$t("home.IMS"), link: "/ims" },
                 { text: this.$t("navbar.plan"), link: "/ims/plan" },
                 { text: this.$t("navbar.rolesResp") },
             ],

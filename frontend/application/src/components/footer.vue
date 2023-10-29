@@ -76,23 +76,24 @@ import { store } from "@/store"
 import i18n, { languages, languageNames } from '@/locales'
 
 export default {
-    name: 'IsmFooter',
+    name: 'imsFooter',
     props: {
-        moduleName: String,
-        moduleVersion: String
+        moduleName: String
     },
     data() {
         return {
             version: Package.version,
             languages: languages,
-            languageNames: languageNames
+            languageNames: languageNames,
+            processInfo: store.state.ims?.processInfo,
         }
     },
     computed: {
         language() { return store.getters["ims/language"]; },
+        moduleVersion() { return isValid(this.processInfo) ? this.processInfo.apiVersion : "?"; },
         moduleDetails() {
-            if(isValid(this.moduleName) && isValid(this.moduleVersion))
-                return this.moduleName + " version " + this.moduleVersion;
+            if(isValid(this.$props.moduleName))
+                return this.$props.moduleName + " version " + this.moduleVersion;
 
             return "";
         }
@@ -101,6 +102,10 @@ export default {
         changeLanguage(newLang, event) {
             event.preventDefault();
             store.dispatch('ims/changeLocale', newLang);
+        },
+        switchProcess() {
+            const ims = store.state.ims;
+            this.processInfo = ims.processInfo;
         }
     },
     created() {

@@ -15,9 +15,13 @@ import BreadCrumb from "@/components/breadCrumb.vue";
 export default {
     name: 'slmSLAs',
     components: { BreadCrumb },
+    props: {
+        processCode: String,
+        processApi: String,
+    },
     data() {
         return {
-            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
+            accessToken: store.state.oidc?.access_token,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM"), link: "/slm" },
@@ -26,10 +30,14 @@ export default {
         }
     },
     methods: {
-        processMenu() {
+        test() {
             return false;
         }
-    }
+    },
+    created() {
+    },
+    mounted() {
+    },
 }
 </script>
 

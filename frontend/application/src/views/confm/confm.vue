@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="CONFM"/>
+    <ims-navbar module-name="CONFM"/>
     <router-view/>
-    <ism-footer module-name="CONFM" :module-version="confmVersion"/>
+    <ims-footer module-name="CONFM" :module-version="confmVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'ConfigurationManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             confmVersion: "1.0.0",

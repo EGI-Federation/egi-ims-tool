@@ -93,7 +93,7 @@
                 <!-- Requirements -->
                 <h3 id="requirements-title">{{ $t('ims.requirements') }}</h3>
                 <div class="requirements">
-                    <table-control v-if="hasRequirements" id="requirements" ref="requirements"
+                    <table-control v-if="hasRequirements" id="process-requirements" ref="requirements"
                                    :can-edit="true" :can-remove="true" :action-column="$t('ims.action')"
                                    :header="requirementsHeader" :data="requirementsData"
                                     @edit="editRequirement" @remove="removeRequirement"/>
@@ -163,7 +163,7 @@
                 <!-- Interfaces -->
                 <h3 id="interfaces-title">{{ $t('ims.inputOutput') }}</h3>
                 <div class="interfaces">
-                    <table-control v-if="hasInterfaces" id="interfaces" ref="interfaces"
+                    <table-control v-if="hasInterfaces" id="process-interfaces" ref="interfaces"
                                    :can-edit="true" :can-remove="true" :action-column="$t('ims.action')"
                                    :header="interfacesHeader" :data="interfacesData"
                                    @edit="editInterface" @remove="removeInterface"/>
@@ -294,7 +294,7 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
-import { isValid, strEqual, deepClone, userNames, scrollTo } from '@/utils'
+import {isValid, strEqual, deepClone, userNames, scrollTo, isSuccess} from '@/utils'
 import { findUserWithEmail } from "@/roles";
 import { parseInterfaces, interfaceList } from '@/process'
 import { getProcessInfo } from "@/api/getProcessInfo";
@@ -1119,16 +1119,11 @@ export default {
 
                     // Call API to update the process information
                     let t = this;
-                    const piResult = updateProcess(this.accessToken, this.$props.processCode, this.processInfo,
+                    const puResult = updateProcess(this.accessToken, this.$props.processCode, this.processInfo,
                                                    this.$props.apiBaseUrl);
-                    piResult.update().then(() => {
-                        if(isValid(piResult.error?.value)) {
-                            let message = isValid(piResult.error.value.data?.description) ?
-                                piResult.error.value.data.description :
-                                piResult.error.value.message;
-                            t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
-                        }
-                        else {
+                    puResult.update().then(() => {
+                        if(isSuccess(t, puResult)) {
+                            // Success
                             console.log(`Created new version of ${t.$props.processCode} process`);
                             t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                              t.$t('ims.newEntityVersion', {
@@ -1140,9 +1135,12 @@ export default {
                             const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
                                                             t.$props.apiBaseUrl);
                             piResult.load().then(() => {
-                                storeProcessInfo(piResult);
-                                t.forceCancel = true;
-                                t.$router.push(t.returnToRoute);
+                                if(isSuccess(t, apResult)) {
+                                    // Success
+                                    storeProcessInfo(piResult);
+                                    t.forceCancel = true;
+                                    t.$router.push(t.returnToRoute);
+                                }
                             });
                         }
                     });

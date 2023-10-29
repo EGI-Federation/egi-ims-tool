@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="SUPPM"/>
+    <ims-navbar module-name="SUPPM"/>
     <router-view/>
-    <ism-footer module-name="SUPPM" :module-version="suppmVersion"/>
+    <ims-footer module-name="SUPPM" :module-version="suppmVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'SupplierRelationshipManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             suppmVersion: "1.0.0",

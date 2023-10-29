@@ -7,30 +7,27 @@ import OidcCallbackPopup from "@/views/auth/OidcCallbackPopup.vue";
 import OidcCallbackError from "@/views/auth/OidcCallbackError.vue";
 
 import Home from './views/Home.vue'
+import Process from './views/Process.vue'
+import ProcessUpdate from './views/ProcessUpdate.vue'
+import Roles from './views/Roles.vue'
+import Role from './views/Role.vue'
+import RoleUpdate from './views/RoleUpdate.vue'
+import Procedures from './views/Procedures.vue'
+import KPIs from './views/KPIs.vue'
 import Logout from "@/views/Logout.vue";
 
-import System from './views/system/system.vue'
-import systemHome from "@/views/system/systemHome.vue";
-import systemConfig from "@/views/system/systemConfig.vue";
+import ManagementSystem from './views/system/system.vue'
 import systemGovernance from "@/views/system/systemGovernance.vue";
 import systemRoles from "@/views/system/systemRoles.vue";
 import systemRole from './views/system/systemRole.vue'
 import systemRoleEdit from './views/system/systemRoleEdit.vue'
 import systemPolicies from "@/views/system/systemPolicies.vue";
 import systemReports from "@/views/system/systemReports.vue";
-import systemProcedures from "@/views/system/systemProcedures.vue";
 import systemProjects from "@/views/system/systemProjects.vue";
 import systemEvents from "@/views/system/systemEvents.vue";
 
 import ServiceLevelManagement from './views/slm/slm.vue'
-import slmHome from './views/slm/slmHome.vue'
-import slmConfig from "@/views/slm/slmConfig.vue";
 import slmReview from "@/views/slm/slmReview.vue";
-import slmRoles from './views/slm/slmRoles.vue'
-import slmRole from './views/slm/slmRole.vue'
-import slmRoleEdit from './views/slm/slmRoleEdit.vue'
-import slmProcedures from "@/views/slm/slmProcedures.vue";
-import slmKPIs from "@/views/slm/slmKPIs.vue";
 import slmCatalogs from "@/views/slm/slmCatalogs.vue";
 import slmSLAs from "@/views/slm/slmSLAs.vue";
 import slmOLAs from "@/views/slm/slmOLAs.vue";
@@ -239,16 +236,16 @@ const routes = [
   {
     path: '/ims',
     name: 'system',
-    component: System,
+    component: ManagementSystem,
     children: [
-      { path: '', name:'system-home', component: systemHome },
-      { path: 'config', component: systemConfig },
+      { path: '', name:'system-home', component: Process, props: route => ({ version: route.query?.v }) },
+      { path: 'config', component: ProcessUpdate },
       { path: 'plan', component: systemGovernance },
       { path: 'plan/roles', component: systemRoles },
       { path: 'plan/roles/:role', component: systemRole, props: route => ({ version: route.query.v }) },
       { path: 'plan/roles/:role/edit', component: systemRoleEdit },
       { path: 'policies', component: systemPolicies },
-      { path: 'procedures', component: systemProcedures },
+      { path: 'procedures', component: Procedures },
       { path: 'reports', component: systemReports },
       { path: 'projects', component: systemProjects },
       { path: 'events', component: systemEvents },
@@ -535,14 +532,14 @@ const routes = [
     name: 'slm',
     component: ServiceLevelManagement,
     children: [
-      { path: '', name:'slm-home', component: slmHome, props: route => ({ version: route.query.v }) },
-      { path: 'config', component: slmConfig },
+      { path: '', name:'slm-home', component: Process, props: route => ({ version: route.query?.v }) },
+      { path: 'config', component: ProcessUpdate },
       { path: 'review', component: slmReview },
-      { path: 'roles', component: slmRoles },
-      { path: 'roles/:role', component: slmRole, props: route => ({ version: route.query.v }) },
-      { path: 'roles/:role/edit', component: slmRoleEdit },
-      { path: 'procedures', component: slmProcedures },
-      { path: 'kpis', component: slmKPIs },
+      { path: 'roles', component: Roles },
+      { path: 'roles/:role', component: Role, props: route => ({ version: route.query?.v }) },
+      { path: 'roles/:role/edit', component: RoleUpdate },
+      { path: 'procedures', component: Procedures },
+      { path: 'kpis', component: KPIs },
       { path: 'catalogs', component: slmCatalogs },
       { path: 'slas', component: slmSLAs },
       { path: 'olas', component: slmOLAs },

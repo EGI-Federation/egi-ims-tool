@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="CPM"/>
+    <ims-navbar module-name="CPM"/>
     <router-view/>
-    <ism-footer module-name="CPM" :module-version="cpmVersion"/>
+    <ims-footer module-name="CPM" :module-version="cpmVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'CoordinatedProjectManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             cpmVersion: "1.0.1",

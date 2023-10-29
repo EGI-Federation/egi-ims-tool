@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="PKM"/>
+    <ims-navbar module-name="PKM"/>
     <router-view/>
-    <ism-footer module-name="PKM" :module-version="pkmVersion"/>
+    <ims-footer module-name="PKM" :module-version="pkmVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'ProjectKnowledgeManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             pkmVersion: "1.0.11",

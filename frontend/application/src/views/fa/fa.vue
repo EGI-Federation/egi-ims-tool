@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="BF"/>
+    <ims-navbar module-name="BF"/>
     <router-view/>
-    <ism-footer module-name="FA" :module-version="faVersion"/>
+    <ims-footer module-name="FA" :module-version="faVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'FinanceAdministration',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             faVersion: "1.0.0",

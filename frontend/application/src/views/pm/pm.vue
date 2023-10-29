@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="PM"/>
+    <ims-navbar module-name="PM"/>
     <router-view/>
-    <ism-footer module-name="PM" :module-version="pmVersion"/>
+    <ims-footer module-name="PM" :module-version="pmVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'ProblemManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             pmVersion: "1.0.0",

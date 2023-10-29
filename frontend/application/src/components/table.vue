@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="table-wrapper">
     <div :id="id"/>
 </div>
 </template>

@@ -7,16 +7,16 @@
       <button type="button" class="btn btn-primary" @click="acknowledgeError">{{ $t('home.back') }}</button>
     </div>
 </div>
-<ism-footer/>
+<ims-footer/>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import IsmFooter from "@/components/footer.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'OidcCallbackError',
-    components: { IsmFooter },
+    components: { imsFooter },
     computed: {
         ...mapGetters('oidc', [
             'oidcError'

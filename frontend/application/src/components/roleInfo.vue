@@ -76,7 +76,7 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store, storeProcessRoles } from "@/store";
-import { Status, isValid, formatTime, getWeek, getDayOfYear, getDayOfWeek, strCapitalize } from '@/utils'
+import {Status, isValid, formatTime, getWeek, getDayOfYear, getDayOfWeek, strCapitalize, isSuccess} from '@/utils'
 import {findUserWithEmail, findUsersWithRole, hasRole, Roles} from "@/roles";
 import { getRoles } from "@/api/getRoles";
 import { getRoleLogs } from "@/api/getRoleLogs";
@@ -227,21 +227,19 @@ export default {
             });
             irResult.toasts = t.$root.$refs.toasts;
             irResult.implement().then(() => {
-                if(isValid(irResult.error?.value)) {
-                    let message = isValid(irResult.error.value.data?.description) ?
-                        irResult.error.value.data.description :
-                        irResult.error.value.message;
-                    t.$root.$refs.toasts.showError(irResult.errorTitle, message);
-                }
-                else {
+                if(isSuccess(t, irResult)) {
+                    // Success
                     console.log(irResult.logMessage);
                     irResult.toasts.showSuccess(irResult.successTitle, irResult.toastMessage);
 
                     // Fetch the role definition from the API to include the new status
                     const riResult = getRoles(t.accessToken, processCode, t.roleCode, t.$props.apiBaseUrl);
                     riResult.load().then(() => {
-                        storeProcessRoles(riResult);
-                        t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
+                        if(isSuccess(t, riResult)) {
+                            // Success
+                            storeProcessRoles(riResult);
+                            t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
+                        }
                     });
                 }
             });
@@ -259,13 +257,8 @@ export default {
 
             let drResult = deprecateRole(t.accessToken, processCode, roleCode, message, t.$props.apiBaseUrl);
             drResult.deprecate().then(() => {
-                if(isValid(drResult.error?.value)) {
-                    let message = isValid(drResult.error.value.data?.description) ?
-                        drResult.error.value.data.description :
-                        drResult.error.value.message;
-                    t.$root.$refs.toasts.showError(errorTitle, message);
-                }
-                else {
+                if(isSuccess(t, drResult)) {
+                    // Success
                     console.log(`Deprecated role ${processCode}.${roleCode}`);
                     t.$root.$refs.toasts.showSuccess(successTitle, t.$t('ims.deprecatedEntity', {
                         processCode: processCode,
@@ -314,8 +307,11 @@ export default {
                         console.log(`Role ${processCode}.${roleCode} was revoked from all users`)
                         const riResult = getRoles(t.accessToken, processCode, roleCode, t.$props.apiBaseUrl);
                         riResult.load().then(() => {
-                            storeProcessRoles(riResult);
-                            t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
+                            if(isSuccess(t, riResult)) {
+                                // Success
+                                storeProcessRoles(riResult);
+                                t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
+                            }
                         });
                     });
                 }
@@ -329,7 +325,9 @@ export default {
                 const rlResult = getRoleLogs(this.accessToken, this.$props.processCode, this.roleCode,
                     this.oldestRoleLogFrom, logPageSize, this.$props.apiBaseUrl);
                 rlResult.load().then(() => {
-                    t.appendRoleLogs(rlResult);
+                    if(isSuccess(t, rlResult))
+                        // Success
+                        t.appendRoleLogs(rlResult);
                 });
             }
         },

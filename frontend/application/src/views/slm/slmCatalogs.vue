@@ -2,7 +2,7 @@
     <bread-crumb :segments="locationSegments"/>
     <div class="about">
         <br/>
-        <h1>This is the SLM catalogs page</h1>
+        <h1>This is the {{ processCode }} catalogs page</h1>
     </div>
 </template>
 
@@ -15,9 +15,13 @@ import BreadCrumb from "@/components/breadCrumb.vue";
 export default {
     name: 'slmCatalogs',
     components: { BreadCrumb },
+    props: {
+        processCode: String,
+        processApi: String,
+    },
     data() {
         return {
-            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
+            accessToken: store.state.oidc?.access_token,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.SLM"), link: "/slm" },
@@ -27,8 +31,13 @@ export default {
     },
     methods: {
         test() {
+            return false;
         }
-    }
+    },
+    created() {
+    },
+    mounted() {
+    },
 }
 </script>
 

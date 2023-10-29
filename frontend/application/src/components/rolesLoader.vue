@@ -4,7 +4,7 @@
 <script>
 // @ is an alias to /src
 import { store, storeUsers, storeUsersByRole } from "@/store";
-import { isValid } from "@/utils";
+import { isValid, isSuccess } from "@/utils";
 import { hasRole, parseRoles, Roles } from "@/roles";
 import { getUsers } from "@/api/getUsers";
 import { getUsersWithRole } from "@/api/getUsersWithRole";
@@ -38,22 +38,29 @@ export default {
         let t = this;
         let uvResult = getUsers(this.accessToken, null, false, this.$props.apiBaseUrl);
         uvResult.load().then(() => {
-            storeUsers('updateVoUsers', uvResult);
-            t.$emit('loadedVoUsers');
+            if(isSuccess(t, uvResult)) {
+                // Success
+                storeUsers('updateVoUsers', uvResult);
+                t.$emit('loadedVoUsers');
+            }
         });
 
         // Fetch the users participating in this process from the API
         const upResult = getUsers(this.accessToken, this.$props.processCode, true, this.$props.apiBaseUrl);
         upResult.load().then(() => {
-            storeUsers('ims/updateProcessUsers', upResult);
-            t.$emit('loadedProcessUsers');
+            if(isSuccess(t, upResult)) {
+                storeUsers('ims/updateProcessUsers', upResult);
+                t.$emit('loadedProcessUsers');
+            }
         });
 
         // Fetch the users with roles in this process from the API
         const urResult = getUsersWithRole(this.accessToken, this.$props.processCode, null, this.$props.apiBaseUrl);
         urResult.load().then(() => {
-            storeUsersByRole(urResult);
-            t.$emit('loadedUsersWithRoles');
+            if(isSuccess(t, urResult)) {
+                storeUsersByRole(urResult);
+                t.$emit('loadedUsersWithRoles');
+            }
         });
     },
 }

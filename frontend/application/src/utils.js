@@ -6,6 +6,30 @@ export const isValid = function(t) {
     return (t === undefined || t === null) ? false : true;
 }
 
+// Check if API call was successful, if not show error in a toast
+// You can pass an array of { statusCode, redirectToUrl } to redirect on error
+export const isSuccess = function(t, apiResult, redirectOnError) {
+    if(isValid(apiResult.error?.value)) {
+
+        if(isValid(redirectOnError)) {
+            for(const statusRedirect of redirectOnError) {
+                if(statusRedirect.statusCode === apiResult.error?.value.status) {
+                    t.$router.push(statusRedirect.redirectToUrl);
+                    return false;
+                }
+            }
+        }
+
+        let message = isValid(apiResult.error.value.data?.description) ?
+            apiResult.error.value.data.description :
+            apiResult.error.value.message;
+        t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
+        return false;
+    }
+
+    return true;
+}
+
 // Compare strings that were missing, with ones that were edited but left empty
 export const strEqual = function(text1, text2) {
     if(!isValid(text1) && "" === text2)

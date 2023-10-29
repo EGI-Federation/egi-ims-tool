@@ -1,5 +1,5 @@
 <template>
-<ism-navbar v-if="loggedIn"/>
+<ims-navbar v-if="loggedIn"/>
 <div class="page">
   <welcome/>
     <div v-if="loggedIn" class="home">
@@ -142,7 +142,7 @@
         </p>
     </div>
 </div>
-<ism-footer/>
+<ims-footer/>
 </template>
 
 <script>
@@ -151,16 +151,16 @@ import { isValid } from "@/utils";
 import { Roles, hasRole, parseRoles, rolesFromEntitlements } from "@/roles";
 import { store } from "@/store"
 import { mapActions } from "vuex";
-import IsmNavbar from "@/components/navbar.vue";
+import imsNavbar from "@/components/navbar.vue";
 import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/imsModule.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsFooter from "@/components/footer.vue";
 
 const voEnrollUrl = process.env.VUE_APP_EGI_VO_ENROLL_URL;
 
 export default {
     name: 'Home',
-    components: { IsmNavbar, Welcome, IsmModule, IsmFooter },
+    components: { imsNavbar, Welcome, IsmModule, imsFooter },
     props: {
         toasts: Element,
     },
@@ -185,8 +185,8 @@ export default {
         if(!isValid(this.roles) || 0 === this.roles.size)
             parseRoles();
 
-        console.log(`IMS API is ${process.env.VUE_APP_IMS_IMS_API}`);
-        console.log(`SLM API is ${process.env.VUE_APP_IMS_SLM_API}`);
+        console.log(`IMS API at ${process.env.VUE_APP_IMS_IMS_API}`);
+        console.log(`SLM API at ${process.env.VUE_APP_IMS_SLM_API}`);
     },
     mounted() {
     }

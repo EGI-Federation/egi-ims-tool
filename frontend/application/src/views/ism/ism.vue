@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="ISM"/>
+    <ims-navbar module-name="ISM"/>
     <router-view/>
-    <ism-footer module-name="ISM" :module-version="ismVersion"/>
+    <ims-footer module-name="ISM" :module-version="ismVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'InformationSecurityManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             ismVersion: "1.0.0",

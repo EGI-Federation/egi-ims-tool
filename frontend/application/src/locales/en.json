@@ -28,7 +28,6 @@
         "search": "Search",
         "toggle": "Toggle navigation",
         "offcanvas": "EGI IMS Menu",
-        "manageSys": "@:home.IMS",
         "overview": "Overview",
         "plan": "Management Plan",
         "events": "Events",
@@ -239,7 +238,7 @@
     },
     "role": {
         "systemRoles": "These are the global roles defined in the Management System",
-        "processRoles": "These are the roles defined in the process",
+        "processRoles": "These are the roles defined in the process {process}",
         "addRole": "Add Role",
         "assignedTo": "Assigned to",
         "assignable": "Assignable",

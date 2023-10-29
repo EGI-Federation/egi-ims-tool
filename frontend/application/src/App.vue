@@ -1,5 +1,5 @@
 <template>
-    <router-view/>
+    <router-view :key="$route.fullPath"/>
     <toast-messages :id="'toasts'" ref="toasts"/>
 </template>
 

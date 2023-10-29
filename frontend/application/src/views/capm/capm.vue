@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="CAPM"/>
+    <ims-navbar module-name="CAPM"/>
     <router-view/>
-    <ism-footer module-name="CAPM" :module-version="capmVersion"/>
+    <ims-footer module-name="CAPM" :module-version="capmVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'CapacityManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             capmVersion: "1.0.0",

@@ -27,7 +27,7 @@
                     <li v-if="canUseTool" class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="systemMenu" role="button" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false" @click="closeSubMenus" href="#">
-                            {{ $t('navbar.manageSys') }}
+                            {{ $t('home.IMS') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="systemMenu">
                             <li><router-link class="dropdown-item" to="/ims">{{ $t('navbar.overview') }}</router-link></li>
@@ -213,7 +213,7 @@ import SpmMenu from "@/components/menus/spmMenu.vue";
 import SrmMenu from "@/components/menus/srmMenu.vue";
 
 export default {
-    name: 'IsmNavbar',
+    name: 'imsNavbar',
     components: {
         SrmMenu, SpmMenu, SuppmMenu, SacmMenu, RmMenu, RdmMenu, PmMenu, IsrmMenu, IsmMenu,
         CrmMenu, CsiMenu, ConfmMenu, ChmMenu, CapmMenu, PpmMenu, PpcMenu, PkmMenu, CpmMenu,

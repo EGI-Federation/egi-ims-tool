@@ -22,6 +22,10 @@ import RoleInfo from "@/components/roleInfo.vue";
 export default {
     name: 'systemRoleEdit',
     components: {RoleInfo, RolesLoader, BreadCrumb, RoleEdit },
+    props: {
+        processCode: String,
+        processApi: String,
+    },
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
@@ -39,7 +43,7 @@ export default {
         isImsManager() { return hasRole(this.roles, Roles.IMS.IMS_MANAGER); },
         locationSegments() { return [
             { text: this.$t("home.home"), link:"/" },
-            { text: this.$t("navbar.manageSys"), link: "/ims" },
+            { text: this.$t("home.IMS"), link: "/ims" },
             { text: this.$t("navbar.plan"), link: "/ims/plan" },
             { text: this.$t("navbar.roles"), link: "/ims/plan/roles" },
             { text: this.currentRole.name, link: this.isNew ? null : `/ims/plan/roles/${this.$route.params.role}` },

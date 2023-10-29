@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="PPC"/>
+    <ims-navbar module-name="PPC"/>
     <router-view/>
-    <ism-footer module-name="PPC" :module-version="ppcVersion"/>
+    <ims-footer module-name="PPC" :module-version="ppcVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'ParticipatedProjectCoordination',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             ppcVersion: "1.0.2",

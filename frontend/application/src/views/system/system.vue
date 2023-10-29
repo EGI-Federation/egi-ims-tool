@@ -1,27 +1,80 @@
 <template>
-    <ism-navbar module-name="IMS"/>
-    <router-view :key="$route.fullPath"/>
-    <ism-footer module-name="IMS" :module-version="imsVersion"/>
+    <ims-navbar module-name="IMS"/>
+    <router-view v-slot="{ Component }">
+        <component ref="page" :is="Component" process-code="IMS" :process-api="imsApi"/>
+    </router-view>
+    <ims-footer ref="footer" module-name="IMS"/>
 </template>
 
 <script>
 // @ is an alias to /src
-import { store, storeUsers, storeUsersByRole } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
-
+import { isValid, isSuccess } from "@/utils";
+import { getProcessInfo } from "@/api/getProcessInfo";
+import { store, storeProcessInfo } from "@/store";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
-    name: 'systemHome',
-    components: { IsmNavbar, IsmFooter },
+    name: 'ManagementSystem',
+    components: { imsNavbar, imsFooter },
     data() {
         return {
-            processInfo: store.state.ims.processInfo,
+            accessToken: store.state.oidc?.access_token,
+            processInfo: store.state.ims?.processInfo,
         }
     },
     computed: {
-        imsVersion() { return this.processInfo ? this.processInfo.apiVersion : "1.0.0" },
+        imsApi() { return process.env.VUE_APP_IMS_IMS_API; },
     },
+    created() {
+        let t = this;
+        let again = false;
+        if(!isValid(this.processInfo) || !isValid(this.processInfo.code) || this.processInfo.code !== 'IMS') {
+            // Fetch the process information from the API
+            const piResult = getProcessInfo(this.accessToken, 'IMS', true, this.imsApi);
+            piResult.load().then(() => {
+                if(isSuccess(t, piResult)) {
+                    // Success
+                    storeProcessInfo(piResult);
+
+                    // Tell the footer to update the process name and version
+                    t.$refs.footer.switchProcess();
+
+                    // Tell the SLM page that the process info was loaded
+                    // The ref to the page might not be ready yet, so we wait
+                    const delayedUpdate = setTimeout(function() {
+                        let page = t.$refs.page;
+                        if(isValid(page)) {
+                            if(again)
+                                clearTimeout(delayedUpdate);
+                            again = true;
+                            if(isValid(page.updateProcessInfo))
+                                page.updateProcessInfo();
+                        }
+                    }, 100);
+                }
+            });
+        }
+        else {
+            // Tell the SLM page about the requested process version
+            // The ref to the page might not be ready yet, so we wait
+            const delayedUpdate = setTimeout(function() {
+                let page = t.$refs.page;
+                if(isValid(page)) {
+                    if(again)
+                        clearTimeout(delayedUpdate);
+                    again = true;
+                    if(isValid(page.updateProcessInfo))
+                        page.updateProcessInfo();
+                }
+            }, 100);
+        }
+    },
+    mounted() {
+        let page = this.$refs.page;
+        if(isValid(page) && isValid(page.updateProcessInfo))
+            page.updateProcessInfo();
+    }
 }
 </script>
 

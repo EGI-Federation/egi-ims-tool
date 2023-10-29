@@ -47,7 +47,7 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store, extractProcessRoles, storeProcessRoles } from "@/store";
-import { isValid, strEqual, deepClone } from '@/utils'
+import {isValid, strEqual, deepClone, isSuccess} from '@/utils'
 import { findUserWithEmail } from "@/roles";
 import { getRoles } from "@/api/getRoles";
 import { updateRole } from "@/api/updateRole";
@@ -220,13 +220,8 @@ export default {
                         const arResult = addRole(this.accessToken, processCode, this.roleInfo,
                                                  this.$props.apiBaseUrl);
                         arResult.add().then(() => {
-                            if(isValid(arResult.error?.value)) {
-                                let message = isValid(arResult.error.value.data?.description) ?
-                                    arResult.error.value.data.description :
-                                    arResult.error.value.message;
-                                t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
-                            }
-                            else {
+                            if(isSuccess(t, arResult)) {
+                                // Success
                                 console.log(`Added new role ${processCode}.${t.roleCode}`);
                                 t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                     t.$t('ims.newEntity', {
@@ -239,9 +234,12 @@ export default {
                                 const prResult = getRoles(t.accessToken, processCode, t.roleCode,
                                                           t.$props.apiBaseUrl);
                                 prResult.load().then(() => {
-                                    storeProcessRoles(prResult);
-                                    t.forceCancel = true;
-                                    t.$router.push(`/${processCode.toLowerCase()}/roles/${t.roleCode}`);
+                                    if(isSuccess(t, prResult)) {
+                                        // Success
+                                        storeProcessRoles(prResult);
+                                        t.forceCancel = true;
+                                        t.$router.push(`/${processCode.toLowerCase()}/roles/${t.roleCode}`);
+                                    }
                                 });
                             }
                         });
@@ -251,13 +249,8 @@ export default {
                         const urResult = updateRole(this.accessToken, processCode, this.roleInfo,
                                                     this.$props.apiBaseUrl);
                         urResult.update().then(() => {
-                            if(isValid(urResult.error?.value)) {
-                                let message = isValid(urResult.error.value.data?.description) ?
-                                    urResult.error.value.data.description :
-                                    urResult.error.value.message;
-                                t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
-                            }
-                            else {
+                            if(isSuccess(t, urResult)) {
+                                // Success
                                 console.log(`Created new version of role ${processCode}.${t.$route.params.role}`);
                                 t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                                  t.$t('ims.newEntityVersion', {
@@ -270,9 +263,12 @@ export default {
                                 const prResult = getRoles(t.accessToken, processCode, t.$route.params.role,
                                                           t.$props.apiBaseUrl);
                                 prResult.load().then(() => {
-                                    storeProcessRoles(prResult);
-                                    t.forceCancel = true;
-                                    t.$router.push(t.returnToRoute);
+                                    if(isSuccess(t, prResult)) {
+                                        // Success
+                                        storeProcessRoles(prResult);
+                                        t.forceCancel = true;
+                                        t.$router.push(t.returnToRoute);
+                                    }
                                 });
                             }
                         });
@@ -301,7 +297,9 @@ export default {
             let t = this;
             const rrResult = getRoles(this.accessToken, this.$props.processCode, null, this.$props.apiBaseUrl);
             rrResult.load().then(() => {
-                t.existingRoles = Array.from(extractProcessRoles(rrResult).keys());
+                if(isSuccess(t, rrResult))
+                    // Success
+                    t.existingRoles = Array.from(extractProcessRoles(rrResult).keys());
             });
         }
     },

@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="PPM"/>
+    <ims-navbar module-name="PPM"/>
     <router-view/>
-    <ism-footer module-name="PPM" :module-version="ppmVersion"/>
+    <ims-footer module-name="PPM" :module-version="ppmVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'ProjectPortfolioManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             ppmVersion: "1.0.1",

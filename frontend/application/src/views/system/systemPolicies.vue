@@ -15,21 +15,29 @@ import BreadCrumb from "@/components/breadCrumb.vue";
 export default {
     name: 'systemPolicies',
     components: { BreadCrumb },
+    props: {
+        processCode: String,
+        processApi: String,
+    },
     data() {
         return {
-            loggedIn: store.state.oidc.oidcIsAuthenticated && null != store.state.oidc.oidcAccessToken,
+            accessToken: store.state.oidc?.access_token,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
-                { text: this.$t("navbar.manageSys"), link:"/ims" },
+                { text: this.$t("home.IMS"), link:"/ims" },
                 { text: this.$t("navbar.policies") },
             ],
         }
     },
     methods: {
-        processMenu() {
+        test() {
             return false;
         }
-    }
+    },
+    created() {
+    },
+    mounted() {
+    },
 }
 </script>
 

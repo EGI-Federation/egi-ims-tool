@@ -20,6 +20,8 @@ export default {
     name: 'systemRole',
     components: {RoleSummary, RolesLoader, BreadCrumb, RoleInfo },
     props: {
+        processCode: String,
+        processApi: String,
         version: String,
     },
     data() {
@@ -36,7 +38,7 @@ export default {
         imsApi() { return process.env.VUE_APP_IMS_IMS_API; },
         locationSegments() { return [
             { text: this.$t("home.home"), link:"/" },
-            { text: this.$t("navbar.manageSys"), link: "/ims" },
+            { text: this.$t("home.IMS"), link: "/ims" },
             { text: this.$t("navbar.plan"), link: "/ims/plan" },
             { text: this.$t("navbar.roles"), link: "/ims/plan/roles" },
             { text: isValid(this.role?.current) ? this.role.current.name : this.$route.params.role },

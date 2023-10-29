@@ -31,14 +31,14 @@
 
                 <h3>{{ $t('ims.requirements') }}</h3>
                 <div class="requirements">
-                    <table-control v-if="hasRequirements" id="requirements" ref="requirements"
+                    <table-control v-if="hasRequirements" id="process-requirements" ref="requirements"
                                    :header="requirementsHeader" :data="requirementsData"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
                 </div>
 
                 <h3>{{ $t('ims.inputOutput') }}</h3>
                 <div class="interfaces">
-                    <table-control v-if="hasInterfaces" id="interfaces" ref="interfaces"
+                    <table-control v-if="hasInterfaces" id="process-interfaces" ref="interfaces"
                                    :header="interfacesHeader" :data="interfacesData"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
                 </div>
@@ -72,7 +72,7 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
-import { Status, isValid, userNames } from '@/utils'
+import {Status, isValid, userNames, isSuccess} from '@/utils'
 import { parseInterfaces, interfaceList } from '@/process'
 import { findUserWithEmail } from "@/roles";
 import { getProcessInfo } from "@/api/getProcessInfo";
@@ -224,13 +224,8 @@ export default {
             let t = this;
             const prfaResult = markProcessReadyForApproval(this.accessToken, this.processCode, this.$props.apiBaseUrl);
             prfaResult.request().then(() => {
-                if(isValid(prfaResult.error?.value)) {
-                    let message = isValid(prfaResult.error.value.data?.description) ?
-                        prfaResult.error.value.data.description :
-                        prfaResult.error.value.message;
-                    t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
-                }
-                else {
+                if(isSuccess(t, prfaResult)) {
+                    // Success
                     console.log(`Requested approval of the ${t.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.requestedProcessApproval'));
 
@@ -238,10 +233,13 @@ export default {
                     const piResult = getProcessInfo(t.accessToken, t.processCode, true,
                                                     t.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo(piResult);
-                        const pi = piResult.processInfo.value;
-                        if(isValid(pi))
-                            t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                        if(isSuccess(t, piResult)) {
+                            // Success
+                            storeProcessInfo(piResult);
+                            const pi = piResult.processInfo.value;
+                            if(isValid(pi))
+                                t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                        }
                     });
                 }
             });
@@ -252,13 +250,8 @@ export default {
             const apResult = approveProcess(this.accessToken, this.$props.processCode, approve, message,
                                             this.$props.apiBaseUrl);
             apResult.request().then(() => {
-                if(isValid(apResult.error?.value)) {
-                    let message = isValid(apResult.error.value.data?.description) ?
-                        apResult.error.value.data.description :
-                        apResult.error.value.message;
-                    t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
-                }
-                else {
+                if(isSuccess(t, apResult)) {
+                    // Success
                     console.log(`${approve ? 'Approved' : 'Rejected'} ${t.$props.processCode} process changes`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                      t.$t(approve ? 'ims.approvedProcess' : 'ims.rejectedProcess'));
@@ -267,10 +260,13 @@ export default {
                     const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
                                                     t.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo(piResult);
-                        const pi = piResult.processInfo.value;
-                        if(isValid(pi))
-                            t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                        if(isSuccess(t, piResult)) {
+                            // Success
+                            storeProcessInfo(piResult);
+                            const pi = piResult.processInfo.value;
+                            if(isValid(pi))
+                                t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                        }
                     });
                 }
             });
@@ -296,13 +292,8 @@ export default {
             const dpResult = deprecateProcess(this.accessToken, this.$props.processCode, message,
                                               this.$props.apiBaseUrl);
             dpResult.request().then(() => {
-                if(isValid(dpResult.error?.value)) {
-                    let message = isValid(dpResult.error.value.data?.description) ?
-                        dpResult.error.value.data.description :
-                        dpResult.error.value.message;
-                    t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
-                }
-                else {
+                if(isSuccess(t, dpResult)) {
+                    // Success
                     console.log(`Deprecated the ${t.$props.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                      t.$t('ims.deprecatedEntity', {
@@ -314,10 +305,13 @@ export default {
                     const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
                                                     t.$props.apiBaseUrl);
                     piResult.load().then(() => {
-                        storeProcessInfo(piResult);
-                        const pi = piResult.processInfo.value;
-                        if(isValid(pi))
-                            t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                        if(isSuccess(t, piResult)) {
+                            // Success
+                            storeProcessInfo(piResult);
+                            const pi = piResult.processInfo.value;
+                            if(isValid(pi))
+                                t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                        }
                     });
                 }
             });

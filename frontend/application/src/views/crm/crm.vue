@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="CRM"/>
+    <ims-navbar module-name="CRM"/>
     <router-view/>
-    <ism-footer module-name="CRM" :module-version="crmVersion"/>
+    <ims-footer module-name="CRM" :module-version="crmVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'CustomerRelationshipManagement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             crmVersion: "1.0.0",

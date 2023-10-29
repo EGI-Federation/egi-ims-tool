@@ -1,25 +1,29 @@
 <template>
-    <roles-loader process-code="SLM" :api-base-url="slmApi"/>
+    <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments"/>
     <process-edit v-if="currentProcess" ref="processEdit"
                   :info="{ current: currentProcess, approved: approvedProcess }"
-                  :state="editState" :api-base-url="slmApi" process-code="SLM"/>
+                  :state="editState" :api-base-url="processApi" :process-code="processCode"/>
 </template>
 
 <script>
 // @ is an alias to /src
 import { reactive } from "vue";
-import {isValid, findEntityWithStatus, findEntityWithVersion, Status} from '@/utils'
-import {store, storeProcessInfo} from "@/store"
+import { getProcessInfo } from "@/api/getProcessInfo";
+import {Status, isValid, findEntityWithStatus, findEntityWithVersion} from '@/utils'
+import { store, storeProcessInfo } from "@/store"
 import { Roles, hasRole } from "@/roles";
 import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
 import ProcessEdit from "@/components/processEdit.vue";
-import {getProcessInfo} from "@/api/getProcessInfo";
 
 export default {
-    name: 'slmConfig',
+    name: 'ProcessUpdate',
     components:  { RolesLoader, BreadCrumb, ProcessEdit },
+    props: {
+        processCode: String,
+        processApi: String,
+    },
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
@@ -28,34 +32,45 @@ export default {
             editState: reactive({ hasUnsavedChanges: false }),
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
-                { text: this.$t("home.SLM"), link: "/slm" },
+                { text: this.$t(`home.${this.$props.processCode}`), link: `/${this.$props.processCode.toLowerCase()}` },
                 { text: this.$t("ims.config") },
             ],
         }
     },
     computed: {
-        slmApi() { return process.env.VUE_APP_IMS_SLM_API; },
         roles() { return store.state.temp.roles; },
-        isProcessOwner() { return hasRole(this.roles, Roles.SLM.PROCESS_OWNER); },
-        isProcessManager() { return hasRole(this.roles, Roles.SLM.PROCESS_MANAGER); },
+        isImsOwner() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_OWNER);
+        },
+        isImsManager() {
+            const ims = Roles.IMS;
+            return hasRole(this.roles, ims.IMS_MANAGER);
+        },
+        isProcessOwner() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_OWNER);
+        },
+        isProcessManager() {
+            const roleEnum = Roles[this.$props.processCode];
+            return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
+        },
     },
-    created() {
-        // Fetch the process information from the API
-        const piResult = getProcessInfo(this.accessToken, 'SLM', true, this.slmApi);
-        piResult.load().then(() => {
-            storeProcessInfo(piResult);
-
+    methods: {
+        updateProcessInfo() {
+            // Called by parent after process info is available (was loaded)
             this.currentProcess = store.state.ims.processInfo;
             if(isValid(this.currentProcess)) {
                 // Make sure we know which is the approved version (if any)
                 this.approvedProcess = findEntityWithStatus(this.currentProcess, Status.APPROVED.description);
-                console.log("Editing SLM process v" + this.currentProcess.version);
+                console.log(`Editing ${this.$props.processCode} process v${this.currentProcess.version}`);
             }
-        });
+        },
     },
     mounted() {
-        if(!this.isProcessOwner && !this.isProcessManager)
-            this.$router.push('/slm');
+        if(!this.isImsOwner && !this.isImsManager &&
+           !this.isProcessOwner && !this.isProcessManager)
+            this.$router.push(`/${this.$props.processCode.toLowerCase()}`);
     },
     beforeRouteLeave(to, from, next) {
         // Navigating away from this view

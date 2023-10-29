@@ -1,7 +1,7 @@
 <template>
-    <ism-navbar module-name="CSI"/>
+    <ims-navbar module-name="CSI"/>
     <router-view/>
-    <ism-footer module-name="CSI" :module-version="csiVersion"/>
+    <ims-footer module-name="CSI" :module-version="csiVersion"/>
 </template>
 
 <script>
@@ -9,12 +9,12 @@
 import { isValid } from "@/utils";
 import { Roles, parseRoles, hasRole } from "@/roles";
 import { store } from "@/store";
-import IsmNavbar from "@/components/navbar.vue";
-import IsmFooter from "@/components/footer.vue";
+import imsNavbar from "@/components/navbar.vue";
+import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'ContinualServiceImprovement',
-    components: { IsmNavbar, IsmFooter },
+    components: { imsNavbar, imsFooter },
     data() {
         return {
             csiVersion: "1.0.0",

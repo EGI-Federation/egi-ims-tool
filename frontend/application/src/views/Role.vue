@@ -1,24 +1,26 @@
 <template>
-    <roles-loader process-code="SLM" :api-base-url="slmApi"/>
+    <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
     <role-info v-if="role.current" :info="role"
-               :api-base-url="slmApi" process-code="SLM"/>
+               :api-base-url="processApi" :process-code="processCode"/>
 </template>
 
 <script>
 // @ is an alias to /src
-import { Status, isValid, findEntityWithStatus, findEntityWithVersion } from '@/utils'
+import { reactive } from "vue";
 import { getRoles } from "@/api/getRoles";
+import {Status, isValid, findEntityWithStatus, findEntityWithVersion, isSuccess} from '@/utils'
 import { store, storeProcessRoles } from "@/store"
 import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
 import RoleInfo from "@/components/roleInfo.vue";
-import {reactive} from "vue";
 
 export default {
-    name: 'slmRole',
+    name: 'Role',
     components: { RolesLoader, BreadCrumb, RoleInfo },
     props: {
+        processCode: String,
+        processApi: String,
         version: String,
     },
     data() {
@@ -31,26 +33,21 @@ export default {
         }
     },
     computed: {
-        slmApi() { return process.env.VUE_APP_IMS_SLM_API; },
         locationSegments() { return [
             { text: this.$t("home.home"), link:"/" },
-            { text: this.$t("home.SLM"), link: "/slm" },
-            { text: this.$t("navbar.roles"), link: "/slm/roles" },
+            { text: this.$t(`home.${this.$props.processCode}`), link: `/${this.$props.processCode.toLowerCase()}` },
+            { text: this.$t("navbar.roles"), link: `/${this.$props.processCode.toLowerCase()}/roles` },
             { text: isValid(this.role?.current) ? this.role.current.name : this.$route.params.role },
         ]},
-    },
-    methods: {
     },
     created() {
         // Fetch the role details from the API
         let t = this;
-        const rrResult = getRoles(this.accessToken, 'SLM', this.$route.params.role, this.slmApi);
+        const rrResult = getRoles(this.accessToken, this.$props.processCode, this.$route.params.role, this.processApi);
         rrResult.load().then(() => {
-            if(isValid(rrResult.error?.value)) {
-                if(404 === rrResult.error?.value.status)
-                    t.$router.push('/slm/roles');
-            }
-            else {
+            const redirectOnError = [{ statusCode: 404, redirectToUrl: `/${this.$props.processCode.toLowerCase()}/roles` }];
+            if(isSuccess(t, rrResult, redirectOnError)) {
+                // Success
                 storeProcessRoles(rrResult);
 
                 let current = store.state.ims.roleInfo;
@@ -65,10 +62,10 @@ export default {
                         if(isValid(requestedVersion))
                             current = requestedVersion;
                         else
-                            console.log(`Cannot find role SLM.${t.$route.params.role} v${requested}`);
+                            console.log(`Cannot find role ${this.$props.processCode}.${t.$route.params.role} v${requested}`);
                     }
 
-                    console.log(`Showing role SLM.${t.$route.params.role} v${current.version}`);
+                    console.log(`Showing role ${this.$props.processCode}.${t.$route.params.role} v${current.version}`);
                 }
                 t.role.current = current;
                 t.$refs.breadCrumb.update(t.locationSegments);
@@ -80,7 +77,3 @@ export default {
     },
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>
