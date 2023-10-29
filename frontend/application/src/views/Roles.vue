@@ -5,7 +5,8 @@
     <div><button type="button" class="btn btn-primary" @click="addRole">{{ $t('role.addRole') }}</button></div>
     <div v-if="roleList" class="d-flex flex-nowrap content">
         <div class="section">
-            <role-summary v-for="role in roleList" :role="role" :process-code="processCode" :api-base-url="processApi"/>
+            <role-summary v-for="role in roleList" :role="role" :page-base-url="baseUrl"
+                          :process-code="processCode" :api-base-url="processApi"/>
         </div>
     </div>
 </template>
@@ -38,6 +39,7 @@ export default {
         }
     },
     computed: {
+        baseUrl() { return `/${this.$props.processCode.toLowerCase()}/roles`; },
         roles() { return store.state.temp.rolesByProcess?.get(this.$props.processCode); },
         roleList() {
             const roleMap = this.roles;

@@ -62,7 +62,7 @@
              :title="$t('ims.deprecate')" title-style="danger" :message="$t('ims.warnDeprecateProcess')"
              :placeholder-collect-message="$t('ims.deprecateReason')"
              :confirm-button="$t('ims.continue')" @confirm="deprecateProcess" />
-    <version-history :bidirectional="bidirectional" view-url="/slm"
+    <version-history :bidirectional="bidirectional" :view-url="`/${processCode.toLowerCase()}`"
                      :version-latest="latest" :version-to-show="current"
                      :filter-to-title="$t('history.approved')" :filter-to-status="Status.APPROVED.description"/>
 </div>
@@ -74,8 +74,7 @@ import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
 import {Status, isValid, userNames, isSuccess} from '@/utils'
 import { parseInterfaces, interfaceList } from '@/process'
-import { findUserWithEmail } from "@/roles";
-import { getProcessInfo } from "@/api/getProcessInfo";
+import { getProcess } from "@/api/getProcess";
 import { markProcessReadyForApproval } from "@/api/readyForProcessApproval";
 import { approveProcess } from "@/api/approveProcess";
 import { deprecateProcess } from "@/api/deprecateProcess";
@@ -230,7 +229,7 @@ export default {
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.requestedProcessApproval'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(t.accessToken, t.processCode, true,
+                    const piResult = getProcess(t.accessToken, t.processCode, true,
                                                     t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         if(isSuccess(t, piResult)) {
@@ -257,7 +256,7 @@ export default {
                                                      t.$t(approve ? 'ims.approvedProcess' : 'ims.rejectedProcess'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
+                    const piResult = getProcess(t.accessToken, t.$props.processCode, true,
                                                     t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         if(isSuccess(t, piResult)) {
@@ -302,7 +301,7 @@ export default {
                                                          entity: '' } ));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcessInfo(t.accessToken, t.$props.processCode, true,
+                    const piResult = getProcess(t.accessToken, t.$props.processCode, true,
                                                     t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         if(isSuccess(t, piResult)) {

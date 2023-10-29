@@ -1,7 +1,7 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
-    <role-info v-if="role.current" :info="role"
+    <role-info v-if="role.current" :info="role" :page-base-url="baseUrl"
                :api-base-url="processApi" :process-code="processCode"/>
 </template>
 
@@ -33,10 +33,11 @@ export default {
         }
     },
     computed: {
+        baseUrl() { return `/${this.$props.processCode.toLowerCase()}/roles`; },
         locationSegments() { return [
             { text: this.$t("home.home"), link:"/" },
             { text: this.$t(`home.${this.$props.processCode}`), link: `/${this.$props.processCode.toLowerCase()}` },
-            { text: this.$t("navbar.roles"), link: `/${this.$props.processCode.toLowerCase()}/roles` },
+            { text: this.$t("navbar.roles"), link: this.baseUrl },
             { text: isValid(this.role?.current) ? this.role.current.name : this.$route.params.role },
         ]},
     },
@@ -45,7 +46,7 @@ export default {
         let t = this;
         const rrResult = getRoles(this.accessToken, this.$props.processCode, this.$route.params.role, this.processApi);
         rrResult.load().then(() => {
-            const redirectOnError = [{ statusCode: 404, redirectToUrl: `/${this.$props.processCode.toLowerCase()}/roles` }];
+            const redirectOnError = [{ statusCode: 404, redirectToUrl: t.baseUrl }];
             if(isSuccess(t, rrResult, redirectOnError)) {
                 // Success
                 storeProcessRoles(rrResult);
