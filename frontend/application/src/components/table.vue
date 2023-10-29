@@ -6,7 +6,7 @@
 
 <script>
 // @ is an alias to /src
-import { isValid, deepClone } from "@/utils";
+import { deepClone } from "@/utils";
 import { Grid, html } from "gridjs";
 import { Tooltip } from "bootstrap";
 
@@ -45,6 +45,16 @@ export default {
         tableData() { return this.rows; },
     },
     methods: {
+        gridStatesListener(state, prevState) {
+            // Workaround for grid-js v6 not firing the "ready" event
+            // See also https://github.com/grid-js/gridjs/issues/1349
+            if(prevState.status < state.status) {
+                if(prevState.status === 2 && state.status === 3) {
+                    // Ready
+                    this.wireActions();
+                }
+            }
+        },
         gridActionButtons(id, canEdit, canRemove, entity) {
             const editButton = `<div class='btn-action edit edit-${entity}' role='button' data-bs-toggle='tooltip' data-bs-title='${this.$t('ims.edit')}'><i class='bi bi-pencil-square' data-${entity}-id='${id}'></i></div>`;
             const removeButton = `<div class='btn-action remove remove-${entity}' role='button' data-bs-toggle='tooltip' data-bs-title='${this.$t('ims.remove')}'><i class='bi bi-x-lg' data-${entity}-id='${id}'></i></div>`;
@@ -69,6 +79,7 @@ export default {
                     trigger: 'hover'
                 }));
         },
+
         addActionsColumnToHeader() {
             // Add an Actions cell to the right end of the table header
             this.headerRow.push({
@@ -88,9 +99,6 @@ export default {
             if(hasActions) {
                 this.addActionsColumnToHeader();
                 this.addActionsColumnToData();
-
-                let t = this;
-                this.grid.on('ready', () => t.wireActions());
             }
 
             this.grid
@@ -142,11 +150,9 @@ export default {
         if(hasActions) {
             this.addActionsColumnToHeader();
             this.addActionsColumnToData();
-
-            let t = this;
-            this.grid.on('ready', () => t.wireActions());
         }
 
+        this.grid.config.store.subscribe(this.gridStatesListener);
         this.grid
             .updateConfig({
                 columns: this.headerRow,

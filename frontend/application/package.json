@@ -16,7 +16,7 @@
     "bootstrap-icons": "^1.10.5",
     "core-js": "^3.8.3",
     "crypto-js": "^4.2.0",
-    "gridjs": "^5.1.0",
+    "gridjs": "^6.0.6",
     "oidc-client": "^1.11.5",
     "secure-ls": "^1.2.6",
     "vue": "^3.3.4",
