@@ -1,12 +1,12 @@
 <template>
     <div class="d-flex flex-nowrap flex-column operations">
         <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-        <button v-if="!editMode && !isDeprecated && isProcessManager" type="button" class="btn btn-primary" @click="configureProcess">{{ $t('ims.config') }}</button>
-        <button v-if="!editMode && isLatest && isDraft && isProcessManager" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
-        <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
-        <button v-if="!editMode && isLatest && isReady && isProcessOwner" type="button" class="btn btn-danger" @click="rejectProcess">{{ $t('ims.reject') }}</button>
-        <button v-if="!editMode && isLatest && isApproved && (isProcessManager || isProcessOwner)" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
-        <button v-if="!editMode && isLatest && isApproved && isProcessOwner" type="button" class="btn btn-danger" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
+        <button v-if="!editMode && !isDeprecated && (isImsManager || isProcessManager)" type="button" class="btn btn-primary" @click="updateProcess">{{ $t('ims.update') }}</button>
+        <button v-if="!editMode && isLatest && isDraft && (isImsManager || isProcessManager)" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
+        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
+        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger" @click="rejectProcess">{{ $t('ims.reject') }}</button>
+        <button v-if="!editMode && isLatest && isApproved && (isImsManager || isProcessManager || isImsOwner || isProcessOwner)" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
+        <button v-if="!editMode && isLatest && isApproved && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
         <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!processChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
         <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
     </div>
@@ -19,8 +19,8 @@
     <div class="d-flex flex-nowrap header">
         <div class="d-flex flex-nowrap info">
             <div>
-                <div>{{ $t('ims.procOwner') }} :</div>
-                <div>{{ $t('ims.procManager') }} :</div>
+                <div>{{ $t(processCode === 'IMS' ? 'ims.imsOwner' : 'ims.procOwner') }} :</div>
+                <div>{{ $t(processCode === 'IMS' ? 'ims.imsManager' : 'ims.procManager') }} :</div>
                 <div>{{ $t('ims.version') }} :</div>
                 <div>{{ $t('ims.status') }} :</div>
                 <div>{{ $t('ims.changed') }} :</div>
@@ -61,7 +61,7 @@ export default {
             default: () => {}
         },
     },
-    emits: ['configure', 'askForApproval', 'approve', 'reject', 'review', 'deprecate', 'save', 'cancel'],
+    emits: ['update', 'askForApproval', 'approve', 'reject', 'review', 'deprecate', 'save', 'cancel'],
     expose: [ 'submit' ],
     computed: {
         latest() { return store.state.ims.processInfo; },
@@ -100,7 +100,10 @@ export default {
         processVersion() { return isValid(this.current) ? this.current.version : "?"; },
         processStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
         processOwner() {
-            let pos = findUsersWithRole(this.$props.processCode, Roles[this.$props.processCode].PROCESS_OWNER, true);
+            const roleOwner = 'IMS' === this.$props.processCode ?
+                Roles.IMS.IMS_OWNER :
+                Roles[this.$props.processCode].PROCESS_OWNER;
+            let pos = findUsersWithRole(this.$props.processCode, roleOwner, true);
             if(isValid(pos) && pos.length > 0) {
                 let po = pos[0];
                 return po.fullName;
@@ -108,7 +111,10 @@ export default {
             return this.$t('ims.notSet');
         },
         processManager() {
-            let pms = findUsersWithRole(this.$props.processCode, Roles[this.$props.processCode].PROCESS_MANAGER, true);
+            const roleManager = 'IMS' === this.$props.processCode ?
+                Roles.IMS.IMS_MANAGER :
+                Roles[this.$props.processCode].PROCESS_MANAGER;
+            let pms = findUsersWithRole(this.$props.processCode, roleManager, true);
             if(isValid(pms) && pms.length > 0) {
                 let pm = pms[0];
                 return pm.fullName;
@@ -139,8 +145,8 @@ export default {
     },
     methods: {
         toggleHistory() { this.$props.bidirectional.historyVisible = !this.$props.bidirectional.historyVisible; },
-        configureProcess() {
-            this.$emit('configure');
+        updateProcess() {
+            this.$emit('update');
         },
         askForApproval() {
             this.$emit('askForApproval');
@@ -205,7 +211,7 @@ export default {
 }
 .header .info > div:nth-child(1) > div {
     color: grey;
-    text-align: right;
+    text-align: right!important;
     margin-right: .2rem;
 }
 .header .info > div:nth-child(2) > div {

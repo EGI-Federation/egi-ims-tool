@@ -1,17 +1,15 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments"/>
-    <process-edit v-if="currentProcess" ref="processEdit"
-                  :info="{ current: currentProcess, approved: approvedProcess }"
+    <process-edit v-if="currentProcess" ref="processEdit" :info="info"
                   :state="editState" :api-base-url="processApi" :process-code="processCode"/>
 </template>
 
 <script>
 // @ is an alias to /src
 import { reactive } from "vue";
-import { getProcess } from "@/api/getProcess";
-import {Status, isValid, findEntityWithStatus, findEntityWithVersion} from '@/utils'
-import { store, storeProcessInfo } from "@/store"
+import { Status, isValid, findEntityWithStatus } from '@/utils'
+import { store } from "@/store"
 import { Roles, hasRole } from "@/roles";
 import RolesLoader from "@/components/rolesLoader.vue";
 import BreadCrumb from "@/components/breadCrumb.vue";
@@ -29,11 +27,12 @@ export default {
             accessToken: store.state.oidc?.access_token,
             currentProcess: store.state.ims?.processInfo,   // Process
             approvedProcess: null,                          // Process
+            info: reactive({ current: this.currentProcess, approved: this.approvedProcess }),
             editState: reactive({ hasUnsavedChanges: false }),
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t(`home.${this.$props.processCode}`), link: `/${this.$props.processCode.toLowerCase()}` },
-                { text: this.$t("ims.config") },
+                { text: this.$t("ims.update") },
             ],
         }
     },
@@ -65,6 +64,10 @@ export default {
                 this.approvedProcess = findEntityWithStatus(this.currentProcess, Status.APPROVED.description);
                 console.log(`Editing ${this.$props.processCode} process v${this.currentProcess.version}`);
             }
+
+            this.info.current = this.currentProcess;
+            this.info.approved = this.approvedProcess;
+            this.$refs.processEdit.setupTables();
         },
     },
     mounted() {
@@ -85,7 +88,3 @@ export default {
     },
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

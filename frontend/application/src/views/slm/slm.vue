@@ -1,6 +1,6 @@
 <template>
     <ims-navbar module-name="SLM"/>
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component }" :key="$route.fullPath">
         <component ref="page" :is="Component" process-code="SLM" :process-api="slmApi"/>
     </router-view>
     <ims-footer ref="footer" module-name="SLM"/>
@@ -28,7 +28,6 @@ export default {
     },
     created() {
         let t = this;
-        let again = false;
         if(!isValid(this.processInfo) || !isValid(this.processInfo.code) || this.processInfo.code !== 'SLM') {
             // Fetch the process information from the API
             const piResult = getProcess(this.accessToken, 'SLM', true, this.slmApi);
@@ -38,16 +37,15 @@ export default {
                     storeProcessInfo(piResult);
 
                     // Tell the footer to update the process name and version
-                    t.$refs.footer.switchProcess();
+                    if(isValid(t.$refs.footer.switchProcess))
+                        t.$refs.footer.switchProcess();
 
                     // Tell the SLM page that the process info was loaded
                     // The ref to the page might not be ready yet, so we wait
                     const delayedUpdate = setTimeout(function() {
                         let page = t.$refs.page;
                         if(isValid(page)) {
-                            if(again)
-                                clearTimeout(delayedUpdate);
-                            again = true;
+                            clearTimeout(delayedUpdate);
                             if(isValid(page.updateProcessInfo))
                                 page.updateProcessInfo();
                         }
@@ -61,9 +59,7 @@ export default {
             const delayedUpdate = setTimeout(function() {
                 let page = t.$refs.page;
                 if(isValid(page)) {
-                    if(again)
-                        clearTimeout(delayedUpdate);
-                    again = true;
+                    clearTimeout(delayedUpdate);
                     if(isValid(page.updateProcessInfo))
                         page.updateProcessInfo();
                 }

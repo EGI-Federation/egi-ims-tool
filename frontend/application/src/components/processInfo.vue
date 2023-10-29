@@ -3,7 +3,7 @@
     <div class="d-flex flex-nowrap section">
         <div class="process">
             <process-header :edit-mode="false" :info="info" :bidirectional="bidirectional" :process-code="processCode"
-                            @configure="configureProcess" @askForApproval="askForApproval"
+                            @update="updateProcess" @askForApproval="askForApproval"
                             @review="reviewProcess" @approve="confirmApproveProcess"
                             @reject="confirmRejectProcess" @deprecate="confirmDeprecateProcess"/>
         </div>
@@ -23,20 +23,18 @@
     <div class="d-flex flex-nowrap section">
         <div class="process">
             <div v-show="detailsVisible" class="details">
-                <h3>{{ $t('ims.goals') }}</h3>
-                <vue3-markdown-it :source='goals' />
+                <h3 v-if="!hasDescription">{{ $t('ims.description') }}</h3>
+                <vue3-markdown-it v-if="hasDescription" :source='description' />
+                <p v-else>{{ $t('ims.notDef') }}</p>
 
-                <h3>{{ $t('ims.scope') }}</h3>
-                <vue3-markdown-it :source='scope' />
-
-                <h3>{{ $t('ims.requirements') }}</h3>
+                <h3 id="requirements">{{ $t('ims.requirements') }}</h3>
                 <div class="requirements">
                     <table-control v-if="hasRequirements" id="process-requirements" ref="requirements"
                                    :header="requirementsHeader" :data="requirementsData"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
                 </div>
 
-                <h3>{{ $t('ims.inputOutput') }}</h3>
+                <h3 id="inputs-and-outputs">{{ $t('ims.inputOutput') }}</h3>
                 <div class="interfaces">
                     <table-control v-if="hasInterfaces" id="process-interfaces" ref="interfaces"
                                    :header="interfacesHeader" :data="interfacesData"/>
@@ -72,7 +70,7 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
-import {Status, isValid, userNames, isSuccess} from '@/utils'
+import {Status, isValid, userNames, isSuccess, deepClone} from '@/utils'
 import { parseInterfaces, interfaceList } from '@/process'
 import { getProcess } from "@/api/getProcess";
 import { markProcessReadyForApproval } from "@/api/readyForProcessApproval";
@@ -92,8 +90,12 @@ export default {
     props: {
         processCode: String,
         apiBaseUrl: String,
-        info: Object, // { current: Process, approved: Process }
+        info: { // Reactive { current: Process, approved: Process }
+            type: Object,
+            default: () => {}
+        },
     },
+    expose: [ 'setupTables' ],
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
@@ -139,17 +141,12 @@ export default {
         latest() { return store.state.ims.processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
-        goals() {
-            return isValid(this.current) && isValid(this.current.goals) &&
-                this.current.goals.trim().length > 0 ?
-                this.current.goals :
-                this.$t('ims.notSet');
+        hasDescription() {
+            return isValid(this.current) && isValid(this.current.description) &&
+                   this.current.description.trim().length > 0;
         },
-        scope() {
-            return isValid(this.current) && isValid(this.current.scope) &&
-                this.current.scope.trim().length > 0 ?
-                this.current.scope :
-                this.$t('ims.notSet');
+        description() {
+            return this.hasDescription ? this.current.description : "";
         },
         hasRequirements() {
             return isValid(this.current) && isValid(this.current.requirements) &&
@@ -201,6 +198,13 @@ export default {
         },
     },
     methods: {
+        setupTables() {
+            this.requirementsData.rows = this.requirements;
+            this.$refs.requirements?.forceUpdate();
+
+            this.interfacesData.rows = this.interfaces;
+            this.$refs.interfaces?.forceUpdate();
+        },
         showDetails(event) {
             this.detailsVisible = true;
             this.$refs['showDetails'].classList.add('active');
@@ -215,8 +219,8 @@ export default {
             event.preventDefault();
             event.stopPropagation();
         },
-        configureProcess() {
-            this.$router.push(this.returnToRoute + '/config');
+        updateProcess() {
+            this.$router.push(this.returnToRoute + '/update');
         },
         askForApproval() {
             // Call API to ask for process approval
@@ -319,19 +323,6 @@ export default {
             this.$router.push(this.returnToRoute + '/review');
         },
     },
-    mounted() {
-        let t = this;
-        const delayedData = setTimeout(function() {
-            if(isValid(t.current)) {
-                clearTimeout(delayedData);
-                t.requirementsData.rows = t.requirements;
-                t.$refs.requirements?.forceUpdate();
-
-                t.interfacesData.rows = t.interfaces;
-                t.$refs.interfaces?.forceUpdate();
-            }
-        }, 100);
-    }
 }
 </script>
 

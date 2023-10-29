@@ -1,6 +1,6 @@
 <template>
     <ims-navbar module-name="IMS"/>
-    <router-view v-slot="{ Component }">
+    <router-view v-slot="{ Component }" :key="$route.fullPath">
         <component ref="page" :is="Component" process-code="IMS" :process-api="imsApi"/>
     </router-view>
     <ims-footer ref="footer" module-name="IMS"/>
@@ -28,7 +28,6 @@ export default {
     },
     created() {
         let t = this;
-        let again = false;
         if(!isValid(this.processInfo) || !isValid(this.processInfo.code) || this.processInfo.code !== 'IMS') {
             // Fetch the process information from the API
             const piResult = getProcess(this.accessToken, 'IMS', true, this.imsApi);
@@ -38,16 +37,15 @@ export default {
                     storeProcessInfo(piResult);
 
                     // Tell the footer to update the process name and version
-                    t.$refs.footer.switchProcess();
+                    if(isValid(t.$refs.footer.switchProcess))
+                        t.$refs.footer.switchProcess();
 
-                    // Tell the SLM page that the process info was loaded
+                    // Tell the IMS page that the process info was loaded
                     // The ref to the page might not be ready yet, so we wait
                     const delayedUpdate = setTimeout(function() {
                         let page = t.$refs.page;
                         if(isValid(page)) {
-                            if(again)
-                                clearTimeout(delayedUpdate);
-                            again = true;
+                            clearTimeout(delayedUpdate);
                             if(isValid(page.updateProcessInfo))
                                 page.updateProcessInfo();
                         }
@@ -56,14 +54,12 @@ export default {
             });
         }
         else {
-            // Tell the SLM page about the requested process version
+            // Tell the IMS page about the requested process version
             // The ref to the page might not be ready yet, so we wait
             const delayedUpdate = setTimeout(function() {
                 let page = t.$refs.page;
                 if(isValid(page)) {
-                    if(again)
-                        clearTimeout(delayedUpdate);
-                    again = true;
+                    clearTimeout(delayedUpdate);
                     if(isValid(page.updateProcessInfo))
                         page.updateProcessInfo();
                 }

@@ -77,19 +77,10 @@
                         </div>
                     </div>
                 </div>
-                <!-- Diagram -->
-                <div class="text-field mb-3">
-                    <label for="urlDiagram" class="form-label">{{ $t('ims.linkProcessDiagram') }}:</label>
-                    <input type="text" class="form-control" id="urlDiagram" v-model="urlDiagram"/>
-                </div>
-                <!-- Goals -->
-                <h3>{{ $t('ims.goals') }}</h3>
-                <textbox-with-preview class="mt-1" :label="$t('ims.goalsLabel')" :text="goalsEditor"
-                                      :rows="5" :max-length=4096 required/>
-                <!-- Scope -->
-                <h3>{{ $t('ims.scope') }}</h3>
-                <textbox-with-preview class="mt-1" :label="$t('ims.scopeLabel')" :text="scopeEditor"
-                                      :rows="10" :max-length=4096 required/>
+                <!-- Description -->
+                <h3>{{ $t('ims.description') }}</h3>
+                <textbox-with-preview class="mt-1" :label="$t('ims.processGoalsLabel')" :text="descriptionEditor"
+                                      :rows="10" :max-length=10240 required/>
                 <!-- Requirements -->
                 <h3 id="requirements-title">{{ $t('ims.requirements') }}</h3>
                 <div class="requirements">
@@ -294,8 +285,7 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
-import {isValid, strEqual, deepClone, userNames, scrollTo, isSuccess} from '@/utils'
-import { findUserWithEmail } from "@/roles";
+import { isValid, isSuccess, strEqual, deepClone, userNames, scrollTo } from '@/utils'
 import { parseInterfaces, interfaceList } from '@/process'
 import { getProcess } from "@/api/getProcess";
 import { updateProcess } from "@/api/updateProcess";
@@ -313,22 +303,22 @@ export default {
     props: {
         processCode: String,
         apiBaseUrl: String,
-        info: Object,   // { current: Process, approved: Process }
-        state: {        // Reactive { hasUnsavedChanges: Boolean, navigateTo: String }
+        info: { // Reactive { current: Process, approved: Process }
+            type: Object,
+            default: () => {}
+        },
+        state: { // Reactive { hasUnsavedChanges: Boolean, navigateTo: String }
             type: Object,
             default: () => {}
         }
     },
-    expose: [ 'warnUnsavedChanges' ],
+    expose: [ 'setupTables', 'warnUnsavedChanges' ],
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            myName: store.state.oidc?.user?.name,
-            myEmail: store.state.oidc?.user?.email,
             bidirectional: reactive({ processChanged: false }),
             processInfo: null, // Process
-            goalsEditor: reactive({ text: isValid(this.edited) ? this.edited.goals : "" }),
-            scopeEditor: reactive({ text: isValid(this.edited) ? this.edited.scope : "" }),
+            descriptionEditor: reactive({ text: isValid(this.edited) ? this.edited.description : "" }),
             dpInput: null,
             forceCancel: false,
 
@@ -406,8 +396,7 @@ export default {
                 delete this.processInfo['history'];
                 delete this.processInfo['apiVersion'];
 
-                this.goalsEditor.text = this.processInfo.goals;
-                this.scopeEditor.text = this.processInfo.scope;
+                this.descriptionEditor.text = this.processInfo.description;
             }
 
             return this.processInfo;
@@ -424,13 +413,6 @@ export default {
             set(value) {
                 if(isValid(this.edited))
                     this.edited.contact = value;
-            },
-        },
-        urlDiagram: {
-            get() { return isValid(this.edited) ? this.edited.urlDiagram : ""; },
-            set(value) {
-                if(isValid(this.edited))
-                    this.edited.urlDiagram = value;
             },
         },
         reviewFrequency: {
@@ -708,27 +690,31 @@ export default {
             return false;
         },
         processChanged() {
-            if(!isValid(this.current) || !isValid(this.edited))
+            if(!isValid(this.current) || !isValid(this.edited)) {
+                console.log("processChanged: invalid");
                 return false;
+            }
 
             const pc = this.current;
             const pe = this.edited;
 
-            if (!strEqual(pc.goals, this.goalsEditor.text) ||
-                !strEqual(pc.scope, this.scopeEditor.text) ||
-                !strEqual(pc.urlDiagram, pe.urlDiagram) ||
+            if (!strEqual(pc.description, this.descriptionEditor.text) ||
                 !strEqual(pc.contact, pe.contact) ||
                 pc.reviewFrequency !== pe.reviewFrequency ||
                 pc.frequencyUnit !== pe.frequencyUnit ||
                 pc.nextReview !== pe.nextReview || // String
-                pc.status !== pe.status)
+                pc.status !== pe.status) {
+                console.log("processChanged: yep");
                 return true;
+            }
 
             // We will not check approval related fields, as those cannot be edited directly
             // and approving a process creates a new version anyway
 
             // Check requirements and interfaces
-            return this.requirementsChanged || this.interfacesChanged;
+            const result = this.requirementsChanged || this.interfacesChanged;
+            console.log("processChanged: " + result);
+            return result;
         },
         users() {
             const users = store.state.temp.usersByProcess?.get(this.$props.processCode);
@@ -740,6 +726,7 @@ export default {
     },
     watch: {
         processChanged(changed) {
+            console.log("watch processChanged");
             this.bidirectional.processChanged = changed;
             this.$props.state.hasUnsavedChanges = changed && !this.forceCancel;
         },
@@ -748,6 +735,13 @@ export default {
         }
     },
     methods: {
+        setupTables() {
+            this.requirementsData.rows = this.requirements;
+            this.$refs.requirements?.forceUpdate();
+
+            this.interfacesData.rows = this.interfaces;
+            this.$refs.interfaces?.forceUpdate();
+        },
         updateReviewFrequencyUnit(value, event) {
             event.preventDefault();
             this.dpUnhookFocus();
@@ -1108,8 +1102,7 @@ export default {
                     // We have changes to the process that must be saved as another version
                     console.log(`Saving ${this.$props.processCode} process changes`);
 
-                    this.processInfo.goals = this.goalsEditor.text;
-                    this.processInfo.scope = this.scopeEditor.text;
+                    this.processInfo.description = this.descriptionEditor.text;
                     if(isValid(this.processInfo.changeBy)) {
                         delete this.processInfo.changeBy['kind'];
                         delete this.processInfo.changeBy['given_name'];
@@ -1135,7 +1128,7 @@ export default {
                             const piResult = getProcess(t.accessToken, t.$props.processCode, true,
                                                             t.$props.apiBaseUrl);
                             piResult.load().then(() => {
-                                if(isSuccess(t, apResult)) {
+                                if(isSuccess(t, piResult)) {
                                     // Success
                                     storeProcessInfo(piResult);
                                     t.forceCancel = true;
@@ -1228,18 +1221,6 @@ export default {
         // Add halo ring on focus to the date picker
         this.dpHookFocus();
         this.setupValidation();
-
-        let t = this;
-        const delayedData = setTimeout(function() {
-            if(isValid(t.edited)) {
-                clearTimeout(delayedData);
-                t.requirementsData.rows = t.requirements;
-                t.$refs.requirements?.forceUpdate();
-
-                t.interfacesData.rows = t.interfaces;
-                t.$refs.interfaces?.forceUpdate();
-            }
-        }, 100);
     },
     beforeDestroy() {
         // Cleanup

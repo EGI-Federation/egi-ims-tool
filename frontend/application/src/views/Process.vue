@@ -1,12 +1,13 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments"/>
-    <process-info v-if="currentProcess" :info="{ current: currentProcess, approved: approvedProcess }"
+    <process-info v-if="currentProcess" ref="processInfo" :info="info"
                   :api-base-url="processApi" :process-code="processCode"/>
 </template>
 
 <script>
 // @ is an alias to /src
+import { reactive } from "vue";
 import { Status, isValid, findEntityWithStatus, findEntityWithVersion } from '@/utils'
 import { store } from "@/store"
 import RolesLoader from "@/components/rolesLoader.vue"
@@ -26,6 +27,7 @@ export default {
             accessToken: store.state.oidc?.access_token,
             currentProcess: store.state.ims?.processInfo,  // Process
             approvedProcess: null,                         // Process
+            info: reactive({ current: this.currentProcess, approved: this.approvedProcess }),
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t(`home.${this.$props.processCode}`) },
@@ -53,6 +55,9 @@ export default {
                 console.log(`Showing ${this.$props.processCode} process v${current.version}`);
             }
             this.currentProcess = current;
+            this.info.current = this.currentProcess;
+            this.info.approved = this.approvedProcess;
+            this.$refs.processInfo.setupTables();
         },
     },
     mounted() {

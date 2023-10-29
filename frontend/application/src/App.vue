@@ -44,15 +44,17 @@ body {
 }
 #app h2 {
     font-size: calc(1.325 * (var(--font-scale) * var(--bs-body-font-size)) + 0.9vw);
+    font-weight: 600;
 }
 #app h3 {
-    font-size: calc(1.3 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    font-size: calc(1.25 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    font-weight: 400;
 }
 #app h5 {
-    font-size: calc(1.25 * (var(--font-scale) * var(--bs-body-font-size)));
+    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)));
 }
 #app .fs-5 {
-    font-size: calc(1.25 * (var(--font-scale) * var(--bs-body-font-size)))!important;
+    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)))!important;
 }
 #app h6,
 #app .form-control,
@@ -82,6 +84,9 @@ body {
 }
 .dp__input {
     line-height: calc(1.5 * var(--font-scale) * var(--dp-font-size))!important;
+}
+.gridjs-td {
+    vertical-align: top;
 }
 .gridjs-td > span > :last-child {
     margin-bottom: 0!important;
