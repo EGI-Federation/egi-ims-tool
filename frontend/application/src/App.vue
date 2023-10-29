@@ -71,7 +71,10 @@ body {
     border-right:none;
 }
 .tooltip {
-    font-size: calc(0.9 * var(--font-scale) * var(--bs-body-font-size))!important;
+    font-size: calc(0.9 * var(--font-scale) * var(--bs-tooltip-font-size))!important;
+}
+.toast {
+    font-size: calc(0.9 * var(--font-scale) * var(--bs-toast-font-size))!important;
 }
 .dp__input,
 .dp__menu_inner {
