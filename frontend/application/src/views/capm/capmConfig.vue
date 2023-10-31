@@ -21,7 +21,7 @@ export default {
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.CAPM"), link: "/capm" },
-                { text: this.$t("ims.config") },
+                { text: this.$t("ims.update") },
             ],
         }
     },
