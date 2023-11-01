@@ -1,14 +1,29 @@
 <template>
-    <router-view :key="$route.fullPath"/>
+    <router-view :key="cacheKey"/>
     <toast-messages :id="'toasts'" ref="toasts"/>
 </template>
 
 <script>
 import ToastMessages from "@/components/toast.vue";
+import {isValid} from "@/utils";
 
 export default {
     name: 'App',
     components: { ToastMessages },
+    computed: {
+        cacheKey() {
+            // Include the query params in the route key, but not the anchors
+            const fullPath = this.$route.fullPath;
+            let regex = new RegExp('(\/[^\?#]*(\?=[^#]+)?)(#.*)?', 'ig');
+            let matches = regex.exec(fullPath);
+            if(isValid(matches)) {
+                const fullPathNoAnchor = matches[1];
+                return fullPathNoAnchor;
+            }
+
+            return fullPath;
+        },
+    },
 }
 </script>
 
@@ -28,7 +43,7 @@ body {
 :root {
     --menu-background-color: var(--bs-tertiary-bg);
     --menu-item-color: var(--bs-secondary-bg);
-    --max-content-width: 55rem;
+    --max-content-width: 60rem;
     --font-scale: 0.9;
 }
 #app {
@@ -48,7 +63,7 @@ body {
 }
 #app h3 {
     font-size: calc(1.25 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
-    font-weight: 400;
+    font-weight: 600;
 }
 #app h5 {
     font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)));
@@ -87,6 +102,7 @@ body {
 }
 .gridjs-td {
     vertical-align: top;
+    padding: 8px 10px!important;
 }
 .gridjs-td > span > :last-child {
     margin-bottom: 0!important;
