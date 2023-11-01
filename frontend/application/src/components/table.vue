@@ -104,7 +104,9 @@ export default {
             this.grid
                 .updateConfig({
                     columns: this.headerRow,
-                    data: this.tableData
+                    data: this.tableData,
+                    autoWidth: true,
+                    resizable: true
                 });
         },
         forceUpdate() {
@@ -157,7 +159,7 @@ export default {
             .updateConfig({
                 columns: this.headerRow,
                 data: this.tableData,
-                width: '100%',
+                autoWidth: true,
                 resizable: true
             })
             .render(document.getElementById(this.$props.id));
