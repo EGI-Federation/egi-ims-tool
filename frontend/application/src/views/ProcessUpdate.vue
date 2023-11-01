@@ -67,7 +67,21 @@ export default {
 
             this.info.current = this.currentProcess;
             this.info.approved = this.approvedProcess;
-            this.$refs.processEdit.setupTables();
+
+            // The ref to the process editor might not be ready yet, so we wait
+            if(isValid(this.$refs.processEdit))
+                this.$refs.processEdit?.setupTables();
+            else {
+                let t = this;
+                const delayedUpdate = setTimeout(function() {
+                    let processEdit = t.$refs.processEdit;
+                    if(isValid(processEdit)) {
+                        clearTimeout(delayedUpdate);
+                        if(isValid(processEdit.setupTables))
+                            processEdit.setupTables();
+                    }
+                }, 100);
+            }
         },
     },
     mounted() {

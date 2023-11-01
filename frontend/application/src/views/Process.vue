@@ -57,7 +57,21 @@ export default {
             this.currentProcess = current;
             this.info.current = this.currentProcess;
             this.info.approved = this.approvedProcess;
-            this.$refs.processInfo.setupTables();
+
+            // The ref to the process info might not be ready yet, so we wait
+            if(isValid(this.$refs.processInfo))
+                this.$refs.processInfo?.setupTables();
+            else {
+                let t = this;
+                const delayedUpdate = setTimeout(function() {
+                    let processInfo = t.$refs.processInfo;
+                    if(isValid(processInfo)) {
+                        clearTimeout(delayedUpdate);
+                        if(isValid(processInfo.setupTables))
+                            processInfo.setupTables();
+                    }
+                }, 100);
+            }
         },
     },
     mounted() {
