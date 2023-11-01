@@ -35,7 +35,7 @@ export default {
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.IMS"), link: "/ims" },
                 { text: this.$t("navbar.plan"), link: "/ims/plan" },
-                { text: this.$t("navbar.rolesResp") },
+                { text: this.$t("navbar.roles") },
             ],
         }
     },

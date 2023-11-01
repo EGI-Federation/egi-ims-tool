@@ -23,18 +23,18 @@
     <div class="d-flex flex-nowrap section">
         <div class="process">
             <div v-show="detailsVisible" class="details">
-                <h3 v-if="!hasDescription">{{ $t('ims.description') }}</h3>
+                <h4 v-if="!hasDescription">{{ $t('ims.description') }}</h4>
                 <vue3-markdown-it v-if="hasDescription" :source='description' />
                 <p v-else>{{ $t('ims.notDef') }}</p>
 
-                <h3 id="requirements">{{ $t('process.requirements') }}</h3>
+                <h4 id="requirements">{{ $t('process.requirements') }}</h4>
                 <div class="requirements">
                     <table-control v-if="hasRequirements" id="process-requirements" ref="requirements"
                                    :header="requirementsHeader" :data="requirementsData"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
                 </div>
 
-                <h3 id="inputs-and-outputs">{{ $t('process.inputOutput') }}</h3>
+                <h4 id="inputs-and-outputs">{{ $t('process.inputOutput') }}</h4>
                 <div class="interfaces">
                     <table-control v-if="hasInterfaces" id="process-interfaces" ref="interfaces"
                                    :header="interfacesHeader" :data="interfacesData"/>
@@ -379,8 +379,8 @@ export default {
     text-align: left;
     padding: 0.5rem 1rem 0;
 }
-.process .details h3,
-.process .reviews h3 {
+.process .details h4,
+.process .reviews h4 {
     border-bottom: 1px solid var(--bs-secondary-bg);
 }
 .process .requirements,
