@@ -116,8 +116,9 @@ export const store = createStore({
                 return {
                     language: null,
                     notifications: [{isNew: false}, {isNew: true}],
-                    processInfo: null,  // Process
-                    roleInfo: null,     // Role
+                    governanceInfo: null,   // Governance
+                    processInfo: null,      // Process
+                    roleInfo: null,         // Role
                     slm: {
                     },
                     error: null,
@@ -163,6 +164,11 @@ export const store = createStore({
                 updateLocale(state, newLocale) {
                     console.log("Store language: " + newLocale);
                     state.language = newLocale;
+                },
+                updateGovernanceInfo(state, info) {
+                    console.log(`Store governance info v${info.governanceInfo.version}`);
+                    state.governanceInfo = info.governanceInfo;
+                    state.error = info.error;
                 },
                 updateProcessInfo(state, info) {
                     console.log(`Store ${info.processCode} process info v${info.processInfo.version}`);
@@ -236,6 +242,19 @@ export const store = createStore({
         }
     )],
 })
+
+// Extract the governance information then call a mutation on the store to save it
+export const storeGovernanceInfo = function(giResult) {
+    let latest = {};
+    if(isValid(giResult?.governanceInfo?.value))
+        latest = giResult.governanceInfo.value;
+
+    store.commit('ims/updateGovernanceInfo', {
+        governanceInfo: latest,
+        processCode: giResult.processCode,
+        error: giResult.error.value
+    });
+}
 
 // Extract the process information then call a mutation on the store to save it
 export const storeProcessInfo = function(piResult) {

@@ -1,27 +1,25 @@
 <template>
+    <roles-loader process-code="IMS" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments"/>
-    <div class="about">
-        <br/>
-        <h1>This is the Governance page</h1>
-    </div>
+    <governance-info :version="version" :api-base-url="processApi"/>
 </template>
 
 <script>
 // @ is an alias to /src
-import { isValid } from '@/utils'
-import { store } from "@/store"
 import BreadCrumb from "@/components/breadCrumb.vue";
+import RolesLoader from "@/components/rolesLoader.vue";
+import GovernanceInfo from "@/components/governanceInfo.vue"
 
 export default {
-    name: 'systemGovernance',
-    components: { BreadCrumb },
+    name: 'Governance',
+    components: { RolesLoader, BreadCrumb, GovernanceInfo },
     props: {
-        processCode: String,
+        processCode: String, // Unused
         processApi: String,
+        version: String,
     },
     data() {
         return {
-            accessToken: store.state.oidc?.access_token,
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.IMS"), link:"/ims" },
@@ -29,18 +27,8 @@ export default {
             ],
         }
     },
-    methods: {
-        test() {
-            return false;
-        }
-    },
-    created() {
-    },
     mounted() {
+        scroll(0, 0);
     },
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

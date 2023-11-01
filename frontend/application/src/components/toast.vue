@@ -21,7 +21,7 @@ export default {
     props: {
         id: String
     },
-    expose: [ 'showToast', 'showSuccess', 'showError' ],
+    expose: [ 'showToast', 'showSuccess', 'showError', 'showWarning' ],
     data() {
         return {
             notifications: [], // { id, title, subtitle, message, class, delay, visible }
@@ -35,6 +35,7 @@ export default {
             this.notifications.push({
                 id: 'toast-' + Math.floor(1000 * Math.random()),
                 title: title,
+                subtitle: subtitle,
                 message: message,
                 headClass: headClass,
                 closeClass: closeClass,
@@ -45,6 +46,7 @@ export default {
             this.notifications.push({
                 id: 'toast-' + Math.floor(1000 * Math.random()),
                 title: title,
+                subtitle: subtitle,
                 message: message,
                 headClass: 'text-bg-success',
                 closeClass: 'btn-close-white',
@@ -55,11 +57,23 @@ export default {
             this.notifications.push({
                 id: 'toast-' + Math.floor(1000 * Math.random()),
                 title: title,
+                subtitle: subtitle,
                 message: message,
                 headClass: 'text-bg-danger',
                 closeClass: 'btn-close-white',
                 bodyClass: bodyClass,
                 delay: 5000 });
+        },
+        showWarning(title, message, subtitle, bodyClass) {
+            this.notifications.push({
+                id: 'toast-' + Math.floor(1000 * Math.random()),
+                title: title,
+                subtitle: subtitle,
+                message: message,
+                headClass: 'text-bg-warning',
+                closeClass: 'btn-close-white',
+                bodyClass: bodyClass,
+                delay: 3000 });
         },
     },
     watch: {

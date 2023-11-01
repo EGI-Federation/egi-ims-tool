@@ -17,7 +17,8 @@ import KPIs from './views/KPIs.vue'
 import Logout from "@/views/Logout.vue";
 
 import ManagementSystem from './views/system/system.vue'
-import systemGovernance from "@/views/system/systemGovernance.vue";
+import Governance from "@/views/system/Governance.vue";
+import GovernanceUpdate from "@/views/system/GovernanceUpdate.vue";
 import systemRoles from "@/views/system/systemRoles.vue";
 import systemRole from './views/system/systemRole.vue'
 import systemRoleEdit from './views/system/systemRoleEdit.vue'
@@ -238,9 +239,10 @@ const routes = [
     name: 'system',
     component: ManagementSystem,
     children: [
-      { path: '', name:'system-home', component: Process, props: route => ({ version: route.query?.v }) },
-      { path: 'config', component: ProcessUpdate },
-      { path: 'plan', component: systemGovernance },
+      { path: '', name:'ims-home', component: Process, props: route => ({ version: route.query?.v }) },
+      { path: 'update', component: ProcessUpdate },
+      { path: 'plan', component: Governance, props: route => ({ version: route.query?.v }) },
+      { path: 'plan/update', component: GovernanceUpdate },
       { path: 'plan/roles', component: systemRoles },
       { path: 'plan/roles/:role', component: systemRole, props: route => ({ version: route.query.v }) },
       { path: 'plan/roles/:role/edit', component: systemRoleEdit },
@@ -533,7 +535,7 @@ const routes = [
     component: ServiceLevelManagement,
     children: [
       { path: '', name:'slm-home', component: Process, props: route => ({ version: route.query?.v }) },
-      { path: 'config', component: ProcessUpdate },
+      { path: 'update', component: ProcessUpdate },
       { path: 'review', component: slmReview },
       { path: 'roles', component: Roles },
       { path: 'roles/:role', component: Role, props: route => ({ version: route.query?.v }) },
