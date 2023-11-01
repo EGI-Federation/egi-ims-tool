@@ -24,7 +24,7 @@
                         <div class="input-group">
                             <input type="text" class="form-control" id="reviewFrequency"
                                    v-model="reviewFrequency" required>
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                            <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ reviewFrequencyUnitName }}</button>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -79,10 +79,10 @@
                 </div>
                 <!-- Description -->
                 <h3>{{ $t('ims.description') }}</h3>
-                <textbox-with-preview class="mt-1" :label="$t('ims.processGoalsLabel')" :text="descriptionEditor"
+                <textbox-with-preview class="mt-1" :label="$t('process.goalsLabel')" :text="descriptionEditor"
                                       :rows="10" :max-length=10240 required/>
                 <!-- Requirements -->
-                <h3 id="requirements-title">{{ $t('ims.requirements') }}</h3>
+                <h3 id="requirements-title">{{ $t('process.requirements') }}</h3>
                 <div class="requirements">
                     <table-control v-if="hasRequirements" id="process-requirements" ref="requirements"
                                    :can-edit="true" :can-remove="true" :action-column="$t('ims.action')"
@@ -91,30 +91,30 @@
                     <p v-else>{{ $t('ims.notDef') }}</p>
                     <div class="d-flex flex-nowrap justify-content-end">
                         <button v-if="!addingRequirement && !editingRequirement"
-                                type="button" class="btn btn-primary" @click="addRequirement">
-                            {{ $t('ims.addRequirement') }}
+                                type="button" class="btn btn-primary text-nowrap" @click="addRequirement">
+                            {{ $t('process.addRequirement') }}
                         </button>
                     </div>
                     <!-- Requirement edit start -->
                     <form v-if="addingRequirement || editingRequirement"
                           class="needs-validation" novalidate ref="reqForm">
                         <h5 id="requirement-title">
-                            {{ $t(addingRequirement ? 'ims.newRequirement' : 'ims.editRequirement') }}
+                            {{ $t(addingRequirement ? 'process.newRequirement' : 'process.editRequirement') }}
                         </h5>
                         <div class="input-group pt-3 mb-3 flex-nowrap gap-2 fade-top-border">
                             <!-- Code -->
                             <div class="text-field code">
-                                <label for="reqCode" class="form-label">{{ $t('ims.code') }}:</label>
+                                <label for="reqCode" class="form-label">{{ $t('process.code') }}:</label>
                                 <input type="text" class="form-control" id="reqCode"
                                        v-model="requirementCode" maxlength="10">
                             </div>
                             <!-- Responsible -->
                             <div class="input-group flex-column flex-nowrap responsible">
-                                <label for="reqResponsibles" class="form-label">{{ $t('ims.responsible') }}:</label>
+                                <label for="reqResponsibles" class="form-label">{{ $t('process.responsible') }}:</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="reqResponsibles"
                                            v-model="requirementResponsibles" readonly>
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown" data-bs-auto-close="outside"
                                             aria-expanded="false">
                                         {{ $t('ims.users') }}
@@ -134,17 +134,17 @@
                             </div>
                         </div>
                         <!-- Description -->
-                        <textbox-with-preview class="mt-1" :label="$t('ims.describeRequirement')"
+                        <textbox-with-preview class="mt-1" :label="$t('process.describeRequirement')"
                                               :text="reqDescriptionEditor" :rows="5" :max-length=2048 required/>
                         <!-- Source -->
-                        <textbox-with-preview class="mt-1" :label="$t('ims.indicateSource')"
+                        <textbox-with-preview class="mt-1" :label="$t('process.indicateSource')"
                                               :text="reqSourceEditor" :rows="3" :max-length=1024 required/>
                         <div class="d-flex flex-nowrap justify-content-end gap-1">
-                            <button type="submit" class="btn btn-primary"
+                            <button type="submit" class="btn btn-primary text-nowrap"
                                     @click="saveRequirement($event)" :disabled="!requirementChanged">
-                                {{ $t(addingRequirement ? 'ims.addRequirement' : 'ims.saveRequirement') }}
+                                {{ $t('process.saveRequirement') }}
                             </button>
-                            <button type="button" class="btn btn-secondary" @click="cancelRequirementEditing">
+                            <button type="button" class="btn btn-secondary text-nowrap" @click="cancelRequirementEditing">
                                 {{ $t('ims.cancel') }}
                             </button>
                         </div>
@@ -152,7 +152,7 @@
                     <!-- Requirement edit end -->
                 </div>
                 <!-- Interfaces -->
-                <h3 id="interfaces-title">{{ $t('ims.inputOutput') }}</h3>
+                <h3 id="interfaces-title">{{ $t('process.inputOutput') }}</h3>
                 <div class="interfaces">
                     <table-control v-if="hasInterfaces" id="process-interfaces" ref="interfaces"
                                    :can-edit="true" :can-remove="true" :action-column="$t('ims.action')"
@@ -161,21 +161,21 @@
                     <p v-else>{{ $t('ims.notDef') }}</p>
                     <div class="d-flex flex-nowrap justify-content-end">
                         <button v-if="!addingInterface && !editingInterface" type="button"
-                                class="btn btn-primary" @click="addInterface">
-                            {{ $t('ims.addInterface') }}
+                                class="btn btn-primary text-nowrap" @click="addInterface">
+                            {{ $t('process.addInterface') }}
                         </button>
                     </div>
                     <!-- Interface edit start -->
                     <form v-if="addingInterface || editingInterface" class="needs-validation" novalidate ref="itfForm">
                         <h5 id="interface-title">
-                            {{ $t(addingInterface ? 'ims.newInterface' : 'ims.editInterface') }}
+                            {{ $t(addingInterface ? 'process.newInterface' : 'process.editInterface') }}
                         </h5>
                         <div class="input-group pt-3 mb-3 flex-nowrap gap-2 fade-top-border">
                             <!-- Direction -->
                             <div class="input-group flex-column flex-nowrap direction">
                                 <label for="direction" class="form-label">{{ $t('ims.type') }}:</label>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown" aria-expanded="false">
                                         {{ interfaceDirection }}</button>
                                     <ul class="dropdown-menu">
@@ -198,10 +198,10 @@
                                 <div class="input-group dropup">
                                     <input type="text" class="form-control" id="interfaceWith"
                                            v-model="interfaceWith" readonly>
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown" data-bs-auto-close="outside"
                                             aria-expanded="false">
-                                        {{ $t('ims.interfaces') }}
+                                        {{ $t('process.interfaces') }}
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li class="dropdown-item check-item">
@@ -247,15 +247,15 @@
                             </div>
                         </div>
                         <!-- Relevant material -->
-                        <textbox-with-preview class="mt-1" :label="$t('ims.provideRelevantMaterial')"
+                        <textbox-with-preview class="mt-1" :label="$t('process.provideRelevantMaterial')"
                                               :text="itfRelevantMaterialEditor" :rows="5" :max-length=2048 required/>
                         <!-- Source -->
-                        <textbox-with-preview class="mt-1" :label="$t('ims.describeInterface')"
+                        <textbox-with-preview class="mt-1" :label="$t('process.describeInterface')"
                                               :text="itfDescriptionEditor" :rows="5" :max-length=2048 required/>
                         <div class="d-flex flex-nowrap justify-content-end gap-1">
                             <button type="submit" class="btn btn-primary"
                                     @click="saveInterface($event)" :disabled="!interfaceChanged">
-                                {{ $t(addingInterface ? 'ims.addInterface' : 'ims.saveInterface') }}
+                                {{ $t('process.saveInterface') }}
                             </button>
                             <button type="button" class="btn btn-secondary" @click="cancelInterfaceEditing">
                                 {{ $t('ims.cancel') }}
@@ -269,10 +269,10 @@
         </form>
     </div>
     <message id="warnEditRequirement" ref="warnEditRequirement"
-             :title="$t('ims.unsavedChanges')" :message="$t('ims.warnEditingRequirement')"
+             :title="$t('ims.unsavedChanges')" :message="$t('process.warnEditingRequirement')"
              :confirm-button="$t('ims.continue')" @confirm="abandonRequirementEditAndSaveChanges" />
     <message id="warnEditInterface" ref="warnEditInterface"
-             :title="$t('ims.unsavedChanges')" :message="$t('ims.warnEditingInterface')"
+             :title="$t('ims.unsavedChanges')" :message="$t('process.warnEditingInterface')"
              :confirm-button="$t('ims.continue')" @confirm="abandonInterfaceEditAndSaveChanges" />
     <message id="warnEditProcess" ref="warnEditProcess"
              :title="$t('ims.unsavedChanges')" :message="$t('ims.warnEditing')"
@@ -327,17 +327,17 @@ export default {
                     name: "id",
                     hidden: true,
                 },
-                this.$t('ims.code'),
+                this.$t('process.code'),
                 {
-                    name: this.$t('ims.requirement'),
+                    name: this.$t('process.requirement'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
                 {
-                    name: this.$t('ims.source'),
+                    name: this.$t('process.source'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
                 {
-                    name: this.$t('ims.responsible'),
+                    name: this.$t('process.responsible'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(cell) : "",
                     sort: true,
                 }],
@@ -358,12 +358,12 @@ export default {
                 },
                 this.$t('ims.type'),
                 {
-                    name: this.$t('ims.interface'),
+                    name: this.$t('process.interface'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(cell) : "",
                     sort: true,
                 },
                 {
-                    name: this.$t('ims.relevantMaterial'),
+                    name: this.$t('process.relevantMaterial'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
                 {
@@ -386,6 +386,7 @@ export default {
         i18n() { return i18n },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
+        latest() { return store.state.ims?.processInfo; },
         edited() {
             if(!isValid(this.processInfo) && isValid(this.current)) {
                 this.processInfo = deepClone(this.current);
@@ -690,10 +691,8 @@ export default {
             return false;
         },
         processChanged() {
-            if(!isValid(this.current) || !isValid(this.edited)) {
-                console.log("processChanged: invalid");
+            if(!isValid(this.current) || !isValid(this.edited))
                 return false;
-            }
 
             const pc = this.current;
             const pe = this.edited;
@@ -703,18 +702,14 @@ export default {
                 pc.reviewFrequency !== pe.reviewFrequency ||
                 pc.frequencyUnit !== pe.frequencyUnit ||
                 pc.nextReview !== pe.nextReview || // String
-                pc.status !== pe.status) {
-                console.log("processChanged: yep");
+                pc.status !== pe.status)
                 return true;
-            }
 
             // We will not check approval related fields, as those cannot be edited directly
             // and approving a process creates a new version anyway
 
             // Check requirements and interfaces
-            const result = this.requirementsChanged || this.interfacesChanged;
-            console.log("processChanged: " + result);
-            return result;
+            return this.requirementsChanged || this.interfacesChanged;
         },
         users() {
             const users = store.state.temp.usersByProcess?.get(this.$props.processCode);
@@ -726,7 +721,6 @@ export default {
     },
     watch: {
         processChanged(changed) {
-            console.log("watch processChanged");
             this.bidirectional.processChanged = changed;
             this.$props.state.hasUnsavedChanges = changed && !this.forceCancel;
         },
@@ -790,13 +784,13 @@ export default {
             })
         },
         addRequirement() {
-            this.newRequirement = true;
-            this.requirementBeingEdited = null;
             this.reqId = this.nextReqId--;
             this.reqCode = "";
             this.reqResponsibles = new Map();
             this.reqDescriptionEditor.text = "";
             this.reqSourceEditor.text = "";
+            this.requirementBeingEdited = null;
+            this.newRequirement = true;
 
             let t = this;
             const delayedSetupValidation = setTimeout(function() {
@@ -851,7 +845,7 @@ export default {
                     this.reqResponsibles.set(checkinUserId, user);
             }
             else {
-                // Remove use from the responsibles
+                // Remove user from the responsibles
                 if(this.reqResponsibles.has(checkinUserId))
                     this.reqResponsibles.delete(checkinUserId);
             }
@@ -862,8 +856,7 @@ export default {
             scrollTo('requirements-title');
         },
         saveRequirement(event) {
-            if(isValid(this.edited) && isValid(this.edited.requirements) &&
-               this.$refs.reqForm.checkValidity()) {
+            if(isValid(this.edited) && this.$refs.reqForm.checkValidity()) {
                 // Check if adding a new requirement or editing an existing one
                 if(this.newRequirement) {
                     // Adding new one
@@ -880,7 +873,7 @@ export default {
                     this.edited.requirements.push(requirement);
                     this.newRequirement = false;
                     console.log("Added new requirement " + requirement.id);
-                } else if(isValid(this.requirementBeingEdited)) {
+                } else if(isValid(this.requirementBeingEdited) && isValid(this.edited.requirements)) {
                     // Saving changes to the one being edited
                     for(const req of this.edited.requirements) {
                         if(this.reqId !== req.id.toString())
@@ -917,13 +910,13 @@ export default {
             }
         },
         addInterface() {
-            this.newInterface = true;
-            this.interfaceBeingEdited = null;
             this.itfId = this.nextItfId--;
             this.itfDirection = "In";
             this.itfWith = { internal: false, external: false, customer: false, process: new Set() };
             this.itfRelevantMaterialEditor.text = "";
             this.itfDescriptionEditor.text = "";
+            this.interfaceBeingEdited = null;
+            this.newInterface = true;
 
             let t = this;
             const delayedSetupValidation = setTimeout(function() {
@@ -1016,8 +1009,7 @@ export default {
             scrollTo('interfaces-title');
         },
         saveInterface(event) {
-            if(isValid(this.edited) && isValid(this.edited.interfaces) &&
-                this.$refs.itfForm.checkValidity()) {
+            if(isValid(this.edited) && this.$refs.itfForm.checkValidity()) {
                 // Check if adding a new interface or editing an existing one
                 if(this.newInterface) {
                     // Adding new one
@@ -1032,7 +1024,7 @@ export default {
                     this.edited.interfaces.push(itf);
                     this.newInterface = false;
                     console.log("Added new interface " + itf.id);
-                } else if(isValid(this.interfaceBeingEdited)) {
+                } else if(isValid(this.interfaceBeingEdited) && isValid(this.edited.interfaces)) {
                     // Saving changes to the one being edited
                     for(const itf of this.edited.interfaces) {
                         if(this.itfId !== itf.id.toString())
@@ -1120,7 +1112,7 @@ export default {
                             console.log(`Created new version of ${t.$props.processCode} process`);
                             t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                              t.$t('ims.newEntityVersion', {
-                                                                 processCode: t.$props.processCode,
+                                                                 processCode: `${t.$props.processCode} `,
                                                                  entity: t.$t('ims.process').toLowerCase()
                                                              }));
 
@@ -1131,6 +1123,7 @@ export default {
                                 if(isSuccess(t, piResult)) {
                                     // Success
                                     storeProcessInfo(piResult);
+                                    t.$props.info.current = t.latest;
                                     t.forceCancel = true;
                                     t.$router.push(t.returnToRoute);
                                 }
@@ -1288,7 +1281,7 @@ export default {
     gap: 0;
 }
 .process .requirements h5,
-.process .interfaces h5{
+.process .interfaces h5 {
     margin-top: 1rem;
     margin-bottom: 0;
 }
@@ -1298,9 +1291,6 @@ export default {
 .process .interfaces .direction {
     width: unset;
     max-width: 5rem;
-}
-.process .interfaces .interfaces-with {
-
 }
 .check-item .form-check-input,
 .check-item .form-check-label {

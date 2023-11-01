@@ -254,7 +254,7 @@ export default {
                                 console.log(`Created new version of role ${processCode}.${t.$route.params.role}`);
                                 t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                                  t.$t('ims.newEntityVersion', {
-                                                                     processCode: processCode,
+                                                                     processCode: `${processCode} `,
                                                                      entity: t.$t('ims.role').toLowerCase(),
                                                                      name: " " + t.roleName
                                                                  }));

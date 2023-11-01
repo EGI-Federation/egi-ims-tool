@@ -15,7 +15,7 @@
             </div>
         </div>
         <div v-if="assignable.assignable && (isImsOwner || isImsManager || isProcessManager || isProcessOwner)" class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ $t('role.assign') }}
             </button>
             <ul class="dropdown-menu user-list">

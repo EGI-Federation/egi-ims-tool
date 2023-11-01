@@ -50,7 +50,7 @@
                     <role-log :title="`${strCapitalize($t('ims.year'))} ${year}`" :logs="reactive({ logs: logs })" />
                 </div>
                 <div v-if="!roleLogsEnd" class="more">
-                    <button type="button" class="btn btn-secondary" @click="loadRoleLogs">{{ $t('role.loadMore') }}</button>
+                    <button type="button" class="btn btn-secondary text-nowrap" @click="loadRoleLogs">{{ $t('role.loadMore') }}</button>
                 </div>
                 <p v-if="roleLogsEnd && 0 === roleLogs.length">{{ $t('role.noLogs') }}</p>
             </div>

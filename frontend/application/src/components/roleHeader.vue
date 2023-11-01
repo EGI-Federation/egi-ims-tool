@@ -1,11 +1,11 @@
 <template>
     <div class="d-flex flex-nowrap flex-column operations">
-        <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-        <button v-if="!editMode && !isDeprecated && (isImsManager || isProcessManager)" type="button" class="btn btn-primary" @click="editRole">{{ $t('ims.edit') }}</button>
-        <button v-if="!editMode && isLatest && isDraft && (isImsDeveloper || isProcessDeveloper)" type="button" class="btn btn-primary" @click="implementRole">{{ $t('ims.implement') }}</button>
-        <button v-if="!editMode && isLatest && isImplemented && canDeprecate && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger" @click="deprecateRole">{{ $t('ims.deprecate') }}</button>
-        <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!roleChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
-        <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
+        <button v-if="!editMode" type="button" class="btn btn-secondary text-nowrap" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
+        <button v-if="!editMode && !isDeprecated && (isImsManager || isProcessManager)" type="button" class="btn btn-primary text-nowrap" @click="editRole">{{ $t('ims.edit') }}</button>
+        <button v-if="!editMode && isLatest && isDraft && (isImsDeveloper || isProcessDeveloper)" type="button" class="btn btn-primary text-nowrap" @click="implementRole">{{ $t('ims.implement') }}</button>
+        <button v-if="!editMode && isLatest && isImplemented && canDeprecate && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger text-nowrap" @click="deprecateRole">{{ $t('ims.deprecate') }}</button>
+        <button v-if="editMode" type="submit" class="btn btn-primary text-nowrap" ref="submit" :disabled="!roleChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
+        <button v-if="editMode" type="button" class="btn btn-secondary text-nowrap" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
     </div>
     <div class="d-flex flex-nowrap header">
         <div class="d-flex flex-nowrap flex-column entity-title">

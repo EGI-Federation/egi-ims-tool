@@ -1,14 +1,14 @@
 <template>
     <div class="d-flex flex-nowrap flex-column operations">
-        <button v-if="!editMode" type="button" class="btn btn-secondary" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-        <button v-if="!editMode && !isDeprecated && (isImsManager || isProcessManager)" type="button" class="btn btn-primary" @click="updateProcess">{{ $t('ims.update') }}</button>
-        <button v-if="!editMode && isLatest && isDraft && (isImsManager || isProcessManager)" type="button" class="btn btn-primary" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
-        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-success" @click="approveProcess">{{ $t('ims.approve') }}</button>
-        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger" @click="rejectProcess">{{ $t('ims.reject') }}</button>
-        <button v-if="!editMode && isLatest && isApproved && (isImsManager || isProcessManager || isImsOwner || isProcessOwner)" type="button" class="btn btn-primary" @click="reviewProcess">{{ $t('ims.review') }}</button>
-        <button v-if="!editMode && isLatest && isApproved && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
-        <button v-if="editMode" type="submit" class="btn btn-primary" ref="submit" :disabled="!processChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
-        <button v-if="editMode" type="button" class="btn btn-secondary" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
+        <button v-if="!editMode" type="button" class="btn btn-secondary text-nowrap" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
+        <button v-if="!editMode && !isDeprecated && (isImsManager || isProcessManager)" type="button" class="btn btn-primary text-nowrap" @click="updateProcess">{{ $t('ims.update') }}</button>
+        <button v-if="!editMode && isLatest && isDraft && (isImsManager || isProcessManager)" type="button" class="btn btn-primary text-nowrap" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
+        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-success text-nowrap" @click="approveProcess">{{ $t('ims.approve') }}</button>
+        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger text-nowrap" @click="rejectProcess">{{ $t('ims.reject') }}</button>
+        <button v-if="!editMode && isLatest && isApproved && (isImsManager || isProcessManager || isImsOwner || isProcessOwner)" type="button" class="btn btn-primary text-nowrap" @click="reviewProcess">{{ $t('ims.review') }}</button>
+        <button v-if="!editMode && isLatest && isApproved && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger text-nowrap" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
+        <button v-if="editMode" type="submit" class="btn btn-primary text-nowrap" ref="submit" :disabled="!processChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
+        <button v-if="editMode" type="button" class="btn btn-secondary text-nowrap" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
     </div>
     <div class="d-flex flex-nowrap header">
         <div class="d-flex flex-nowrap flex-column entity-title">

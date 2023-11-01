@@ -14,9 +14,9 @@
                               v-model="collectedMessage" :maxlength=1024 :required="mustCollectMessage" :placeholder="placeholderCollectMessage"/>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelAction">{{ cancelButton }}</button>
-                    <button v-if="extraButton" type="button" data-bs-dismiss="modal" class="btn btn-primary" @click="extraAction">{{ extraButton }}</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" :disabled="!canConfirm" @click="confirmAction">{{ confirmButton }}</button>
+                    <button v-if="canCancel" type="button" class="btn btn-secondary text-nowrap" data-bs-dismiss="modal" @click="cancelAction">{{ cancelButton }}</button>
+                    <button v-if="extraButton" type="button" class="btn btn-primary text-nowrap" data-bs-dismiss="modal" @click="extraAction">{{ extraButton }}</button>
+                    <button type="button" class="btn btn-primary text-nowrap" data-bs-dismiss="modal" :disabled="!canConfirm" @click="confirmAction">{{ confirmButton }}</button>
                 </div>
             </div>
         </div>
@@ -27,6 +27,7 @@
 // @ is an alias to /src
 import i18n from "@/locales";
 import { Modal } from "bootstrap";
+import { isValid } from "@/utils";
 
 export default {
     name: 'message',
@@ -46,7 +47,7 @@ export default {
             default: i18n.global.t('ims.ok')
         },
         extraButton: String,
-        cancelButton: {
+        cancelButton: { // Set to null to hide the Cancel button
             type: String,
             default: i18n.global.t('ims.cancel')
         },
@@ -80,6 +81,9 @@ export default {
             set(value) {
                 this.collected = value;
             }
+        },
+        canCancel() {
+            return isValid(this.$props.cancelButton);
         },
         canConfirm() {
             return this.$props.mustCollectMessage ? this.collected.trim().length > 0 : true;

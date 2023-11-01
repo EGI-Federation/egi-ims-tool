@@ -4,7 +4,7 @@
         <h1></h1>
         <p>{{ $t('home.authError') }}</p>
         <br/>
-      <button type="button" class="btn btn-primary" @click="acknowledgeError">{{ $t('home.back') }}</button>
+      <button type="button" class="btn btn-primary text-nowrap" @click="acknowledgeError">{{ $t('home.back') }}</button>
     </div>
 </div>
 <ims-footer/>

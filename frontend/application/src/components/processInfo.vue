@@ -27,14 +27,14 @@
                 <vue3-markdown-it v-if="hasDescription" :source='description' />
                 <p v-else>{{ $t('ims.notDef') }}</p>
 
-                <h3 id="requirements">{{ $t('ims.requirements') }}</h3>
+                <h3 id="requirements">{{ $t('process.requirements') }}</h3>
                 <div class="requirements">
                     <table-control v-if="hasRequirements" id="process-requirements" ref="requirements"
                                    :header="requirementsHeader" :data="requirementsData"/>
                     <p v-else>{{ $t('ims.notDef') }}</p>
                 </div>
 
-                <h3 id="inputs-and-outputs">{{ $t('ims.inputOutput') }}</h3>
+                <h3 id="inputs-and-outputs">{{ $t('process.inputOutput') }}</h3>
                 <div class="interfaces">
                     <table-control v-if="hasInterfaces" id="process-interfaces" ref="interfaces"
                                    :header="interfacesHeader" :data="interfacesData"/>
@@ -49,15 +49,15 @@
         </div>
     </div>
     <message id="approveProcessDialog" ref="approveProcessDialog" :collect-message="true" :must-collect-message="false"
-             :title="$t('ims.approveChange')" :message="$t('ims.approveProcessChange')"
+             :title="$t('ims.approveChange')" :message="$t('process.approveProcessChange')"
              :placeholder-collect-message="$t('ims.approvalNotes')"
              :confirm-button="$t('ims.approve')" @confirm="approveProcess" />
     <message id="rejectProcessDialog" ref="rejectProcessDialog" :collect-message="true" :must-collect-message="true"
-             :title="$t('ims.rejectChange')" :message="$t('ims.rejectProcessChange')"
+             :title="$t('ims.rejectChange')" :message="$t('process.rejectProcessChange')"
              :placeholder-collect-message="$t('ims.rejectReason')"
              :confirm-button="$t('ims.reject')" @confirm="rejectProcess" />
     <message id="warnDeprecateProcess" ref="warnDeprecateProcess" :collect-message="true" :must-collect-message="true"
-             :title="$t('ims.deprecate')" title-style="danger" :message="$t('ims.warnDeprecateProcess')"
+             :title="$t('ims.deprecate')" title-style="danger" :message="$t('process.warnDeprecateProcess')"
              :placeholder-collect-message="$t('ims.deprecateReason')"
              :confirm-button="$t('ims.continue')" @confirm="deprecateProcess" />
     <version-history :bidirectional="bidirectional" :view-url="`/${processCode.toLowerCase()}`"
@@ -102,17 +102,17 @@ export default {
             myEmail: store.state.oidc?.user?.email,
             detailsVisible: true,
             requirementsHeader: [
-                this.$t('ims.code'),
+                this.$t('process.code'),
                 {
-                    name: this.$t('ims.requirement'),
+                    name: this.$t('process.requirement'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
                 {
-                    name: this.$t('ims.source'),
+                    name: this.$t('process.source'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
                 {
-                    name: this.$t('ims.responsible'),
+                    name: this.$t('process.responsible'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(cell) : "",
                     sort: true,
                 }],
@@ -120,12 +120,12 @@ export default {
             interfacesHeader: [
                 this.$t('ims.type'),
                 {
-                    name: this.$t('ims.interface'),
+                    name: this.$t('process.interface'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(cell) : "",
                     sort: true,
                 },
                 {
-                    name: this.$t('ims.relevantMaterial'),
+                    name: this.$t('process.relevantMaterial'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
                 },
                 {
@@ -230,7 +230,7 @@ export default {
                 if(isSuccess(t, prfaResult)) {
                     // Success
                     console.log(`Requested approval of the ${t.processCode} process`);
-                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('ims.requestedProcessApproval'));
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('process.requestedProcessApproval'));
 
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcess(t.accessToken, t.processCode, true,
@@ -257,7 +257,7 @@ export default {
                     // Success
                     console.log(`${approve ? 'Approved' : 'Rejected'} ${t.$props.processCode} process changes`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                     t.$t(approve ? 'ims.approvedProcess' : 'ims.rejectedProcess'));
+                                                     t.$t(approve ? 'process.approvedProcess' : 'process.rejectedProcess'));
 
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcess(t.accessToken, t.$props.processCode, true,
