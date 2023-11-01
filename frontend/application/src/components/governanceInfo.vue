@@ -10,11 +10,11 @@
         <div class="governance">
             <div class="details">
                 <h3 v-if="!hasDescription">{{ $t('ims.description') }}</h3>
-                <vue3-markdown-it v-if="hasDescription" :source='description' />
+                <vue3-markdown-it v-if="hasDescription" :source='description' :html="true"/>
                 <p v-else>{{ $t('ims.notDef') }}</p>
 
                 <h3 id="annexes">{{ $t('gov.annexes') }}</h3>
-                <h5 v-if="hasGroups">1. {{ $t('gov.summaryToR') }}</h5>
+                <h4 v-if="hasGroups">1. {{ $t('gov.summaryToR') }}</h4>
                 <div class="groups">
                     <table-control v-if="hasGroups" id="governance-groups" ref="groups"
                                    :header="groupsHeader" :data="groupsData"/>
@@ -32,7 +32,7 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store, storeGovernanceInfo } from "@/store";
-import { isValid, isSuccess, findEntityWithVersion } from '@/utils'
+import {isValid, isSuccess, findEntityWithVersion, sortBy} from '@/utils'
 import { getGovernance } from "@/api/getGovernance";
 import MarkdownIt from 'markdown-it';
 import GovernanceHeader from "@/components/governanceHeader.vue"
@@ -57,6 +57,7 @@ export default {
                 {
                     name: this.$t('gov.body'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(mdRender.render(cell)) : "",
+                    sort: true,
                 },
                 {
                     name: this.$t('gov.composition'),
@@ -73,6 +74,7 @@ export default {
                 {
                     name: this.$t('gov.interfaces'),
                     formatter: (cell) => (cell && cell.length > 0) ? html(cell) : "",
+                    sort: true,
                 }],
             groupsData: reactive({ rows: [] }),
             info: reactive({ current: this.currentGovernance }),
@@ -118,6 +120,11 @@ export default {
                     ];
                     r.push(row);
                 }
+
+                r.sort(sortBy('id', true));
+
+                let i = 10;
+                i++;
             }
             return r;
         },
