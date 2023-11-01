@@ -8,7 +8,7 @@
                   :rows="rows" :required="required" :maxlength="maxLength ? maxLength : (1024*1024*10).toString()"
                   v-model="textarea"/>
         <div v-if="showPreview" class="preview">
-            <vue3-markdown-it :source='textarea'/>
+            <vue3-markdown-it :source='textarea' :html="html"/>
         </div>
     </div>
     <div class="form-check mb-3">
@@ -50,6 +50,10 @@ export default {
         maxLength: {
             type: Number,
             default: null
+        },
+        html: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
