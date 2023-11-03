@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const markProcessReadyForApproval = function(accessToken, processCode, baseUrl) {
+export const requestProcessApproval = function(accessToken, processCode, baseUrl) {
     const response = ref(null);
     const error = ref(null);
 

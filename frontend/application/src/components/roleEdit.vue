@@ -84,11 +84,6 @@ export default {
     },
     computed: {
         i18n() { return i18n },
-        baseUrl() {
-            return isValid(this.$props.pageBaseUrl) ?
-                this.$props.pageBaseUrl :
-                `/${this.$props.processCode.toLowerCase()}/roles`;
-        },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
         edited() {
@@ -151,9 +146,9 @@ export default {
         },
         returnToRoute() {
             if(this.isNew)
-                return this.baseUrl;
+                return this.$props.pageBaseUrl;
 
-            return `${this.baseUrl}/${this.$route.params.role}`;
+            return `${this.$props.pageBaseUrl}/${this.roleCode}`;
         },
     },
     watch: {
@@ -238,7 +233,7 @@ export default {
                                         // Success
                                         storeProcessRoles(prResult);
                                         t.forceCancel = true;
-                                        t.$router.push(`/${processCode.toLowerCase()}/roles/${t.roleCode}`);
+                                        t.$router.push(`${t.$props.pageBaseUrl}/${t.roleCode}`);
                                     }
                                 });
                             }

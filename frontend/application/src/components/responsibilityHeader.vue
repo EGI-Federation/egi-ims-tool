@@ -1,44 +1,38 @@
 <template>
     <div class="d-flex flex-nowrap flex-column operations">
         <button v-if="!editMode" type="button" class="btn btn-secondary text-nowrap" @click="toggleHistory">{{ $t(showHistory ? 'history.hideHistory' : 'history.showHistory') }}</button>
-        <button v-if="!editMode && !isDeprecated && (isImsManager || isProcessManager)" type="button" class="btn btn-primary text-nowrap" @click="updateProcess">{{ $t('ims.update') }}</button>
+        <button v-if="!editMode && !isDeprecated && (isImsManager || isProcessManager)" type="button" class="btn btn-primary text-nowrap" @click="updateResponsibility">{{ $t('ims.update') }}</button>
         <button v-if="!editMode && isLatest && isDraft && (isImsManager || isProcessManager)" type="button" class="btn btn-primary text-nowrap" @click="askForApproval">{{ $t('ims.askApproval') }}</button>
-        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-success text-nowrap" @click="approveProcess">{{ $t('ims.approve') }}</button>
-        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger text-nowrap" @click="rejectProcess">{{ $t('ims.reject') }}</button>
-        <button v-if="!editMode && isLatest && isApproved && (isImsManager || isProcessManager || isImsOwner || isProcessOwner)" type="button" class="btn btn-primary text-nowrap" @click="reviewProcess">{{ $t('ims.review') }}</button>
-        <button v-if="!editMode && isLatest && isApproved && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger text-nowrap" @click="deprecateProcess">{{ $t('ims.deprecate') }}</button>
-        <button v-if="editMode" type="submit" class="btn btn-primary text-nowrap" ref="submit" :disabled="!processChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
+        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-success text-nowrap" @click="approveResponsibility">{{ $t('ims.approve') }}</button>
+        <button v-if="!editMode && isLatest && isReady && (isImsOwner || isProcessOwner)" type="button" class="btn btn-danger text-nowrap" @click="rejectResponsibility">{{ $t('ims.reject') }}</button>
+        <button v-if="!editMode && systemProcess && isLatest && isApproved && (isImsOwner || isImsManager || isProcessManager || isProcessOwner)" type="button" class="btn btn-primary text-nowrap" @click="reviewResponsibility">{{ $t('ims.review') }}</button>
+        <button v-if="!editMode && isLatest && (isImsOwner || isImsManager || isProcessOwner|| isProcessManager)" type="button" class="btn btn-primary text-nowrap" @click="addRole">{{ $t('role.addRole') }}</button>
+        <button v-if="editMode" type="submit" class="btn btn-primary text-nowrap" ref="submit" :disabled="!responsibilityChanged" @click="saveChanges($event)">{{ $t('ims.saveChanges') }}</button>
         <button v-if="editMode" type="button" class="btn btn-secondary text-nowrap" @click="cancelChanges">{{ $t('ims.cancel') }}</button>
     </div>
     <div class="d-flex flex-nowrap header">
         <div class="d-flex flex-nowrap flex-column entity-title">
-            <div class="entity-type">{{ $t('ims.process') }}</div>
-            <h2 class="fade-top-border">{{ processName }} ({{ processCode }})</h2>
+            <div class="entity-type">{{ $t('ims.responsibility') }}</div>
+            <h2 class="fade-top-border">{{ $t('navbar.roles') }}</h2>
         </div>
     </div>
     <div class="d-flex flex-nowrap header">
         <div class="d-flex flex-nowrap info">
             <div>
-                <div>{{ $t(systemProcess ? 'ims.imsOwner' : 'ims.procOwner') }} :</div>
-                <div>{{ $t(systemProcess ? 'ims.imsManager' : 'ims.procManager') }} :</div>
                 <div>{{ $t('ims.version') }} :</div>
                 <div>{{ $t('ims.status') }} :</div>
                 <div>{{ $t('ims.changed') }} :</div>
                 <div>{{ $t('ims.approved') }} :</div>
                 <div v-if="!editMode">{{ $t('ims.reviewFrequency') }} :</div>
                 <div v-if="!editMode">{{ $t('ims.reviewNext') }} :</div>
-                <div v-if="!editMode">{{ $t('ims.contact') }} :</div>
             </div>
             <div>
-                <div>{{ owner }}</div>
-                <div>{{ manager }}</div>
-                <div>{{ processVersion }}</div>
-                <div><span :class="processStatus.pillClass">{{ processStatus.label }}</span></div>
+                <div>{{ responsibilityVersion }}</div>
+                <div><span :class="responsibilityStatus.pillClass">{{ responsibilityStatus.label }}</span></div>
                 <div>{{ changeDate }}</div>
                 <div>{{ approvalStatus }}</div>
                 <div v-if="!editMode">{{ nextReview.frequency }}</div>
                 <div v-if="!editMode">{{ nextReview.when }}</div>
-                <div v-if="!editMode">{{ contact }}</div>
             </div>
         </div>
     </div>
@@ -48,28 +42,31 @@
 // @ is an alias to /src
 import { store } from "@/store";
 import { Status, isValid, statusPill, formatDate, formatNextEvent } from '@/utils'
-import { Roles, hasRole, findUsersWithRole } from "@/roles";
+import { Roles, hasRole } from "@/roles";
 
 export default {
-    name: 'processHeader',
+    name: 'responsibilityHeader',
     props: {
         processCode: String,
-        info: Object,      // { current: Process, approved: Process }
+        info: { // Reactive { current: Responsibility, approved: Responsibility }
+            type: Object,
+            default: () => {}
+        },
         editMode: Boolean,
-        bidirectional: {   // Reactive { historyVisible: Boolean, processChanged: Boolean }
+        bidirectional: { // Reactive { historyVisible: Boolean, responsibilityChanged: Boolean }
             type: Object,
             default: () => {}
         },
     },
-    emits: ['update', 'askForApproval', 'approve', 'reject', 'review', 'deprecate', 'save', 'cancel'],
+    emits: ['update', 'askForApproval', 'approve', 'reject', 'review', 'save', 'cancel'],
     expose: [ 'submit' ],
     computed: {
-        latest() { return store.state.ims.processInfo; },
+        latest() { return store.state.ims.responsibilityInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
         isLatest() { return this.latest?.version === this.current?.version; },
         showHistory() { return this.$props.bidirectional?.historyVisible; },
-        processChanged() { return this.$props.bidirectional?.processChanged; },
+        responsibilityChanged() { return this.$props.bidirectional?.responsibilityChanged; },
         isDraft() { return isValid(this.current) && Status.DRAFT.description === this.current.status; },
         isApproved() { return isValid(this.current) && Status.APPROVED.description === this.current.status; },
         isReady() { return isValid(this.current) && Status.READY_FOR_APPROVAL.description === this.current.status; },
@@ -91,45 +88,14 @@ export default {
             const roleEnum = Roles[this.$props.processCode];
             return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
         },
-        processName() { return this.$t('home.' + this.$props.processCode); },
-        systemProcess() {
-            return 'IMS' === this.$props.processCode;
-        },
-        contact() {
-            return isValid(this.current) && isValid(this.current.contact) &&
-                this.current.contact.trim().length > 0 ?
-                this.current.contact :
-                this.$t('ims.notSet'); },
-        processVersion() { return isValid(this.current) ? this.current.version : "?"; },
-        processStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
-        owner() {
-            const roleOwner = 'IMS' === this.$props.processCode ?
-                Roles.IMS.IMS_OWNER :
-                Roles[this.$props.processCode].PROCESS_OWNER;
-            let pos = findUsersWithRole(this.$props.processCode, roleOwner, true);
-            if(isValid(pos) && pos.length > 0) {
-                let po = pos[0];
-                return po.fullName;
-            }
-            return this.$t('ims.notSet');
-        },
-        manager() {
-            const roleManager = 'IMS' === this.$props.processCode ?
-                Roles.IMS.IMS_MANAGER :
-                Roles[this.$props.processCode].PROCESS_MANAGER;
-            let pms = findUsersWithRole(this.$props.processCode, roleManager, true);
-            if(isValid(pms) && pms.length > 0) {
-                let pm = pms[0];
-                return pm.fullName;
-            }
-            return this.$t('ims.notSet');
-        },
+        responsibilityVersion() { return isValid(this.current) ? this.current.version : "?"; },
+        responsibilityStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
         changeDate() {
             return isValid(this.current) && isValid(this.current.changedOn) ?
                    formatDate(this.current.changedOn) : "?"; },
         approvalStatus() {
             if(!isValid(this.approved) ||
-               !isValid(this.approved.changeBy))
+                !isValid(this.approved.changeBy))
                 return this.$t('ims.no');
 
             let prefix = '';
@@ -140,31 +106,37 @@ export default {
         },
         nextReview() {
             return isValid(this.current) ?
-                   formatNextEvent(this.current.reviewFrequency,
-                                   this.current.frequencyUnit,
-                                   this.current.nextReview,
-                                   this.$t) : "?";
+                formatNextEvent(this.current.reviewFrequency,
+                    this.current.frequencyUnit,
+                    this.current.nextReview,
+                    this.$t) : "?";
+        },
+        systemProcess() {
+            return 'IMS' === this.$props.processCode;
+        },
+        baseUrl() {
+            return `/${this.$props.processCode.toLowerCase()}${this.systemProcess ? '/plan' : ''}/roles`;
         },
     },
     methods: {
         toggleHistory() { this.$props.bidirectional.historyVisible = !this.$props.bidirectional.historyVisible; },
-        updateProcess() {
+        addRole() {
+            this.$router.push(`${this.baseUrl}/new/edit`);
+        },
+        updateResponsibility() {
             this.$emit('update');
         },
         askForApproval() {
             this.$emit('askForApproval');
         },
-        reviewProcess() {
+        reviewResponsibility() {
             this.$emit('review');
         },
-        approveProcess() {
+        approveResponsibility() {
             this.$emit('approve');
         },
-        rejectProcess() {
+        rejectResponsibility() {
             this.$emit('reject');
-        },
-        deprecateProcess() {
-            this.$emit('deprecate');
         },
         saveChanges(event) {
             this.$emit('save', event);
@@ -214,7 +186,7 @@ export default {
 }
 .header .info > div:nth-child(1) > div {
     color: grey;
-    text-align: right!important;
+    text-align: right;
     margin-right: .2rem;
 }
 .header .info > div:nth-child(2) > div {

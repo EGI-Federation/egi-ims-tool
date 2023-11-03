@@ -24,7 +24,7 @@
         <div class="process">
             <div v-show="detailsVisible" class="details">
                 <h4 v-if="!hasDescription">{{ $t('ims.description') }}</h4>
-                <vue3-markdown-it v-if="hasDescription" :source='description' />
+                <vue3-markdown-it v-if="hasDescription" :source='description' :html="true"/>
                 <p v-else>{{ $t('ims.notDef') }}</p>
 
                 <h4 id="requirements">{{ $t('process.requirements') }}</h4>
@@ -43,20 +43,36 @@
             </div>
             <div v-show="!detailsVisible" class="reviews">
                 <h3>Process Reviews</h3>
-                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-                <p>Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+                <p>
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                </p>
+                <p>
+                    Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum
+                    dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit
+                    praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit
+                    amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna
+                    aliquam erat volutpat.
+                </p>
             </div>
         </div>
     </div>
-    <message id="approveProcessDialog" ref="approveProcessDialog" :collect-message="true" :must-collect-message="false"
+    <message id="approveDialog" ref="approveDialog" :collect-message="true" :must-collect-message="false"
              :title="$t('ims.approveChange')" :message="$t('process.approveProcessChange')"
              :placeholder-collect-message="$t('ims.approvalNotes')"
              :confirm-button="$t('ims.approve')" @confirm="approveProcess" />
-    <message id="rejectProcessDialog" ref="rejectProcessDialog" :collect-message="true" :must-collect-message="true"
+    <message id="rejectDialog" ref="rejectDialog" :collect-message="true" :must-collect-message="true"
              :title="$t('ims.rejectChange')" :message="$t('process.rejectProcessChange')"
              :placeholder-collect-message="$t('ims.rejectReason')"
              :confirm-button="$t('ims.reject')" @confirm="rejectProcess" />
-    <message id="warnDeprecateProcess" ref="warnDeprecateProcess" :collect-message="true" :must-collect-message="true"
+    <message id="deprecateDialog" ref="deprecateDialog" :collect-message="true" :must-collect-message="true"
              :title="$t('ims.deprecate')" title-style="danger" :message="$t('process.warnDeprecateProcess')"
              :placeholder-collect-message="$t('ims.deprecateReason')"
              :confirm-button="$t('ims.continue')" @confirm="deprecateProcess" />
@@ -73,7 +89,7 @@ import { store, storeProcessInfo } from "@/store";
 import {Status, isValid, userNames, isSuccess, deepClone} from '@/utils'
 import { parseInterfaces, interfaceList } from '@/process'
 import { getProcess } from "@/api/getProcess";
-import { markProcessReadyForApproval } from "@/api/readyForProcessApproval";
+import { requestProcessApproval } from "@/api/requestProcessApproval";
 import { approveProcess } from "@/api/approveProcess";
 import { deprecateProcess } from "@/api/deprecateProcess";
 import MarkdownIt from 'markdown-it';
@@ -99,7 +115,6 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            myEmail: store.state.oidc?.user?.email,
             detailsVisible: true,
             requirementsHeader: [
                 this.$t('process.code'),
@@ -193,7 +208,7 @@ export default {
             }
             return i;
         },
-        returnToRoute() {
+        baseUrl() {
             return `/${this.processCode.toLowerCase()}`;
         },
     },
@@ -220,14 +235,14 @@ export default {
             event.stopPropagation();
         },
         updateProcess() {
-            this.$router.push(this.returnToRoute + '/update');
+            this.$router.push(this.baseUrl + '/update');
         },
         askForApproval() {
             // Call API to ask for process approval
             let t = this;
-            const prfaResult = markProcessReadyForApproval(this.accessToken, this.processCode, this.$props.apiBaseUrl);
-            prfaResult.request().then(() => {
-                if(isSuccess(t, prfaResult)) {
+            const rpaResult = requestProcessApproval(this.accessToken, this.processCode, this.$props.apiBaseUrl);
+            rpaResult.request().then(() => {
+                if(isSuccess(t, rpaResult)) {
                     // Success
                     console.log(`Requested approval of the ${t.processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('process.requestedProcessApproval'));
@@ -241,7 +256,7 @@ export default {
                             storeProcessInfo(piResult);
                             const pi = piResult.processInfo.value;
                             if(isValid(pi))
-                                t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                                t.$router.push(t.baseUrl + `?v=${pi.version}`);
                         }
                     });
                 }
@@ -268,26 +283,26 @@ export default {
                             storeProcessInfo(piResult);
                             const pi = piResult.processInfo.value;
                             if(isValid(pi))
-                                t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                                t.$router.push(t.baseUrl + `?v=${pi.version}`);
                         }
                     });
                 }
             });
         },
         confirmApproveProcess() {
-            this.$refs.approveProcessDialog.showModal();
+            this.$refs.approveDialog.showModal();
         },
         approveProcess(message) {
             this.approveOrRejectProcess(true, message);
         },
         confirmRejectProcess() {
-            this.$refs.rejectProcessDialog.showModal();
+            this.$refs.rejectDialog.showModal();
         },
         rejectProcess(message) {
             this.approveOrRejectProcess(false, message);
         },
         confirmDeprecateProcess() {
-            this.$refs.warnDeprecateProcess.showModal();
+            this.$refs.deprecateDialog.showModal();
         },
         deprecateProcess(message) {
             // Call API to deprecate process
@@ -313,14 +328,14 @@ export default {
                             storeProcessInfo(piResult);
                             const pi = piResult.processInfo.value;
                             if(isValid(pi))
-                                t.$router.push(t.returnToRoute + `?v=${pi.version}`);
+                                t.$router.push(t.baseUrl + `?v=${pi.version}`);
                         }
                     });
                 }
             });
         },
         reviewProcess() {
-            this.$router.push(this.returnToRoute + '/review');
+            this.$router.push(this.baseUrl + '/review');
         },
     },
 }

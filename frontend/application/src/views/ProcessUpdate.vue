@@ -1,7 +1,7 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments"/>
-    <process-edit v-if="currentProcess" ref="processEdit" :info="info"
+    <process-edit v-if="info.current" ref="processEdit" :info="info"
                   :state="editState" :api-base-url="processApi" :process-code="processCode"/>
 </template>
 
@@ -25,9 +25,10 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentProcess: store.state.ims?.processInfo,   // Process
-            approvedProcess: null,                          // Process
-            info: reactive({ current: this.currentProcess, approved: this.approvedProcess }),
+            info: reactive({
+                current: store.state.ims?.processInfo, // Process
+                approved: null                         // Process
+            }),
             editState: reactive({ hasUnsavedChanges: false }),
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
@@ -58,15 +59,14 @@ export default {
     methods: {
         updateProcessInfo() {
             // Called by parent after process info is available (was loaded)
-            this.currentProcess = store.state.ims.processInfo;
-            if(isValid(this.currentProcess)) {
+            let current = store.state.ims?.processInfo;
+            if(isValid(current)) {
                 // Make sure we know which is the approved version (if any)
-                this.approvedProcess = findEntityWithStatus(this.currentProcess, Status.APPROVED.description);
-                console.log(`Editing ${this.$props.processCode} process v${this.currentProcess.version}`);
+                this.info.approved = findEntityWithStatus(current, Status.APPROVED.description);
+                console.log(`Editing ${this.$props.processCode} process v${current.version}`);
             }
 
-            this.info.current = this.currentProcess;
-            this.info.approved = this.approvedProcess;
+            this.info.current = current;
 
             // The ref to the process editor might not be ready yet, so we wait
             if(isValid(this.$refs.processEdit))

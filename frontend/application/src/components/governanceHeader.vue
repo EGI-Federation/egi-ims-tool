@@ -150,6 +150,7 @@ export default {
 .header .info > div > div {
     white-space: nowrap;
     font-size: smaller;
+    min-width: 7rem;
 }
 .header .info .badge {
     padding-bottom: 1px!important;

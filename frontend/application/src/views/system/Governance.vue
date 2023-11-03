@@ -23,7 +23,7 @@ export default {
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.IMS"), link:"/ims" },
-                { text: this.$t("navbar.governance") },
+                { text: this.$t("navbar.plan") },
             ],
         }
     },

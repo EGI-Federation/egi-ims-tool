@@ -1,7 +1,7 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments"/>
-    <process-info v-if="currentProcess" ref="processInfo" :info="info"
+    <process-info v-if="info.current" :info="info" ref="processInfo"
                   :api-base-url="processApi" :process-code="processCode"/>
 </template>
 
@@ -25,9 +25,10 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentProcess: store.state.ims?.processInfo,  // Process
-            approvedProcess: null,                         // Process
-            info: reactive({ current: this.currentProcess, approved: this.approvedProcess }),
+            info: reactive({
+                current: store.state.ims?.processInfo, // Process
+                approved: null                         // Process
+            }),
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t(`home.${this.$props.processCode}`) },
@@ -37,10 +38,10 @@ export default {
     methods: {
         updateProcessInfo() {
             // Called by parent after process info is available (was loaded)
-            let current = store.state.ims.processInfo;
+            let current = store.state.ims?.processInfo;
             if(isValid(current)) {
                 // Make sure we know which is the approved version (if any)
-                this.approvedProcess = findEntityWithStatus(current, Status.APPROVED.description);
+                this.info.approved = findEntityWithStatus(current, Status.APPROVED.description);
 
                 const requested = this.$props.version;
                 if(isValid(requested) && requested.length > 0) {
@@ -54,13 +55,12 @@ export default {
 
                 console.log(`Showing ${this.$props.processCode} process v${current.version}`);
             }
-            this.currentProcess = current;
-            this.info.current = this.currentProcess;
-            this.info.approved = this.approvedProcess;
+
+            this.info.current = current;
 
             // The ref to the process info might not be ready yet, so we wait
             if(isValid(this.$refs.processInfo))
-                this.$refs.processInfo?.setupTables();
+                this.$refs.processInfo.setupTables();
             else {
                 let t = this;
                 const delayedUpdate = setTimeout(function() {

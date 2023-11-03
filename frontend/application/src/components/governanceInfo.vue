@@ -32,7 +32,7 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store, storeGovernanceInfo } from "@/store";
-import {isValid, isSuccess, findEntityWithVersion, sortBy} from '@/utils'
+import { isValid, isSuccess, findEntityWithVersion, sortBy } from '@/utils'
 import { getGovernance } from "@/api/getGovernance";
 import MarkdownIt from 'markdown-it';
 import GovernanceHeader from "@/components/governanceHeader.vue"
@@ -52,7 +52,6 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentGovernance: store.state.ims?.governanceInfo, // Governance
             groupsHeader: [
                 {
                     name: this.$t('gov.body'),
@@ -77,13 +76,15 @@ export default {
                     sort: true,
                 }],
             groupsData: reactive({ rows: [] }),
-            info: reactive({ current: this.currentGovernance }),
+            info: reactive({
+                current: store.state.ims?.governanceInfo, // Governance
+            }),
             bidirectional: reactive({ historyVisible: false }),
         }
     },
     computed: {
         latest() { return store.state.ims?.governanceInfo; },
-        current() { return this.currentGovernance; },
+        current() { return this.info.current; },
         hasDescription() {
             return isValid(this.current) && isValid(this.current.description) &&
                 this.current.description.trim().length > 0;
@@ -161,9 +162,8 @@ export default {
 
                     console.log(`Showing governance v${current.version}`);
                 }
-                this.currentGovernance = current;
-                this.info.current = this.currentGovernance;
-                this.setupTables();
+                t.info.current = current;
+                t.setupTables();
             }
         });
     },

@@ -1,6 +1,6 @@
 <template>
     <ims-navbar module-name="IMS"/>
-    <router-view v-slot="{ Component }" :key="$route.fullPath">
+    <router-view v-slot="{ Component }" :key="cacheKey">
         <component ref="page" :is="Component" process-code="IMS" :process-api="imsApi"/>
     </router-view>
     <ims-footer ref="footer" module-name="IMS"/>
@@ -8,7 +8,7 @@
 
 <script>
 // @ is an alias to /src
-import { isValid, isSuccess } from "@/utils";
+import { isValid, isSuccess, removeUrlAnchor } from "@/utils";
 import { getProcess } from "@/api/getProcess";
 import { store, storeProcessInfo } from "@/store";
 import imsNavbar from "@/components/navbar.vue";
@@ -25,6 +25,10 @@ export default {
     },
     computed: {
         imsApi() { return process.env.VUE_APP_IMS_IMS_API; },
+        cacheKey() {
+            // Include the query params in the route key, but not the anchors
+            return removeUrlAnchor(this.$route.fullPath);
+        },
     },
     created() {
         let t = this;

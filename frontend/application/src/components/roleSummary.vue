@@ -1,6 +1,6 @@
 <template>
 <div class="role-info">
-    <h3><router-link :to="`${baseUrl}/${roleCode}`">{{ role.name }}</router-link></h3>
+    <h5><router-link :to="`${baseUrl}/${roleCode}`">{{ role.name }}</router-link></h5>
     <div class="d-flex flex-nowrap justify-content-between">
         <div class="d-flex flex-nowrap info">
             <div>
@@ -18,7 +18,7 @@
             <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{ $t('role.assign') }}
             </button>
-            <ul class="dropdown-menu user-list">
+            <ul class="dropdown-menu dropdown-menu-end user-list">
                 <li v-for="user in users" class="dropdown-item check-item">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" :id="role.roleCode + '-' + user.checkinUserId"
@@ -35,9 +35,17 @@
             </ul>
         </div>
     </div>
-    <h6>{{ $t('role.tasks') }}</h6>
-    <div class="underline fade-top-border"/>
-    <vue3-markdown-it :source="role.tasks ? role.tasks : $t('ims.notDef')" />
+    <h6 v-if="hasRecommendation">{{ $t('role.recommendation') }}</h6>
+    <div v-if="hasRecommendation" class="underline fade-top-border"/>
+    <vue3-markdown-it v-if="hasRecommendation" :source="role.recommendation" />
+
+    <h6 v-if="hasInheritedTasks">{{ $t('role.tasks') }} inherited from global role {{ role.globalRoleName }}</h6>
+    <div v-if="hasInheritedTasks" class="underline fade-top-border"/>
+    <vue3-markdown-it v-if="hasInheritedTasks" :source="role.globalRoleTasks" />
+
+    <h6 v-if="hasTasks">{{ $t('role.tasks') }}</h6>
+    <div v-if="hasTasks" class="underline fade-top-border"/>
+    <vue3-markdown-it v-if="hasTasks" :source="role.tasks ? role.tasks : $t('ims.notDef')" />
 </div>
 </template>
 
@@ -75,10 +83,12 @@ export default {
         }
     },
     computed: {
+        systemProcess() {
+            return 'IMS' === this.$props.processCode;
+        },
         baseUrl() {
-            return isValid(this.$props.pageBaseUrl) ?
-                   this.$props.pageBaseUrl :
-                   `/${this.$props.processCode.toLowerCase()}/roles`;
+            return isValid(this.$props.pageBaseUrl) ? this.$props.pageBaseUrl :
+                `/${this.$props.processCode.toLowerCase()}${this.systemProcess ? '/plan' : ''}/roles`;
         },
         status() {
             return statusPill(this.$props.role.status, this.$t);
@@ -146,6 +156,12 @@ export default {
         isProcessManager() {
             const roleEnum = Roles[this.$props.processCode];
             return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
+        },
+        hasRecommendation() { return isValid(this.$props.role.recommendation); },
+        hasInheritedTasks() { return isValid(this.$props.role.globalRoleTasks); },
+        hasTasks() {
+            return isValid(this.$props.role.tasks) ||
+                  !isValid(this.$props.role.globalRoleTasks);
         },
     },
     methods: {
@@ -350,18 +366,15 @@ export default {
 <style scoped>
 .role-info {
     text-align: left;
-    padding: 0 1rem;
+    padding-left: 1rem;
 }
-.role-info h3 {
+.role-info h5 {
+    font-weight: 500;
     margin-top: 0.5rem;
     border-bottom: 1px solid var(--bs-secondary-bg);
 }
-.role-info h3 a {
+.role-info h5 a {
     text-decoration: none;
-    color: unset;
-}
-.role-info h3 a:hover {
-    color: var(--bs-link-color);
 }
 .role-info h6 {
     margin: .7rem 0 .25rem;

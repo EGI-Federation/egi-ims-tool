@@ -22,7 +22,7 @@
                     <div class="input-group flex-column flex-nowrap frequency">
                         <label for="reviewFrequency" class="form-label">{{ $t('ims.reviewFreq') }}:</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="reviewFrequency"
+                            <input type="number" class="form-control" id="reviewFrequency"
                                    v-model="reviewFrequency" required>
                             <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -705,9 +705,6 @@ export default {
                 pc.status !== pe.status)
                 return true;
 
-            // We will not check approval related fields, as those cannot be edited directly
-            // and approving a process creates a new version anyway
-
             // Check requirements and interfaces
             return this.requirementsChanged || this.interfacesChanged;
         },
@@ -1255,8 +1252,8 @@ export default {
     border-bottom: 1px solid #e9ecef;
 }
 .details .frequency {
-    min-width: 10rem;
-    max-width: 15rem;
+    min-width: 8rem;
+    max-width: 12rem;
 }
 .details .frequency button {
     width: 6rem;

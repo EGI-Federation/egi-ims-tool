@@ -34,7 +34,12 @@ export default {
         }
     },
     computed: {
-        baseUrl() { return `/${this.$props.processCode.toLowerCase()}/roles`; },
+        systemProcess() {
+            return 'IMS' === this.$props.processCode;
+        },
+        baseUrl() {
+            return `/${this.$props.processCode.toLowerCase()}${this.systemProcess ? '/plan' : ''}/roles`;
+        },
         roles() { return store.state.temp.roles; },
         isNew() { return 'new' === this.$route.params.role; },
         isImsOwner() {
@@ -53,13 +58,19 @@ export default {
             const roleEnum = Roles[this.$props.processCode];
             return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
         },
-        locationSegments() { return [
-            { text: this.$t("home.home"), link:"/" },
-            { text: this.$t(`home.${this.$props.processCode}`), link: `/${this.$props.processCode.toLowerCase()}` },
-            { text: this.$t("navbar.roles"), link: this.baseUrl },
-            { text: this.currentRole.name, link: this.isNew ? null : `${this.baseUrl}/${this.$route.params.role}` },
-            { text: this.$t("ims.edit") },
-        ]},
+        locationSegments() {
+            let segments = [
+                { text: this.$t("home.home"), link:"/" },
+                { text: this.$t(`home.${this.$props.processCode}`), link: `/${this.$props.processCode.toLowerCase()}` }];
+
+            if(this.systemProcess)
+                segments.push({ text: this.$t("navbar.plan"), link:"/ims/plan" });
+
+            return segments.concat([
+                { text: this.$t("navbar.roles"), link: this.baseUrl },
+                { text: this.currentRole.name, link: this.isNew ? null : `${this.baseUrl}/${this.$route.params.role}` },
+                { text: this.$t("ims.edit") }]);
+        },
     },
     created() {
         if(this.isNew) {

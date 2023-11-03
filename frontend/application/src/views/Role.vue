@@ -1,7 +1,7 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
-    <role-info v-if="role.current" :info="role" :page-base-url="baseUrl"
+    <role-info v-if="info.current" :info="info" :page-base-url="baseUrl"
                :api-base-url="processApi" :process-code="processCode"/>
 </template>
 
@@ -26,20 +26,31 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            role: reactive({
-                current: null,      // Role
-                implemented: null,  // Role
+            info: reactive({
+                current: store.state.ims?.roleInfo, // Role
+                implemented: null,                  // Role
             }),
         }
     },
     computed: {
-        baseUrl() { return `/${this.$props.processCode.toLowerCase()}/roles`; },
-        locationSegments() { return [
-            { text: this.$t("home.home"), link:"/" },
-            { text: this.$t(`home.${this.$props.processCode}`), link: `/${this.$props.processCode.toLowerCase()}` },
-            { text: this.$t("navbar.roles"), link: this.baseUrl },
-            { text: isValid(this.role?.current) ? this.role.current.name : this.$route.params.role },
-        ]},
+        systemProcess() {
+            return 'IMS' === this.$props.processCode;
+        },
+        baseUrl() {
+            return `/${this.$props.processCode.toLowerCase()}${this.systemProcess ? '/plan' : ''}/roles`;
+        },
+        locationSegments() {
+            let segments = [
+                { text: this.$t("home.home"), link:"/" },
+                { text: this.$t(`home.${this.$props.processCode}`), link: `/${this.$props.processCode.toLowerCase()}` }];
+
+            if(this.systemProcess)
+                segments.push({ text: this.$t("navbar.plan"), link:"/ims/plan" });
+
+            return segments.concat([
+                { text: this.$t("navbar.roles"), link: this.baseUrl },
+                { text: isValid(this.info?.current) ? this.info.current.name : this.$route.params.role }]);
+        },
     },
     created() {
         // Fetch the role details from the API
@@ -54,7 +65,7 @@ export default {
                 let current = store.state.ims.roleInfo;
                 if(isValid(current)) {
                     // Make sure we know which is the implemented version (if any)
-                    t.role.implemented = findEntityWithStatus(current, Status.IMPLEMENTED.description);
+                    t.info.implemented = findEntityWithStatus(current, Status.IMPLEMENTED.description);
 
                     const requested = this.$props.version;
                     if(isValid(requested) && requested.length > 0) {
@@ -68,7 +79,7 @@ export default {
 
                     console.log(`Showing role ${this.$props.processCode}.${t.$route.params.role} v${current.version}`);
                 }
-                t.role.current = current;
+                t.info.current = current;
                 t.$refs.breadCrumb.update(t.locationSegments);
             }
         });

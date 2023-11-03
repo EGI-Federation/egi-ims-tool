@@ -9,7 +9,8 @@ import OidcCallbackError from "@/views/auth/OidcCallbackError.vue";
 import Home from './views/Home.vue'
 import Process from './views/Process.vue'
 import ProcessUpdate from './views/ProcessUpdate.vue'
-import Roles from './views/Roles.vue'
+import Responsibilities from './views/Responsibilities.vue'
+import ResponsibilitiesUpdate from './views/ResponsibilitiesUpdate.vue'
 import Role from './views/Role.vue'
 import RoleUpdate from './views/RoleUpdate.vue'
 import Procedures from './views/Procedures.vue'
@@ -19,9 +20,7 @@ import Logout from "@/views/Logout.vue";
 import ManagementSystem from './views/system/system.vue'
 import Governance from "@/views/system/Governance.vue";
 import GovernanceUpdate from "@/views/system/GovernanceUpdate.vue";
-import systemRoles from "@/views/system/systemRoles.vue";
-import systemRole from './views/system/systemRole.vue'
-import systemRoleEdit from './views/system/systemRoleEdit.vue'
+import ResponsibilitiesReview from "@/views/system/ResponsibilitiesReview.vue";
 import systemPolicies from "@/views/system/systemPolicies.vue";
 import systemReports from "@/views/system/systemReports.vue";
 import systemProjects from "@/views/system/systemProjects.vue";
@@ -243,9 +242,11 @@ const routes = [
       { path: 'update', component: ProcessUpdate },
       { path: 'plan', component: Governance, props: route => ({ version: route.query?.v }) },
       { path: 'plan/update', component: GovernanceUpdate },
-      { path: 'plan/roles', component: systemRoles },
-      { path: 'plan/roles/:role', component: systemRole, props: route => ({ version: route.query.v }) },
-      { path: 'plan/roles/:role/edit', component: systemRoleEdit },
+      { path: 'plan/roles', component: Responsibilities, props: route => ({ version: route.query?.v }) },
+      { path: 'plan/roles/:role', component: Role, props: route => ({ version: route.query.v }) },
+      { path: 'plan/roles/:role/edit', component: RoleUpdate },
+      { path: 'plan/responsibilities/update', component: ResponsibilitiesUpdate },
+      { path: 'plan/responsibilities/review', component: ResponsibilitiesReview },
       { path: 'policies', component: systemPolicies },
       { path: 'procedures', component: Procedures },
       { path: 'reports', component: systemReports },
@@ -537,9 +538,10 @@ const routes = [
       { path: '', name:'slm-home', component: Process, props: route => ({ version: route.query?.v }) },
       { path: 'update', component: ProcessUpdate },
       { path: 'review', component: slmReview },
-      { path: 'roles', component: Roles },
+      { path: 'roles', component: Responsibilities, props: route => ({ version: route.query?.v }) },
       { path: 'roles/:role', component: Role, props: route => ({ version: route.query?.v }) },
       { path: 'roles/:role/edit', component: RoleUpdate },
+      { path: 'responsibilities/update', component: ResponsibilitiesUpdate },
       { path: 'procedures', component: Procedures },
       { path: 'kpis', component: KPIs },
       { path: 'catalogs', component: slmCatalogs },

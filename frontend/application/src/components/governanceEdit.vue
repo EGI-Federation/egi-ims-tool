@@ -30,7 +30,7 @@
                 <!-- Description -->
                 <h3>{{ $t('ims.description') }}</h3>
                 <textbox-with-preview class="mt-1" :label="$t('gov.goalsLabel')" :text="descriptionEditor"
-                                      :rows="10" :max-length=102400 required/>
+                                      :rows="10" :max-length=1048576 required/>
                 <!-- Annexes -->
                 <h3 id="annexes-title">{{ $t('gov.annexes') }}</h3>
                 <div class="groups">

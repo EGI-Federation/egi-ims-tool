@@ -116,9 +116,10 @@ export const store = createStore({
                 return {
                     language: null,
                     notifications: [{isNew: false}, {isNew: true}],
-                    governanceInfo: null,   // Governance
-                    processInfo: null,      // Process
-                    roleInfo: null,         // Role
+                    governanceInfo: null,       // Governance
+                    processInfo: null,          // Process
+                    responsibilityInfo: null,   // Responsibility
+                    roleInfo: null,             // Role
                     slm: {
                     },
                     error: null,
@@ -173,6 +174,11 @@ export const store = createStore({
                 updateProcessInfo(state, info) {
                     console.log(`Store ${info.processCode} process info v${info.processInfo.version}`);
                     state.processInfo = info.processInfo;
+                    state.error = info.error;
+                },
+                updateProcessResponsibilities(state, info) {
+                    console.log(`Store ${info.processCode} process responsibilities v${info.responsibilityInfo.version}`);
+                    state.responsibilityInfo = info.responsibilityInfo;
                     state.error = info.error;
                 },
                 updateProcessRoles(state, info) {
@@ -266,6 +272,19 @@ export const storeProcessInfo = function(piResult) {
         processInfo: latest,
         processCode: piResult.processCode,
         error: piResult.error.value
+    });
+}
+
+// Extract the role responsibilities then call a mutation on the store to save it
+export const storeProcessResponsibilities = function(prResult) {
+    let latest = {};
+    if(isValid(prResult?.responsibilityInfo?.value))
+        latest = prResult.responsibilityInfo.value;
+
+    store.commit('ims/updateProcessResponsibilities', {
+        responsibilityInfo: latest,
+        processCode: prResult.processCode,
+        error: prResult.error.value
     });
 }
 

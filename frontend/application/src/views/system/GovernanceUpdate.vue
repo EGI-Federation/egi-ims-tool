@@ -1,7 +1,7 @@
 <template>
     <roles-loader process-code="IMS" :api-base-url="processApi"/>
     <bread-crumb :segments="locationSegments"/>
-    <governance-edit v-if="currentGovernance" ref="governanceEdit" :info="info"
+    <governance-edit v-if="info.current" ref="governanceEdit" :info="info"
                      :state="editState" :api-base-url="processApi"/>
 </template>
 
@@ -26,13 +26,14 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentGovernance: store.state.ims?.governanceInfo, // Governance
-            info: reactive({ current: this.currentGovernance }),
+            info: reactive({
+                current: store.state.ims?.governanceInfo, // Governance
+            }),
             editState: reactive({ hasUnsavedChanges: false }),
             locationSegments: [
                 { text: this.$t("home.home"), link:"/" },
                 { text: this.$t("home.IMS"), link: "/ims" },
-                { text: this.$t("navbar.governance"), link: "/ims/plan" },
+                { text: this.$t("navbar.plan"), link: "/ims/plan" },
                 { text: this.$t("ims.update") },
             ],
         }
@@ -57,8 +58,7 @@ export default {
                 // Success
                 storeGovernanceInfo(giResult);
 
-                this.currentGovernance = store.state.ims.governanceInfo;
-                this.info.current = this.currentGovernance;
+                this.info.current = store.state.ims.governanceInfo;
                 this.$refs.governanceEdit.setupTables();
             }
         });

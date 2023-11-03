@@ -1,6 +1,13 @@
 import { isValid, makeEnum } from "@/utils";
 import { store } from "@/store";
 
+// Define all role categories
+export const Category = Object.freeze({
+    IMS: "IMS",
+    PROCESS: "PROCESS",
+    SERVICE: "SERVICE",
+});
+
 // Define all the roles in the IMS
 export const Roles = {
 

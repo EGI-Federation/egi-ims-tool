@@ -370,3 +370,15 @@ export const scrollTo = function(id) {
         }, 500);
     }
 }
+
+// Strip anchor from URL, but keep query params
+export const removeUrlAnchor = function(url) {
+    let regex = new RegExp('(.+)(#.*$)?', 'ig');
+    let matches = regex.exec(url);
+    if(isValid(matches)) {
+        const fullPathNoAnchor = matches[1];
+        return fullPathNoAnchor;
+    }
+
+    return url;
+}

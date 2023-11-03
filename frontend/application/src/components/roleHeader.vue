@@ -193,6 +193,7 @@ export default {
 .header .info > div > div {
     white-space: nowrap;
     font-size: smaller;
+    min-width: 7rem;
 }
 .header .info > div:nth-child(2) > div:last-of-type {
     white-space: normal;

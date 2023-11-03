@@ -5,7 +5,7 @@
 
 <script>
 import ToastMessages from "@/components/toast.vue";
-import {isValid} from "@/utils";
+import { removeUrlAnchor } from "@/utils";
 
 export default {
     name: 'App',
@@ -13,15 +13,7 @@ export default {
     computed: {
         cacheKey() {
             // Include the query params in the route key, but not the anchors
-            const fullPath = this.$route.fullPath;
-            let regex = new RegExp('(\/[^\?#]*(\?=[^#]+)?)(#.*)?', 'ig');
-            let matches = regex.exec(fullPath);
-            if(isValid(matches)) {
-                const fullPathNoAnchor = matches[1];
-                return fullPathNoAnchor;
-            }
-
-            return fullPath;
+            return removeUrlAnchor(this.$route.fullPath);
         },
     },
 }
@@ -65,11 +57,15 @@ body {
     font-size: calc(1.25 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
     font-weight: 600;
 }
+#app h4 {
+    font-size: calc(1.25 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    font-weight: 500;
+}
 #app h5 {
-    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)));
+    font-size: calc(1.22 * (var(--font-scale) * var(--bs-body-font-size)));
 }
 #app .fs-5 {
-    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)))!important;
+    font-size: calc(1.22 * (var(--font-scale) * var(--bs-body-font-size)))!important;
 }
 #app h6,
 #app .form-control,
