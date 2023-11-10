@@ -336,7 +336,7 @@ export const storeUsersByRole = function(urResult) {
     });
 }
 
-// Extract the role definitions then call a mutation on the store to save it
+// Extract the role definitions
 export const extractProcessRoles = function(prResult) {
     let roles = new Map();
     if(isValid(prResult.page)) {

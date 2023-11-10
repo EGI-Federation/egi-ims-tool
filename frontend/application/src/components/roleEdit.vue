@@ -16,8 +16,7 @@
                     </div>
                 </div>
 
-                <!-- Tasks -->
-                <h3 v-if="isNew">{{ $t('ims.general') }}</h3>
+                <h3 v-if="isNew || isSystem">{{ $t('ims.general') }}</h3>
 
                 <!-- Name -->
                 <div v-if="isNew" class="text-field mb-3">
@@ -28,8 +27,43 @@
                     </div>
                 </div>
 
+                <!-- Recommendation -->
+                <textbox-with-preview v-if="isSystem" class="mt-1" :label="$t('role.recommendLabel')"
+                                      :text="recommendationEditor" :rows="5" :max-length=4096 required/>
+
+                <!-- Inherited Tasks -->
+                <h3 v-if="!isSystem">{{ $t('role.inheritedTasks') }}</h3>
+
+                <div v-if="!isSystem" class="input-group flex-column flex-nowrap mb-3">
+                    <label for="inheritFrom" class="form-label">{{ $t('role.inheritFrom') }}:</label>
+                    <div class="input-group inherit-from">
+                        <input type="text" readonly class="form-control" id="inheritFrom"
+                               :value="roleInfo.globalRoleName ? roleInfo.globalRoleName : $t('role.noInherit')">
+                        <button type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split text-nowrap">
+                            <span class="visually-hidden">Toggle</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" id="no-inherit"
+                                   @click="inheritGlobalRole($event)">
+                                {{ $t('role.noInherit') }}
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li v-for="[roleCode, roleInfo] in globalRoles">
+                                <a class="dropdown-item" href="#" :id="roleCode"
+                                   @click="inheritGlobalRole($event)">
+                                    {{ roleInfo.name }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <vue3-markdown-it v-if="roleInfo.globalRoleTasks" :source="roleInfo.globalRoleTasks" />
+
                 <!-- Tasks -->
                 <h3>{{ $t('role.tasks') }}</h3>
+
                 <textbox-with-preview class="mt-1" :label="$t('role.tasksLabel')" :text="tasksEditor"
                                       :rows="5" :max-length=4096 required/>
             </div>
@@ -47,8 +81,7 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store, extractProcessRoles, storeProcessRoles } from "@/store";
-import {isValid, strEqual, deepClone, isSuccess} from '@/utils'
-import { findUserWithEmail } from "@/roles";
+import { isValid, isSuccess, strEqual, deepClone } from '@/utils'
 import { getRoles } from "@/api/getRoles";
 import { updateRole } from "@/api/updateRole";
 import { addRole } from "@/api/addRole";
@@ -76,9 +109,15 @@ export default {
             myName: store.state.oidc?.user?.name,
             myEmail: store.state.oidc?.user?.email,
             bidirectional: reactive({ roleChanged: false }),
-            roleInfo: null,     // Role
-            existingRoles: [],  // Strings
-            tasksEditor: reactive({ text: isValid(this.edited) ? this.edited.tasks : "" }),
+            roleInfo: null,         // Role
+            existingRoles: [],      // Strings
+            globalRoles: new Map(), // Map<String, { name: String, tasks: String }>
+            recommendationEditor: reactive({
+                text: isValid(this.edited?.recommendation) ? this.edited?.recommendation : ""
+            }),
+            tasksEditor: reactive({
+                text: isValid(this.edited) ? this.edited.tasks : ""
+            }),
             forceCancel: false,
         }
     },
@@ -97,11 +136,14 @@ export default {
                 delete this.roleInfo['apiVersion'];
 
                 this.tasksEditor.text = this.roleInfo.tasks;
+                if(this.isSystem)
+                    this.recommendationEditor.text = this.roleInfo.recommendation;
             }
 
             return this.roleInfo;
         },
         isNew() { return 'new' === this.$route.params.role; },
+        isSystem() { return 'IMS' === this.$props.processCode; },
         roleCode() {
             if(!isValid(this.edited) && !this.isNew)
                 return this.$route.params.role;
@@ -135,15 +177,16 @@ export default {
             if(!strEqual(pc.tasks, this.tasksEditor.text) ||
                !strEqual(pc.name, pe.name) ||
                !strEqual(pc.roleCode, pe.roleCode) ||
+               !strEqual(pc.globalRole, pe.globalRole) ||
                 pc.status !== pe.status)
+                return true;
+
+            if(this.isSystem && !strEqual(pc.recommendation, this.recommendationEditor.text))
                 return true;
 
             return false;
         },
-        users() {
-            const users = store.state.temp.usersByProcess?.get(this.$props.processCode);
-            return isValid(users) ? users : new Map();
-        },
+        imsApi() { return process.env.VUE_APP_IMS_IMS_API; },
         returnToRoute() {
             if(this.isNew)
                 return this.$props.pageBaseUrl;
@@ -174,6 +217,25 @@ export default {
                 }, false);
             })
         },
+        inheritGlobalRole(event) {
+            event.preventDefault();
+
+            let el = event.target;
+            const globalRoleCode = el.getAttribute("id");
+            if("no-inherit" === globalRoleCode) {
+                this.roleInfo.globalRole = null;
+                this.roleInfo.globalRoleName = null;
+                this.roleInfo.globalRoleTasks = null;
+                return;
+            }
+
+            const globalRole = this.globalRoles.get(globalRoleCode);
+            if(isValid(globalRole)) {
+                this.roleInfo.globalRole = globalRoleCode;
+                this.roleInfo.globalRoleName = globalRole.name;
+                this.roleInfo.globalRoleTasks = globalRole.tasks;
+            }
+        },
         saveChanges(event) {
             const formIsValid = this.$refs.roleForm.checkValidity();
             if(this.isNew) {
@@ -201,6 +263,15 @@ export default {
                     console.log(`Saving ${this.$props.processCode}.${this.roleCode} role changes`);
 
                     this.roleInfo.tasks = this.tasksEditor.text;
+                    if(this.isSystem)
+                        this.roleInfo.recommendation = this.recommendationEditor.text;
+                    else if(isValid(this.roleInfo.globalRole)) {
+                        // Update the global role name and tasks
+                        const globalRole = this.globalRoles.get(this.roleInfo.globalRole);
+                        this.roleInfo.globalRoleName = globalRole.name;
+                        this.roleInfo.globalRoleTasks = globalRole.tasks;
+                    }
+
                     if(isValid(this.roleInfo.changeBy)) {
                         delete this.roleInfo.changeBy['kind'];
                         delete this.roleInfo.changeBy['given_name'];
@@ -287,14 +358,29 @@ export default {
         },
     },
     created() {
+        let t = this;
         if(this.isNew) {
             // Fetch the process roles from the API
-            let t = this;
-            const rrResult = getRoles(this.accessToken, this.$props.processCode, null, this.$props.apiBaseUrl);
-            rrResult.load().then(() => {
-                if(isSuccess(t, rrResult))
+            const prrResult = getRoles(this.accessToken, this.$props.processCode, null, this.$props.apiBaseUrl);
+            prrResult.load().then(() => {
+                if(isSuccess(t, prrResult))
                     // Success
-                    t.existingRoles = Array.from(extractProcessRoles(rrResult).keys());
+                    t.existingRoles = Array.from(extractProcessRoles(prrResult).keys());
+            });
+        }
+
+        if(!this.isSystem) {
+            // Fetch the global roles from the API
+            const grrResult = getRoles(this.accessToken, 'IMS', null, this.imsApi);
+            grrResult.load().then(() => {
+                if(isSuccess(t, grrResult)) {
+                    // Success
+                    // Keep just the inheritable global roles
+                    let inheritable = Array.from(extractProcessRoles(grrResult).values())
+                                           .filter(role => !role.assignable);
+                    for(const role of inheritable)
+                        t.globalRoles.set(role.role, { name: role.name, tasks: role.tasks });
+                }
             });
         }
     },
@@ -342,12 +428,17 @@ export default {
 .details .form-label {
     margin-bottom: 0!important;
 }
-.details label.form-check-label {
-    position: relative;
-    top: 2px;
+.inherit-from {
+    max-width: 30rem;
 }
-.check-item .form-check-input,
-.check-item .form-check-label {
-    cursor: pointer;
+.dropdown-menu {
+    background-color: var(--menu-background-color);
+    font-size: calc(var(--font-scale) * var(--bs-dropdown-font-size));
+}
+.dropdown-menu > li:hover,
+.dropdown-menu > li:focus,
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+    background-color: var(--menu-item-color);
 }
 </style>

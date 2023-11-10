@@ -21,8 +21,22 @@
     <div class="d-flex flex-nowrap section">
         <div class="role">
             <div v-show="detailsVisible" class="details">
-                <h3>{{ $t('role.tasks') }}</h3>
-                <vue3-markdown-it :source='tasks' />
+                <h3 v-if="hasRecommendation">{{ $t('role.recommendation') }}</h3>
+                <vue3-markdown-it v-if="hasRecommendation" :source='recommendation' />
+
+                <div v-if="hasInheritedTasks" class="d-flex flex-nowrap gap-1 inherited">
+                    <h3>{{ $t('role.tasks') }}</h3>
+                    <div>
+                    <p>{{ $t('role.inherited') }}
+                        <router-link :to="`/ims/plan/roles/${globalRoleCode}`">
+                            {{ globalRoleName }}
+                        </router-link></p>
+                    </div>
+                </div>
+                <vue3-markdown-it v-if="hasInheritedTasks" :source="inheritedTasks" />
+
+                <h3 v-if="hasTasks || !hasInheritedTasks">{{ $t('role.tasks') }}</h3>
+                <vue3-markdown-it v-if="hasTasks || !hasInheritedTasks" :source='tasks' />
             </div>
             <div v-if="isImsOwner || isImsManager || isProcessOwner || isProcessManager"
                  v-show="!detailsVisible" class="logs">
@@ -83,13 +97,11 @@ import { getRoleLogs } from "@/api/getRoleLogs";
 import { implementRole } from "@/api/implementRole";
 import { deprecateRole } from "@/api/deprecateRole";
 import { revokeRole } from "@/api/revokeRole";
-import MarkdownIt from 'markdown-it';
 import RoleHeader from "@/components/roleHeader.vue"
 import RoleLog from "@/components/roleLog.vue"
 import VersionHistory from "@/components/history.vue"
 import Message from "@/components/message.vue";
 
-var mdRender = new MarkdownIt();
 const logPageSize = 50;
 
 export default {
@@ -153,6 +165,8 @@ export default {
 
             return ('symbol' === typeof this.current.role) ? this.current.role.description : this.current.role;
         },
+        globalRoleName() { return this.current?.globalRoleName; },
+        globalRoleCode() { return this.current?.globalRole; },
         roles() { return store.state.temp.roles; },
         isImsOwner() {
             const ims = Roles.IMS;
@@ -170,11 +184,27 @@ export default {
             const roleEnum = Roles[this.$props.processCode];
             return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
         },
+        hasRecommendation() {
+            return isValid(this.current?.recommendation) && this.current.recommendation.trim().length > 0;
+        },
+        hasInheritedTasks() {
+            return isValid(this.current?.globalRoleTasks) && this.current.globalRoleTasks.trim().length > 0;
+        },
+        hasTasks() {
+            return (isValid(this.current?.tasks) && this.current.tasks.trim().length > 0) ||
+                   !isValid(this.current?.globalRoleTasks);
+        },
+        recommendation() {
+            return isValid(this.current) && isValid(this.current.recommendation) &&
+                   this.current.recommendation.trim().length > 0 ? this.current.recommendation : "";
+        },
+        inheritedTasks() {
+            return isValid(this.current) && isValid(this.current.globalRoleTasks) &&
+                   this.current.globalRoleTasks.trim().length > 0 ? this.current.globalRoleTasks : "";
+        },
         tasks() {
             return isValid(this.current) && isValid(this.current.tasks) &&
-                this.current.tasks.trim().length > 0 ?
-                this.current.tasks :
-                this.$t('ims.notSet');
+                   this.current.tasks.trim().length > 0 ? this.current.tasks : this.$t('ims.notDef');
         },
         assignees() {
             const usersWithRole = findUsersWithRole(this.$props.processCode, this.current.role);
@@ -550,7 +580,29 @@ export default {
     text-align: left;
     padding: 0.5rem 1rem 0;
 }
-.role .details h3,
+.inherited {
+    margin-bottom: 0.5rem;
+}
+.inherited h3,
+.inherited p {
+    margin: 0;
+    line-height: 1.2;
+    color: var(--bs-secondary-color);
+}
+.inherited > div {
+    display: table;
+}
+.inherited p {
+    display: table-cell;
+    vertical-align: bottom;
+    white-space: nowrap;
+    padding-bottom: 3px;
+}
+.inherited a {
+    text-decoration: none;
+}
+.inherited,
+.role .details > h3,
 .role .logs h3 {
     border-bottom: 1px solid var(--bs-secondary-bg);
 }

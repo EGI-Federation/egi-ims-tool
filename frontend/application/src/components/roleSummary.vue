@@ -14,8 +14,10 @@
                 <div v-if="assignable.assignable">{{ assigneeNames }}</div>
             </div>
         </div>
-        <div v-if="assignable.assignable && (isImsOwner || isImsManager || isProcessManager || isProcessOwner)" class="dropdown">
-            <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div v-if="assignable.assignable && (isImsOwner || isImsManager || isProcessManager || isProcessOwner)"
+             class="dropdown">
+            <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
                 {{ $t('role.assign') }}
             </button>
             <ul class="dropdown-menu dropdown-menu-end user-list">
@@ -39,21 +41,28 @@
     <div v-if="hasRecommendation" class="underline fade-top-border"/>
     <vue3-markdown-it v-if="hasRecommendation" :source="role.recommendation" />
 
-    <h6 v-if="hasInheritedTasks">{{ $t('role.tasks') }} inherited from global role {{ role.globalRoleName }}</h6>
+    <div v-if="hasInheritedTasks" class="d-flex flex-nowrap gap-1 inherited">
+        <h6>{{ $t('role.tasks') }}</h6>
+        <p>{{ $t('role.inherited') }}
+            <router-link :to="`/ims/plan/roles/${role.globalRole}`">
+                {{ role.globalRoleName }}
+            </router-link>
+        </p>
+    </div>
     <div v-if="hasInheritedTasks" class="underline fade-top-border"/>
     <vue3-markdown-it v-if="hasInheritedTasks" :source="role.globalRoleTasks" />
 
     <h6 v-if="hasTasks">{{ $t('role.tasks') }}</h6>
     <div v-if="hasTasks" class="underline fade-top-border"/>
-    <vue3-markdown-it v-if="hasTasks" :source="role.tasks ? role.tasks : $t('ims.notDef')" />
+    <vue3-markdown-it v-if="hasTasks"
+                      :source="role.tasks && role.tasks.trim().length > 0 ? role.tasks : $t('ims.notDef')" />
 </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import MarkdownIt from "markdown-it";
-import {findEntityWithStatus, isValid, Status, statusPill, userNames} from "@/utils";
-import {Roles, hasRole, findUsersWithRole, findUserWithEmail} from "@/roles";
+import { Status, isValid, findEntityWithStatus, statusPill, userNames } from "@/utils";
+import { Roles, hasRole, findUsersWithRole } from "@/roles";
 import { store, storeUsers, storeUsersByRole } from "@/store";
 import { assignRole } from "@/api/assignRole";
 import { revokeRole } from "@/api/revokeRole";
@@ -61,8 +70,6 @@ import { includeInProcess } from "@/api/includeInProcess";
 import { excludeFromProcess } from "@/api/excludeFromProcess";
 import { getUsers } from "@/api/getUsers";
 import { getUsersWithRole } from "@/api/getUsersWithRole";
-
-var mdRender = new MarkdownIt();
 
 export default {
     name: 'roleSummary',
@@ -157,11 +164,15 @@ export default {
             const roleEnum = Roles[this.$props.processCode];
             return hasRole(this.roles, roleEnum.PROCESS_MANAGER);
         },
-        hasRecommendation() { return isValid(this.$props.role.recommendation); },
-        hasInheritedTasks() { return isValid(this.$props.role.globalRoleTasks); },
+        hasRecommendation() {
+            return isValid(this.$props.role.recommendation) && this.$props.role.recommendation.trim().length > 0;
+        },
+        hasInheritedTasks() {
+            return isValid(this.$props.role.globalRoleTasks) && this.$props.role.globalRoleTasks.trim().length > 0;
+        },
         hasTasks() {
-            return isValid(this.$props.role.tasks) ||
-                  !isValid(this.$props.role.globalRoleTasks);
+            return (isValid(this.$props.role.tasks) && this.$props.role.tasks.trim().length > 0) ||
+                   !isValid(this.$props.role.globalRoleTasks);
         },
     },
     methods: {
@@ -414,6 +425,19 @@ export default {
 }
 button.btn {
     max-height: 2.35rem;
+}
+.inherited {
+    vertical-align: bottom;
+}
+.inherited h6,
+.inherited p {
+    margin: 0.7rem 0 0.25rem;
+    line-height: 1.2;
+    color: var(--bs-secondary-color);
+}
+.inherited a {
+    text-decoration: none;
+    opacity: 0.5;
 }
 label.form-check-label {
     position: relative;

@@ -91,12 +91,9 @@ import { store, storeProcessResponsibilities } from "@/store";
 import { isValid, isSuccess, strEqual, deepClone, scrollTo } from '@/utils'
 import { getResponsibility } from "@/api/getResponsibility";
 import { updateResponsibility } from "@/api/updateResponsibility";
-import MarkdownIt from 'markdown-it';
 import ResponsibilityHeader from "@/components/responsibilityHeader.vue"
 import TextboxWithPreview from "@/components/textboxPreview.vue"
 import Message from "@/components/message.vue"
-
-var mdRender = new MarkdownIt();
 
 export default {
     name: 'responsibilityEdit',
