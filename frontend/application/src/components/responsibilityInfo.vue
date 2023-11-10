@@ -90,15 +90,15 @@
 
 <script>
 // @ is an alias to /src
-import { reactive } from 'vue';
+import { reactive } from "vue";
 import { store, storeProcessInfo, storeProcessResponsibilities } from "@/store";
-import { Status, isValid, isSuccess } from '@/utils'
-import { Category } from '@/roles'
+import { Status, isValid, isSuccess } from "@/utils";
+import { Category } from "@/roles";
 import { requestResponsibilityApproval } from "@/api/requestResponsibilityApproval";
 import { getResponsibility } from "@/api/getResponsibility";
 import { approveResponsibility } from "@/api/approveResponsibility";
 import ResponsibilityHeader from "@/components/responsibilityHeader.vue";
-import VersionHistory from "@/components/history.vue"
+import VersionHistory from "@/components/history.vue";
 import Message from "@/components/message.vue";
 import RoleSummary from "@/components/roleSummary.vue";
 

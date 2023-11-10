@@ -88,12 +88,12 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store, storeProcessResponsibilities } from "@/store";
-import { isValid, isSuccess, strEqual, deepClone, scrollTo } from '@/utils'
+import { isValid, isSuccess, strEqual, deepClone } from "@/utils";
 import { getResponsibility } from "@/api/getResponsibility";
 import { updateResponsibility } from "@/api/updateResponsibility";
-import ResponsibilityHeader from "@/components/responsibilityHeader.vue"
-import TextboxWithPreview from "@/components/textboxPreview.vue"
-import Message from "@/components/message.vue"
+import ResponsibilityHeader from "@/components/responsibilityHeader.vue";
+import TextboxWithPreview from "@/components/textboxPreview.vue";
+import Message from "@/components/message.vue";
 
 export default {
     name: 'responsibilityEdit',

@@ -285,15 +285,15 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
-import { isValid, isSuccess, strEqual, deepClone, userNames, scrollTo } from '@/utils'
-import { parseInterfaces, interfaceList } from '@/process'
+import { isValid, isSuccess, strEqual, deepClone, userNames, scrollTo } from "@/utils";
+import { parseInterfaces, interfaceList } from "@/process";
 import { getProcess } from "@/api/getProcess";
 import { updateProcess } from "@/api/updateProcess";
 import MarkdownIt from 'markdown-it';
-import ProcessHeader from "@/components/processHeader.vue"
-import TextboxWithPreview from "@/components/textboxPreview.vue"
-import TableControl, { html } from "@/components/table.vue"
-import Message from "@/components/message.vue"
+import ProcessHeader from "@/components/processHeader.vue";
+import TextboxWithPreview from "@/components/textboxPreview.vue";
+import TableControl, { html } from "@/components/table.vue";
+import Message from "@/components/message.vue";
 
 var mdRender = new MarkdownIt();
 

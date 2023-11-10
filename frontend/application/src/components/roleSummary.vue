@@ -73,7 +73,6 @@ import { getUsersWithRole } from "@/api/getUsersWithRole";
 
 export default {
     name: 'roleSummary',
-    components: { },
     props: {
         processCode: String,
         pageBaseUrl: String,

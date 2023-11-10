@@ -81,13 +81,16 @@
 import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store, extractProcessRoles, storeProcessRoles } from "@/store";
-import { isValid, isSuccess, strEqual, deepClone } from '@/utils'
+import { isValid, isSuccess, strEqual, deepClone } from "@/utils";
 import { getRoles } from "@/api/getRoles";
 import { updateRole } from "@/api/updateRole";
 import { addRole } from "@/api/addRole";
-import RoleHeader from "@/components/roleHeader.vue"
-import TextboxWithPreview from "@/components/textboxPreview.vue"
-import Message from "@/components/message.vue"
+import RoleHeader from "@/components/roleHeader.vue";
+import TextboxWithPreview from "@/components/textboxPreview.vue";
+import Message from "@/components/message.vue";
+import MarkdownIt from "markdown-it";
+
+var mdRender = new MarkdownIt();
 
 export default {
     name: 'roleEdit',

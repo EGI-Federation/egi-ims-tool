@@ -90,18 +90,20 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store, storeProcessRoles } from "@/store";
-import {Status, isValid, formatTime, getWeek, getDayOfYear, getDayOfWeek, strCapitalize, isSuccess} from '@/utils'
-import {findUserWithEmail, findUsersWithRole, hasRole, Roles} from "@/roles";
+import { Status, isValid, isSuccess, formatTime, getWeek, getDayOfYear, getDayOfWeek, strCapitalize } from "@/utils";
+import { findUserWithEmail, findUsersWithRole, hasRole, Roles} from "@/roles";
 import { getRoles } from "@/api/getRoles";
 import { getRoleLogs } from "@/api/getRoleLogs";
 import { implementRole } from "@/api/implementRole";
 import { deprecateRole } from "@/api/deprecateRole";
 import { revokeRole } from "@/api/revokeRole";
-import RoleHeader from "@/components/roleHeader.vue"
-import RoleLog from "@/components/roleLog.vue"
-import VersionHistory from "@/components/history.vue"
+import RoleHeader from "@/components/roleHeader.vue";
+import RoleLog from "@/components/roleLog.vue";
+import VersionHistory from "@/components/history.vue";
 import Message from "@/components/message.vue";
+import MarkdownIt from "markdown-it";
 
+var mdRender = new MarkdownIt();
 const logPageSize = 50;
 
 export default {

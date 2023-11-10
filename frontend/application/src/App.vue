@@ -4,8 +4,8 @@
 </template>
 
 <script>
-import ToastMessages from "@/components/toast.vue";
 import { removeUrlAnchor } from "@/utils";
+import ToastMessages from "@/components/toast.vue";
 
 export default {
     name: 'App',

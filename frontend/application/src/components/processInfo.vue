@@ -86,16 +86,16 @@
 // @ is an alias to /src
 import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
-import {Status, isValid, userNames, isSuccess, deepClone} from '@/utils'
-import { parseInterfaces, interfaceList } from '@/process'
+import { Status, isValid, isSuccess, userNames } from "@/utils";
+import { parseInterfaces, interfaceList } from "@/process";
 import { getProcess } from "@/api/getProcess";
 import { requestProcessApproval } from "@/api/requestProcessApproval";
 import { approveProcess } from "@/api/approveProcess";
 import { deprecateProcess } from "@/api/deprecateProcess";
 import MarkdownIt from 'markdown-it';
-import ProcessHeader from "@/components/processHeader.vue"
-import VersionHistory from "@/components/history.vue"
-import TableControl, { html } from "@/components/table.vue"
+import ProcessHeader from "@/components/processHeader.vue";
+import VersionHistory from "@/components/history.vue";
+import TableControl, { html } from "@/components/table.vue";
 import Message from "@/components/message.vue";
 
 var mdRender = new MarkdownIt();

@@ -22,7 +22,6 @@
 
 <script>
 // @ is an alias to /src
-import { isValid } from "@/utils";
 import VueMarkdownIt from "vue3-markdown-it";
 
 export default {
