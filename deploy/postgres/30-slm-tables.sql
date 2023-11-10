@@ -218,3 +218,60 @@ create table slm.role_holder_map
 
 alter table slm.role_holder_map
     owner to ims;
+
+create sequence slm.process_version_seq
+    as integer;
+
+alter sequence slm.process_version_seq owner to ims;
+
+alter sequence slm.process_version_seq owned by slm.process.version;
+
+create sequence slm.process_id_seq;
+
+alter sequence slm.process_id_seq owner to ims;
+
+alter sequence slm.process_id_seq owned by slm.process.id;
+
+create sequence slm.process_interfaces_id_seq;
+
+alter sequence slm.process_interfaces_id_seq owner to ims;
+
+alter sequence slm.process_interfaces_id_seq owned by slm.process_interfaces.id;
+
+create sequence slm.process_requirements_id_seq;
+
+alter sequence slm.process_requirements_id_seq owner to ims;
+
+alter sequence slm.process_requirements_id_seq owned by slm.process_requirements.id;
+
+create sequence slm.responsibility_version_seq
+    as integer;
+
+alter sequence slm.responsibility_version_seq owner to ims;
+
+alter sequence slm.responsibility_version_seq owned by slm.responsibility.version;
+
+create sequence slm.responsibility_id_seq;
+
+alter sequence slm.responsibility_id_seq owner to ims;
+
+alter sequence slm.responsibility_id_seq owned by slm.responsibility.id;
+
+create sequence slm.rolelog_id_seq;
+
+alter sequence slm.rolelog_id_seq owner to ims;
+
+alter sequence slm.rolelog_id_seq owned by slm.rolelog.id;
+
+create sequence slm.roles_id_seq;
+
+alter sequence slm.roles_id_seq owner to ims;
+
+alter sequence slm.roles_id_seq owned by slm.roles.id;
+
+create sequence slm.users_id_seq;
+
+alter sequence slm.users_id_seq owner to ims;
+
+alter sequence slm.users_id_seq owned by slm.users.id;
+
