@@ -157,7 +157,7 @@ services:
       - ./postgres:/docker-entrypoint-initdb.d/
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "${IMS_DB_USER}", "-d", "${IMS_DB_PASSWORD}" ]
+      test: [ "CMD", "pg_isready", "-U", "${IMS_DB_USER}", "-d", "ims" ]
     ports:
       - "5432:5432"
 
