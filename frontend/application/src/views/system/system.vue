@@ -31,44 +31,30 @@ export default {
         },
     },
     created() {
+        // Fetch the process information from the API
         let t = this;
-        if(!isValid(this.processInfo) || !isValid(this.processInfo.code) || this.processInfo.code !== 'IMS') {
-            // Fetch the process information from the API
-            const piResult = getProcess(this.accessToken, 'IMS', true, this.imsApi);
-            piResult.load().then(() => {
-                if(isSuccess(t, piResult)) {
-                    // Success
-                    storeProcessInfo(piResult);
+        const piResult = getProcess(this.accessToken, 'IMS', true, this.imsApi);
+        piResult.load().then(() => {
+            if(isSuccess(t, piResult)) {
+                // Success
+                storeProcessInfo(piResult);
 
-                    // Tell the footer to update the process name and version
-                    if(isValid(t.$refs.footer.switchProcess))
-                        t.$refs.footer.switchProcess();
+                // Tell the footer to update the process name and version
+                if(isValid(t.$refs.footer.switchProcess))
+                    t.$refs.footer.switchProcess();
 
-                    // Tell the IMS page that the process info was loaded
-                    // The ref to the page might not be ready yet, so we wait
-                    const delayedUpdate = setTimeout(function() {
-                        let page = t.$refs.page;
-                        if(isValid(page)) {
-                            clearTimeout(delayedUpdate);
-                            if(isValid(page.updateProcessInfo))
-                                page.updateProcessInfo();
-                        }
-                    }, 100);
-                }
-            });
-        }
-        else {
-            // Tell the IMS page about the requested process version
-            // The ref to the page might not be ready yet, so we wait
-            const delayedUpdate = setTimeout(function() {
-                let page = t.$refs.page;
-                if(isValid(page)) {
-                    clearTimeout(delayedUpdate);
-                    if(isValid(page.updateProcessInfo))
-                        page.updateProcessInfo();
-                }
-            }, 100);
-        }
+                // Tell the IMS page that the process info was loaded
+                // The ref to the page might not be ready yet, so we wait
+                const delayedUpdate = setTimeout(function() {
+                    let page = t.$refs.page;
+                    if(isValid(page)) {
+                        clearTimeout(delayedUpdate);
+                        if(isValid(page.updateProcessInfo))
+                            page.updateProcessInfo();
+                    }
+                }, 100);
+            }
+        });
     },
 }
 </script>

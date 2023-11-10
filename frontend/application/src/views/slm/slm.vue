@@ -31,44 +31,30 @@ export default {
         },
     },
     created() {
+        // Fetch the process information from the API
         let t = this;
-        if(!isValid(this.processInfo) || !isValid(this.processInfo.code) || this.processInfo.code !== 'SLM') {
-            // Fetch the process information from the API
-            const piResult = getProcess(this.accessToken, 'SLM', true, this.slmApi);
-            piResult.load().then(() => {
-                if(isSuccess(t, piResult)) {
-                    // Success
-                    storeProcessInfo(piResult);
+        const piResult = getProcess(this.accessToken, 'SLM', true, this.slmApi);
+        piResult.load().then(() => {
+            if(isSuccess(t, piResult)) {
+                // Success
+                storeProcessInfo(piResult);
 
-                    // Tell the footer to update the process name and version
-                    if(isValid(t.$refs.footer.switchProcess))
-                        t.$refs.footer.switchProcess();
+                // Tell the footer to update the process name and version
+                if(isValid(t.$refs.footer.switchProcess))
+                    t.$refs.footer.switchProcess();
 
-                    // Tell the SLM page that the process info was loaded
-                    // The ref to the page might not be ready yet, so we wait
-                    const delayedUpdate = setTimeout(function() {
-                        let page = t.$refs.page;
-                        if(isValid(page)) {
-                            clearTimeout(delayedUpdate);
-                            if(isValid(page.updateProcessInfo))
-                                page.updateProcessInfo();
-                        }
-                    }, 100);
-                }
-            });
-        }
-        else {
-            // Tell the SLM page about the requested process version
-            // The ref to the page might not be ready yet, so we wait
-            const delayedUpdate = setTimeout(function() {
-                let page = t.$refs.page;
-                if(isValid(page)) {
-                    clearTimeout(delayedUpdate);
-                    if(isValid(page.updateProcessInfo))
-                        page.updateProcessInfo();
-                }
-            }, 100);
-        }
+                // Tell the SLM page that the process info was loaded
+                // The ref to the page might not be ready yet, so we wait
+                const delayedUpdate = setTimeout(function() {
+                    let page = t.$refs.page;
+                    if(isValid(page)) {
+                        clearTimeout(delayedUpdate);
+                        if(isValid(page.updateProcessInfo))
+                            page.updateProcessInfo();
+                    }
+                }, 100);
+            }
+        });
     },
 }
 </script>
