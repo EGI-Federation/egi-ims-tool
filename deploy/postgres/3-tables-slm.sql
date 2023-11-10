@@ -11,11 +11,9 @@ create table slm.process
         primary key,
     nextreview        timestamp(6),
     frequencyunit     varchar(10),
-    changedescription varchar(1024),
-    goals             varchar(4096),
-    scope             varchar(4096),
-    contact           varchar(255),
-    urldiagram        varchar(255)
+    changedescription varchar(2048),
+    description       varchar(10240),
+    contact           varchar(255)
 );
 
 alter table slm.process
@@ -74,6 +72,24 @@ create table slm.process_requirements_map
 alter table slm.process_requirements_map
     owner to ims;
 
+create table slm.responsibility
+(
+    reviewfrequency   integer not null,
+    status            integer not null,
+    version           serial
+        unique,
+    changedon         timestamp(6),
+    id                bigserial
+        primary key,
+    nextreview        timestamp(6),
+    frequencyunit     varchar(10),
+    changedescription varchar(2048),
+    description       varchar(10240)
+);
+
+alter table slm.responsibility
+    owner to ims;
+
 create table slm.rolelog
 (
     assigned  boolean not null,
@@ -88,6 +104,7 @@ alter table slm.rolelog
 
 create table slm.roles
 (
+    handover          boolean not null,
     status            integer not null,
     version           integer not null,
     changedon         timestamp(6),
@@ -97,7 +114,7 @@ create table slm.roles
     globalrolename    varchar(50),
     name              varchar(50),
     role              varchar(50),
-    changedescription varchar(1024),
+    changedescription varchar(2048),
     globalroletasks   varchar(4096),
     tasks             varchar(4096)
 );
@@ -144,6 +161,20 @@ create table slm.process_requirement_responsibles_map
 );
 
 alter table slm.process_requirement_responsibles_map
+    owner to ims;
+
+create table slm.responsibility_editor_map
+(
+    responsibility_id bigint not null
+        primary key
+        constraint fkh9m2eeeqq62ap3ayha7p2n0di
+            references slm.responsibility,
+    user_id           bigint
+        constraint fkkyj1788bk6qvpt3hoqbdgxyh0
+            references slm.users
+);
+
+alter table slm.responsibility_editor_map
     owner to ims;
 
 create table slm.role_assigner_map

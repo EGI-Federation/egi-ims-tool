@@ -8,14 +8,14 @@ create table ims.governance
     id                bigserial
         primary key,
     title             varchar(256),
-    changedescription varchar(1024),
-    description       varchar(255)
+    changedescription varchar(2048),
+    description       varchar(1048576)
 );
 
 alter table ims.governance
     owner to ims;
 
-create table ims.governance_annex_interfaces
+create table ims.governance_group_interfaces
 (
     id             bigserial
         primary key,
@@ -23,34 +23,48 @@ create table ims.governance_annex_interfaces
     interfaceswith varchar(255)
 );
 
-alter table ims.governance_annex_interfaces
+alter table ims.governance_group_interfaces
     owner to ims;
 
-create table ims.governance_annexes
+create table ims.governance_groups
 (
     id             bigserial
         primary key,
-    body           varchar(255),
-    composition    varchar(255),
-    decisionvoting varchar(255),
-    meeting        varchar(255)
+    body           varchar(10240),
+    composition    varchar(10240),
+    decisionvoting varchar(10240),
+    meeting        varchar(10240)
 );
 
-alter table ims.governance_annexes
+alter table ims.governance_groups
     owner to ims;
 
-create table ims.governance_annex_interfaces_map
+create table ims.governance_group_interfaces_map
 (
-    annex_id     bigint not null
-        constraint fkq6efm4apbmwltwuvmoxrcl1xg
-            references ims.governance_annexes,
+    group_id     bigint not null
+        constraint fk2ap67a1smr8343k4qppvobxei
+            references ims.governance_groups,
     interface_id bigint not null
-        constraint fk40wnbqbvp5cwsemjptuarfjfl
-            references ims.governance_annex_interfaces,
-    primary key (annex_id, interface_id)
+        constraint fkpswjy46td3d0sbptj1uoxjokl
+            references ims.governance_group_interfaces,
+    primary key (group_id, interface_id)
 );
 
-alter table ims.governance_annex_interfaces_map
+alter table ims.governance_group_interfaces_map
+    owner to ims;
+
+create table ims.governance_groups_map
+(
+    governance_id bigint not null
+        constraint fk5rjbel9uh4o4h7pwftn2en123
+            references ims.governance,
+    group_id      bigint not null
+        constraint fkkpgcqcw700kc2v0ul0geyl2uw
+            references ims.governance_groups,
+    primary key (governance_id, group_id)
+);
+
+alter table ims.governance_groups_map
     owner to ims;
 
 create table ims.process
@@ -64,28 +78,12 @@ create table ims.process
         primary key,
     nextreview        timestamp(6),
     frequencyunit     varchar(10),
-    changedescription varchar(1024),
-    goals             varchar(4096),
-    scope             varchar(4096),
-    contact           varchar(255),
-    urldiagram        varchar(255)
+    changedescription varchar(2048),
+    description       varchar(10240),
+    contact           varchar(255)
 );
 
 alter table ims.process
-    owner to ims;
-
-create table ims.process_annexes_map
-(
-    annex_id   bigint not null
-        constraint fkc9h7te73r7k0val8efwqw4x4p
-            references ims.governance_annexes,
-    process_id bigint not null
-        constraint fkcxj85mk4e3j249m1v79pmhxdi
-            references ims.governance,
-    primary key (annex_id, process_id)
-);
-
-alter table ims.process_annexes_map
     owner to ims;
 
 create table ims.process_interfaces
@@ -141,6 +139,24 @@ create table ims.process_requirements_map
 alter table ims.process_requirements_map
     owner to ims;
 
+create table ims.responsibility
+(
+    reviewfrequency   integer not null,
+    status            integer not null,
+    version           serial
+        unique,
+    changedon         timestamp(6),
+    id                bigserial
+        primary key,
+    nextreview        timestamp(6),
+    frequencyunit     varchar(10),
+    changedescription varchar(2048),
+    description       varchar(10240)
+);
+
+alter table ims.responsibility
+    owner to ims;
+
 create table ims.rolelog
 (
     assigned  boolean not null,
@@ -156,6 +172,8 @@ alter table ims.rolelog
 create table ims.roles
 (
     assignable        boolean not null,
+    category          integer not null,
+    handover          boolean not null,
     status            integer not null,
     version           integer not null,
     changedon         timestamp(6),
@@ -163,7 +181,8 @@ create table ims.roles
         primary key,
     name              varchar(50),
     role              varchar(50),
-    changedescription varchar(1024),
+    recommendation    varchar(1024),
+    changedescription varchar(2048),
     tasks             varchar(4096)
 );
 
@@ -185,11 +204,11 @@ alter table ims.users
 
 create table ims.governance_editor_map
 (
-    process_id bigint not null
+    governance_id bigint not null
         primary key
-        constraint fk4e7ha0784ijdqtdbp0xytr522
+        constraint fkc1i82uu0ciqcg3bs33yilvdgm
             references ims.governance,
-    user_id    bigint
+    user_id       bigint
         constraint fkandscob79c0svshl694bn0rla
             references ims.users
 );
@@ -223,6 +242,20 @@ create table ims.process_requirement_responsibles_map
 );
 
 alter table ims.process_requirement_responsibles_map
+    owner to ims;
+
+create table ims.responsibility_editor_map
+(
+    responsibility_id bigint not null
+        primary key
+        constraint fkh9m2eeeqq62ap3ayha7p2n0di
+            references ims.responsibility,
+    user_id           bigint
+        constraint fkkyj1788bk6qvpt3hoqbdgxyh0
+            references ims.users
+);
+
+alter table ims.responsibility_editor_map
     owner to ims;
 
 create table ims.role_assigner_map
