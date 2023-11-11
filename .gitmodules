@@ -7,3 +7,6 @@
 [submodule "backend/management-system"]
 	path = backend/management-system
 	url = https://github.com/EGI-Federation/egi-ims-config
+[submodule "messaging-service"]
+	path = backend/messaging-service
+	url = https://github.com/EGI-Federation/egi-ims-messaging
