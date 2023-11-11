@@ -238,7 +238,7 @@ export const formatNextEvent = function(frequency, unit, nextEvent, t) {
 // convert the fields before comparison for sort. Use it like this:
 //      someArray.sort(sortBy('name', true));
 //      someArray.sort(sortBy('price', true, parseInt));
-export const sortBy = function(field, reverse, primer) {
+export const sortBy = function(field, reverse = false, primer) {
     const key = primer ?
         function(x) { return primer(x[field]); } :
         function(x) { return x[field]; };

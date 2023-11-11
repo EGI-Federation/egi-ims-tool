@@ -18,7 +18,7 @@
              class="dropdown">
             <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                {{ $t('role.assign') }}
+                {{ $t(true === role.handover ? 'role.handover' : 'role.assign') }}
             </button>
             <ul class="dropdown-menu dropdown-menu-end user-list">
                 <li v-for="user in users" class="dropdown-item check-item">
@@ -61,7 +61,7 @@
 
 <script>
 // @ is an alias to /src
-import { Status, isValid, findEntityWithStatus, statusPill, userNames } from "@/utils";
+import { Status, isValid, findEntityWithStatus, statusPill, userNames, sortBy } from "@/utils";
 import { Roles, hasRole, findUsersWithRole } from "@/roles";
 import { store, storeUsers, storeUsersByRole } from "@/store";
 import { assignRole } from "@/api/assignRole";
@@ -89,12 +89,12 @@ export default {
         }
     },
     computed: {
-        systemProcess() {
+        isSystem() {
             return 'IMS' === this.$props.processCode;
         },
         baseUrl() {
             return isValid(this.$props.pageBaseUrl) ? this.$props.pageBaseUrl :
-                `/${this.$props.processCode.toLowerCase()}${this.systemProcess ? '/plan' : ''}/roles`;
+                `/${this.$props.processCode.toLowerCase()}${this.isSystem ? '/plan' : ''}/roles`;
         },
         status() {
             return statusPill(this.$props.role.status, this.$t);
@@ -119,7 +119,7 @@ export default {
                     users = this.usersByProcess?.get(this.$props.processCode);
             }
 
-            return isValid(users) ? Array.from(users.values()) : [];
+            return isValid(users) ? Array.from(users.values()).sort(sortBy('fullName')) : [];
         },
         assignable() {
             if(this.roleProcessStaff)
@@ -141,7 +141,7 @@ export default {
         },
         assignees() {
             const usersWithRole = findUsersWithRole(this.$props.processCode, this.$props.role.role);
-            return isValid(usersWithRole) ? usersWithRole : new Array();
+            return isValid(usersWithRole) ? usersWithRole.sort(sortBy('fullName')) : new Array();
         },
         assigneeNames() {
             return userNames(this.assignees, " ", this.$t('role.nobody'));
@@ -204,7 +204,8 @@ export default {
                 store.commit('updateUserRole', info);
 
                 // Call API to assign role to user
-                const arResult = assignRole(t.accessToken, processCode, t.roleCode, roleHolder, t.$props.apiBaseUrl);
+                const arResult = assignRole(t.accessToken, processCode, t.roleCode, roleHolder,
+                                            t.$props.role.handover, t.$props.apiBaseUrl);
                 arResult.logMessage = `Assigned ${processCode}.${t.roleCode} to ${roleHolder.fullName}`;
                 arResult.toastTitle = t.$t('ims.success');
                 arResult.errorTitle = t.$t('ims.error');

@@ -16,6 +16,8 @@
     <div class="d-flex flex-nowrap flex-column header">
         <div class="d-flex flex-nowrap info">
             <div>
+                <div v-if="isSystem">{{ $t('role.category') }} :</div>
+                <div>{{ $t('role.handoverNeeded') }} :</div>
                 <div>{{ $t('ims.version') }} :</div>
                 <div>{{ $t('ims.status') }} :</div>
                 <div>{{ $t('ims.changed') }} :</div>
@@ -23,6 +25,8 @@
                 <div>{{ $t('role.assignedTo') }} :</div>
             </div>
             <div>
+                <div v-if="isSystem">{{ roleCategory }}</div>
+                <div>{{ roleHandover }}</div>
                 <div>{{ roleVersion }}</div>
                 <div><span :class="roleStatus.pillClass">{{ roleStatus.label }}</span></div>
                 <div>{{ changeDate }}</div>
@@ -36,8 +40,8 @@
 <script>
 // @ is an alias to /src
 import { store } from "@/store";
-import { Status, isValid, statusPill, formatDate, userNames } from '@/utils'
-import {Roles, hasRole, getRoleByName, findUsersWithRole} from "@/roles";
+import { Status, isValid, statusPill, formatDate, userNames, sortBy } from '@/utils'
+import { Roles, Category, hasRole, findUsersWithRole } from "@/roles";
 
 export default {
     name: 'processHeader',
@@ -59,10 +63,10 @@ export default {
         latest() { return store.state.ims.roleInfo; },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
+        isSystem() { return 'IMS' === this.$props.processCode; },
         isNew() { return 'new' === this.$route.params.role; },
         isLatest() { return this.latest?.version === this.current?.version; },
         showHistory() { return this.$props.bidirectional?.historyVisible; },
-        roleChanged() { return this.$props.bidirectional?.roleChanged; },
         isDraft() { return isValid(this.current) && Status.DRAFT.description === this.current.status; },
         isImplemented() { return isValid(this.current) && Status.IMPLEMENTED.description === this.current.status; },
         isDeprecated() { return isValid(this.current) && Status.DEPRECATED.description === this.current.status; },
@@ -70,7 +74,7 @@ export default {
         roles() { return store.state.temp.roles; },
         assignees() {
             const usersWithRole = findUsersWithRole(this.$props.processCode, this.current?.role);
-            return isValid(usersWithRole) ? usersWithRole : new Array();
+            return isValid(usersWithRole) ? usersWithRole.sort(sortBy('fullName')) : new Array();
         },
         assigneeNames() {
             if(this.isNew)
@@ -104,8 +108,20 @@ export default {
             return hasRole(this.roles, roleEnum.PROCESS_DEVELOPER);
         },
         roleName() { return this.current?.name; },
-        roleVersion() { return isValid(this.current) ? this.current.version : "?"; },
+        roleHandover() { return isValid(this.current) ? this.$t(this.current.handover ? 'ims.yes' : 'ims.no') : ""; },
+        roleVersion() { return isValid(this.current) ? this.current.version : ""; },
         roleStatus() { return isValid(this.current) ? statusPill(this.current.status, this.$t) : {}; },
+        roleCategory() {
+            if(isValid(this.current)) {
+                switch(this.current.category) {
+                    case Category.IMS: return this.$t('role.imsRole');
+                    case Category.PROCESS: return this.$t('role.processRole');
+                    case Category.SERVICE: return this.$t('role.serviceRole');
+                }
+            }
+            return "?";
+        },
+        roleChanged() { return this.$props.bidirectional?.roleChanged; },
         changeDate() {
             return this.isNew ? this.$t("ims.now") : (
                    isValid(this.current) && isValid(this.current.changedOn) ?

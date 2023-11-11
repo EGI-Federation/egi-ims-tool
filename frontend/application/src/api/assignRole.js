@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-export const assignRole = function(accessToken, processCode, role, roleHolder, baseUrl) {
+export const assignRole = function(accessToken, processCode, role, roleHolder, handover, baseUrl) {
     const response = ref(null);
     const error = ref(null);
     const role_ = 'symbol' === typeof role ? role.description : role;
@@ -12,7 +12,8 @@ export const assignRole = function(accessToken, processCode, role, roleHolder, b
             const url = baseUrl + '/role/' + roleHolder?.checkinUserId;
             let data = await axios.post(url, {
                     role: role_,
-                    roleHolder: roleHolder
+                    roleHolder: roleHolder,
+                    handover: handover
                 },
                 {
                 headers: {

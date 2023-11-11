@@ -31,6 +31,50 @@
                 <textbox-with-preview v-if="isSystem" class="mt-1" :label="$t('role.recommendLabel')"
                                       :text="recommendationEditor" :rows="5" :max-length=4096 required/>
 
+                <div v-if="isSystem" class="input-group mb-3 flex-nowrap gap-2">
+                    <!-- Category -->
+                    <div class="input-group flex-column flex-nowrap category">
+                        <label for="category" class="form-label">{{ $t('role.category') }}:</label>
+                        <div class="input-group">
+                            <input type="text" readonly class="form-control" id="category" :value="roleCategory">
+                            <button type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                    class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split text-nowrap">
+                                <span class="visually-hidden">Toggle</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#" @click="changeCategory(Category.IMS, $event)">
+                                    {{ $t('role.imsRole') }}
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" @click="changeCategory(Category.PROCESS, $event)">
+                                    {{ $t('role.processRole') }}
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" @click="changeCategory(Category.SERVICE, $event)">
+                                    {{ $t('role.serviceRole') }}
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Handover -->
+                    <div class="input-group flex-column flex-nowrap handover">
+                        <label for="handover" class="form-label">{{ $t('role.handoverLabel') }}:</label>
+                        <div class="input-group">
+                            <input type="text" readonly class="form-control" id="handover" :value="roleHandover">
+                            <button type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                    class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split text-nowrap">
+                                <span class="visually-hidden">Toggle</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#" @click="changeHandover(true, $event)">
+                                    {{ $t('ims.yes') }}
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" @click="changeHandover(false, $event)">
+                                    {{ $t('ims.no') }}
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Inherited Tasks -->
                 <h3 v-if="!isSystem">{{ $t('role.inheritedTasks') }}</h3>
 
@@ -65,7 +109,7 @@
                 <h3>{{ $t('role.tasks') }}</h3>
 
                 <textbox-with-preview class="mt-1" :label="$t('role.tasksLabel')" :text="tasksEditor"
-                                      :rows="5" :max-length=4096 required/>
+                                      :rows="10" :max-length=4096 :required="!roleInfo.globalRole"/>
             </div>
         </div>
         </form>
@@ -89,6 +133,7 @@ import RoleHeader from "@/components/roleHeader.vue";
 import TextboxWithPreview from "@/components/textboxPreview.vue";
 import Message from "@/components/message.vue";
 import MarkdownIt from "markdown-it";
+import {Category} from "@/roles";
 
 var mdRender = new MarkdownIt();
 
@@ -109,12 +154,10 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            myName: store.state.oidc?.user?.name,
-            myEmail: store.state.oidc?.user?.email,
             bidirectional: reactive({ roleChanged: false }),
             roleInfo: null,         // Role
             existingRoles: [],      // Strings
-            globalRoles: new Map(), // Map<String, { name: String, tasks: String }>
+            globalRoles: new Map(), // Map<String, { name: String, tasks: String, handover: Boolean }>
             recommendationEditor: reactive({
                 text: isValid(this.edited?.recommendation) ? this.edited?.recommendation : ""
             }),
@@ -125,6 +168,9 @@ export default {
         }
     },
     computed: {
+        Category() {
+            return Category
+        },
         i18n() { return i18n },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
@@ -163,6 +209,20 @@ export default {
         roleValueFromName() {
             return this.roleInfo?.name.trim().toLowerCase().replace(/\s/g, "-");
         },
+        roleCategory() {
+            if(isValid(this.roleInfo)) {
+                switch(this.roleInfo.category) {
+                    case Category.IMS: return this.$t('role.imsRole');
+                    case Category.PROCESS: return this.$t('role.processRole');
+                    case Category.SERVICE: return this.$t('role.serviceRole');
+                }
+            }
+            return "?";
+        },
+        roleHandover() {
+            return isValid(this.roleInfo) ?
+                   this.$t(this.roleInfo.handover ? 'role.handoverMust' : 'role.handoverNope') : "?";
+        },
         changeDescription: {
             get() { return isValid(this.edited) ? this.edited.changeDescription : ""; },
             set(value) {
@@ -181,6 +241,8 @@ export default {
                !strEqual(pc.name, pe.name) ||
                !strEqual(pc.roleCode, pe.roleCode) ||
                !strEqual(pc.globalRole, pe.globalRole) ||
+               !strEqual(pc.category, pe.category) ||
+                pc.handover !== pe.handover ||
                 pc.status !== pe.status)
                 return true;
 
@@ -220,23 +282,34 @@ export default {
                 }, false);
             })
         },
+        changeCategory(category, event) {
+            event.preventDefault();
+            this.edited.category = category;
+            this.edited.assignable = (category === Category.IMS);
+        },
+        changeHandover(handover, event) {
+            event.preventDefault();
+            this.edited.handover = handover;
+        },
         inheritGlobalRole(event) {
             event.preventDefault();
 
             let el = event.target;
             const globalRoleCode = el.getAttribute("id");
             if("no-inherit" === globalRoleCode) {
-                this.roleInfo.globalRole = null;
-                this.roleInfo.globalRoleName = null;
-                this.roleInfo.globalRoleTasks = null;
+                this.edited.globalRole = null;
+                this.edited.globalRoleName = null;
+                this.edited.globalRoleTasks = null;
+                this.edited.handover = false;
                 return;
             }
 
             const globalRole = this.globalRoles.get(globalRoleCode);
             if(isValid(globalRole)) {
-                this.roleInfo.globalRole = globalRoleCode;
-                this.roleInfo.globalRoleName = globalRole.name;
-                this.roleInfo.globalRoleTasks = globalRole.tasks;
+                this.edited.globalRole = globalRoleCode;
+                this.edited.globalRoleName = globalRole.name;
+                this.edited.globalRoleTasks = globalRole.tasks;
+                this.edited.handover = globalRole.handover;
             }
         },
         saveChanges(event) {
@@ -382,7 +455,7 @@ export default {
                     let inheritable = Array.from(extractProcessRoles(grrResult).values())
                                            .filter(role => !role.assignable);
                     for(const role of inheritable)
-                        t.globalRoles.set(role.role, { name: role.name, tasks: role.tasks });
+                        t.globalRoles.set(role.role, { name: role.name, tasks: role.tasks, handover: role.handover });
                 }
             });
         }
@@ -431,8 +504,13 @@ export default {
 .details .form-label {
     margin-bottom: 0!important;
 }
-.inherit-from {
+.inherit-from
+{
     max-width: 30rem;
+}
+.category
+{
+    max-width: 20rem;
 }
 .dropdown-menu {
     background-color: var(--menu-background-color);
