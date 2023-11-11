@@ -54,18 +54,18 @@ body {
     font-weight: 600;
 }
 #app h3 {
-    font-size: calc(1.22 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
     font-weight: 600;
 }
 #app h4 {
-    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    font-size: calc(1.125 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
     font-weight: 500;
 }
 #app h5 {
-    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)));
+    font-size: calc(1.122 * (var(--font-scale) * var(--bs-body-font-size)));
 }
 #app .fs-5 {
-    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)))!important;
+    font-size: calc(1.125 * (var(--font-scale) * var(--bs-body-font-size)))!important;
 }
 #app h6,
 #app .form-control,
