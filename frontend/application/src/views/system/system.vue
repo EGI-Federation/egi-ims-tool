@@ -1,9 +1,11 @@
 <template>
     <ims-navbar module-name="IMS"/>
-    <router-view v-slot="{ Component }" :key="cacheKey">
-        <component ref="page" :is="Component" process-code="IMS" :process-api="imsApi"/>
-    </router-view>
-    <ims-footer ref="footer" module-name="IMS"/>
+    <div class="page-container">
+        <router-view v-slot="{ Component }" :key="cacheKey">
+            <component ref="page" class="page" :is="Component" process-code="IMS" :process-api="imsApi"/>
+        </router-view>
+        <ims-footer ref="footer" module-name="IMS"/>
+    </div>
 </template>
 
 <script>
@@ -13,10 +15,12 @@ import { getProcess } from "@/api/getProcess";
 import { store, storeProcessInfo } from "@/store";
 import imsNavbar from "@/components/navbar.vue";
 import imsFooter from "@/components/footer.vue";
+import Welcome from "@/components/welcome.vue";
+import IsmModule from "@/components/imsModule.vue";
 
 export default {
     name: 'ManagementSystem',
-    components: { imsNavbar, imsFooter },
+    components: {IsmModule, Welcome, imsNavbar, imsFooter },
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
@@ -58,7 +62,3 @@ export default {
     },
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

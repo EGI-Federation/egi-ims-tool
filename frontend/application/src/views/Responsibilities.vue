@@ -1,7 +1,9 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
-    <bread-crumb :segments="locationSegments"/>
-    <responsibility-info v-if="info.current" :process-code="processCode" :api-base-url="processApi" :info="info"/>
+    <div class="page">
+        <bread-crumb :segments="locationSegments"/>
+        <responsibility-info v-if="info.current" :process-code="processCode" :api-base-url="processApi" :info="info"/>
+    </div>
 </template>
 
 <script>

@@ -83,6 +83,22 @@ body {
     border-bottom:none;
     border-right:none;
 }
+.page-container {
+    --content-height: calc(100vh - var(--navbar-height));
+    position: absolute;
+    top: var(--navbar-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--content-height);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.page {
+    min-height: var(--content-height);
+    flex: none;
+}
 .tooltip {
     font-size: calc(0.9 * var(--font-scale) * var(--bs-tooltip-font-size))!important;
 }
@@ -102,5 +118,11 @@ body {
 }
 .gridjs-td > span > :last-child {
     margin-bottom: 0!important;
+}
+.dropdown-menu {
+    padding: 0!important;
+}
+.dropdown-divider {
+    margin: 0!important;
 }
 </style>

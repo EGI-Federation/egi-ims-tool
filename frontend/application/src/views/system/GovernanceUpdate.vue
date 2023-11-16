@@ -1,8 +1,10 @@
 <template>
     <roles-loader process-code="IMS" :api-base-url="processApi"/>
-    <bread-crumb :segments="locationSegments"/>
-    <governance-edit v-if="info.current" ref="governanceEdit" :info="info"
-                     :state="editState" :api-base-url="processApi"/>
+    <div class="page">
+        <bread-crumb :segments="locationSegments"/>
+        <governance-edit v-if="info.current" ref="governanceEdit" :info="info"
+                         :state="editState" :api-base-url="processApi"/>
+    </div>
 </template>
 
 <script>

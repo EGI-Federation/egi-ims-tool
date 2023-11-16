@@ -1,9 +1,11 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
-    <bread-crumb :segments="locationSegments"/>
-    <div class="about">
-        <br/>
-        <h1>This is the {{ processCode }} procedures page</h1>
+    <div class="page">
+        <bread-crumb :segments="locationSegments"/>
+        <div class="about">
+            <br/>
+            <h1>This is the {{ processCode }} procedures page</h1>
+        </div>
     </div>
 </template>
 

@@ -177,7 +177,7 @@ export default {
     left: 0;
     top: 0;
     padding-top: 1.8rem;
-    margin-left: .5rem;
+    margin-left: 1rem;
     margin-bottom: 1rem;
 }
 .entity-type {

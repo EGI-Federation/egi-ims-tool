@@ -100,7 +100,8 @@ export default {
 <style scoped>
 .welcome {
     gap: 1rem;
-    margin: 2rem auto 3rem auto;
+    padding-top: 2rem;
+    margin: 0 auto 3rem auto;
     max-width: fit-content;
     align-items: stretch;
     height: 5rem;

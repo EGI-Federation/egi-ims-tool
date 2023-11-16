@@ -1,7 +1,9 @@
 <template>
     <roles-loader process-code="IMS" :api-base-url="processApi"/>
-    <bread-crumb :segments="locationSegments"/>
-    <governance-info :version="version" :api-base-url="processApi"/>
+    <div class="page">
+        <bread-crumb :segments="locationSegments"/>
+        <governance-info :version="version" :api-base-url="processApi"/>
+    </div>
 </template>
 
 <script>

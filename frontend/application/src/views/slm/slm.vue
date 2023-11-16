@@ -1,9 +1,11 @@
 <template>
     <ims-navbar module-name="SLM"/>
-    <router-view v-slot="{ Component }" :key="cacheKey">
-        <component ref="page" :is="Component" process-code="SLM" :process-api="slmApi"/>
-    </router-view>
-    <ims-footer ref="footer" module-name="SLM"/>
+    <div class="page-container">
+        <router-view v-slot="{ Component }" :key="cacheKey">
+            <component ref="page" :is="Component" process-code="SLM" :process-api="slmApi"/>
+        </router-view>
+        <ims-footer ref="footer" module-name="SLM"/>
+    </div>
 </template>
 
 <script>
@@ -58,7 +60,3 @@ export default {
     },
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

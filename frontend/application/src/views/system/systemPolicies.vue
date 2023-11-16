@@ -1,8 +1,10 @@
 <template>
     <bread-crumb :segments="locationSegments"/>
-    <div class="about">
-        <br/>
-        <h1>This is the Policies page</h1>
+    <div class="page">
+        <div class="about">
+            <br/>
+            <h1>This is the Policies page</h1>
+        </div>
     </div>
 </template>
 

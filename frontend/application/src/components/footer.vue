@@ -122,21 +122,23 @@ export default {
 <style>
 :root {
     --footer-horizontal-width: 765px;
-    --footer-horizontal-height: 22.375rem;
+    --footer-horizontal-height: 19.8125rem;
 }
 </style>
 <style scoped>
 .footer {
+    --footer-background-color: #282a2d;
+    --footer-color: #5b5d5b;
     font-size: calc(var(--font-scale) * var(--bs-dropdown-font-size));
-    background-color: #282a2d;
-    color: #5b5d5b;
-    min-height: 15rem;
+    background-color: var(--footer-background-color);
+    color: var(--footer-color);
     flex-direction: column;
     margin-top: auto;
 }
 .footer .info {
     max-width: var(--max-content-width);
-    margin: 3rem auto 1rem;
+    padding: 3rem 1rem 1rem;
+    margin: 0 auto;
 }
 .footer .logo {
     min-width: 8rem;

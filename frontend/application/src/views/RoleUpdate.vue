@@ -1,10 +1,12 @@
 <template>
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
-    <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
-    <role-edit ref="roleEdit"
-                  :info="{ current: currentRole, implemented: implementedRole }"
-                  :state="editState" :page-base-url="baseUrl"
-                  :api-base-url="processApi" :process-code="processCode"/>
+    <div class="page">
+        <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
+        <role-edit ref="roleEdit"
+                      :info="{ current: currentRole, implemented: implementedRole }"
+                      :state="editState" :page-base-url="baseUrl"
+                      :api-base-url="processApi" :process-code="processCode"/>
+    </div>
 </template>
 
 <script>
