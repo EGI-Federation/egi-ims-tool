@@ -18,7 +18,7 @@
              class="dropdown">
             <button class="btn btn-outline-secondary text-nowrap dropdown-toggle" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                {{ $t(true === role.handover ? 'role.handover' : 'role.assign') }}
+                {{ $t('role.assign') }}
             </button>
             <ul class="dropdown-menu dropdown-menu-end user-list">
                 <li v-for="user in users" class="dropdown-item check-item">

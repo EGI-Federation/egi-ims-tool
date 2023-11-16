@@ -46,7 +46,7 @@ The following IMS processes are currently supported by this tool:
 The following components support the ones that implement the processes of the IMS:
 
 - [Configuration Service](https://github.com/EGI-Federation/egi-ims-config)
-- [Notification Service](https://github.com/EGI-Federation/egi-ims-messaging)
+- [Messaging Service](https://github.com/EGI-Federation/egi-ims-messaging)
 
 ## Configuration and deployment
 

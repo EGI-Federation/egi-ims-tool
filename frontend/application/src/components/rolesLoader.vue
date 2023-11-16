@@ -1,5 +1,4 @@
-<template>
-</template>
+<template></template>
 
 <script>
 // @ is an alias to /src
@@ -65,7 +64,3 @@ export default {
     },
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-</style>

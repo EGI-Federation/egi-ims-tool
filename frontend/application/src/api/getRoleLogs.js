@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import axios from 'axios'
-import {isValid} from "@/utils";
+import { isValid } from "@/utils";
 
 export const getRoleLogs = function(accessToken, processCode, role, from, limit, baseUrl) {
     const logs = ref(null);
