@@ -5,7 +5,7 @@
         <button type="button" class="btn-close btn-close" :aria-label="$t('ims.close')" @click="closeHistory"/>
     </div>
 </div>
-<div v-if="showHistory" class="bg-body-tertiary history">
+<div v-if="showHistory" class="history bg-body-tertiary">
     <div class="d-flex flex-nowrap flex-column">
         <!-- Version filter -->
         <div v-if="filterToStatus" class="filter">
@@ -17,36 +17,38 @@
             </div>
             <hr/>
         </div>
-        <div class="history-items">
-            <!-- Latest version -->
-            <div v-if="!applyFilter || !versionLatest?.status || filterToStatus === versionLatest?.status"
-                 :class="'history-item' + (versionLatest?.version === versionToShow?.version ? ' current-version' : '')"
-                 @click="showVersion(versionLatest?.version)">
-                <div>
-                    <div>{{ $t('history.version') }} {{ versionLatest?.version }} &nbsp;
-                        <span :class="statusCurrent.pillClass">{{ statusCurrent.label }}</span>
+        <Simplebar class="history-items">
+            <div class="history-items scroll-box" ref="historyItems">
+                <!-- Latest version -->
+                <div v-if="!applyFilter || !versionLatest?.status || filterToStatus === versionLatest?.status"
+                     :class="'history-item' + (versionLatest?.version === versionToShow?.version ? ' current-version' : '')"
+                     @click="showVersion(versionLatest?.version)">
+                    <div>
+                        <div>{{ $t('history.version') }} {{ versionLatest?.version }} &nbsp;
+                            <span :class="statusCurrent.pillClass">{{ statusCurrent.label }}</span>
+                        </div>
                     </div>
+                    <div>{{ versionLatest?.changedOn ? formatTime(versionLatest?.changedOn) : '?' }}</div>
+                    <div>{{ versionLatest?.changeBy ? versionLatest?.changeBy.fullName : '?' }}</div>
+                    <div>{{ versionLatest?.changeDescription }}</div>
+                    <hr/>
                 </div>
-                <div>{{ versionLatest?.changedOn ? formatTime(versionLatest?.changedOn) : '?' }}</div>
-                <div>{{ versionLatest?.changeBy ? versionLatest?.changeBy.fullName : '?' }}</div>
-                <div>{{ versionLatest?.changeDescription }}</div>
-                <hr/>
-            </div>
-            <!-- Older versions -->
-            <div v-if="versionLatest && versionLatest.history && versionLatest.history.versions"
-                 v-for="ver in filteredVersions" :class="'history-item' + (ver.version == versionToShow?.version ? ' current-version' : '')"
-                 @click="showVersion(ver.version)">
-                <div>
-                    <div>{{ $t('history.version') }} {{ ver.version }} &nbsp;
-                        <span :class="statusOf(ver).pillClass">{{ statusOf(ver).label }}</span>
+                <!-- Older versions -->
+                <div v-if="versionLatest && versionLatest.history && versionLatest.history.versions"
+                     v-for="ver in filteredVersions" :class="'history-item' + (ver.version == versionToShow?.version ? ' current-version' : '')"
+                     @click="showVersion(ver.version)">
+                    <div>
+                        <div>{{ $t('history.version') }} {{ ver.version }} &nbsp;
+                            <span :class="statusOf(ver).pillClass">{{ statusOf(ver).label }}</span>
+                        </div>
                     </div>
+                    <div>{{ ver.changedOn ? formatTime(ver.changedOn) : '?' }}</div>
+                    <div>{{ ver.changeBy ? ver.changeBy.fullName : '?' }}</div>
+                    <div>{{ ver.changeDescription }}</div>
+                    <hr/>
                 </div>
-                <div>{{ ver.changedOn ? formatTime(ver.changedOn) : '?' }}</div>
-                <div>{{ ver.changeBy ? ver.changeBy.fullName : '?' }}</div>
-                <div>{{ ver.changeDescription }}</div>
-                <hr/>
             </div>
-        </div>
+        </Simplebar>
     </div>
 </div>
 </template>
@@ -54,6 +56,8 @@
 <script>
 // @ is an alias to /src
 import { isValid, statusPill, formatTime } from '@/utils'
+import Simplebar from 'simplebar-vue';
+import 'simplebar-vue/dist/simplebar.min.css';
 
 export default {
     name: 'versionHistory',
@@ -67,6 +71,9 @@ export default {
         filterToTitle: String,
         filterToStatus: String,
         viewUrl: String,
+    },
+    components: {
+        Simplebar
     },
     data() {
         return {
@@ -105,13 +112,19 @@ export default {
             this.showHistory = false;
         },
         showVersion(version) {
-            this.$router.push(this.$props.viewUrl + `?v=${version}`)
+            this.$router.push(this.$props.viewUrl + `?v=${version}`);
         },
     },
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+.simplebar-scrollbar:before {
+    background-color: var(--bs-tertiary-color);
+}
+</style>
+
 <style scoped>
 .history-top {
     position: absolute;
@@ -128,6 +141,7 @@ export default {
     height: 100%;
 }
 .history {
+    --filter-height: 2.8rem;
     position: absolute;
     top: 0;
     right: 0;
@@ -135,26 +149,21 @@ export default {
     min-width: 15rem;
     max-width: 15rem;
 }
+.history-top,
+.history {
+    box-shadow: -5px 5px 10px rgb(0 0 0 / 0.15)
+}
 .history > div {
     height: 100%;
     overflow: hidden;
 }
 .history-items {
-    overflow-y: auto;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-}
-.history-items::-webkit-scrollbar { /* WebKit */
-    width: 0;
-    height: 0;
-}
-.history-top,
-.history {
-    box-shadow: -5px 5px 10px rgb(0 0 0 / 0.15)
+    height: calc(100% - var(--filter-height));
 }
 .filter {
+    height: var(--filter-height);
+    padding-top: .7rem;
     text-wrap: none;
-    margin-top: 1rem;
 }
 .filter .form-check {
     display: flex;
