@@ -8,123 +8,147 @@
             <ism-module
                 :title="$t('home.BA')"
                 code="BA"
-                icon="sliders"
+                :icon="Icons.BA"
+                :color="Colors.BA"
             />
             <ism-module
                 :title="$t('home.BDS')"
                 code="BDS"
-                icon="stack-overflow"
+                :icon="Icons.BDS"
+                :color="Colors.BDS"
             />
             <ism-module
                 :title="$t('home.CAPM')"
                 code="CAPM"
-                icon="sliders"
+                :icon="Icons.CAPM"
+                :color="Colors.CAPM"
             />
             <ism-module
                 :title="$t('home.CHM')"
                 code="CHM"
-                icon="sliders"
+                :icon="Icons.CHM"
+                :color="Colors.CHM"
             />
             <ism-module
                 :title="$t('home.COM')"
                 code="COM"
-                icon="stack-overflow"
+                :icon="Icons.COM"
+                :color="Colors.COM"
             />
             <ism-module
                 :title="$t('home.CONFM')"
                 code="CONFM"
-                icon="sliders"
+                :icon="Icons.CONFM"
+                :color="Colors.CONFM"
             />
             <ism-module
                 :title="$t('home.CSI')"
                 code="CSI"
-                icon="stack-overflow"
+                :icon="Icons.CSI"
+                :color="Colors.CSI"
             />
             <ism-module
                 :title="$t('home.CRM')"
                 code="CRM"
-                icon="sliders"
+                :icon="Icons.CRM"
+                :color="Colors.CRM"
             />
             <ism-module
                 :title="$t('home.CPM')"
                 code="CPM"
-                icon="stack-overflow"
+                :icon="Icons.CPM"
+                :color="Colors.CPM"
             />
             <ism-module
                 :title="$t('home.FA')"
                 code="FA"
-                icon="sliders"
+                :icon="Icons.FA"
+                :color="Colors.FA"
             />
             <ism-module
                 :title="$t('home.HR')"
                 code="HR"
-                icon="stack-overflow"
+                :icon="Icons.HR"
+                :color="Colors.HR"
             />
             <ism-module
                 :title="$t('home.ISM')"
                 code="ISM"
-                icon="sliders"
+                :icon="Icons.ISM"
+                :color="Colors.ISM"
             />
             <ism-module
                 :title="$t('home.ISRM')"
                 code="ISRM"
-                icon="stack-overflow"
+                :icon="Icons.ISRM"
+                :color="Colors.ISRM"
             />
             <ism-module
                 :title="$t('home.PPC')"
                 code="PPC"
-                icon="sliders"
+                :icon="Icons.PPC"
+                :color="Colors.PPC"
             />
             <ism-module
                 :title="$t('home.PM')"
                 code="PM"
-                icon="stack-overflow"
+                :icon="Icons.PM"
+                :color="Colors.PM"
             />
             <ism-module
                 :title="$t('home.PKM')"
                 code="PKM"
-                icon="sliders"
+                :icon="Icons.PKM"
+                :color="Colors.PKM"
             />
             <ism-module
                 :title="$t('home.PPM')"
                 code="PPM"
-                icon="stack-overflow"
+                :icon="Icons.PPM"
+                :color="Colors.PPM"
             />
             <ism-module
                 :title="$t('home.RDM')"
                 code="RDM"
-                icon="sliders"
+                :icon="Icons.RDM"
+                :color="Colors.RDM"
             />
             <ism-module
                 :title="$t('home.RM')"
                 code="RM"
-                icon="stack-overflow"
+                :icon="Icons.RM"
+                :color="Colors.RM"
             />
             <ism-module
                 :title="$t('home.SACM')"
                 code="SACM"
-                icon="sliders"
+                :icon="Icons.SACM"
+                :color="Colors.SACM"
             />
             <ism-module
                 :title="$t('home.SUPPM')"
                 code="SUPPM"
-                icon="stack-overflow"
+                :icon="Icons.SUPPM"
+                :color="Colors.SUPPM"
             />
             <ism-module
                 :title="$t('home.SLM')"
                 code="SLM"
-                icon="sliders"
+                :icon="Icons.SLM"
+                :color="Colors.SLM"
                 active=true
             />
             <ism-module
                 :title="$t('home.SPM')"
                 code="SPM"
-                icon="stack-overflow"
+                :icon="Icons.SPM"
+                :color="Colors.SPM"
             />
             <ism-module
                 :title="$t('home.SRM')"
                 code="SRM"
-                icon="sliders"
+                :icon="Icons.SRM"
+                :color="Colors.SRM"
             />
         </div>
         <p v-else class="must-enroll">
@@ -149,14 +173,13 @@
 // @ is an alias to /src
 import { isValid } from "@/utils";
 import { Roles, hasRole, parseRoles, rolesFromEntitlements } from "@/roles";
-import { store } from "@/store"
+import { Icons, IconColors } from "@/notify";
+import { store } from "@/store";
 import { mapActions } from "vuex";
 import imsNavbar from "@/components/navbar.vue";
 import Welcome from "@/components/welcome.vue";
 import IsmModule from "@/components/imsModule.vue";
 import imsFooter from "@/components/footer.vue";
-
-const voEnrollUrl = process.env.VUE_APP_EGI_VO_ENROLL_URL;
 
 export default {
     name: 'Home',
@@ -166,12 +189,14 @@ export default {
     },
     data() {
         return {
-            enrollUrl: voEnrollUrl,
+            enrollUrl: process.env.VUE_APP_EGI_VO_ENROLL_URL,
             isAuthenticated: store.state.oidc.is_checked,
             accessToken: store.state.oidc.access_token,
         }
     },
     computed: {
+        Icons() { return Icons; },
+        Colors() { return IconColors; },
         loggedIn() { return this.isAuthenticated && null != this.accessToken },
         roles() { return store.state.temp.roles; },
         canUseTool() { return hasRole(this.roles, Roles.VO.MEMBER); },

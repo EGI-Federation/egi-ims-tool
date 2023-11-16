@@ -21,7 +21,8 @@ export default {
         title: String,
         icon: String,
         code: String,
-        active: false
+        active: false,
+        color: String
     },
     data() {
         return {
@@ -31,7 +32,7 @@ export default {
     computed: {
         routerClass() { return isValid(this.active) ? "" : " no-route"; },
         cardClass() { return "card" + (!isValid(this.active) ? " disabled" : ""); },
-        cardIcon() { return "bi bi-" + this.icon; }
+        cardIcon() { return this.icon; }
     }
 }
 </script>
@@ -47,14 +48,26 @@ export default {
     min-width: 10rem;
     margin: 0 auto;
     border-radius: 1rem;
-    background-color: #00004b;
+    background: linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.45),
+                    rgba(0, 0, 0, 0.45)
+                ) v-bind(color);
 }
 .card:hover {
-    background-color: darkblue;
+    box-shadow: 0px 15px 26px rgba(0, 0, 0, 0.50);
+    transform:scale(1.05);
+    /*box-shadow: 0px 15px 26px rgba(0, 0, 0, 0.50);*/
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    -ms-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    background: v-bind(color);
 }
 .disabled,
 .disabled:hover {
-    background-color: gray;
+    background-color: lightgray;
     cursor: default!important;
 }
 .card-body {
