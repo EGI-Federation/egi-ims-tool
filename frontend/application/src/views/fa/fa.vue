@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="BF"/>
-    <router-view/>
-    <ims-footer module-name="FA" :module-version="faVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="FA" :module-version="faVersion"/>
+    </div>
 </template>
 
 <script>

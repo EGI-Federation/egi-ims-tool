@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="CSI"/>
-    <router-view/>
-    <ims-footer module-name="CSI" :module-version="csiVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="CSI" :module-version="csiVersion"/>
+    </div>
 </template>
 
 <script>

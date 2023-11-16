@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="BDS"/>
-    <router-view/>
-    <ims-footer module-name="BDS" :module-version="bdsVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="BDS" :module-version="bdsVersion"/>
+    </div>
 </template>
 
 <script>

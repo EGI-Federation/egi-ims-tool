@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="SUPPM"/>
-    <router-view/>
-    <ims-footer module-name="SUPPM" :module-version="suppmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="SUPPM" :module-version="suppmVersion"/>
+    </div>
 </template>
 
 <script>

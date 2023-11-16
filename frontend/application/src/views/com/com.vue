@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="COM"/>
-    <router-view/>
-    <ims-footer module-name="COM" :module-version="comVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="COM" :module-version="comVersion"/>
+    </div>
 </template>
 
 <script>

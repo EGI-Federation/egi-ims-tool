@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="HR"/>
-    <router-view/>
-    <ims-footer module-name="HR" :module-version="hrVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="HR" :module-version="hrVersion"/>
+    </div>
 </template>
 
 <script>

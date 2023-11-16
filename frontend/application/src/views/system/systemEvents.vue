@@ -1,9 +1,11 @@
 <template>
     <bread-crumb :segments="locationSegments"/>
-    <div class="page">
-        <div class="about">
-            <br/>
-            <h1>This is the Events page</h1>
+    <div class="page-container">
+        <div class="page">
+            <div class="about">
+                <br/>
+                <h1>This is the Events page</h1>
+            </div>
         </div>
     </div>
 </template>

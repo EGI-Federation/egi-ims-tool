@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="ISM"/>
-    <router-view/>
-    <ims-footer module-name="ISM" :module-version="ismVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="ISM" :module-version="ismVersion"/>
+    </div>
 </template>
 
 <script>

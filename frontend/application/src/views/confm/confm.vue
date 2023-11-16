@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="CONFM"/>
-    <router-view/>
-    <ims-footer module-name="CONFM" :module-version="confmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="CONFM" :module-version="confmVersion"/>
+    </div>
 </template>
 
 <script>

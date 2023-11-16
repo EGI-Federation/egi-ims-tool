@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="RDM"/>
-    <router-view/>
-    <ims-footer module-name="RDM" :module-version="rdmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="RDM" :module-version="rdmVersion"/>
+    </div>
 </template>
 
 <script>

@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="ISRM"/>
-    <router-view/>
-    <ims-footer module-name="ISRM" :module-version="isrmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="ISRM" :module-version="isrmVersion"/>
+    </div>
 </template>
 
 <script>

@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="PM"/>
-    <router-view/>
-    <ims-footer module-name="PM" :module-version="pmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="PM" :module-version="pmVersion"/>
+    </div>
 </template>
 
 <script>

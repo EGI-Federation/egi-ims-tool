@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="CHM"/>
-    <router-view/>
-    <ims-footer module-name="CHM" :module-version="chmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="CHM" :module-version="chmVersion"/>
+    </div>
 </template>
 
 <script>

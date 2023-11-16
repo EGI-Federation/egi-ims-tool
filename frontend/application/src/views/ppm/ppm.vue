@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="PPM"/>
-    <router-view/>
-    <ims-footer module-name="PPM" :module-version="ppmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="PPM" :module-version="ppmVersion"/>
+    </div>
 </template>
 
 <script>

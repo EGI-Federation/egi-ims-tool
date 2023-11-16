@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="CPM"/>
-    <router-view/>
-    <ims-footer module-name="CPM" :module-version="cpmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="CPM" :module-version="cpmVersion"/>
+    </div>
 </template>
 
 <script>

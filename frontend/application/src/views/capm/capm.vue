@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="CAPM"/>
-    <router-view/>
-    <ims-footer module-name="CAPM" :module-version="capmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="CAPM" :module-version="capmVersion"/>
+    </div>
 </template>
 
 <script>

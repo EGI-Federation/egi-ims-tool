@@ -1,7 +1,11 @@
 <template>
     <ims-navbar module-name="SACM"/>
-    <router-view/>
-    <ims-footer module-name="SACM" :module-version="sacmVersion"/>
+    <div class="page-container">
+        <div class="page">
+            <router-view/>
+        </div>
+        <ims-footer module-name="SACM" :module-version="sacmVersion"/>
+    </div>
 </template>
 
 <script>

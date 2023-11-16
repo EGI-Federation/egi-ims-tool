@@ -1,9 +1,9 @@
 <template>
     <bread-crumb :segments="locationSegments"/>
-    <div class="about">
-        <br/>
-        <h1>This is the SUPPM home page</h1>
-    </div>
+        <div class="about">
+            <br/>
+            <h1>This is the SUPPM home page</h1>
+        </div>
 </template>
 
 <script>
