@@ -81,7 +81,9 @@ export default {
                 name: this.$t("role.newRole"),
                 role: 'new-role',
                 tasks: '',
-                status: 'DRAFT'
+                status: 'DRAFT',
+                category: 'IMS',
+                handover: false
             };
         }
         else {

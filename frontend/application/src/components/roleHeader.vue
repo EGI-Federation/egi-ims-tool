@@ -16,8 +16,8 @@
     <div class="d-flex flex-nowrap flex-column header">
         <div class="d-flex flex-nowrap info">
             <div>
-                <div v-if="isSystem">{{ $t('role.category') }} :</div>
-                <div>{{ $t('role.handoverNeeded') }} :</div>
+                <div v-if="isSystem && !isNew">{{ $t('role.category') }} :</div>
+                <div v-if="!isNew">{{ $t('role.handoverNeeded') }} :</div>
                 <div>{{ $t('ims.version') }} :</div>
                 <div>{{ $t('ims.status') }} :</div>
                 <div>{{ $t('ims.changed') }} :</div>
@@ -25,8 +25,8 @@
                 <div>{{ $t('role.assignedTo') }} :</div>
             </div>
             <div>
-                <div v-if="isSystem">{{ roleCategory }}</div>
-                <div>{{ roleHandover }}</div>
+                <div v-if="isSystem && !isNew">{{ roleCategory }}</div>
+                <div v-if="!isNew">{{ roleHandover }}</div>
                 <div>{{ roleVersion }}</div>
                 <div><span :class="roleStatus.pillClass">{{ roleStatus.label }}</span></div>
                 <div>{{ changeDate }}</div>
