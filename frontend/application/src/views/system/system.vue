@@ -2,7 +2,7 @@
     <ims-navbar module-name="IMS"/>
     <div class="page-container">
         <router-view v-slot="{ Component }" :key="cacheKey">
-            <component ref="page" class="page" :is="Component" process-code="IMS" :process-api="imsApi"/>
+            <component ref="page" :is="Component" process-code="IMS" :process-api="imsApi"/>
         </router-view>
         <ims-footer ref="footer" module-name="IMS"/>
     </div>

@@ -1,174 +1,174 @@
 <template>
 <ims-navbar v-if="loggedIn"/>
-<div class="page-container">
-    <div class="page">
-      <welcome/>
-        <div v-if="loggedIn" class="home">
-            <div v-if="canUseTool" class="greet">{{ $t('navbar.processes') }}</div>
-            <div v-if="canUseTool" class="d-flex flex-wrap ism-modules">
-                <ism-module
-                    :title="$t('home.BA')"
-                    code="BA"
-                    :icon="Icons.BA"
-                    :color="Colors.BA"
-                />
-                <ism-module
-                    :title="$t('home.BDS')"
-                    code="BDS"
-                    :icon="Icons.BDS"
-                    :color="Colors.BDS"
-                />
-                <ism-module
-                    :title="$t('home.CAPM')"
-                    code="CAPM"
-                    :icon="Icons.CAPM"
-                    :color="Colors.CAPM"
-                />
-                <ism-module
-                    :title="$t('home.CHM')"
-                    code="CHM"
-                    :icon="Icons.CHM"
-                    :color="Colors.CHM"
-                />
-                <ism-module
-                    :title="$t('home.COM')"
-                    code="COM"
-                    :icon="Icons.COM"
-                    :color="Colors.COM"
-                />
-                <ism-module
-                    :title="$t('home.CONFM')"
-                    code="CONFM"
-                    :icon="Icons.CONFM"
-                    :color="Colors.CONFM"
-                />
-                <ism-module
-                    :title="$t('home.CSI')"
-                    code="CSI"
-                    :icon="Icons.CSI"
-                    :color="Colors.CSI"
-                />
-                <ism-module
-                    :title="$t('home.CRM')"
-                    code="CRM"
-                    :icon="Icons.CRM"
-                    :color="Colors.CRM"
-                />
-                <ism-module
-                    :title="$t('home.CPM')"
-                    code="CPM"
-                    :icon="Icons.CPM"
-                    :color="Colors.CPM"
-                />
-                <ism-module
-                    :title="$t('home.FA')"
-                    code="FA"
-                    :icon="Icons.FA"
-                    :color="Colors.FA"
-                />
-                <ism-module
-                    :title="$t('home.HR')"
-                    code="HR"
-                    :icon="Icons.HR"
-                    :color="Colors.HR"
-                />
-                <ism-module
-                    :title="$t('home.ISM')"
-                    code="ISM"
-                    :icon="Icons.ISM"
-                    :color="Colors.ISM"
-                />
-                <ism-module
-                    :title="$t('home.ISRM')"
-                    code="ISRM"
-                    :icon="Icons.ISRM"
-                    :color="Colors.ISRM"
-                />
-                <ism-module
-                    :title="$t('home.PPC')"
-                    code="PPC"
-                    :icon="Icons.PPC"
-                    :color="Colors.PPC"
-                />
-                <ism-module
-                    :title="$t('home.PM')"
-                    code="PM"
-                    :icon="Icons.PM"
-                    :color="Colors.PM"
-                />
-                <ism-module
-                    :title="$t('home.PKM')"
-                    code="PKM"
-                    :icon="Icons.PKM"
-                    :color="Colors.PKM"
-                />
-                <ism-module
-                    :title="$t('home.PPM')"
-                    code="PPM"
-                    :icon="Icons.PPM"
-                    :color="Colors.PPM"
-                />
-                <ism-module
-                    :title="$t('home.RDM')"
-                    code="RDM"
-                    :icon="Icons.RDM"
-                    :color="Colors.RDM"
-                />
-                <ism-module
-                    :title="$t('home.RM')"
-                    code="RM"
-                    :icon="Icons.RM"
-                    :color="Colors.RM"
-                />
-                <ism-module
-                    :title="$t('home.SACM')"
-                    code="SACM"
-                    :icon="Icons.SACM"
-                    :color="Colors.SACM"
-                />
-                <ism-module
-                    :title="$t('home.SUPPM')"
-                    code="SUPPM"
-                    :icon="Icons.SUPPM"
-                    :color="Colors.SUPPM"
-                />
-                <ism-module
-                    :title="$t('home.SLM')"
-                    code="SLM"
-                    :icon="Icons.SLM"
-                    :color="Colors.SLM"
-                    active=true
-                />
-                <ism-module
-                    :title="$t('home.SPM')"
-                    code="SPM"
-                    :icon="Icons.SPM"
-                    :color="Colors.SPM"
-                />
-                <ism-module
-                    :title="$t('home.SRM')"
-                    code="SRM"
-                    :icon="Icons.SRM"
-                    :color="Colors.SRM"
-                />
+    <div class="page-container">
+        <div class="page">
+          <welcome/>
+            <div v-if="loggedIn" class="home">
+                <div v-if="canUseTool" class="greet">{{ $t('navbar.processes') }}</div>
+                <div v-if="canUseTool" class="d-flex flex-wrap ism-modules">
+                    <ism-module
+                        :title="$t('home.BA')"
+                        code="BA"
+                        :icon="Icons.BA"
+                        :color="Colors.BA"
+                    />
+                    <ism-module
+                        :title="$t('home.BDS')"
+                        code="BDS"
+                        :icon="Icons.BDS"
+                        :color="Colors.BDS"
+                    />
+                    <ism-module
+                        :title="$t('home.CAPM')"
+                        code="CAPM"
+                        :icon="Icons.CAPM"
+                        :color="Colors.CAPM"
+                    />
+                    <ism-module
+                        :title="$t('home.CHM')"
+                        code="CHM"
+                        :icon="Icons.CHM"
+                        :color="Colors.CHM"
+                    />
+                    <ism-module
+                        :title="$t('home.COM')"
+                        code="COM"
+                        :icon="Icons.COM"
+                        :color="Colors.COM"
+                    />
+                    <ism-module
+                        :title="$t('home.CONFM')"
+                        code="CONFM"
+                        :icon="Icons.CONFM"
+                        :color="Colors.CONFM"
+                    />
+                    <ism-module
+                        :title="$t('home.CSI')"
+                        code="CSI"
+                        :icon="Icons.CSI"
+                        :color="Colors.CSI"
+                    />
+                    <ism-module
+                        :title="$t('home.CRM')"
+                        code="CRM"
+                        :icon="Icons.CRM"
+                        :color="Colors.CRM"
+                    />
+                    <ism-module
+                        :title="$t('home.CPM')"
+                        code="CPM"
+                        :icon="Icons.CPM"
+                        :color="Colors.CPM"
+                    />
+                    <ism-module
+                        :title="$t('home.FA')"
+                        code="FA"
+                        :icon="Icons.FA"
+                        :color="Colors.FA"
+                    />
+                    <ism-module
+                        :title="$t('home.HR')"
+                        code="HR"
+                        :icon="Icons.HR"
+                        :color="Colors.HR"
+                    />
+                    <ism-module
+                        :title="$t('home.ISM')"
+                        code="ISM"
+                        :icon="Icons.ISM"
+                        :color="Colors.ISM"
+                    />
+                    <ism-module
+                        :title="$t('home.ISRM')"
+                        code="ISRM"
+                        :icon="Icons.ISRM"
+                        :color="Colors.ISRM"
+                    />
+                    <ism-module
+                        :title="$t('home.PPC')"
+                        code="PPC"
+                        :icon="Icons.PPC"
+                        :color="Colors.PPC"
+                    />
+                    <ism-module
+                        :title="$t('home.PM')"
+                        code="PM"
+                        :icon="Icons.PM"
+                        :color="Colors.PM"
+                    />
+                    <ism-module
+                        :title="$t('home.PKM')"
+                        code="PKM"
+                        :icon="Icons.PKM"
+                        :color="Colors.PKM"
+                    />
+                    <ism-module
+                        :title="$t('home.PPM')"
+                        code="PPM"
+                        :icon="Icons.PPM"
+                        :color="Colors.PPM"
+                    />
+                    <ism-module
+                        :title="$t('home.RDM')"
+                        code="RDM"
+                        :icon="Icons.RDM"
+                        :color="Colors.RDM"
+                    />
+                    <ism-module
+                        :title="$t('home.RM')"
+                        code="RM"
+                        :icon="Icons.RM"
+                        :color="Colors.RM"
+                    />
+                    <ism-module
+                        :title="$t('home.SACM')"
+                        code="SACM"
+                        :icon="Icons.SACM"
+                        :color="Colors.SACM"
+                    />
+                    <ism-module
+                        :title="$t('home.SUPPM')"
+                        code="SUPPM"
+                        :icon="Icons.SUPPM"
+                        :color="Colors.SUPPM"
+                    />
+                    <ism-module
+                        :title="$t('home.SLM')"
+                        code="SLM"
+                        :icon="Icons.SLM"
+                        :color="Colors.SLM"
+                        active=true
+                    />
+                    <ism-module
+                        :title="$t('home.SPM')"
+                        code="SPM"
+                        :icon="Icons.SPM"
+                        :color="Colors.SPM"
+                    />
+                    <ism-module
+                        :title="$t('home.SRM')"
+                        code="SRM"
+                        :icon="Icons.SRM"
+                        :color="Colors.SRM"
+                    />
+                </div>
+                <p v-else class="must-enroll">
+                    {{ $t('home.voMember') }}
+                    {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.
+                </p>
             </div>
-            <p v-else class="must-enroll">
-                {{ $t('home.voMember') }}
-                {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.
-            </p>
+            <div v-if="!loggedIn" class="d-flex flex-nowrap auth">
+                <p class="mb-0">{{ $t('home.needAuth') }}</p>
+                <p class="mb-2">{{ $t('home.clickAuth') }}</p>
+                <div class="checkin-blue-border" @click="authenticateOidc"><p>{{ $t('home.signIn') }}</p></div>
+                <p class="mt-2 ">
+                    <b>{{ $t('home.pleaseNote') }}</b>: {{ $t('home.voMember') }}
+                    {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.
+                </p>
+            </div>
         </div>
-        <div v-if="!loggedIn" class="d-flex flex-nowrap auth">
-            <p class="mb-0">{{ $t('home.needAuth') }}</p>
-            <p class="mb-2">{{ $t('home.clickAuth') }}</p>
-            <div class="checkin-blue-border" @click="authenticateOidc"><p>{{ $t('home.signIn') }}</p></div>
-            <p class="mt-2 ">
-                <b>{{ $t('home.pleaseNote') }}</b>: {{ $t('home.voMember') }}
-                {{ $t('home.requestEnroll') }} <a :href="enrollUrl" target="_blank">{{ $t('home.clickingHere') }}</a>.
-            </p>
-        </div>
+        <ims-footer/>
     </div>
-    <ims-footer/>
-</div>
 </template>
 
 <script>
