@@ -470,7 +470,6 @@ export default {
 <style scoped>
 .content {
     position: relative;
-    gap: .5rem;
     width: 100%;
     min-height: unset;
 }

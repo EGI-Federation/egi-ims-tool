@@ -29,8 +29,8 @@ export default {
         return {
             accessToken: store.state.oidc?.access_token,
             info: reactive({
-                current: store.state.ims?.roleInfo, // Role
-                implemented: null,                  // Role
+                current: null,      // Role
+                implemented: null,  // Role
             }),
         }
     },

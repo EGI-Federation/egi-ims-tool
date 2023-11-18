@@ -30,8 +30,8 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentRole: store.state.ims?.roleInfo,   // Role
-            implementedRole: null,                    // Role
+            currentRole: null,      // Role
+            implementedRole: null,  // Role
             editState: reactive({ hasUnsavedChanges: false }),
         }
     },

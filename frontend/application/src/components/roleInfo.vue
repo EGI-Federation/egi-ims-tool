@@ -355,7 +355,7 @@ export default {
                 // Fetch the role assignment logs from the API
                 let t = this;
                 const rlResult = getRoleLogs(this.accessToken, this.$props.processCode, this.roleCode,
-                    this.oldestRoleLogFrom, logPageSize, this.$props.apiBaseUrl);
+                                             this.oldestRoleLogFrom, logPageSize, this.$props.apiBaseUrl);
                 rlResult.load().then(() => {
                     if(isSuccess(t, rlResult))
                         // Success
@@ -523,9 +523,15 @@ export default {
             };
         }
     },
-    created() {
-        this.loadRoleLogs();
-    },
+    mounted() {
+        let t = this;
+        const delayedRoleLogs = setTimeout(function() {
+            if(isValid(this.info.current)) {
+                clearTimeout(delayedRoleLogs);
+                t.loadRoleLogs();
+            }
+        }, 100);
+    }
 }
 </script>
 
