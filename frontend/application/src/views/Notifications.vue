@@ -61,7 +61,7 @@
                     <div v-if="!messagesEnd" class="more">
                         <button type="button" class="btn btn-primary text-nowrap" @click="loadMore">{{ $t('ims.loadMore') }}</button>
                     </div>
-                    <p v-if="messagesEnd && 0 === totalNotificationCount">{{ $t('navbar.noMessages') }}</p>
+                    <p v-if="messagesEnd && 0 === totalNotificationCount">{{ $t('navbar.noMessagesExplicit') }}</p>
                 </div>
             </div>
         </div>

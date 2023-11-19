@@ -80,7 +80,7 @@ export default {
                 // Success
                 storeProcessResponsibilities(riResult);
 
-                this.info.current = store.state.ims.responsibilityInfo;
+                t.info.current = store.state.ims.responsibilityInfo;
             }
         });
     },

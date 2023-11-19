@@ -196,12 +196,14 @@ export const store = createStore({
                     state.error = info.error;
                 },
                 updateNotifications(state, info) {
-                    console.log(`Store ${info.messages.length} notifications`);
+                    if(info.messages.length > 0)
+                        console.log(`Store ${info.messages.length} notifications`);
                     state.notifications = info.messages;
                     state.notificationsEnd = info.endOfMessages;
                 },
                 updateUnreadNotificationCount(state, unreadCount) {
-                    console.log(`Found ${unreadCount} unread notifications`);
+                    if(unreadCount > 0)
+                        console.log(`Found ${unreadCount} unread notifications`);
                     state.notificationsUnread = unreadCount;
                 },
                 markNotificationsRead(state, notificationIds) {

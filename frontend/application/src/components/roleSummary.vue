@@ -85,7 +85,6 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            myEmail: store.state.oidc?.user?.email,
         }
     },
     computed: {

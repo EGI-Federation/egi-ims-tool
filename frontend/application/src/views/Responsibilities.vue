@@ -60,7 +60,7 @@ export default {
 
                 let current = store.state.ims.responsibilityInfo;
                 if(isValid(current)) {
-                    const requested = this.$props.version;
+                    const requested = t.$props.version;
                     if(isValid(requested) && requested.length > 0) {
                         // Make sure we show the correct version
                         let requestedVersion = findEntityWithVersion(current, requested);
