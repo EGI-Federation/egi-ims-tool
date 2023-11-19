@@ -70,6 +70,7 @@ import { includeInProcess } from "@/api/includeInProcess";
 import { excludeFromProcess } from "@/api/excludeFromProcess";
 import { getUsers } from "@/api/getUsers";
 import { getUsersWithRole } from "@/api/getUsersWithRole";
+import {notifyUserChanges} from "@/notify";
 
 export default {
     name: 'roleSummary',
@@ -88,26 +89,18 @@ export default {
         }
     },
     computed: {
-        isSystem() {
-            return 'IMS' === this.$props.processCode;
-        },
+        isSystem() { return 'IMS' === this.$props.processCode; },
         baseUrl() {
             return isValid(this.$props.pageBaseUrl) ? this.$props.pageBaseUrl :
                 `/${this.$props.processCode.toLowerCase()}${this.isSystem ? '/plan' : ''}/roles`;
         },
-        status() {
-            return statusPill(this.$props.role.status, this.$t);
-        },
-        roleCode() {
-            return this.$props.role.roleCode;
-        },
+        status() { return statusPill(this.$props.role.status, this.$t); },
+        roleCode() { return this.$props.role.roleCode; },
         roleProcessStaff() {
             const roleEnum = Roles[this.$props.processCode];
             return this.roleCode === roleEnum.PROCESS_STAFF.description;
         },
-        usersByProcess() {
-            return store.state.temp?.usersByProcess;
-        },
+        usersByProcess() { return store.state.temp?.usersByProcess; },
         users() {
             let users = null;
             if(isValid(this.$props.role)) {
@@ -142,9 +135,7 @@ export default {
             const usersWithRole = findUsersWithRole(this.$props.processCode, this.$props.role.role);
             return isValid(usersWithRole) ? usersWithRole.sort(sortBy('fullName')) : new Array();
         },
-        assigneeNames() {
-            return userNames(this.assignees, " ", this.$t('role.nobody'));
-        },
+        assigneeNames() { return userNames(this.assignees, " ", this.$t('role.nobody')); },
         roles() { return store.state.temp?.roles; },
         isImsOwner() {
             const ims = Roles.IMS;
@@ -191,6 +182,7 @@ export default {
             let t = this;
             let el = event.target;
             const processCode = this.$props.processCode;
+            const linkToRole = `${this.baseUrl}/${this.roleCode}`;
             const checkinUserId = el.getAttribute("data-checkinUserId");
             const roleHolder = {
                 checkinUserId: checkinUserId,
@@ -227,6 +219,15 @@ export default {
                     }
                     else {
                         // Success
+                        // Notify the user and the process owner
+                        const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
+                        const notification = t.$t('role.assignedRoleUserNotif', {
+                            processCode: processCode,
+                            entity: t.$props.role.name });
+                        notifyUserChanges(t, processCode,
+                                          roleHolder, notification, linkToRole,
+                                          processOwner.description, arResult.toastMessage, linkToRole);
+
                         // Fetch the users with roles in this process from the API
                         const urResult = getUsersWithRole(t.accessToken, processCode, null, t.$props.apiBaseUrl);
                         urResult.load().then(() => {
@@ -267,6 +268,15 @@ export default {
                     }
                     else {
                         // Success
+                        // Notify the user and the process owner
+                        const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
+                        const notification = t.$t('role.revokedRoleUserNotif', {
+                            processCode: processCode,
+                            entity: t.$props.role.name });
+                        notifyUserChanges(t, processCode,
+                                          roleHolder, notification, linkToRole,
+                                          processOwner.description, rrResult.toastMessage, linkToRole);
+
                         // Fetch the users with roles in this process from the API
                         const urResult = getUsersWithRole(t.accessToken, processCode, null, t.$props.apiBaseUrl);
                         urResult.load().then(() => {
@@ -283,6 +293,7 @@ export default {
             let t = this;
             let el = event.target;
             const processCode = this.$props.processCode;
+            const linkToRole = `${this.baseUrl}/${this.roleCode}`;
             const checkinUserId = el.getAttribute("data-checkinUserId");
             const roleHolder = {
                 checkinUserId: checkinUserId,
@@ -317,6 +328,15 @@ export default {
                     }
                     else {
                         // Success
+                        // Notify the user and the process owner
+                        const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER
+                        const notification = t.$t('role.includedInProcessUserNotif', {
+                            processCode: processCode,
+                            entity: t.$props.role.name });
+                        notifyUserChanges(t, processCode,
+                                          roleHolder, notification, linkToRole,
+                                          processOwner.description, irResult.toastMessage, linkToRole);
+
                         // Fetch the users participating in this process from the API
                         const upResult = getUsers(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                         upResult.load().then(() => {
@@ -356,6 +376,15 @@ export default {
                     }
                     else {
                         // Success
+                        // Notify the user and the process owner
+                        const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER
+                        const notification = t.$t('role.excludedInProcessUserNotif', {
+                            processCode: processCode,
+                            entity: t.$props.role.name });
+                        notifyUserChanges(t, processCode,
+                                          roleHolder, notification, linkToRole,
+                                          processOwner.description, erResult.toastMessage, linkToRole);
+
                         // Fetch the users participating in this process from the API
                         const upResult = getUsers(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                         upResult.load().then(() => {

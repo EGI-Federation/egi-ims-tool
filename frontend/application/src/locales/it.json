@@ -52,6 +52,7 @@
         "new": "New",
         "earlier": "Earlier",
         "noMessages": "No notifications",
+        "noMessagesExplicit": "You do not have any notifications yet.",
         "viewAll": "View All"
     },
     "footer": {
@@ -328,7 +329,6 @@
         "logsTitle": "Assignment Log",
         "assigned": "Assigned",
         "revoked": "Revoked",
-        "loadMore": "Show Older",
         "noLogs": "No logs yet",
         "today": "Today",
         "yesterday": "Yesterday",

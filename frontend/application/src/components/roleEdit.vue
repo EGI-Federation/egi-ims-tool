@@ -103,7 +103,7 @@
                     </div>
                 </div>
 
-                <vue3-markdown-it v-if="roleInfo.globalRoleTasks" :source="roleInfo.globalRoleTasks" />
+                <vue3-markdown-it v-if="roleInfo?.globalRoleTasks" :source="roleInfo.globalRoleTasks" />
 
                 <!-- Tasks -->
                 <h3>{{ $t('role.tasks') }}</h3>

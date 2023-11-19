@@ -1,5 +1,8 @@
-import { isValid } from '@/utils'
-import { Roles, findUsersWithRole } from "@/roles";
+import { store } from "@/store";
+import { isValid, isSuccess } from '@/utils'
+import { sendMessage } from "@/api/sendMessage";
+import { sendMessageToUsersWithRole } from "@/api/sendMessageToRole";
+
 
 export const Icons = Object.freeze({
     IMS: "bi bi-columns-gap",
@@ -57,7 +60,45 @@ export const IconColors = Object.freeze({
     SUPPM: "#7f6000",
 });
 
-// Send notification to all users holding specified role
-export const notifyUsersWithRole = function(role, message) {
+// Send process-specific notification to a user
+export const notifyUser = function(t, processCode, user, message, messageLink) {
+    let smResult = sendMessage(store.state.oidc?.access_token, processCode, user,
+                                   message, messageLink,
+                                   process.env.VUE_APP_IMS_MSG_API);
+    smResult.notify().then(() => {
+        if(isSuccess(t, smResult))
+            // Notification sent
+            console.log(`Sent notification to ${user.fullName}`);
+    });
 }
 
+// Send notifications to all users holding a role
+export const notifyUsersWithRole = function(t, processCode, role, message, messageLink) {
+    let srmResult = sendMessageToUsersWithRole(store.state.oidc?.access_token, processCode, role,
+                                                   message, messageLink,
+                                                   process.env.VUE_APP_IMS_MSG_API);
+    srmResult.notify().then(() => {
+        if(isSuccess(t, srmResult)) {
+            // Notification sent
+            console.log(`Sent notifications to users with role ${processCode}.${role}`);
+        }
+    });
+}
+
+// Send notifications about a change affecting a user
+// Sends a notification to the affected user, and notifications to all users holding the specified role
+export const notifyUserChanges = function(t, processCode,
+                                          user, userMessage, userMessageLink,
+                                          role, roleMessage, roleMessageLink) {
+    // If the user is the currently logged-in user, do not send the user message
+    // We should know what we did, right?
+    const userInfo = store.state.oidc?.user;
+    if(isValid(userInfo.voperson_id) && userInfo.voperson_id !== user.chekinUserId)
+        // Send user notification
+        notifyUser(t, processCode, user, userMessage, userMessageLink);
+
+    if(isValid(role) && isValid(roleMessage))
+        // Send notification to all users with specified role
+        // This will skip the caller, if (s)he has the role
+        notifyUsersWithRole(t, processCode, role, roleMessage, roleMessageLink);
+}

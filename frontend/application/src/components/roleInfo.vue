@@ -267,14 +267,15 @@ export default {
                     irResult.toasts.showSuccess(irResult.successTitle, irResult.toastMessage);
 
                     // Notify process owner and manager
-                    let processOwner = this.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
-                    let processManager = this.isSystem ? Roles.IMS.IMS_MANAGER : Roles[processCode].PROCESS_MANAGER;
+                    const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
+                    const processManager = t.isSystem ? Roles.IMS.IMS_MANAGER : Roles[processCode].PROCESS_MANAGER;
+                    const linkToVersion = `${t.returnToRoute}?v=${t.latest.version}`;
                     const notification = t.$t('ims.implementedNotif', {
                                                processCode: processCode,
                                                type: t.$t('ims.role').toLowerCase(),
                                                entity: ` ${t.latest.name}` });
-                    notifyUsersWithRole(t, processCode, processOwner.description, notification, t.returnToRoute);
-                    notifyUsersWithRole(t, processCode, processManager.description, notification, t.returnToRoute);
+                    notifyUsersWithRole(t, processCode, processOwner.description, notification, linkToVersion);
+                    notifyUsersWithRole(t, processCode, processManager.description, notification, linkToVersion);
 
                     // Fetch the role definition from the API to include the new status
                     const riResult = getRoles(t.accessToken, processCode, t.roleCode, t.$props.apiBaseUrl);
@@ -282,7 +283,7 @@ export default {
                         if(isSuccess(t, riResult)) {
                             // Success
                             storeProcessRoles(riResult);
-                            t.$router.push(t.returnToRoute + `?v=${t.latest.version}`);
+                            t.$router.push(linkToVersion);
                         }
                     });
                 }
@@ -305,16 +306,16 @@ export default {
                     // Success
                     console.log(`Deprecated role ${processCode}.${roleCode}`);
                     t.$root.$refs.toasts.showSuccess(successTitle, t.$t('ims.deprecatedEntity', {
-                        processCode: processCode,
-                        type: t.$t('ims.role').toLowerCase(),
-                        entity: ` ${t.latest.roleName}`
+                            processCode: processCode,
+                            type: t.$t('ims.role').toLowerCase(),
+                            entity: ` ${t.latest.name}`
                     }));
 
                     // Update UI immediately
                     t.current.status = Status.DEPRECATED.description;
 
                     // Revoke the role from all users
-                    const roleName = t.latest.roleName;
+                    const roleName = t.latest.name;
                     let toRevoke = [];
                     for(const user of t.assignees) {
                         let rrResult = revokeRole(t.accessToken, processCode, roleCode, user, t.$props.apiBaseUrl);
@@ -347,6 +348,14 @@ export default {
 
                     // Wait until all API calls to revoke the role finish
                     Promise.allSettled(apiCalls).then((results) => {
+                        // Notify process manager
+                        const processManager = t.isSystem ? Roles.IMS.IMS_MANAGER : Roles[processCode].PROCESS_MANAGER;
+                        const notification = t.$t('role.deprecatedNotif', {
+                                processCode: processCode,
+                                role: t.latest.name
+                        });
+                        notifyUsersWithRole(t, processCode, processManager.description, notification, t.returnToRoute);
+
                         // Fetch the role definition from the API to include the new status
                         console.log(`Role ${processCode}.${roleCode} was revoked from all users`)
                         const riResult = getRoles(t.accessToken, processCode, roleCode, t.$props.apiBaseUrl);
