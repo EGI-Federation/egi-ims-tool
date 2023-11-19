@@ -60,8 +60,8 @@ export default {
                 // Success
                 storeGovernanceInfo(giResult);
 
-                this.info.current = store.state.ims.governanceInfo;
-                this.$refs.governanceEdit.setupTables();
+                t.info.current = store.state.ims.governanceInfo;
+                t.$refs.governanceEdit.setupTables();
             }
         });
     },

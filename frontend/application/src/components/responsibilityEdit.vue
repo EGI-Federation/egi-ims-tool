@@ -316,7 +316,7 @@ export default {
                                                              }));
 
                             // Fetch process responsibilities from the API to include the added version
-                            const riResult = getResponsibility(t.accessToken, this.$props.processCode, true,
+                            const riResult = getResponsibility(t.accessToken, t.$props.processCode, true,
                                                                t.$props.apiBaseUrl);
                             riResult.load().then(() => {
                                 if(isSuccess(t, riResult)) {

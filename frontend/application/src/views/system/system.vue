@@ -44,15 +44,21 @@ export default {
                 storeProcessInfo(piResult);
 
                 // Tell the footer to update the process name and version
-                if(isValid(t.$refs.footer.switchProcess))
-                    t.$refs.footer.switchProcess();
+                // The ref to the footer might not be ready yet, so we wait
+                const delayedFooterUpdate = setTimeout(function() {
+                    let footer = t.$refs.footer;
+                    if(isValid(footer)) {
+                        clearTimeout(delayedFooterUpdate);
+                        footer.switchProcess();
+                    }
+                }, 100);
 
-                // Tell the IMS page that the process info was loaded
+                // Tell the page that the process info was loaded
                 // The ref to the page might not be ready yet, so we wait
-                const delayedUpdate = setTimeout(function() {
+                const delayedPageUpdate = setTimeout(function() {
                     let page = t.$refs.page;
                     if(isValid(page)) {
-                        clearTimeout(delayedUpdate);
+                        clearTimeout(delayedPageUpdate);
                         if(isValid(page.updateProcessInfo))
                             page.updateProcessInfo();
                     }

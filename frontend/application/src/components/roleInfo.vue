@@ -97,6 +97,7 @@ import { getRoleLogs } from "@/api/getRoleLogs";
 import { implementRole } from "@/api/implementRole";
 import { deprecateRole } from "@/api/deprecateRole";
 import { revokeRole } from "@/api/revokeRole";
+import { notifyUsersWithRole } from "@/notify";
 import RoleHeader from "@/components/roleHeader.vue";
 import RoleLog from "@/components/roleLog.vue";
 import VersionHistory from "@/components/history.vue";
@@ -170,6 +171,7 @@ export default {
         globalRoleName() { return this.current?.globalRoleName; },
         globalRoleCode() { return this.current?.globalRole; },
         roles() { return store.state.temp.roles; },
+        isSystem() { return 'IMS' === this.$props.processCode; },
         isImsOwner() {
             const ims = Roles.IMS;
             return hasRole(this.roles, ims.IMS_OWNER);
@@ -263,6 +265,16 @@ export default {
                     // Success
                     console.log(irResult.logMessage);
                     irResult.toasts.showSuccess(irResult.successTitle, irResult.toastMessage);
+
+                    // Notify process owner and manager
+                    let processOwner = this.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
+                    let processManager = this.isSystem ? Roles.IMS.IMS_MANAGER : Roles[processCode].PROCESS_MANAGER;
+                    const notification = t.$t('ims.implementedNotif', {
+                                               processCode: processCode,
+                                               type: t.$t('ims.role').toLowerCase(),
+                                               entity: ` ${t.latest.name}` });
+                    notifyUsersWithRole(t, processCode, processOwner.description, notification, t.returnToRoute);
+                    notifyUsersWithRole(t, processCode, processManager.description, notification, t.returnToRoute);
 
                     // Fetch the role definition from the API to include the new status
                     const riResult = getRoles(t.accessToken, processCode, t.roleCode, t.$props.apiBaseUrl);

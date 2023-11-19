@@ -2,10 +2,10 @@
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <div class="page">
         <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
-        <role-edit ref="roleEdit"
-                      :info="{ current: currentRole, implemented: implementedRole }"
-                      :state="editState" :page-base-url="baseUrl"
-                      :api-base-url="processApi" :process-code="processCode"/>
+        <role-edit v-if="currentRole" ref="roleEdit"
+                  :info="{ current: currentRole, implemented: implementedRole }"
+                  :state="editState" :page-base-url="baseUrl"
+                  :api-base-url="processApi" :process-code="processCode"/>
     </div>
 </template>
 
@@ -70,7 +70,7 @@ export default {
 
             return segments.concat([
                 { text: this.$t("navbar.roles"), link: this.baseUrl },
-                { text: this.currentRole.name, link: this.isNew ? null : `${this.baseUrl}/${this.$route.params.role}` },
+                { text: this.currentRole?.name || '', link: this.isNew ? null : `${this.baseUrl}/${this.$route.params.role}` },
                 { text: this.$t("ims.edit") }]);
         },
     },
@@ -96,13 +96,22 @@ export default {
                     // Success
                     storeProcessRoles(rrResult);
 
-                    this.currentRole = store.state.ims.roleInfo;
+                    t.currentRole = store.state.ims.roleInfo;
                     if(isValid(t.currentRole)) {
                         // Make sure we know which is the implemented version (if any)
-                        this.implementedRole = findEntityWithStatus(t.currentRole, Status.IMPLEMENTED.description);
-                        console.log(`Editing role ${this.$props.processCode}.${t.$route.params.role} v${t.currentRole.version}`);
+                        t.implementedRole = findEntityWithStatus(t.currentRole, Status.IMPLEMENTED.description);
+                        console.log(`Editing role ${t.$props.processCode}.${t.$route.params.role} v${t.currentRole.version}`);
                     }
-                    this.$refs.breadCrumb.update(t.locationSegments);
+
+                    // Update the breadcrumb
+                    // The ref to the breadcrumb might not be ready yet, so we wait
+                    const delayedBreadcrumbUpdate = setTimeout(function() {
+                        let breadcrumb = t.$refs.breadCrumb;
+                        if(isValid(breadcrumb)) {
+                            clearTimeout(delayedBreadcrumbUpdate);
+                            breadcrumb.update(t.locationSegments);
+                        }
+                    }, 100);
                 }
             });
         }

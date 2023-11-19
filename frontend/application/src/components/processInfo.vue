@@ -276,7 +276,7 @@ export default {
 
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcess(t.accessToken, t.$props.processCode, true,
-                                                    t.$props.apiBaseUrl);
+                                                t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         if(isSuccess(t, piResult)) {
                             // Success
@@ -321,7 +321,7 @@ export default {
 
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcess(t.accessToken, t.$props.processCode, true,
-                                                    t.$props.apiBaseUrl);
+                                                t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         if(isSuccess(t, piResult)) {
                             // Success

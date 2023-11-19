@@ -107,7 +107,7 @@ export default {
         },
     },
     mounted() {
-        this.modal = new Modal(`#${this.$props.id}`);
+        this.modal = new Modal("#" + this.$props.id);
     }
 }
 </script>
