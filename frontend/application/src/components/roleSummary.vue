@@ -223,7 +223,7 @@ export default {
                         const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
                         const notification = t.$t('role.assignedRoleUserNotif', {
                             processCode: processCode,
-                            entity: t.$props.role.name });
+                            role: t.$props.role.name });
                         notifyUserChanges(t, processCode,
                                           roleHolder, notification, linkToRole,
                                           processOwner.description, arResult.toastMessage, linkToRole);
@@ -272,7 +272,7 @@ export default {
                         const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
                         const notification = t.$t('role.revokedRoleUserNotif', {
                             processCode: processCode,
-                            entity: t.$props.role.name });
+                            role: t.$props.role.name });
                         notifyUserChanges(t, processCode,
                                           roleHolder, notification, linkToRole,
                                           processOwner.description, rrResult.toastMessage, linkToRole);
@@ -330,9 +330,7 @@ export default {
                         // Success
                         // Notify the user and the process owner
                         const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER
-                        const notification = t.$t('role.includedInProcessUserNotif', {
-                            processCode: processCode,
-                            entity: t.$props.role.name });
+                        const notification = t.$t('role.includedInProcessUserNotif', { processCode: processCode });
                         notifyUserChanges(t, processCode,
                                           roleHolder, notification, linkToRole,
                                           processOwner.description, irResult.toastMessage, linkToRole);
@@ -378,9 +376,7 @@ export default {
                         // Success
                         // Notify the user and the process owner
                         const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER
-                        const notification = t.$t('role.excludedInProcessUserNotif', {
-                            processCode: processCode,
-                            entity: t.$props.role.name });
+                        const notification = t.$t('role.excludedInProcessUserNotif', { processCode: processCode });
                         notifyUserChanges(t, processCode,
                                           roleHolder, notification, linkToRole,
                                           processOwner.description, erResult.toastMessage, linkToRole);

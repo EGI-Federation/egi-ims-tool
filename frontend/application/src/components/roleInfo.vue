@@ -256,8 +256,8 @@ export default {
             irResult.errorTitle = t.$t('ims.error');
             irResult.toastMessage = t.$t('ims.implementedEntity', {
                 processCode: processCode,
-                type: t.$t('ims.role').toLowerCase(),
-                entity: ` ${t.latest.name}`
+                entity: t.$t('ims.role').toLowerCase(),
+                name: ` ${t.latest.name}`
             });
             irResult.toasts = t.$root.$refs.toasts;
             irResult.implement().then(() => {
@@ -272,8 +272,8 @@ export default {
                     const linkToVersion = `${t.returnToRoute}?v=${t.latest.version}`;
                     const notification = t.$t('ims.implementedNotif', {
                                                processCode: processCode,
-                                               type: t.$t('ims.role').toLowerCase(),
-                                               entity: ` ${t.latest.name}` });
+                                               entity: t.$t('ims.role').toLowerCase(),
+                                               name: ` ${t.latest.name}` });
                     notifyUsersWithRole(t, processCode, processOwner.description, notification, linkToVersion);
                     notifyUsersWithRole(t, processCode, processManager.description, notification, linkToVersion);
 

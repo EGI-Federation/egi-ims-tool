@@ -87,6 +87,8 @@
 import { reactive } from 'vue';
 import { store, storeProcessInfo } from "@/store";
 import { Status, isValid, isSuccess, userNames } from "@/utils";
+import { Roles } from "@/roles";
+import { notifyUsersWithRole } from "@/notify";
 import { parseInterfaces, interfaceList } from "@/process";
 import { getProcess } from "@/api/getProcess";
 import { requestProcessApproval } from "@/api/requestProcessApproval";
@@ -153,6 +155,7 @@ export default {
     },
     computed: {
         Status() { return Status; },
+        isSystem() { return 'IMS' === this.$props.processCode; },
         latest() { return store.state.ims.processInfo; },
         current() { return this.$props.info.current; },
         approved() { return this.$props.info.approved; },
@@ -240,23 +243,33 @@ export default {
         askForApproval() {
             // Call API to ask for process approval
             let t = this;
-            const rpaResult = requestProcessApproval(this.accessToken, this.processCode, this.$props.apiBaseUrl);
+            const processCode = this.$props.processCode;
+            const rpaResult = requestProcessApproval(this.accessToken, processCode, this.$props.apiBaseUrl);
             rpaResult.request().then(() => {
                 if(isSuccess(t, rpaResult)) {
                     // Success
-                    console.log(`Requested approval of the ${t.processCode} process`);
-                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('process.requestedProcessApproval'));
+                    console.log(`Requested approval of the ${processCode} process`);
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('process.requestedApproval'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcess(t.accessToken, t.processCode, true,
-                                                    t.$props.apiBaseUrl);
+                    const piResult = getProcess(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         if(isSuccess(t, piResult)) {
                             // Success
                             storeProcessInfo(piResult);
                             const pi = piResult.processInfo.value;
-                            if(isValid(pi))
-                                t.$router.push(t.baseUrl + `?v=${pi.version}`);
+                            if(isValid(pi)) {
+                                // Notify process owner
+                                const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
+                                const linkToVersion = `${t.baseUrl}?v=${pi.version}`;
+                                const notification = t.$t('ims.askApprovalNotif', {
+                                    entity: `${t.$t('ims.process').toLowerCase()} `,
+                                    name: t.$t(`home.${processCode}`) });
+                                notifyUsersWithRole(t, processCode, processOwner.description, notification, linkToVersion);
+
+                                // Show new version
+                                t.$router.push(linkToVersion);
+                            }
                         }
                     });
                 }
@@ -265,25 +278,34 @@ export default {
         approveOrRejectProcess(approve, message) {
             // Call API to approve/reject process changes
             let t = this;
-            const apResult = approveProcess(this.accessToken, this.$props.processCode, approve, message,
-                                            this.$props.apiBaseUrl);
+            const processCode = this.$props.processCode;
+            const apResult = approveProcess(this.accessToken, processCode, approve, message, this.$props.apiBaseUrl);
             apResult.request().then(() => {
                 if(isSuccess(t, apResult)) {
                     // Success
-                    console.log(`${approve ? 'Approved' : 'Rejected'} ${t.$props.processCode} process changes`);
+                    console.log(`${approve ? 'Approved' : 'Rejected'} ${processCode} process changes`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                      t.$t(approve ? 'process.approvedProcess' : 'process.rejectedProcess'));
 
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcess(t.accessToken, t.$props.processCode, true,
-                                                t.$props.apiBaseUrl);
+                    const piResult = getProcess(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         if(isSuccess(t, piResult)) {
                             // Success
                             storeProcessInfo(piResult);
                             const pi = piResult.processInfo.value;
-                            if(isValid(pi))
-                                t.$router.push(t.baseUrl + `?v=${pi.version}`);
+                            if(isValid(pi)) {
+                                // Notify process manager
+                                const processManager = t.isSystem ? Roles.IMS.IMS_MANAGER : Roles[processCode].PROCESS_MANAGER;
+                                const linkToVersion = `${t.baseUrl}?v=${pi.version}`;
+                                const notification = t.$t(approve ? 'ims.approvedNotif' : 'ims.rejectedNotif', {
+                                    entity: `${t.$t('ims.process').toLowerCase()} `,
+                                    name: t.$t(`home.${processCode}`) });
+                                notifyUsersWithRole(t, processCode, processManager.description, notification, linkToVersion);
+
+                                // Show new version
+                                t.$router.push(linkToVersion);
+                            }
                         }
                     });
                 }
@@ -307,21 +329,25 @@ export default {
         deprecateProcess(message) {
             // Call API to deprecate process
             let t = this;
-            const dpResult = deprecateProcess(this.accessToken, this.$props.processCode, message,
-                                              this.$props.apiBaseUrl);
+            const processCode = this.$props.processCode;
+            const dpResult = deprecateProcess(this.accessToken, processCode, message, this.$props.apiBaseUrl);
             dpResult.request().then(() => {
                 if(isSuccess(t, dpResult)) {
                     // Success
-                    console.log(`Deprecated the ${t.$props.processCode} process`);
+                    console.log(`Deprecated the ${processCode} process`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                      t.$t('ims.deprecatedEntity', {
-                                                         processCode: t.$props.processCode,
+                                                         processCode: processCode,
                                                          type: t.$t('ims.process').toLowerCase(),
                                                          entity: '' } ));
 
+                    // Notify process manager
+                    const processManager = Roles[processCode].PROCESS_MANAGER;
+                    const notification = t.$t('process.deprecatedNotif', { processName: t.$t(`home.${processCode}`) });
+                    notifyUsersWithRole(t, processCode, processManager.description, notification, t.baseUrl);
+
                     // Fetch the process information from the API to include the new status
-                    const piResult = getProcess(t.accessToken, t.$props.processCode, true,
-                                                t.$props.apiBaseUrl);
+                    const piResult = getProcess(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                     piResult.load().then(() => {
                         if(isSuccess(t, piResult)) {
                             // Success
