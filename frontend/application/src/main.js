@@ -11,6 +11,9 @@ import "gridjs/dist/theme/mermaid.css"
 import '@vuepic/vue-datepicker/dist/main.css'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
+import "json.date-extensions"
+
+JSON.useDateParser();
 
 createApp(App)
     .use(store)

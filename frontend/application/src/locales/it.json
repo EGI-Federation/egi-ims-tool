@@ -46,7 +46,13 @@
         "settings": "Settings",
         "logout": "Sign Out",
         "lowAssurance": "Level of Assurance is low",
-        "highAssurance": "Level of Assurance is substantial"
+        "highAssurance": "Level of Assurance is substantial",
+        "notifications": "Notifications",
+        "markAllRead": "Mark all as read",
+        "new": "New",
+        "earlier": "Earlier",
+        "noMessages": "No notifications",
+        "viewAll": "View All"
     },
     "footer": {
         "termsUse": "Terms of Use",
@@ -193,6 +199,14 @@
         "warning": "Warning",
         "info": "Information",
         "success": "Success",
+        "yourNotifications": "Your Notifications",
+        "newNotifications": "You have {count} unread notifications.",
+        "markRead": "Mark Read",
+        "markAllRead": "Mark All Read",
+        "justNow": "Just now",
+        "secsAgo": "{secs} seconds ago",
+        "minsAgo": "{mins} minutes ago",
+        "hoursMinsAgo": "{hours} hours and {mins} minutes ago",
         "newEntity": "Added new {processCode} {entity}{name}",
         "newEntityVersion": "New version of the {processCode}{entity}{name} was created",
         "approveChange": "Approve Change",
@@ -205,7 +219,8 @@
         "deprecatedEntity": "The {processCode} {type}{entity} was deprecated",
         "implementEntity": "Implement {entity}",
         "implementationDetails": "Implementation details",
-        "implementedEntity": "The {processCode} {type}{entity} was marked as implemented"
+        "implementedEntity": "The {processCode} {type}{entity} was marked as implemented",
+        "loadMore": "Show Older"
     },
     "process": {
         "goalsLabel": "Describe the goals of this process",
@@ -317,6 +332,7 @@
         "noLogs": "No logs yet",
         "today": "Today",
         "yesterday": "Yesterday",
+        "sat": "Saturday",
         "fri": "Friday",
         "thu": "Thursday",
         "wed": "Wednesday",

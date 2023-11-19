@@ -64,7 +64,7 @@
                     <role-log :title="`${strCapitalize($t('ims.year'))} ${year}`" :logs="reactive({ logs: logs })" />
                 </div>
                 <div v-if="!roleLogsEnd" class="more">
-                    <button type="button" class="btn btn-secondary text-nowrap" @click="loadRoleLogs">{{ $t('role.loadMore') }}</button>
+                    <button type="button" class="btn btn-primary text-nowrap" @click="loadRoleLogs">{{ $t('ims.loadMore') }}</button>
                 </div>
                 <p v-if="roleLogsEnd && 0 === roleLogs.length">{{ $t('role.noLogs') }}</p>
             </div>
@@ -104,7 +104,6 @@ import Message from "@/components/message.vue";
 import MarkdownIt from "markdown-it";
 
 var mdRender = new MarkdownIt();
-const logPageSize = 50;
 
 export default {
     name: 'roleInfo',
@@ -157,6 +156,7 @@ export default {
                 this.$props.pageBaseUrl :
                 `/${this.$props.processCode.toLowerCase()}/roles`;
         },
+        logPageSize() { return parseInt(process.env.VUE_APP_LOG_PAGE_SIZE, 10) || 50; },
         latest() { return store.state.ims.roleInfo; },
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
@@ -355,7 +355,7 @@ export default {
                 // Fetch the role assignment logs from the API
                 let t = this;
                 const rlResult = getRoleLogs(this.accessToken, this.$props.processCode, this.roleCode,
-                                             this.oldestRoleLogFrom, logPageSize, this.$props.apiBaseUrl);
+                                             this.oldestRoleLogFrom, this.logPageSize, this.$props.apiBaseUrl);
                 rlResult.load().then(() => {
                     if(isSuccess(t, rlResult))
                         // Success
@@ -375,7 +375,7 @@ export default {
                         const lastLog = page.elements[page.elements.length - 1];
                         this.oldestRoleLogFrom = lastLog.changedOn;
                         this.roleLogs.push(...page.elements);
-                        this.roleLogsEnd = page.count < logPageSize;
+                        this.roleLogsEnd = page.count < page.limit;
 
                         const now = new Date();
                         const day = now.getDate();
@@ -412,7 +412,7 @@ export default {
                         this.logsYears = new Map();
 
                         for(const log of this.roleLogs) {
-                            const changedOn = new Date(log.changedOn);
+                            const changedOn = log.changedOn;
                             const dayL = changedOn.getDate();
                             const monthL = changedOn.getMonth();
                             const yearL = changedOn.getFullYear();
@@ -526,7 +526,7 @@ export default {
     mounted() {
         let t = this;
         const delayedRoleLogs = setTimeout(function() {
-            if(isValid(this.info.current)) {
+            if(isValid(t.$props.info.current)) {
                 clearTimeout(delayedRoleLogs);
                 t.loadRoleLogs();
             }

@@ -29,7 +29,7 @@ export default {
         return {
             accessToken: store.state.oidc?.access_token,
             info: reactive({
-                current: store.state.ims?.responsibilityInfo, // Responsibility
+                current: null, // Responsibility
             }),
             editState: reactive({ hasUnsavedChanges: false }),
         }

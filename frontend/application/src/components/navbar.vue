@@ -1,4 +1,5 @@
 <template>
+<messages ref="notifications"/>
 <nav class="navbar sticky-top navbar-expand-md bg-body-tertiary p-0">
     <div class="d-flex flex-nowrap left">
         <!-- Logo Start -->
@@ -61,11 +62,11 @@
                                     {{ $t('navbar.gov') }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="governanceSubMenu" ref="governanceSubMenu">
-                                    <li v-if="!('BA' === moduleName)"><router-link class="dropdown-item" to="/ba">{{ $t('home.BA') }}</router-link></li>
-                                    <li v-if="!('BDS' === moduleName)"><router-link class="dropdown-item" to="/bds">{{ $t('home.BDS') }}</router-link></li>
-                                    <li v-if="!('COM' === moduleName)"><router-link class="dropdown-item" to="/com">{{ $t('home.COM') }}</router-link></li>
-                                    <li v-if="!('FA' === moduleName)"><router-link class="dropdown-item" to="/fa">{{ $t('home.FA') }}</router-link></li>
-                                    <li v-if="!('HR' === moduleName)"><router-link class="dropdown-item" to="/hr">{{ $t('home.HR') }}</router-link></li>
+                                    <li v-if="!('BA' === moduleName)"><router-link class="dropdown-item" to="/ba"><i :class="Icons.BA"></i>{{ $t('home.BA') }}</router-link></li>
+                                    <li v-if="!('BDS' === moduleName)"><router-link class="dropdown-item" to="/bds"><i :class="Icons.BDS"></i>{{ $t('home.BDS') }}</router-link></li>
+                                    <li v-if="!('COM' === moduleName)"><router-link class="dropdown-item" to="/com"><i :class="Icons.COM"></i>{{ $t('home.COM') }}</router-link></li>
+                                    <li v-if="!('FA' === moduleName)"><router-link class="dropdown-item" to="/fa"><i :class="Icons.FA"></i>{{ $t('home.FA') }}</router-link></li>
+                                    <li v-if="!('HR' === moduleName)"><router-link class="dropdown-item" to="/hr"><i :class="Icons.HR"></i>{{ $t('home.HR') }}</router-link></li>
                                 </ul>
                             </li>
                             <li class="dropdown-submenu dropstart">
@@ -74,28 +75,28 @@
                                     {{ $t('navbar.projects') }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="projectsSubMenu" ref="projectsSubMenu">
-                                    <li v-if="!('CPM' === moduleName)"><router-link class="dropdown-item" to="/cpm">{{ $t('home.CPM') }}</router-link></li>
-                                    <li v-if="!('PPC' === moduleName)"><router-link class="dropdown-item" to="/ppc">{{ $t('home.PPC') }}</router-link></li>
-                                    <li v-if="!('PPM' === moduleName)"><router-link class="dropdown-item" to="/ppm">{{ $t('home.PPM') }}</router-link></li>
-                                    <li v-if="!('PKM' === moduleName)"><router-link class="dropdown-item" to="/pkm">{{ $t('home.PKM') }}</router-link></li>
+                                    <li v-if="!('CPM' === moduleName)"><router-link class="dropdown-item" to="/cpm"><i :class="Icons.CPM"></i>{{ $t('home.CPM') }}</router-link></li>
+                                    <li v-if="!('PPC' === moduleName)"><router-link class="dropdown-item" to="/ppc"><i :class="Icons.PPC"></i>{{ $t('home.PPC') }}</router-link></li>
+                                    <li v-if="!('PPM' === moduleName)"><router-link class="dropdown-item" to="/ppm"><i :class="Icons.PPM"></i>{{ $t('home.PPM') }}</router-link></li>
+                                    <li v-if="!('PKM' === moduleName)"><router-link class="dropdown-item" to="/pkm"><i :class="Icons.PKM"></i>{{ $t('home.PKM') }}</router-link></li>
                                 </ul>
                             </li>
                             <li><hr class="dropdown-divider"/></li>
-                            <li v-if="!('CAPM' === moduleName)"><router-link class="dropdown-item" to="/capm">{{ $t('home.CAPM') }}</router-link></li>
-                            <li v-if="!('CHM' === moduleName)"><router-link class="dropdown-item" to="/chm">{{ $t('home.CHM') }}</router-link></li>
-                            <li v-if="!('CONFM' === moduleName)"><router-link class="dropdown-item" to="/confm">{{ $t('home.CONFM') }}</router-link></li>
-                            <li v-if="!('CSI' === moduleName)"><router-link class="dropdown-item" to="/csi">{{ $t('home.CSI') }}</router-link></li>
-                            <li v-if="!('CRM' === moduleName)"><router-link class="dropdown-item" to="/crm">{{ $t('home.CRM') }}</router-link></li>
-                            <li v-if="!('ISM' === moduleName)"><router-link class="dropdown-item" to="/ism">{{ $t('home.ISM') }}</router-link></li>
-                            <li v-if="!('ISRM' === moduleName)"><router-link class="dropdown-item" to="/isrm">{{ $t('home.ISRM') }}</router-link></li>
-                            <li v-if="!('PM' === moduleName)"><router-link class="dropdown-item" to="/pm">{{ $t('home.PM') }}</router-link></li>
-                            <li v-if="!('RDM' === moduleName)"><router-link class="dropdown-item" to="/rdm">{{ $t('home.RDM') }}</router-link></li>
-                            <li v-if="!('RM' === moduleName)"><router-link class="dropdown-item" to="/rm">{{ $t('home.RM') }}</router-link></li>
-                            <li v-if="!('SACM' === moduleName)"><router-link class="dropdown-item" to="/sacm">{{ $t('home.SACM') }}</router-link></li>
-                            <li v-if="!('SUPPM' === moduleName)"><router-link class="dropdown-item" to="/suppm">{{ $t('home.SUPPM') }}</router-link></li>
-                            <li v-if="!('SLM' === moduleName)"><router-link class="dropdown-item" to="/slm">{{ $t('home.SLM') }}</router-link></li>
-                            <li v-if="!('SPM' === moduleName)"><router-link class="dropdown-item" to="/spm">{{ $t('home.SPM') }}</router-link></li>
-                            <li v-if="!('SRM' === moduleName)"><router-link class="dropdown-item" to="/srm">{{ $t('home.SRM') }}</router-link></li>
+                            <li v-if="!('CAPM' === moduleName)"><router-link class="dropdown-item" to="/capm"><i :class="Icons.CAPM"></i>{{ $t('home.CAPM') }}</router-link></li>
+                            <li v-if="!('CHM' === moduleName)"><router-link class="dropdown-item" to="/chm"><i :class="Icons.CHM"></i>{{ $t('home.CHM') }}</router-link></li>
+                            <li v-if="!('CONFM' === moduleName)"><router-link class="dropdown-item" to="/confm"><i :class="Icons.CONFM"></i>{{ $t('home.CONFM') }}</router-link></li>
+                            <li v-if="!('CSI' === moduleName)"><router-link class="dropdown-item" to="/csi"><i :class="Icons.CSI"></i>{{ $t('home.CSI') }}</router-link></li>
+                            <li v-if="!('CRM' === moduleName)"><router-link class="dropdown-item" to="/crm"><i :class="Icons.CRM"></i>{{ $t('home.CRM') }}</router-link></li>
+                            <li v-if="!('ISM' === moduleName)"><router-link class="dropdown-item" to="/ism"><i :class="Icons.ISM"></i>{{ $t('home.ISM') }}</router-link></li>
+                            <li v-if="!('ISRM' === moduleName)"><router-link class="dropdown-item" to="/isrm"><i :class="Icons.ISRM"></i>{{ $t('home.ISRM') }}</router-link></li>
+                            <li v-if="!('PM' === moduleName)"><router-link class="dropdown-item" to="/pm"><i :class="Icons.PM"></i>{{ $t('home.PM') }}</router-link></li>
+                            <li v-if="!('RDM' === moduleName)"><router-link class="dropdown-item" to="/rdm"><i :class="Icons.RDM"></i>{{ $t('home.RDM') }}</router-link></li>
+                            <li v-if="!('RM' === moduleName)"><router-link class="dropdown-item" to="/rm"><i :class="Icons.RM"></i>{{ $t('home.RM') }}</router-link></li>
+                            <li v-if="!('SACM' === moduleName)"><router-link class="dropdown-item" to="/sacm"><i :class="Icons.SACM"></i>{{ $t('home.SACM') }}</router-link></li>
+                            <li v-if="!('SUPPM' === moduleName)"><router-link class="dropdown-item" to="/suppm"><i :class="Icons.SUPPM"></i>{{ $t('home.SUPPM') }}</router-link></li>
+                            <li v-if="!('SLM' === moduleName)"><router-link class="dropdown-item" to="/slm"><i :class="Icons.SLM"></i>{{ $t('home.SLM') }}</router-link></li>
+                            <li v-if="!('SPM' === moduleName)"><router-link class="dropdown-item" to="/spm"><i :class="Icons.SPM"></i>{{ $t('home.SPM') }}</router-link></li>
+                            <li v-if="!('SRM' === moduleName)"><router-link class="dropdown-item" to="/srm"><i :class="Icons.SRM"></i>{{ $t('home.SRM') }}</router-link></li>
                         </ul>
                     </li>
                     <!-- This Process menu -->
@@ -137,12 +138,86 @@
         <!-- Menu End -->
         <!-- User Start -->
         <div class="d-inline-flex flex-nowrap gap-1 user">
+            <!-- Notifications -->
             <div class="d-flex flex-nowrap user-info">
-                <a class="bg-body-secondary" role="button" href="#" >
-                    <span :class="unreadNotificationCount ? 'badge-notif' : ''"></span>
+                <a class="bg-body-secondary dropdown" id="userMessages" ref="userMessages" role="button"
+                   aria-expanded="false" data-bs-toggle="dropdown"
+                   data-bs-auto-close="outside" data-bs-display="static" href="#">
+                    <span :class="unreadNotificationCount ?
+                        'position-absolute top-2 translate-middle badge rounded-pill bg-danger' : ''">
+                        {{ unreadNotificationCount ? (unreadNotificationCount > 99 ? '99+' : unreadNotificationCount) : '' }}
+                    </span>
                     <i class="bi bi-bell"/>
                 </a>
+                <div class="dropdown-menu dropdown-menu-end messages-container" aria-labelledby="userMessages">
+                    <!-- Messages Start -->
+                    <div class="d-flex flex-column flex-nowrap gap-0">
+                        <div class="px-3 messages-head">
+                            <div class="d-flex flex-nowrap gap-2 justify-content-between">
+                                <p class="text-nowrap h6">{{ $t('navbar.notifications') }}</p>
+                                <a v-if="unreadNotificationCount > 0" class="click-action" href="#"
+                                   @click="markAllRead($event)">
+                                    <p class="text-nowrap">{{ $t('navbar.markAllRead') }}</p>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Messages -->
+                        <Simplebar class="messages">
+                            <div v-if="unreadNotificationCount > 0" class="px-3 category">
+                                {{ $t('navbar.new') }}
+                            </div>
+                            <div v-for="(message, index) in unreadNotifications" class="message">
+                                <a :class="messageInfo(message, index).class" :href="messageInfo(message).url"
+                                   @click="handleNotificationLink(message.id, $event)">
+                                    <div class="d-flex flex-nowrap gap-1">
+                                        <div class="icon" :style="`background-color:${messageInfo(message).iconBackground};color:${messageInfo(message).iconColor}`">
+                                            <div>
+                                                <span :class="messageInfo(message).iconClass"/>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="notification">{{ message.message }}</div>
+                                            <div class="when">{{ formatSinceEvent(message.sentOn, $t) }}</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div v-if="totalNotificationCount > 0 &&
+                                       totalNotificationCount > unreadNotificationCount &&
+                                       unreadNotificationCount < maxNotificationsCount" class="px-3 category">
+                                {{ $t('navbar.earlier') }}
+                            </div>
+                            <div v-for="(message, index) in olderNotifications" class="message">
+                                <a :class="messageInfo(message, index).class" :href="messageInfo(message).url"
+                                   @click="handleNotificationLink(message.id, $event)">
+                                    <div class="d-flex flex-nowrap gap-1">
+                                        <div class="icon" :style="`background-color:${messageInfo(message).iconBackground};color:${messageInfo(message).iconColor}`">
+                                            <div>
+                                                <span :class="messageInfo(message).iconClass"/>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="notification earlier">{{ message.message }}</div>
+                                            <div class="when">{{ formatSinceEvent(message.sentOn, $t) }}</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </Simplebar>
+                        <!-- Messages End -->
+                        <div class="dropdown-divider"></div>
+                        <div v-if="totalNotificationCount === 0" class="center pt-3 pb-3">
+                            {{ $t('navbar.noMessages') }}
+                        </div>
+                        <div v-if="totalNotificationCount > 0" class="center pt-1 pb-1">
+                            <a class="click-action" href="#" @click="viewAll($event)">
+                                {{ $t('navbar.viewAll') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
+           <!-- Settings -->
             <div class="d-flex flex-nowrap user-info" id="userInfo">
                 <a class="bg-body-secondary dropdown" id="userProfile" role="button" aria-expanded="false"
                    data-bs-auto-close="outside" data-bs-display="static" data-bs-toggle="dropdown" href="#">
@@ -150,7 +225,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userProfile">
                     <!-- Profile info -->
-                    <li class="px-3">
+                    <li class="px-3 mb-1">
                         <div class="d-flex align-items-center">
                             <!-- Avatar -->
                             <div class="avatar">
@@ -159,7 +234,7 @@
                                    data-bs-toggle='tooltip' :data-bs-title="$t(highAssurance ? 'navbar.highAssurance' : 'navbar.lowAssurance')" ></i>
                             </div>
                             <div class="ms-3">
-                                <p class="h5 mb-1 user-details">{{ userFullName }}</p>
+                                <p class="h6 mb-1 user-details">{{ userFullName }}</p>
                                 <p class="small m-0 text-secondary user-details">{{ userEmail }}</p>
                             </div>
                         </div>
@@ -183,16 +258,19 @@
 
 <script>
 // @ is an alias to /src
-import { isValid } from '@/utils'
+import { isValid, isSuccess, formatSinceEvent } from '@/utils'
+import { readMessage } from "@/api/readMessage";
+import { readAllMessages } from "@/api/readAllMessages";
 import { Roles, hasRole } from "@/roles";
-import { store } from "@/store"
-import { Tooltip } from "bootstrap";
-import baMenu from "@/components/menus/baMenu.vue";
-import bdsMenu from "@/components/menus/bdsMenu.vue";
-import comMenu from "@/components/menus/comMenu.vue";
-import faMenu from "@/components/menus/faMenu.vue";
-import hrMenu from "@/components/menus/hrMenu.vue";
-import slmMenu from "@/components/menus/slmMenu.vue";
+import { Icons, IconColors } from "@/notify";
+import { store } from "@/store";
+import Messages from "@/components/messages.vue";
+import BaMenu from "@/components/menus/baMenu.vue";
+import BdsMenu from "@/components/menus/bdsMenu.vue";
+import ComMenu from "@/components/menus/comMenu.vue";
+import FaMenu from "@/components/menus/faMenu.vue";
+import HrMenu from "@/components/menus/hrMenu.vue";
+import SlmMenu from "@/components/menus/slmMenu.vue";
 import CpmMenu from "@/components/menus/cpmMenu.vue";
 import PkmMenu from "@/components/menus/pkmMenu.vue";
 import PpcMenu from "@/components/menus/ppcMenu.vue";
@@ -211,28 +289,34 @@ import SacmMenu from "@/components/menus/sacmMenu.vue";
 import SuppmMenu from "@/components/menus/suppmMenu.vue";
 import SpmMenu from "@/components/menus/spmMenu.vue";
 import SrmMenu from "@/components/menus/srmMenu.vue";
+import { Tooltip } from "bootstrap";
+import Simplebar from 'simplebar-vue';
+import 'simplebar-vue/dist/simplebar.min.css';
+
+const maxNotificationsInMenu = 20;
 
 export default {
     name: 'imsNavbar',
     components: {
+        Messages, Tooltip, Simplebar,
         SrmMenu, SpmMenu, SuppmMenu, SacmMenu, RmMenu, RdmMenu, PmMenu, IsrmMenu, IsmMenu,
         CrmMenu, CsiMenu, ConfmMenu, ChmMenu, CapmMenu, PpmMenu, PpcMenu, PkmMenu, CpmMenu,
-        baMenu, bdsMenu, comMenu, faMenu, hrMenu, slmMenu, Tooltip },
+        BaMenu, BdsMenu, ComMenu, FaMenu, HrMenu, SlmMenu },
     props: {
         moduleName: String,
     },
     data() {
         return {
-            isAuthenticated: store.state.oidc.is_checked,
-            accessToken: store.state.oidc.access_token,
-            userInfo: store.state.oidc.user,
-            userEmail: store.state.oidc.user ? store.state.oidc.user.email : "",
+            accessToken: store.state.oidc?.access_token,
+            userInfo: store.state.oidc?.user,
+            userEmail: store.state.oidc?.user ? store.state.oidc.user?.email : "",
             tooltips: [],
         }
     },
     computed: {
+        Icons() { return Icons; },
         roles() { return store.state.temp.roles; },
-        loggedIn() { return this.isAuthenticated && null != this.accessToken },
+        msgApi() { return process.env.VUE_APP_IMS_MSG_API; },
         canUseTool() { return hasRole(this.roles, Roles.VO.MEMBER); },
         userFullName() { return store.getters["ims/userFullName"]; },
         highAssurance() {
@@ -243,14 +327,24 @@ export default {
             }
             return assurance;
         },
-        unreadNotificationCount() { return store.getters["ims/unreadNotificationCount"]; },
-        isAdmin() { return store.getters["ims/isAdmin"]; },
+        maxNotificationsCount() { return maxNotificationsInMenu; },
+        totalNotificationCount() {
+            const total = store.state.ims?.notifications?.length;
+            return isValid(total) ? total : 0;
+        },
+        unreadNotificationCount() {
+            const unread = store.state.ims?.notificationsUnread;
+            return isValid(unread) ? unread : 0;
+        },
+        unreadNotifications() { return store.getters["ims/unreadNotifications"]; },
+        olderNotifications() { return store.getters["ims/olderNotifications"]; },
         isProcess() {
             return isValid(this.$props.moduleName) &&
                    this.$props.moduleName.length > 0 &&
                    this.$props.moduleName !== "IMS" ; },
     },
     methods: {
+        formatSinceEvent,
         togglePlanSubMenu(event) {
             event.stopPropagation();
             if(isValid(this.$refs.planSubMenu)) {
@@ -287,6 +381,66 @@ export default {
         hideTooltips() {
             for(let tooltip of this.tooltips)
                 tooltip.hide();
+        },
+        messageInfo(message, index) {
+            return {
+                class: `dropdown-item${isValid(message.url) ? '' : ' nolink'}${isValid(index) && 0 === index ? ' fade-top-border' : ''}`,
+                url: isValid(message.url) ? message.url : '#',
+                iconClass: Icons[message.category || 'IMS'],
+                iconBackground: IconColors[message.category || 'IMS'],
+                iconColor: 'white'
+            };
+        },
+        navigateTo(url, event) {
+            // Close notifications menu
+            if(isValid(this.$refs.userMessages))
+                this.$refs.userMessages.click();
+
+            if(isValid(url))
+                this.$router.push(url);
+
+            event.preventDefault();
+            event.stopPropagation();
+        },
+        handleNotificationLink(messageId, event) {
+            let el = event.target;
+            while(el.nodeName !== 'A')
+                el = el.parentElement;
+
+            const url = el.getAttribute("href");
+            if(isValid(url) && url.charAt(0) !== '#') {
+                // Notification has a link, navigate using the router
+                let t = this;
+                let rmResult = readMessage(this.accessToken, messageId, this.msgApi);
+                store.commit('ims/markNotificationsRead', Array.of(messageId));
+                rmResult.markRead().then(() => {
+                    if(isSuccess(t, rmResult)) {
+                        // Success, nothing to do
+                        // The page where we are going will reload notifications
+                    }
+                });
+
+                this.navigateTo(url);
+            }
+        },
+        markAllRead(event) {
+            let t = this;
+            let n = this.$refs.notifications;
+            let rmResult = readAllMessages(this.accessToken, this.msgApi);
+            store.commit('ims/markNotificationsRead');
+            rmResult.markRead().then(() => {
+                if(isSuccess(t, rmResult)) {
+                    // Success, reload the notifications
+                    if(isValid(n))
+                        n.checkNotifications();
+                }
+            });
+
+            // Close notifications menu
+            this.navigateTo(null, event);
+        },
+        viewAll(event) {
+            this.navigateTo('/notifications', event);
         },
     },
     mounted() {
@@ -361,10 +515,7 @@ export default {
     color: #2790ee;
 }
 .user-details {
-  white-space: nowrap;
-}
-h5.user-details {
-    font-size: calc(1.25 * var(--font-scale) * var(--bs-dropdown-font-size));
+    white-space: nowrap;
 }
 .navbar .right .user-info > a,
 .navbar-toggler {
@@ -380,15 +531,99 @@ h5.user-details {
     position: relative;
     top: 2px;
 }
-.badge-notif {
-    width: 8px;
-    height: 8px;
-    background: #d6293e;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    right: -3px;
-    z-index: 1;
+.badge {
+    font-size: calc(0.6 * var(--font-scale) * var(--bs-body-font-size));
+    left: calc(100% - 3px)!important;
+    margin-top: 1px;
+}
+.messages-container {
+    min-width: 25rem;
+    max-width: 25rem;
+    max-height: calc(var(--content-height) - 1rem);
+}
+.messages-container > div {
+    height: 100%;
+    overflow: hidden;
+}
+.messages {
+    height: 100%;
+    max-height: calc(var(--content-height) - 6rem)!important;
+}
+.messages,
+.messages-head,
+.messages-container .center {
+    flex: none;
+}
+.messages-head {
+    height: 2.35rem;
+}
+.messages-head p {
+    padding-top: .7rem;
+    margin-bottom: 0!important;
+}
+.messages .category {
+    color: var(--bs-tertiary-color);
+    padding-top: .5rem;
+}
+.message {
+    border-bottom: 1px solid rgb(93, 99, 106, .15);
+}
+.message:last-of-type {
+    border-bottom: none;
+}
+.message .dropdown-item {
+    --bs-dropdown-link-active-color: var(--bs-dropdown-link-color)!important;
+}
+.message .dropdown-item:hover {
+    background-color: var(--bs-secondary-bg);
+}
+.message .dropdown-item.nolink {
+    cursor: default;
+}
+.message .dropdown-item > div {
+    padding: .5rem 0;
+}
+.message .icon {
+    --icon-height: calc(2 * var(--font-scale) * var(--bs-body-font-size));
+    --icon-diameter: calc(var(--icon-height) + 1rem);
+    font-size: var(--icon-height);
+    font-weight: bold;
+    width: var(--icon-diameter);
+    min-width: var(--icon-diameter);
+    max-height: var(--icon-diameter);
+    margin-right: .4rem;
+    -moz-border-radius: calc(var(--icon-diameter) / 2);
+    -webkit-border-radius: calc(var(--icon-diameter) / 2);
+    border-radius: calc(var(--icon-diameter) / 2);
+}
+.message .icon > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: .3rem;
+}
+.message .notification {
+    white-space: normal;
+}
+.message .notification.earlier {
+    color: var(--bs-secondary-color);
+    opacity: .75;
+}
+.message .when {
+    font-size: smaller;
+    color: var(--bs-secondary-color);
+    opacity: .75;
+}
+.click-action {
+    text-decoration: none;
+}
+.messages-container .center {
+    min-height: 1.35rem;
+    text-align: center;
+}
+.messages-container .center a {
+    text-decoration: none;
+    cursor: pointer;
 }
 .badge-assurance {
     font-size: calc(1.75 * var(--font-scale) * var(--bs-body-font-size));
@@ -412,6 +647,10 @@ h5.user-details {
 }
 .offcanvas-header {
     background-color: var(--menu-item-color);
+}
+.offcanvas-body li i.bi {
+    padding-right: .5rem;
+    padding-top: 2px;
 }
 .dropdown-menu,
 .offcanvas-body {

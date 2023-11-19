@@ -179,7 +179,7 @@ export default {
             get() {
                 let date = Date.now();
                 if(isValid(this.edited)) {
-                    date = new Date(this.edited.nextReview);
+                    date = this.edited.nextReview;
                     switch(this.edited.frequencyUnit) {
                         case 'year': return date.getFullYear();
                         case 'month': return { year: date.getFullYear(), month: date.getMonth() }

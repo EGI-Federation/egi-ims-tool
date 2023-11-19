@@ -6,18 +6,19 @@ import OidcCallback from "@/views/auth/OidcCallback.vue";
 import OidcCallbackPopup from "@/views/auth/OidcCallbackPopup.vue";
 import OidcCallbackError from "@/views/auth/OidcCallbackError.vue";
 
-import Home from './views/Home.vue'
-import Process from './views/Process.vue'
-import ProcessUpdate from './views/ProcessUpdate.vue'
-import Responsibilities from './views/Responsibilities.vue'
-import ResponsibilitiesUpdate from './views/ResponsibilitiesUpdate.vue'
-import Role from './views/Role.vue'
-import RoleUpdate from './views/RoleUpdate.vue'
-import Procedures from './views/Procedures.vue'
-import KPIs from './views/KPIs.vue'
+import Home from './views/Home.vue';
+import Notifications from './views/Notifications.vue';
+import Process from './views/Process.vue';
+import ProcessUpdate from './views/ProcessUpdate.vue';
+import Responsibilities from './views/Responsibilities.vue';
+import ResponsibilitiesUpdate from './views/ResponsibilitiesUpdate.vue';
+import Role from './views/Role.vue';
+import RoleUpdate from './views/RoleUpdate.vue';
+import Procedures from './views/Procedures.vue';
+import KPIs from './views/KPIs.vue';
 import Logout from "@/views/Logout.vue";
 
-import ManagementSystem from './views/system/system.vue'
+import ManagementSystem from './views/system/system.vue';
 import Governance from "@/views/system/Governance.vue";
 import GovernanceUpdate from "@/views/system/GovernanceUpdate.vue";
 import ResponsibilitiesReview from "@/views/system/ResponsibilitiesReview.vue";
@@ -26,7 +27,7 @@ import systemReports from "@/views/system/systemReports.vue";
 import systemProjects from "@/views/system/systemProjects.vue";
 import systemEvents from "@/views/system/systemEvents.vue";
 
-import ServiceLevelManagement from './views/slm/slm.vue'
+import ServiceLevelManagement from './views/slm/slm.vue';
 import slmReview from "@/views/slm/slmReview.vue";
 import slmCatalogs from "@/views/slm/slmCatalogs.vue";
 import slmSLAs from "@/views/slm/slmSLAs.vue";
@@ -34,98 +35,98 @@ import slmOLAs from "@/views/slm/slmOLAs.vue";
 import slmUAs from "@/views/slm/slmUAs.vue";
 import slmReports from "@/views/slm/slmReports.vue";
 
-import BudgetingAccounting from './views/ba/ba.vue'
+import BudgetingAccounting from './views/ba/ba.vue';
 import baHome from "@/views/ba/baHome.vue";
 import baConfig from "@/views/ba/baConfig.vue";
 import baRoles from "@/views/ba/baRoles.vue";
 import baProcedures from "@/views/ba/baProcedures.vue";
 import baKPIs from "@/views/ba/baKPIs.vue";
 
-import BusinessDevelopmentStakeholders from './views/bds/bds.vue'
+import BusinessDevelopmentStakeholders from './views/bds/bds.vue';
 import bdsHome from "@/views/bds/bdsHome.vue";
 import bdsConfig from "@/views/bds/bdsConfig.vue";
 import bdsRoles from "@/views/bds/bdsRoles.vue";
 import bdsProcedures from "@/views/bds/bdsProcedures.vue";
 import bdsKPIs from "@/views/bds/bdsKPIs.vue";
 
-import CommunicationsManagement from './views/com/com.vue'
+import CommunicationsManagement from './views/com/com.vue';
 import comHome from "@/views/com/comHome.vue";
 import comConfig from "@/views/com/comConfig.vue";
 import comRoles from "@/views/com/comRoles.vue";
 import comProcedures from "@/views/com/comProcedures.vue";
 import comKPIs from "@/views/com/comKPIs.vue";
 
-import FinanceAdministration from './views/fa/fa.vue'
+import FinanceAdministration from './views/fa/fa.vue';
 import faHome from "@/views/fa/faHome.vue";
 import faConfig from "@/views/fa/faConfig.vue";
 import faRoles from "@/views/fa/faRoles.vue";
 import faProcedures from "@/views/fa/faProcedures.vue";
 import faKPIs from "@/views/fa/faKPIs.vue";
 
-import HumanResources from './views/hr/hr.vue'
+import HumanResources from './views/hr/hr.vue';
 import hrHome from "@/views/hr/hrHome.vue";
 import hrConfig from "@/views/hr/hrConfig.vue";
 import hrRoles from "@/views/hr/hrRoles.vue";
 import hrProcedures from "@/views/hr/hrProcedures.vue";
 import hrKPIs from "@/views/hr/hrKPIs.vue";
 
-import CoordinatedProjectManagement from './views/cpm/cpm.vue'
+import CoordinatedProjectManagement from './views/cpm/cpm.vue';
 import cpmHome from "@/views/cpm/cpmHome.vue";
 import cpmConfig from "@/views/cpm/cpmConfig.vue";
 import cpmRoles from "@/views/cpm/cpmRoles.vue";
 import cpmProcedures from "@/views/cpm/cpmProcedures.vue";
 import cpmKPIs from "@/views/cpm/cpmKPIs.vue";
 
-import ProjectKnowledgeManagement from './views/pkm/pkm.vue'
+import ProjectKnowledgeManagement from './views/pkm/pkm.vue';
 import pkmHome from "@/views/pkm/pkmHome.vue";
 import pkmConfig from "@/views/pkm/pkmConfig.vue";
 import pkmRoles from "@/views/pkm/pkmRoles.vue";
 import pkmProcedures from "@/views/pkm/pkmProcedures.vue";
 import pkmKPIs from "@/views/pkm/pkmKPIs.vue";
 
-import ParticipatedProjectCoordination from './views/ppc/ppc.vue'
+import ParticipatedProjectCoordination from './views/ppc/ppc.vue';
 import ppcHome from "@/views/ppc/ppcHome.vue";
 import ppcConfig from "@/views/ppc/ppcConfig.vue";
 import ppcRoles from "@/views/ppc/ppcRoles.vue";
 import ppcProcedures from "@/views/ppc/ppcProcedures.vue";
 import ppcKPIs from "@/views/ppc/ppcKPIs.vue";
 
-import ProjectPortfolioManagement from './views/ppm/ppm.vue'
+import ProjectPortfolioManagement from './views/ppm/ppm.vue';
 import ppmHome from "@/views/ppm/ppmHome.vue";
 import ppmConfig from "@/views/ppm/ppmConfig.vue";
 import ppmRoles from "@/views/ppm/ppmRoles.vue";
 import ppmProcedures from "@/views/ppm/ppmProcedures.vue";
 import ppmKPIs from "@/views/ppm/ppmKPIs.vue";
 
-import CapacityManagement from './views/capm/capm.vue'
+import CapacityManagement from './views/capm/capm.vue';
 import capmHome from "@/views/capm/capmHome.vue";
 import capmConfig from "@/views/capm/capmConfig.vue";
 import capmRoles from "@/views/capm/capmRoles.vue";
 import capmProcedures from "@/views/capm/capmProcedures.vue";
 import capmKPIs from "@/views/capm/capmKPIs.vue";
 
-import ChangeManagement from './views/chm/chm.vue'
+import ChangeManagement from './views/chm/chm.vue';
 import chmHome from "@/views/chm/chmHome.vue";
 import chmConfig from "@/views/chm/chmConfig.vue";
 import chmRoles from "@/views/chm/chmRoles.vue";
 import chmProcedures from "@/views/chm/chmProcedures.vue";
 import chmKPIs from "@/views/chm/chmKPIs.vue";
 
-import ConfigurationManagement from './views/confm/confm.vue'
+import ConfigurationManagement from './views/confm/confm.vue';
 import confmHome from "@/views/confm/confmHome.vue";
 import confmConfig from "@/views/confm/confmConfig.vue";
 import confmRoles from "@/views/confm/confmRoles.vue";
 import confmProcedures from "@/views/confm/confmProcedures.vue";
 import confmKPIs from "@/views/confm/confmKPIs.vue";
 
-import ContinualServiceImprovement from './views/csi/csi.vue'
+import ContinualServiceImprovement from './views/csi/csi.vue';
 import csiHome from "@/views/csi/csiHome.vue";
 import csiConfig from "@/views/csi/csiConfig.vue";
 import csiRoles from "@/views/csi/csiRoles.vue";
 import csiProcedures from "@/views/csi/csiProcedures.vue";
 import csiKPIs from "@/views/csi/csiKPIs.vue";
 
-import CustomerRelationshipManagement from './views/crm/crm.vue'
+import CustomerRelationshipManagement from './views/crm/crm.vue';
 import crmHome from "@/views/crm/crmHome.vue";
 import crmConfig from "@/views/crm/crmConfig.vue";
 import crmRoles from "@/views/crm/crmRoles.vue";
@@ -139,21 +140,21 @@ import ismRoles from "@/views/ism/ismRoles.vue";
 import ismProcedures from "@/views/ism/ismProcedures.vue";
 import ismKPIs from "@/views/ism/ismKPIs.vue";
 
-import IncidentServiceRequestManagement from './views/isrm/isrm.vue'
+import IncidentServiceRequestManagement from './views/isrm/isrm.vue';
 import isrmHome from "@/views/isrm/isrmHome.vue";
 import isrmConfig from "@/views/isrm/isrmConfig.vue";
 import isrmRoles from "@/views/isrm/isrmRoles.vue";
 import isrmProcedures from "@/views/isrm/isrmProcedures.vue";
 import isrmKPIs from "@/views/isrm/isrmKPIs.vue";
 
-import ProblemManagement from './views/pm/pm.vue'
+import ProblemManagement from './views/pm/pm.vue';
 import pmHome from "@/views/pm/pmHome.vue";
 import pmConfig from "@/views/pm/pmConfig.vue";
 import pmRoles from "@/views/pm/pmRoles.vue";
 import pmProcedures from "@/views/pm/pmProcedures.vue";
 import pmKPIs from "@/views/pm/pmKPIs.vue";
 
-import ReleaseDeploymentManagement from './views/rdm/rdm.vue'
+import ReleaseDeploymentManagement from './views/rdm/rdm.vue';
 import rdmHome from "@/views/rdm/rdmHome.vue";
 import rdmConfig from "@/views/rdm/rdmConfig.vue";
 import rdmRoles from "@/views/rdm/rdmRoles.vue";
@@ -167,28 +168,28 @@ import rmRoles from "@/views/rm/rmRoles.vue";
 import rmProcedures from "@/views/rm/rmProcedures.vue";
 import rmKPIs from "@/views/rm/rmKPIs.vue";
 
-import ServiceAvailabilityContinuityManagement from './views/sacm/sacm.vue'
+import ServiceAvailabilityContinuityManagement from './views/sacm/sacm.vue';
 import sacmHome from "@/views/sacm/sacmHome.vue";
 import sacmConfig from "@/views/sacm/sacmConfig.vue";
 import sacmRoles from "@/views/sacm/sacmRoles.vue";
 import sacmProcedures from "@/views/sacm/sacmProcedures.vue";
 import sacmKPIs from "@/views/sacm/sacmKPIs.vue";
 
-import SupplierRelationshipManagement from './views/suppm/suppm.vue'
+import SupplierRelationshipManagement from './views/suppm/suppm.vue';
 import suppmHome from "@/views/suppm/suppmHome.vue";
 import suppmConfig from "@/views/suppm/suppmConfig.vue";
 import suppmRoles from "@/views/suppm/suppmRoles.vue";
 import suppmProcedures from "@/views/suppm/suppmProcedures.vue";
 import suppmKPIs from "@/views/suppm/suppmKPIs.vue";
 
-import ServicePortfolioManagement from './views/spm/spm.vue'
+import ServicePortfolioManagement from './views/spm/spm.vue';
 import spmHome from "@/views/spm/spmHome.vue";
 import spmConfig from "@/views/spm/spmConfig.vue";
 import spmRoles from "@/views/spm/spmRoles.vue";
 import spmProcedures from "@/views/spm/spmProcedures.vue";
 import spmKPIs from "@/views/spm/spmKPIs.vue";
 
-import ServiceReportingManagement from './views/srm/srm.vue'
+import ServiceReportingManagement from './views/srm/srm.vue';
 import srmHome from "@/views/srm/srmHome.vue";
 import srmConfig from "@/views/srm/srmConfig.vue";
 import srmRoles from "@/views/srm/srmRoles.vue";
@@ -203,6 +204,11 @@ const routes = [
     meta: {
       isPublic: true
     }
+  },
+  {
+    path: '/notifications',
+    name: 'notifications',
+    component: Notifications
   },
   {
     path: '/oidc-callback', // Needs to match redirectUri in oidcSettings

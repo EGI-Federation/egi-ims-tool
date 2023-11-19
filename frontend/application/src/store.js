@@ -4,7 +4,7 @@ import SecureLS from "secure-ls";
 import { vuexOidcCreateStoreModule } from 'vuex-oidc'
 import { oidcSettings } from '@/config/oidc'
 import i18n, { languageNames } from './locales'
-import { isValid } from "@/utils";
+import { isValid, sortBy } from "@/utils";
 import { Roles, getRoleByName, hasRole } from "@/roles";
 
 var sls = new SecureLS({ isCompression: false });
@@ -115,7 +115,9 @@ export const store = createStore({
             state() {
                 return {
                     language: null,
-                    notifications: [{isNew: false}, {isNew: true}],
+                    notifications: [],          // Array<{ id:Long, message:String, link:String, sentOn:Date, wasRead:Boolean }>
+                    notificationsEnd: false,
+                    notificationsUnread: 0,
                     governanceInfo: null,       // Governance
                     processInfo: null,          // Process
                     responsibilityInfo: null,   // Responsibility
@@ -150,15 +152,11 @@ export const store = createStore({
                           (hasRole(rootState.roles, Roles.IMS.IMS_OWNER) ||
                            hasRole(rootState.roles, Roles.IMS.IMS_MANAGER));
                 },
-                allNotifications(state) {
-                    return state.notifications;
-                },
                 unreadNotifications(state) {
-                    return state.notifications?.filter(msg => msg.isNew);
+                    return state.notifications.filter(msg => false === msg.wasRead);
                 },
-                unreadNotificationCount(state) {
-                    const unread = state.notifications?.filter(msg => msg.isNew);
-                    return unread?.length;
+                olderNotifications(state) {
+                    return state.notifications.filter(msg => true === msg.wasRead);
                 },
             },
             mutations: {
@@ -197,8 +195,41 @@ export const store = createStore({
                     store.commit("updateUsersByRole", info);
                     state.error = info.error;
                 },
-                clearState(state, newLocale) {
+                updateNotifications(state, info) {
+                    console.log(`Store ${info.messages.length} notifications`);
+                    state.notifications = info.messages;
+                    state.notificationsEnd = info.endOfMessages;
+                },
+                updateUnreadNotificationCount(state, unreadCount) {
+                    console.log(`Found ${unreadCount} unread notifications`);
+                    state.notificationsUnread = unreadCount;
+                },
+                markNotificationsRead(state, notificationIds) {
+                    if(isValid(notificationIds))
+                        state.notificationsUnread -= notificationIds.length;
+                    else
+                        state.notificationsUnread = 0;
+
+                    let messageIds = new Set();
+                    if(isValid(notificationIds))
+                        for(const messageId of notificationIds)
+                            messageIds.add(messageId);
+
+                    for(let notification of state.notifications) {
+                        if(isValid(notificationIds)) {
+                            if(messageIds.has(notification.id))
+                                notification.wasRead = true;
+                        }
+                        else
+                            notification.wasRead = true;
+                    }
+                },
+                clearState(state) {
+                    state.notifications = [];
+                    state.notificationsUnread = 0;
+                    state.governanceInfo = null;
                     state.processInfo = null;
+                    state.responsibilityInfo = null;
                     state.roleInfo = null;
                 },
             },
@@ -290,26 +321,27 @@ export const storeProcessResponsibilities = function(prResult) {
 
 // Extract the users then call a mutation on the store to save them
 export const storeUsers = function(mutation, upResult) {
-    let users = new Map();
     if(isValid(upResult.page)) {
+        let users = new Map();
         const page = upResult.page.value;
         if(isValid(page) && isValid(page.elements)) {
             for(let user of page.elements) {
                 users.set(user.checkinUserId, user);
             }
         }
+
+        store.commit(mutation, {
+            users: users,
+            processCode: upResult.processCode,
+            error: upResult.error.value
+        });
     }
-    store.commit(mutation, {
-        users: users,
-        processCode: upResult.processCode,
-        error: upResult.error.value
-    });
 }
 
 // Extract the users then call a mutation on the store to save them
 export const storeUsersByRole = function(urResult) {
-    let users = new Map();
     if(isValid(urResult.page)) {
+        let users = new Map();
         const page = urResult.page.value;
         if(isValid(page) && isValid(page.elements)) {
             for(let user of page.elements) {
@@ -328,12 +360,13 @@ export const storeUsersByRole = function(urResult) {
                 }
             }
         }
+
+        store.commit('ims/updateProcessUsersByRole', {
+            users: users,
+            processCode: urResult.processCode,
+            error: urResult.error.value
+        });
     }
-    store.commit('ims/updateProcessUsersByRole', {
-        users: users,
-        processCode: urResult.processCode,
-        error: urResult.error.value
-    });
 }
 
 // Extract the role definitions
@@ -364,4 +397,38 @@ export const storeProcessRoles = function(prResult) {
         processCode: prResult.processCode,
         error: prResult.error.value
     });
+}
+
+// Extract the notification messages then call a mutation on the store to save them
+export const storeMessages = function(gmResult) {
+    let newMessages = [];
+    if(isValid(gmResult.page)) {
+        const page = gmResult.page.value;
+        if(isValid(page) && isValid(page.elements)) {
+            // Prepare to merge new messages with existing ones
+            let messages = new Map();
+            if(isValid(store.state.ims?.notifications) && store.state.ims?.notifications.length > 0)
+                for(const notif of store.state.ims.notifications) {
+                    // Field sentOn saved to store as string
+                    notif.sentOn = new Date(notif.sentOn);
+                    messages.set(notif.id, notif);
+                }
+
+            // Merge new messages, could replace existing messages with fresh info (e.g. updated wasRead field)
+            for(let message of page.elements) {
+                delete message['kind'];
+                if(!messages.has(message.id) && !message.wasRead)
+                    newMessages.push(message);
+                messages.set(message.id, message);
+            }
+
+            let sortedMessages = Array.from(messages.values()).sort(sortBy('sentOn', true));
+
+            store.commit('ims/updateNotifications', {
+                messages: sortedMessages,
+                endOfMessages: page.count < page.limit
+            });
+        }
+    }
+    return newMessages;
 }

@@ -35,7 +35,9 @@ body {
 :root {
     --menu-background-color: var(--bs-tertiary-bg);
     --menu-item-color: var(--bs-secondary-bg);
-    --max-content-width: 60rem;
+    --primary-text-color: #2c3e50;
+    --max-content-width: 55rem;
+    --content-height: calc(100vh - var(--navbar-height));
     --font-scale: 0.9;
 }
 #app {
@@ -44,7 +46,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
+    color: var(--primary-text-color);
     display: flex;
     flex-direction: column;
     min-height: 100%;
@@ -84,7 +86,6 @@ body {
     border-right:none;
 }
 .page-container {
-    --content-height: calc(100vh - var(--navbar-height));
     position: absolute;
     top: var(--navbar-height);
     left: 0;
@@ -124,5 +125,25 @@ body {
 }
 .dropdown-divider {
     margin: 0!important;
+}
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #d1dbe3 var(--bs-tertiary-bg);
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--bs-tertiary-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #d1dbe3;
+    border-radius: 20px;
+    border: 3px solid var(--bs-tertiary-bg);
 }
 </style>

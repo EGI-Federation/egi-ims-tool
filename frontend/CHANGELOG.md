@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.55
+- Added notifications support
+- Reviewed usage of datetimes (UI is local, all from/to APIs is UTC)
+- Configurable page sizes for notifications and role assignment logs
+
 ## 1.0.52
 - Global role management complete, including role inheritance
 - Added role assignment logs

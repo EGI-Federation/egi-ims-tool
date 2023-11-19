@@ -65,7 +65,6 @@ export const Status = makeEnum(['DRAFT', 'READY_FOR_APPROVAL', 'APPROVED', 'IMPL
 
 // Get localized label and class for a status
 export const statusPill = function(status, t) {
-
     if(!isValid(status))
         return { label: "", pillClass: "" };
 
@@ -83,8 +82,14 @@ export const statusPill = function(status, t) {
 
 
 // Check if a date is in a leap year
-export const isLeapYear = function(someDate) {
-    const year = someDate.getFullYear();
+// Note: someDateTime can be either a Date or a string
+export const isLeapYear = function(someDateTime) {
+    // Check if we got a Date
+    let d = someDateTime;
+    if(Object.prototype.toString.call(someDateTime) !== '[object Date]')
+        d = new Date(someDateTime.toString());
+
+    const year = d.getFullYear();
     if((year & 3) != 0)
         return false;
 
@@ -92,12 +97,18 @@ export const isLeapYear = function(someDate) {
 };
 
 // Get day of the year (January 1st is 1)
-export const getDayOfYear = function(someDate) {
+// Note: someDateTime can be either a Date or a string
+export const getDayOfYear = function(someDateTime) {
+    // Check if we got a Date
+    let d = someDateTime;
+    if(Object.prototype.toString.call(someDateTime) !== '[object Date]')
+        d = new Date(someDateTime.toString());
+
     var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-    const mn = someDate.getMonth();
-    const dn = someDate.getDate();
+    const mn = d.getMonth();
+    const dn = d.getDate();
     let dayOfYear = dayCount[mn] + dn;
-    if(mn > 1 && isLeapYear(someDate))
+    if(mn > 1 && isLeapYear(d))
         dayOfYear++;
 
     return dayOfYear;
@@ -105,8 +116,14 @@ export const getDayOfYear = function(someDate) {
 
 // Returns the ISO week number
 // Source: https://weeknumber.net/how-to/javascript
-export const getWeek = function(someDate) {
-    let date = new Date(someDate.getTime());
+// Note: someDateTime can be either a Date or a string
+export const getWeek = function(someDateTime) {
+    // Check if we got a Date
+    let d = someDateTime;
+    if(Object.prototype.toString.call(someDateTime) !== '[object Date]')
+        d = new Date(someDateTime.toString());
+
+    let date = new Date(d.getTime());
     date.setHours(0, 0, 0, 0);
 
     // Thursday in current week decides the year
@@ -120,8 +137,14 @@ export const getWeek = function(someDate) {
 }
 
 // Returns the day of the week, 0 is Monday
-export const getDayOfWeek = function(someDate) {
-    let dow= new Date(someDate.getTime()).getDay();
+// Note: someDateTime can be either a Date or a string
+export const getDayOfWeek = function(someDateTime) {
+    // Check if we got a Date
+    let d = someDateTime;
+    if(Object.prototype.toString.call(someDateTime) !== '[object Date]')
+        d = new Date(someDateTime.toString());
+
+    let dow= new Date(d.getTime()).getDay();
     if(0 === dow)
         dow = 6;
     else
@@ -132,8 +155,8 @@ export const getDayOfWeek = function(someDate) {
 
 // Format a date and time as a string
 // If the date is in the current year, omit the year
+// Note: someDateTime can be either a Date or a string
 export const formatTime = function(someDateTime) {
-
     if(!isValid(someDateTime))
         return " ";
 
@@ -161,15 +184,15 @@ export const formatTime = function(someDateTime) {
 // Format a date as a string
 // Unit controls the granularity ('day', 'month', or 'year')
 // If the date is in the current year and granularity is finer than 'year', omit the year
-export const formatDate = function(someDate, unit = 'day') {
-
-    if(!isValid(someDate))
+// Note: someDateTime can be either a Date or a string
+export const formatDate = function(someDateTime, unit = 'day') {
+    if(!isValid(someDateTime))
         return " ";
 
     // Check if we got a Date
-    let d = someDate;
-    if(Object.prototype.toString.call(someDate) !== '[object Date]')
-        d = new Date(someDate.toString());
+    let d = someDateTime;
+    if(Object.prototype.toString.call(someDateTime) !== '[object Date]')
+        d = new Date(someDateTime.toString());
 
     const today  = new Date();
     let formattedDate = null;
@@ -199,8 +222,8 @@ export const formatDate = function(someDate, unit = 'day') {
 }
 
 // Return formatted texts for the frequency and next occurrence of an event
+// Note: nextEvent can be either a Date or a string
 export const formatNextEvent = function(frequency, unit, nextEvent, t) {
-
     let f = t('ims.notSet');
     if(frequency === 1) {
         f = `${t('ims.every')} `;
@@ -226,12 +249,67 @@ export const formatNextEvent = function(frequency, unit, nextEvent, t) {
     }
 
     let w = t('ims.notSet');
-    if(isValid(nextEvent)) {
-        const next = new Date(nextEvent);
-        w = formatDate(next, unit);
-    }
+    if(isValid(nextEvent))
+        w = formatDate(nextEvent, unit);
 
     return { frequency: f, when: w };
+}
+
+// Return formatted text for the time since an event,
+// suitable to be used as the subtitle of a toast notification
+// Note: event can be either a Date or a string
+export const formatSinceEvent = function(event, t) {
+    if(!isValid(event))
+        return "";
+
+    // Check if we got a Date
+    let d = event;
+    if(Object.prototype.toString.call(event) !== '[object Date]')
+        d = new Date(event.toString());
+
+    const now = new Date();
+    const timeNow = now.getTime();
+    const timeEvent = d.getTime();
+    if(timeEvent > timeNow)
+        return "";
+
+    // Now
+    const secsAgo = Math.floor((timeNow - timeEvent)/1000);
+    if(secsAgo < 10)
+        return t('ims.justNow');
+
+    // Minutes ago
+    let minsAgo = Math.floor(secsAgo / 60);
+    if(0 === minsAgo)
+        return t('ims.secsAgo', { secs: secsAgo });
+    if(minsAgo < 60)
+        return t('ims.minsAgo', { mins: minsAgo });
+
+    // Hours and minutes ago
+    const hoursAgo = Math.floor(minsAgo / 60);
+    if(hoursAgo < 24) {
+        minsAgo = minsAgo % 60;
+        return t('ims.hoursMinsAgo', { hours: hoursAgo, mins: minsAgo });
+    }
+
+    // Earlier this week
+    const week = getWeek(now);
+    const weekAgo = getWeek(event);
+    if(week === weekAgo) {
+        const dow = getDayOfWeek(event);
+        switch(dow) {
+            case 5: return t('role.sat');
+            case 4: return t('role.fri');
+            case 3: return t('role.thu');
+            case 2: return t('role.wed');
+            case 1: return t('role.tue');
+            case 0: return t('role.mon');
+        }
+        return "";
+    }
+
+    // Earlier
+    return formatDate(d, 'day');
 }
 
 // Reusable sort function, allows sorting by any field and even

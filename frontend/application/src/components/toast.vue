@@ -7,7 +7,10 @@
             <small class="text-body-tertiary">{{ toast.subtitle }}</small>
             <button type="button" :class="'btn-close ' + (toast.closeClass ? toast.closeClass : '')" data-bs-dismiss="toast" :aria-label="$t('ims.close')"></button>
         </div>
-        <div :class="'toast-body ' + (toast.bodyClass ? toast.bodyClass : '')">{{ toast.message }}</div>
+        <div v-if="toast.link" :class="'toast-body ' + (toast.bodyClass ? toast.bodyClass : '')">
+            <router-link :to="toast.link">{{ toast.message }}</router-link>
+        </div>
+        <div v-else :class="'toast-body ' + (toast.bodyClass ? toast.bodyClass : '')">{{ toast.message }}</div>
     </div>
 </div>
 </template>
@@ -21,59 +24,47 @@ export default {
     props: {
         id: String
     },
-    expose: [ 'showToast', 'showSuccess', 'showError', 'showWarning' ],
+    expose: [ 'showToast', 'showSuccess', 'showError', 'showWarning', 'showInfo' ],
     data() {
         return {
-            notifications: [], // { id, title, subtitle, message, class, delay, visible }
+            notifications: [], // { id, title, subtitle, message, link, class, delay, visible }
         }
     },
     computed: {
         toasts() { return this.notifications; },
     },
     methods: {
-        showToast(title, message, subtitle, headClass, closeClass, bodyClass, delay = 5000) {
+        showToast(title, message, link, subtitle, headClass, closeClass, bodyClass, delay = 5000) {
             this.notifications.push({
                 id: 'toast-' + Math.floor(1000 * Math.random()),
                 title: title,
                 subtitle: subtitle,
                 message: message,
+                link: link,
                 headClass: headClass,
                 closeClass: closeClass,
                 bodyClass: bodyClass,
                 delay: delay });
         },
-        showSuccess(title, message, subtitle, bodyClass) {
-            this.notifications.push({
-                id: 'toast-' + Math.floor(1000 * Math.random()),
-                title: title,
-                subtitle: subtitle,
-                message: message,
-                headClass: 'text-bg-success',
-                closeClass: 'btn-close-white',
-                bodyClass: bodyClass,
-                delay: 3000 });
+        showSuccess(title, message, link, subtitle, bodyClass) {
+            this.showToast(title, message, link, subtitle,
+                  'text-bg-success', 'btn-close-white',
+                           bodyClass, 3000);
         },
-        showError(title, message, subtitle, bodyClass) {
-            this.notifications.push({
-                id: 'toast-' + Math.floor(1000 * Math.random()),
-                title: title,
-                subtitle: subtitle,
-                message: message,
-                headClass: 'text-bg-danger',
-                closeClass: 'btn-close-white',
-                bodyClass: bodyClass,
-                delay: 5000 });
+        showError(title, message, link, subtitle, bodyClass) {
+            this.showToast(title, message, link, subtitle,
+                'text-bg-danger', 'btn-close-white',
+                bodyClass, 5000);
         },
-        showWarning(title, message, subtitle, bodyClass) {
-            this.notifications.push({
-                id: 'toast-' + Math.floor(1000 * Math.random()),
-                title: title,
-                subtitle: subtitle,
-                message: message,
-                headClass: 'text-bg-warning',
-                closeClass: 'btn-close-white',
-                bodyClass: bodyClass,
-                delay: 3000 });
+        showWarning(title, message, link, subtitle, bodyClass) {
+            this.showToast(title, message, link, subtitle,
+                'text-bg-warning', 'btn-close-white',
+                bodyClass, 3000);
+        },
+        showInfo(title, message, link, subtitle, bodyClass) {
+            this.showToast(title, message, link, subtitle,
+                'text-bg-info', 'btn-close',
+                bodyClass, 3000);
         },
     },
     watch: {
@@ -111,6 +102,9 @@ export default {
 }
 .toast-container > :not(:last-child) {
     margin-bottom: .5rem;
+}
+.toast-body a {
+    text-decoration: none;
 }
 .bg-solid-white {
     background-color: whitesmoke!important;

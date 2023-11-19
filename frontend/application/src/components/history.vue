@@ -119,7 +119,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 .simplebar-scrollbar:before {
-    background-color: var(--bs-tertiary-color);
+    background-color: #e1e5ec;
 }
 </style>
 

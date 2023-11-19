@@ -1,6 +1,6 @@
 {
   "name": "ims-tools",
-  "version": "1.0.52",
+  "version": "1.0.55",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -17,6 +17,7 @@
     "core-js": "^3.8.3",
     "crypto-js": "^4.2.0",
     "gridjs": "^6.0.6",
+    "json.date-extensions": "^1.2.2",
     "oidc-client": "^1.11.5",
     "secure-ls": "^1.2.6",
     "simplebar-vue": "^2.3.3",
