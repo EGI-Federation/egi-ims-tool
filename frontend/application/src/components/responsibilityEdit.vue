@@ -195,11 +195,11 @@ export default {
                 }
                 else if(typeof(value) === "number") {
                     // Got a year
-                    value = new Date(value, 3, 1, 8).toISOString();
+                    value = new Date(value, 3, 1, 8);
                 }
                 else if(isValid(value.year) || isValid(value.month)) {
                     // Got { month: 0, year: 2023 }
-                    value = new Date(value.year, value.month, 1, 8).toISOString();
+                    value = new Date(value.year, value.month, 1, 8);
                 }
 
                 if(isValid(this.edited))
