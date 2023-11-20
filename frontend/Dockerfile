@@ -7,6 +7,7 @@ ARG LOCALE
 ARG FALLBACK_LOCALE
 ARG TRACE_ROLES
 ARG IMS_API
+ARG MSG_API
 ARG SLM_API
 
 # Install envsubst
@@ -35,7 +36,7 @@ RUN npm install
 COPY application/ .
 
 # Build app for production with minification
-RUN envsubst '${EGI_CHECKIN_SERVER}${EGI_VO}${EGI_VO_ENROLL_URL}${LOCALE}${FALLBACK_LOCALE}${TRACE_ROLES}${IMS_API}${SLM_API}' < /app/.env.template > /app/.env && \
+RUN envsubst '${EGI_CHECKIN_SERVER}${EGI_VO}${EGI_VO_ENROLL_URL}${LOCALE}${FALLBACK_LOCALE}${TRACE_ROLES}${IMS_API}${MSG_API}${SLM_API}' < /app/.env.template > /app/.env && \
     npm run build
 
 EXPOSE 8080
