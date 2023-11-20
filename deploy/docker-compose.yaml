@@ -67,6 +67,7 @@ services:
         - EGI_VO_ENROLL_URL=${EGI_VO_ENROLL_URL}
         - LOCALE=${IMS_LOCALE:-en}
         - FALLBACK_LOCALE=${IMS_FALLBACK_LOCALE:-it}
+        - TRACE_APIS=${IMS_TRACE_APIS:-true}
         - TRACE_ROLES=${IMS_TRACE_ROLES:-false}
         - IMS_API=https://${SERVICE_DOMAIN}/api/ims
         - MSG_API=https://${SERVICE_DOMAIN}/api/msg

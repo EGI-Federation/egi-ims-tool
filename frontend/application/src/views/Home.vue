@@ -212,8 +212,11 @@ export default {
         if(!isValid(this.roles) || 0 === this.roles.size)
             parseRoles();
 
-        console.log(`IMS API at ${process.env.VUE_APP_IMS_IMS_API}`);
-        console.log(`SLM API at ${process.env.VUE_APP_IMS_SLM_API}`);
+        if('true' === process.env.VUE_APP_IMS_TRACE_APIS) {
+            console.log(`IMS API at ${process.env.VUE_APP_IMS_IMS_API}`);
+            console.log(`MSG API at ${process.env.VUE_APP_IMS_MSG_API}`);
+            console.log(`SLM API at ${process.env.VUE_APP_IMS_SLM_API}`);
+        }
     },
     mounted() {
     }
