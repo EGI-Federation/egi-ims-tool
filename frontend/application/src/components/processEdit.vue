@@ -388,7 +388,7 @@ export default {
         approved() { return this.$props.info.approved; },
         latest() { return store.state.ims?.processInfo; },
         edited() {
-            if(!isValid(this.processInfo) && isValid(this.current)) {
+            if(!isValid(this.processInfo) && isValid(this.current?.version)) {
                 this.processInfo = deepClone(this.current);
                 this.processInfo.changeDescription = "";
                 this.processInfo.changeBy = null;
@@ -691,7 +691,7 @@ export default {
             return false;
         },
         processChanged() {
-            if(!isValid(this.current) || !isValid(this.edited))
+            if(!isValid(this.current?.version) || !isValid(this.edited))
                 return false;
 
             const pc = this.current;
@@ -701,7 +701,7 @@ export default {
                 !strEqual(pc.contact, pe.contact) ||
                 pc.reviewFrequency !== pe.reviewFrequency ||
                 pc.frequencyUnit !== pe.frequencyUnit ||
-                pc.nextReview !== pe.nextReview || // String
+                pc.nextReview.getTime() !== pe.nextReview.getTime() ||
                 pc.status !== pe.status)
                 return true;
 

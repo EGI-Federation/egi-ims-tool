@@ -75,11 +75,11 @@
         </div>
     </div>
     <message id="approveDialog" ref="approveDialog" :collect-message="true" :must-collect-message="false"
-             :title="$t('ims.approveChange')" :message="$t('role.approveRespChange')"
+             :title="$t('ims.approveChange')" :message="$t('role.approveChange')"
              :placeholder-collect-message="$t('ims.approvalNotes')"
              :confirm-button="$t('ims.approve')" @confirm="approveResponsibility" />
     <message id="rejectDialog" ref="rejectDialog" :collect-message="true" :must-collect-message="true"
-             :title="$t('ims.rejectChange')" :message="$t('role.rejectRespChange')"
+             :title="$t('ims.rejectChange')" :message="$t('role.rejectChange')"
              :placeholder-collect-message="$t('ims.rejectReason')"
              :confirm-button="$t('ims.reject')" @confirm="rejectResponsibility" />
     <version-history :bidirectional="bidirectional" :view-url="this.baseUrl"
@@ -93,7 +93,8 @@
 import { reactive } from "vue";
 import { store, storeProcessInfo, storeProcessResponsibilities } from "@/store";
 import { Status, isValid, isSuccess } from "@/utils";
-import { Category } from "@/roles";
+import { Roles, Category } from "@/roles";
+import { notifyUsersWithRole } from "@/notify";
 import { requestResponsibilityApproval } from "@/api/requestResponsibilityApproval";
 import { getResponsibility } from "@/api/getResponsibility";
 import { approveResponsibility } from "@/api/approveResponsibility";
@@ -132,11 +133,9 @@ export default {
         description() {
             return this.hasDescription ? this.current.description : "";
         },
-        systemProcess() {
-            return 'IMS' === this.$props.processCode;
-        },
+        isSystem() { return 'IMS' === this.$props.processCode; },
         baseUrl() { 
-            return `/${this.$props.processCode.toLowerCase()}${this.systemProcess ? '/plan' : ''}/roles`;
+            return `/${this.$props.processCode.toLowerCase()}${this.isSystem ? '/plan' : ''}/roles`;
         },
         roles() { return store.state.temp.rolesByProcess?.get(this.$props.processCode); },
         systemRoleList() { return this.filteredRoleList(Category.IMS); },
@@ -186,28 +185,40 @@ export default {
             event.stopPropagation();
         },
         updateResponsibility() {
-            const updatePath = `/${this.$props.processCode.toLowerCase()}${this.systemProcess ? '/plan' : ''}/responsibilities/update`;
+            const updatePath = `/${this.$props.processCode.toLowerCase()}${this.isSystem ? '/plan' : ''}/responsibilities/update`;
             this.$router.push(updatePath);
         },
         askForApproval() {
             // Call API to ask for responsibility approval
             let t = this;
-            const rraResult = requestResponsibilityApproval(this.accessToken, this.processCode, this.$props.apiBaseUrl);
+            const processCode = this.$props.processCode;
+            const rraResult = requestResponsibilityApproval(this.accessToken, processCode, this.$props.apiBaseUrl);
             rraResult.request().then(() => {
                 if(isSuccess(t, rraResult)) {
                     // Success
-                    console.log(`Requested approval of the ${t.processCode} process responsibilities`);
-                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('role.requestedRespApproval'));
+                    console.log(`Requested approval of the ${processCode} process responsibilities`);
+                    t.$root.$refs.toasts.showSuccess(t.$t('ims.success'), t.$t('role.requestedApproval'));
 
                     // Fetch responsibility from the API to include the new status
-                    const riResult = getResponsibility(t.accessToken, t.processCode, true, t.$props.apiBaseUrl);
+                    const riResult = getResponsibility(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                     riResult.load().then(() => {
                         if(isSuccess(t, riResult)) {
                             // Success
                             storeProcessResponsibilities(riResult);
                             const ri = riResult.responsibilityInfo.value;
-                            if(isValid(ri))
-                                t.$router.push(t.baseUrl + `?v=${ri.version}`);
+                            if(isValid(ri)) {
+                                // Notify process owner
+                                const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
+                                const linkToVersion = `${t.baseUrl}?v=${ri.version}`;
+                                const notification = t.$t('ims.askApprovalNotif', {
+                                    process: t.$t(`home.${processCode}`),
+                                    entity: ` ${t.$t('ims.responsibility').toLowerCase()}`,
+                                    has: t.$t('ims.have') });
+                                notifyUsersWithRole(t, processCode, processOwner.description, notification, linkToVersion);
+
+                                // Show new version
+                                t.$router.push(linkToVersion);
+                            }
                         }
                     });
                 }
@@ -216,25 +227,35 @@ export default {
         approveOrRejectResponsibility(approve, message) {
             // Call API to approve/reject responsibility changes
             let t = this;
-            const arResult = approveResponsibility(this.accessToken, this.$props.processCode, approve, message,
+            const processCode = this.$props.processCode;
+            const arResult = approveResponsibility(this.accessToken, processCode, approve, message,
                                                    this.$props.apiBaseUrl);
             arResult.request().then(() => {
                 if(isSuccess(t, arResult)) {
                     // Success
-                    console.log(`${approve ? 'Approved' : 'Rejected'} ${t.$props.processCode} process responsibility changes`);
+                    console.log(`${approve ? 'Approved' : 'Rejected'} ${processCode} process responsibility changes`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
                                                      t.$t(approve ? 'role.approvedResp' : 'role.rejectedResp'));
 
                     // Fetch responsibility from the API to include the new status
-                    const riResult = getResponsibility(t.accessToken, t.$props.processCode, true,
-                                                       t.$props.apiBaseUrl);
+                    const riResult = getResponsibility(t.accessToken, processCode, true, t.$props.apiBaseUrl);
                     riResult.load().then(() => {
                         if(isSuccess(t, riResult)) {
                             // Success
                             storeProcessInfo(riResult);
                             const ri = riResult.responsibilityInfo.value;
-                            if(isValid(ri))
-                                t.$router.push(t.baseUrl + `?v=${ri.version}`);
+                            if(isValid(ri)) {
+                                // Notify process manager
+                                const processManager = t.isSystem ? Roles.IMS.IMS_MANAGER : Roles[processCode].PROCESS_MANAGER;
+                                const linkToVersion = `${t.baseUrl}?v=${ri.version}`;
+                                const notification = t.$t(approve ? 'ims.approvedNotif' : 'ims.rejectedNotif', {
+                                    process: t.$t(`home.${processCode}`),
+                                    entity: ` ${t.$t('ims.responsibility').toLowerCase()}` });
+                                notifyUsersWithRole(t, processCode, processManager.description, notification, linkToVersion);
+
+                                // Show new version
+                                t.$router.push(linkToVersion);
+                            }
                         }
                     });
                 }

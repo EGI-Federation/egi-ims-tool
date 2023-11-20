@@ -65,15 +65,15 @@
         </div>
     </div>
     <message id="approveDialog" ref="approveDialog" :collect-message="true" :must-collect-message="false"
-             :title="$t('ims.approveChange')" :message="$t('process.approveProcessChange')"
+             :title="$t('ims.approveChange')" :message="$t('process.approveChange')"
              :placeholder-collect-message="$t('ims.approvalNotes')"
              :confirm-button="$t('ims.approve')" @confirm="approveProcess" />
     <message id="rejectDialog" ref="rejectDialog" :collect-message="true" :must-collect-message="true"
-             :title="$t('ims.rejectChange')" :message="$t('process.rejectProcessChange')"
+             :title="$t('ims.rejectChange')" :message="$t('process.rejectChange')"
              :placeholder-collect-message="$t('ims.rejectReason')"
              :confirm-button="$t('ims.reject')" @confirm="rejectProcess" />
     <message id="deprecateDialog" ref="deprecateDialog" :collect-message="true" :must-collect-message="true"
-             :title="$t('ims.deprecate')" title-style="danger" :message="$t('process.warnDeprecateProcess')"
+             :title="$t('ims.deprecate')" title-style="danger" :message="$t('process.warnDeprecate')"
              :placeholder-collect-message="$t('ims.deprecateReason')"
              :confirm-button="$t('ims.continue')" @confirm="deprecateProcess" />
     <version-history :bidirectional="bidirectional" :view-url="`/${processCode.toLowerCase()}`"
@@ -263,8 +263,9 @@ export default {
                                 const processOwner = t.isSystem ? Roles.IMS.IMS_OWNER : Roles[processCode].PROCESS_OWNER;
                                 const linkToVersion = `${t.baseUrl}?v=${pi.version}`;
                                 const notification = t.$t('ims.askApprovalNotif', {
-                                    entity: `${t.$t('ims.process').toLowerCase()} `,
-                                    name: t.$t(`home.${processCode}`) });
+                                    process: t.$t(`home.${processCode}`),
+                                    entity: ` ${t.$t('ims.process').toLowerCase()}`,
+                                    has: t.$t('ims.has') });
                                 notifyUsersWithRole(t, processCode, processOwner.description, notification, linkToVersion);
 
                                 // Show new version
@@ -285,7 +286,7 @@ export default {
                     // Success
                     console.log(`${approve ? 'Approved' : 'Rejected'} ${processCode} process changes`);
                     t.$root.$refs.toasts.showSuccess(t.$t('ims.success'),
-                                                     t.$t(approve ? 'process.approvedProcess' : 'process.rejectedProcess'));
+                                                     t.$t(approve ? 'process.approved' : 'process.rejected'));
 
                     // Fetch the process information from the API to include the new status
                     const piResult = getProcess(t.accessToken, processCode, true, t.$props.apiBaseUrl);
@@ -299,8 +300,8 @@ export default {
                                 const processManager = t.isSystem ? Roles.IMS.IMS_MANAGER : Roles[processCode].PROCESS_MANAGER;
                                 const linkToVersion = `${t.baseUrl}?v=${pi.version}`;
                                 const notification = t.$t(approve ? 'ims.approvedNotif' : 'ims.rejectedNotif', {
-                                    entity: `${t.$t('ims.process').toLowerCase()} `,
-                                    name: t.$t(`home.${processCode}`) });
+                                    process: t.$t(`home.${processCode}`),
+                                    entity: ` ${t.$t('ims.process').toLowerCase()}` });
                                 notifyUsersWithRole(t, processCode, processManager.description, notification, linkToVersion);
 
                                 // Show new version

@@ -71,12 +71,12 @@
         </div>
     </div>
     <message id="warnDeprecateRole" ref="warnDeprecateRole" :collect-message="true" :must-collect-message="true"
-             :title="$t('ims.deprecate')" title-style="danger" :message="$t('role.warnDeprecateRole')"
+             :title="$t('ims.deprecate')" title-style="danger" :message="$t('role.warnDeprecate')"
              :placeholder-collect-message="$t('ims.deprecateReason')"
              :confirm-button="$t('ims.continue')" @confirm="deprecateRole" />
     <message id="implementRoleDialog" ref="implementRoleDialog" :collect-message="true" :must-collect-message="true"
              :title="$t('ims.implementEntity', { entity: $t('ims.role') })"
-             :message="$t('role.implementRoleChanges', { processCode: processCode, roleName: roleName })"
+             :message="$t('role.implementChanges', { processCode: processCode, roleName: roleName })"
              :placeholder-collect-message="$t('ims.implementationDetails')"
              :confirm-button="$t('ims.implement')" @confirm="implementRole" />
     <version-history :bidirectional="bidirectional" :view-url="`${this.baseUrl}/${this.$route.params.role}`"
@@ -255,9 +255,10 @@ export default {
             irResult.successTitle = t.$t('ims.success');
             irResult.errorTitle = t.$t('ims.error');
             irResult.toastMessage = t.$t('ims.implementedEntity', {
-                processCode: processCode,
+                process: processCode,
                 entity: t.$t('ims.role').toLowerCase(),
-                name: ` ${t.latest.name}`
+                name: ` ${t.latest.name}`,
+                has: t.$t('ims.has')
             });
             irResult.toasts = t.$root.$refs.toasts;
             irResult.implement().then(() => {
@@ -271,9 +272,10 @@ export default {
                     const processManager = t.isSystem ? Roles.IMS.IMS_MANAGER : Roles[processCode].PROCESS_MANAGER;
                     const linkToVersion = `${t.returnToRoute}?v=${t.latest.version}`;
                     const notification = t.$t('ims.implementedNotif', {
-                                               processCode: processCode,
+                                               process: processCode,
                                                entity: t.$t('ims.role').toLowerCase(),
-                                               name: ` ${t.latest.name}` });
+                                               name: ` ${t.latest.name}`,
+                                               has: t.$t('ims.has')});
                     notifyUsersWithRole(t, processCode, processOwner.description, notification, linkToVersion);
                     notifyUsersWithRole(t, processCode, processManager.description, notification, linkToVersion);
 

@@ -175,7 +175,7 @@ export default {
         current() { return this.$props.info.current; },
         implemented() { return this.$props.info.implemented; },
         edited() {
-            if(!isValid(this.roleInfo) && isValid(this.current)) {
+            if(!isValid(this.roleInfo) && isValid(this.current?.version)) {
                 this.roleInfo = deepClone(this.current);
                 this.roleInfo.changeDescription = "";
                 this.roleInfo.changeBy = null;
@@ -231,7 +231,7 @@ export default {
             },
         },
         roleChanged() {
-            if(!isValid(this.current) || !isValid(this.edited))
+            if(!isValid(this.current?.version) || !isValid(this.edited))
                 return false;
 
             const pc = this.current;

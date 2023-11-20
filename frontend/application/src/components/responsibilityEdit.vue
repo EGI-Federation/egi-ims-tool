@@ -126,7 +126,7 @@ export default {
         approved() { return this.$props.info.approved; },
         latest() { return store.state.ims?.responsibilityInfo; },
         edited() {
-            if(!isValid(this.responsibilityInfo) && isValid(this.current)) {
+            if(!isValid(this.responsibilityInfo) && isValid(this.current?.version)) {
                 this.responsibilityInfo = deepClone(this.current);
                 this.responsibilityInfo.changeDescription = "";
                 this.responsibilityInfo.changeBy = null;
@@ -207,16 +207,16 @@ export default {
             },
         },
         responsibilityChanged() {
-            if(!isValid(this.current) || !isValid(this.edited))
+            if(!isValid(this.current?.version) || !isValid(this.edited))
                 return false;
 
             const pc = this.current;
             const pe = this.edited;
 
-            if (!strEqual(pc.description, this.descriptionEditor.text) ||
+            if(!strEqual(pc.description, this.descriptionEditor.text) ||
                 pc.reviewFrequency !== pe.reviewFrequency ||
                 pc.frequencyUnit !== pe.frequencyUnit ||
-                pc.nextReview !== pe.nextReview || // String
+                pc.nextReview.getTime() !== pe.nextReview.getTime() ||
                 pc.status !== pe.status)
                 return true;
 

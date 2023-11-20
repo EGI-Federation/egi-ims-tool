@@ -2,7 +2,7 @@
     <roles-loader process-code="IMS" :api-base-url="processApi"/>
     <div class="page">
         <bread-crumb :segments="locationSegments"/>
-        <responsibility-edit v-if="info.current" ref="responsibilityEdit" :info="info"
+        <responsibility-edit v-if="info.current?.version" ref="responsibilityEdit" :info="info"
                              :state="editState" :process-code="processCode" :api-base-url="processApi"/>
     </div>
 </template>
@@ -29,7 +29,7 @@ export default {
         return {
             accessToken: store.state.oidc?.access_token,
             info: reactive({
-                current: null, // Responsibility
+                current: {}, // Responsibility
             }),
             editState: reactive({ hasUnsavedChanges: false }),
         }

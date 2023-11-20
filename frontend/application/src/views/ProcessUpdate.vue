@@ -2,7 +2,7 @@
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <div class="page">
         <bread-crumb :segments="locationSegments"/>
-        <process-edit v-if="info.current" ref="processEdit" :info="info"
+        <process-edit v-if="info.current?.version" ref="processEdit" :info="info"
                       :state="editState" :api-base-url="processApi" :process-code="processCode"/>
     </div>
 </template>
@@ -28,8 +28,8 @@ export default {
         return {
             accessToken: store.state.oidc?.access_token,
             info: reactive({
-                current: store.state.ims?.processInfo, // Process
-                approved: null                         // Process
+                current: {},    // Process
+                approved: null  // Process
             }),
             editState: reactive({ hasUnsavedChanges: false }),
             locationSegments: [

@@ -2,7 +2,7 @@
     <roles-loader :process-code="processCode" :api-base-url="processApi"/>
     <div class="page">
         <bread-crumb :segments="locationSegments" ref="breadCrumb"/>
-        <role-edit v-if="currentRole" ref="roleEdit"
+        <role-edit v-if="currentRole?.version" ref="roleEdit"
                   :info="{ current: currentRole, implemented: implementedRole }"
                   :state="editState" :page-base-url="baseUrl"
                   :api-base-url="processApi" :process-code="processCode"/>
@@ -30,7 +30,7 @@ export default {
     data() {
         return {
             accessToken: store.state.oidc?.access_token,
-            currentRole: null,      // Role
+            currentRole: {},        // Role
             implementedRole: null,  // Role
             editState: reactive({ hasUnsavedChanges: false }),
         }
