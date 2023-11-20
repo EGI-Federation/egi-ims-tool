@@ -218,4 +218,3 @@ create table slm.role_holder_map
 
 alter table slm.role_holder_map
     owner to ims;
-

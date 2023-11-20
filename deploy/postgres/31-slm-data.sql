@@ -1,5 +1,3 @@
-SET search_path TO slm;
-
 insert into slm.users (checkinuserid, fullname, email)
 values ('e9c37aa0d1cf14c56e560f9f9915da6761f54383badb501a2867bc43581b835c@egi.eu', 'Levente Farkas', 'levente.farkas@egi.eu'),
        ('025166931789a0f57793a6092726c2ad89387a4cc167e7c63c5d85fc91021d18@egi.eu', 'Giuseppe La Rocca', 'giuseppe.larocca@egi.eu');
@@ -74,7 +72,7 @@ values ('process-staff', 'Process Staff', 1, 1, '2021-02-19T19:23:18', 'First ve
 - Perform regular reviews of the UA
 - Understand new or changed requirements of the UA under his/her ownership, and initiate necessary updates or other follow-up actions'),
 
-       ('process-manager', 'Process Manager', 2, 1, '2021-02-19T19:23:18', 'Second version', true, 'process-manager', 'Process Manager',
+        ('process-manager', 'Process Manager', 2, 1, '2021-02-19T19:23:18', 'Second version', true, 'process-manager', 'Process Manager',
 'Act as the primary contact point for operational concerns in the context of the process.
 - Maintain the process definition/description and ensure it is available to relevant persons
 - Maintain an adequate level of awareness and competence of the people involved in the process
@@ -153,12 +151,10 @@ values (1, 1),
 
 insert into slm.process_interfaces(direction, interfaceswith, description, relevantmaterial)
 values ('In', 'CAPM', 'Reflecting demands, planned upgrades, downgrades and re-allocations of resources.', 'Capacity Plan Database'),
-       ('Out', 'Internal', 'Data is gathered by [ARGO](http://argo.egi.eu/)',
-'Records of monitoring the performance of services and internal groups providing service components
+       ('Out', 'Internal', 'Data is gathered under http://argo.egi.eu/', 'Records of monitoring the performance of services and internal groups providing service components
 
 EGI OLA Services reporting data'),
-       ('Out', 'ISRM, SRM, CRM, SACM, CAPM, IS', 'Agreed Service Level Agreement, Operational Level Agreement, Underpinning Agreements',
-'**SLA/OLA/UA** database
+       ('Out', 'ISRM, SRM, CRM, SACM, CAPM, IS', 'Agreed Service Level Agreement, Operational Level Agreement, Underpinning Agreements', '**SLA/OLA/UA** database
 
 - VO SLA OLAs
 - OLA and UA
