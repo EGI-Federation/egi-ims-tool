@@ -9,7 +9,7 @@ export const getResponsibility = function(accessToken, processCode, allVersions,
     const load = async function() {
 
         try {
-            const url = baseUrl + '/responsibilities' + (allVersions ? '?allVersions=true' : '');
+            const url = baseUrl + '/xresponsibilities' + (allVersions ? '?allVersions=true' : '');
             let data = await axios.get(url, {
                 headers: {
                     Accept: 'application/json',
@@ -26,9 +26,9 @@ export const getResponsibility = function(accessToken, processCode, allVersions,
                     }
                 }
             });
-            if(!data.status) {
-                console.error(data.statusText);
-                throw Error("Error in request " + url + " : " + data.status);
+            if(!data) {
+                console.error(error.value?.message);
+                throw Error("Error in request " + url + " : " + error.value?.status);
             }
 
             responsibilityInfo.value = data.data;

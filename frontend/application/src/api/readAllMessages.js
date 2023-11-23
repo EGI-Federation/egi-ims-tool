@@ -28,9 +28,9 @@ export const readAllMessages = function(accessToken, baseUrl) {
                     }
                 }
             });
-            if(!data.status) {
-                console.error(data.statusText);
-                throw Error("Error in request " + url + " : " + data.status);
+            if(!data) {
+                console.error(error.value?.message);
+                throw Error("Error in request " + url + " : " + error.value?.status);
             }
 
             response.value = data.data;

@@ -32,9 +32,9 @@ export const getMessages = function(accessToken, from, limit, baseUrl) {
                     }
                 }
             });
-            if(!data.status) {
-                console.error(data.statusText);
-                throw Error("Error in request " + url + " : " + data.status);
+            if(!data) {
+                console.error(error.value?.message);
+                throw Error("Error in request " + url + " : " + error.value?.status);
             }
 
             messages.value = data.data;

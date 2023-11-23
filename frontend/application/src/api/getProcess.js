@@ -26,9 +26,9 @@ export const getProcess = function(accessToken, processCode, allVersions, baseUr
                     }
                 }
             });
-            if(!data.status) {
-                console.error(data.statusText);
-                throw Error("Error in request " + url + " : " + data.status);
+            if(!data) {
+                console.error(error.value?.message);
+                throw Error("Error in request " + url + " : " + error.value?.status);
             }
 
             processInfo.value = data.data;
