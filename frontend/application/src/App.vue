@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { removeUrlAnchor } from "@/utils";
+import { formatFileSize, removeUrlAnchor } from "@/utils";
 import ToastMessages from "@/components/toast.vue";
 
 export default {
@@ -14,6 +14,21 @@ export default {
         cacheKey() {
             // Include the query params in the route key, but not the anchors
             return removeUrlAnchor(this.$route.fullPath);
+        },
+    },
+    methods: {
+        tooBigToUpload(fileInfo) {
+            let toast = this.$refs.toasts;
+            toast.showError(this.$t('ims.error'),
+                this.$t('textbox.imageTooBig', {
+                    size: formatFileSize(this.$t, fileInfo.size),
+                    max: formatFileSize(this.$t, process.env.VUE_APP_MAX_UPLOAD_SIZE)
+                }));
+        },
+        imageExists(fileName) {
+            let toast = this.$refs.toasts;
+            toast.showError(this.$t('ims.error'),
+                            this.$t('textbox.imageExists', { name: fileName }));
         },
     },
 }
@@ -39,6 +54,10 @@ body {
     --max-content-width: 55rem;
     --content-height: calc(100vh - var(--navbar-height));
     --font-scale: 0.9;
+    --font-size-h2: calc(1.32 * (var(--font-scale) * var(--bs-body-font-size)) + 0.9vw);
+    --font-size-h3: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    --font-size-h4: calc(1.125 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    --font-size-h5: calc(1.122 * (var(--font-scale) * var(--bs-body-font-size)));
 }
 #app {
     font-family: Hind, Helvetica, Arial, sans-serif;
@@ -52,19 +71,19 @@ body {
     min-height: 100%;
 }
 #app h2 {
-    font-size: calc(1.32 * (var(--font-scale) * var(--bs-body-font-size)) + 0.9vw);
+    font-size: var(--font-size-h2);
     font-weight: 600;
 }
 #app h3 {
-    font-size: calc(1.2 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    font-size: var(--font-size-h3);
     font-weight: 600;
 }
 #app h4 {
-    font-size: calc(1.125 * (var(--font-scale) * var(--bs-body-font-size)) + 0.6vw);
+    font-size: var(--font-size-h4);
     font-weight: 500;
 }
 #app h5 {
-    font-size: calc(1.122 * (var(--font-scale) * var(--bs-body-font-size)));
+    font-size: var(--font-size-h5);
 }
 #app .fs-5 {
     font-size: calc(1.125 * (var(--font-scale) * var(--bs-body-font-size)))!important;
