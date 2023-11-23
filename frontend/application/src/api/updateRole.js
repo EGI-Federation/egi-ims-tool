@@ -40,6 +40,8 @@ export const updateRole = function(accessToken, processCode, roleInfo, baseUrl) 
         }
         catch(err) {
             console.error(`Error updating ${processCode}.${ri.role} role definition`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

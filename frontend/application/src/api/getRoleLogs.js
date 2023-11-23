@@ -35,6 +35,8 @@ export const getRoleLogs = function(accessToken, processCode, role, from, limit,
         }
         catch(err) {
             console.error(`Error getting assignment logs for role ${processCode}.${role}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

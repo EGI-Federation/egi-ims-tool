@@ -39,6 +39,8 @@ export const deprecateProcess = function(accessToken, processCode, changeDescrip
         }
         catch(err) {
             console.error("Error deprecating " + processCode + " process");
+            if(!error.value)
+                error.value = err;
         }
     }
 

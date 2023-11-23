@@ -41,6 +41,8 @@ export const sendMessage = function(accessToken, processCode, user, message, lin
         }
         catch(err) {
             console.error(`Error sending ${processCode} notification to user ${user.fullName}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

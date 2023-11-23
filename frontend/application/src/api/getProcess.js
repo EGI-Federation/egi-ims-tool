@@ -35,6 +35,8 @@ export const getProcess = function(accessToken, processCode, allVersions, baseUr
         }
         catch(err) {
             console.error("Error getting " + processCode + " process");
+            if(!error.value)
+                error.value = err;
         }
     }
 

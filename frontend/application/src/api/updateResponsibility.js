@@ -36,6 +36,8 @@ export const updateResponsibility = function(accessToken, processCode, responsib
         }
         catch(err) {
             console.error("Error updating " + processCode + " responsibilities");
+            if(!error.value)
+                error.value = err;
         }
     }
 

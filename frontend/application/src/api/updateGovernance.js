@@ -36,6 +36,8 @@ export const updateGovernance = function(accessToken, governanceInfo, baseUrl) {
         }
         catch(err) {
             console.error("Error updating IMS governance");
+            if(!error.value)
+                error.value = err;
         }
     }
 

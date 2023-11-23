@@ -35,6 +35,8 @@ export const getResponsibility = function(accessToken, processCode, allVersions,
         }
         catch(err) {
             console.error("Error getting " + processCode + " responsibilities");
+            if(!error.value)
+                error.value = err;
         }
     }
 

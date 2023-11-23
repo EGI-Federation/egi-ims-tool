@@ -35,6 +35,8 @@ export const getGovernance = function(accessToken, allVersions, baseUrl) {
         }
         catch(err) {
             console.error("Error getting IMS governance");
+            if(!error.value)
+                error.value = err;
         }
     }
 

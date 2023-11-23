@@ -41,6 +41,8 @@ export const getMessages = function(accessToken, from, limit, baseUrl) {
         }
         catch(err) {
             console.error("Error getting messages");
+            if(!error.value)
+                error.value = err;
         }
     }
 

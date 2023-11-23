@@ -41,6 +41,8 @@ export const assignRole = function(accessToken, processCode, role, roleHolder, h
         }
         catch(err) {
             console.error(`Error assigning role ${processCode}.${role_} to user ${roleHolder?.fullName}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

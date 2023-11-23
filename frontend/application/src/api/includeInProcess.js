@@ -35,6 +35,8 @@ export const includeInProcess = function(accessToken, processCode, user, baseUrl
         }
         catch(err) {
             console.error(`Error including user ${user?.fullName} in process ${processCode}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

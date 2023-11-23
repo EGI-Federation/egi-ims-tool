@@ -35,6 +35,8 @@ export const getUsers = function(accessToken, processCode, processOnly, baseUrl)
         }
         catch(err) {
             console.error("Error getting " + (isValid(processCode) ? processCode : 'VO') + " users");
+            if(!error.value)
+                error.value = err;
         }
     }
 

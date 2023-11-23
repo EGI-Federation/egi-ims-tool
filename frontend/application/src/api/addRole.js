@@ -37,6 +37,8 @@ export const addRole = function(accessToken, processCode, roleInfo, baseUrl) {
         }
         catch(err) {
             console.error(`Error adding role ${processCode}.${roleInfo.role}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

@@ -36,6 +36,8 @@ export const excludeFromProcess = function(accessToken, processCode, user, baseU
         }
         catch(err) {
             console.error(`Error excluding user ${user?.fullName} from process ${processCode}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

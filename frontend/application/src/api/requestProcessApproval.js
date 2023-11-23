@@ -41,6 +41,8 @@ export const requestProcessApproval = function(accessToken, processCode, baseUrl
         }
         catch(err) {
             console.error("Error requesting " + processCode + " process approval");
+            if(!error.value)
+                error.value = err;
         }
     }
 

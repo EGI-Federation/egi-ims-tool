@@ -40,6 +40,8 @@ export const revokeRole = function(accessToken, processCode, role, roleHolder, b
         }
         catch(err) {
             console.error(`Error revoking role ${processCode}.${role} from user ${roleHolder?.fullName}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

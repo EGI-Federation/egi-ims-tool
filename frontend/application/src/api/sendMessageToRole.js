@@ -42,6 +42,8 @@ export const sendMessageToUsersWithRole = function(accessToken, processCode, rol
         }
         catch(err) {
             console.error(`Error sending message to users with role ${processCode}.${role}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

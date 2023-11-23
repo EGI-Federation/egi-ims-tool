@@ -40,6 +40,8 @@ export const deprecateRole = function(accessToken, processCode, role, changeDesc
         }
         catch(err) {
             console.error(`Error deprecating role ${processCode}.${role_}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

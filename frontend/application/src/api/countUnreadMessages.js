@@ -34,6 +34,8 @@ export const countUnreadMessages = function(accessToken, baseUrl) {
         }
         catch(err) {
             console.error("Error getting unread message count");
+            if(!error.value)
+                error.value = err;
         }
     }
 

@@ -37,6 +37,8 @@ export const readMessage = function(accessToken, messageId, baseUrl) {
         }
         catch(err) {
             console.error(`Error marking message ${messageId} as read`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

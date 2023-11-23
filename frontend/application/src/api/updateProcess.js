@@ -36,6 +36,8 @@ export const updateProcess = function(accessToken, processCode, processInfo, bas
         }
         catch(err) {
             console.error("Error updating " + processCode + " process");
+            if(!error.value)
+                error.value = err;
         }
     }
 

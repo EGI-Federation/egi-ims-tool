@@ -41,6 +41,8 @@ export const requestResponsibilityApproval = function(accessToken, processCode, 
         }
         catch(err) {
             console.error("Error requesting " + processCode + " responsibilities approval");
+            if(!error.value)
+                error.value = err;
         }
     }
 

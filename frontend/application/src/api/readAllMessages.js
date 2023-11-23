@@ -37,6 +37,8 @@ export const readAllMessages = function(accessToken, baseUrl) {
         }
         catch(err) {
             console.error(`Error marking all messages as read`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

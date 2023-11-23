@@ -35,6 +35,8 @@ export const getUsersWithRole = function(accessToken, processCode, role, baseUrl
         }
         catch(err) {
             console.error(`Error getting users holding ${processCode ? processCode + ' roles' : 'role ' + processCode + '.' + role_}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 

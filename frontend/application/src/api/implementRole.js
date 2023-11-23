@@ -43,6 +43,8 @@ export const implementRole = function(accessToken, processCode, role, changeBy, 
         }
         catch(err) {
             console.error(`Error implementing role ${processCode}.${role_}`);
+            if(!error.value)
+                error.value = err;
         }
     }
 
