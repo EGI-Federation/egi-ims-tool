@@ -259,8 +259,8 @@
 <script>
 // @ is an alias to /src
 import { isValid, isSuccess, formatSinceEvent } from '@/utils'
-import { readMessage } from "@/api/readMessage";
-import { readAllMessages } from "@/api/readAllMessages";
+import { readMessage } from "@/api/msg/readMessage";
+import { readAllMessages } from "@/api/msg/readAllMessages";
 import { Roles, hasRole } from "@/roles";
 import { Icons, IconColors } from "@/notify";
 import { store } from "@/store";

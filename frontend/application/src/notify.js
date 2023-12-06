@@ -1,7 +1,7 @@
 import { store } from "@/store";
 import { isValid, isSuccess } from '@/utils'
-import { sendMessage } from "@/api/sendMessage";
-import { sendMessageToUsersWithRole } from "@/api/sendMessageToRole";
+import { sendMessage } from "@/api/msg/sendMessage";
+import { sendMessageToUsersWithRole } from "@/api/msg/sendMessageToRole";
 
 
 export const Icons = Object.freeze({

@@ -10,7 +10,7 @@
 <script>
 // @ is an alias to /src
 import { reactive } from "vue";
-import { getGovernance } from "@/api/getGovernance";
+import { getGovernance } from "@/api/ims/getGovernance";
 import { isSuccess } from '@/utils'
 import { store, storeGovernanceInfo } from "@/store"
 import { Roles, hasRole } from "@/roles";

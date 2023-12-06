@@ -4,8 +4,8 @@
 // @ is an alias to /src
 import { store, storeMessages } from "@/store";
 import { isValid, isSuccess, formatSinceEvent } from "@/utils";
-import { getMessages } from "@/api/getMessages";
-import { countUnreadMessages } from "@/api/countUnreadMessages";
+import { getMessages } from "@/api/msg/getMessages";
+import { countUnreadMessages } from "@/api/msg/countUnreadMessages";
 
 const messagesToAggregate = 5;
 

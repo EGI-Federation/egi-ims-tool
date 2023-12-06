@@ -33,7 +33,7 @@
 import { reactive } from 'vue';
 import { store, storeGovernanceInfo } from "@/store";
 import { isValid, isSuccess, findEntityWithVersion, sortBy } from '@/utils'
-import { getGovernance } from "@/api/getGovernance";
+import { getGovernance } from "@/api/ims/getGovernance";
 import MarkdownIt from 'markdown-it';
 import GovernanceHeader from "@/components/governanceHeader.vue"
 import VersionHistory from "@/components/history.vue"
@@ -123,9 +123,6 @@ export default {
                 }
 
                 r.sort(sortBy('id', true));
-
-                let i = 10;
-                i++;
             }
             return r;
         },

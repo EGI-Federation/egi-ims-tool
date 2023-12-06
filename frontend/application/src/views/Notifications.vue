@@ -73,8 +73,8 @@
 // @ is an alias to /src
 import { store  } from "@/store"
 import { isValid, isSuccess, formatSinceEvent } from "@/utils";
-import { readMessage } from "@/api/readMessage";
-import { readAllMessages } from "@/api/readAllMessages";
+import { readMessage } from "@/api/msg/readMessage";
+import { readAllMessages } from "@/api/msg/readAllMessages";
 import { Icons, IconColors } from "@/notify";
 import imsNavbar from "@/components/navbar.vue";
 import imsFooter from "@/components/footer.vue";
