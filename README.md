@@ -47,6 +47,7 @@ The following components support the ones that implement the processes of the IM
 
 - [Configuration Service](https://github.com/EGI-Federation/egi-ims-config)
 - [Messaging Service](https://github.com/EGI-Federation/egi-ims-messaging)
+- [Document Service](https://github.com/EGI-Federation/egi-ims-docs)
 
 ## Configuration and deployment
 

@@ -27,7 +27,8 @@ services:
         - SERVICE_UI=ims-ui:8080
         - SERVICE_IMS=ims-api:8081
         - SERVICE_MSG=msg-api:8082
-        - SERVICE_SLM=slm-api:8083
+        - SERVICE_DOC=doc-api:8083
+        - SERVICE_SLM=slm-api:8084
         - GRAFANA_URL=http://grafana:3000
         - TELEMETRY_URL=${OTEL_COLLECTOR_ADDR}
         - CORS_ORIGINS=${CORS_ORIGINS:-.*}
@@ -40,6 +41,8 @@ services:
     links:
       - ims-ui
       - ims-api
+      - msg-api
+      - doc-api
       - slm-api
       - grafana
     volumes:
@@ -147,6 +150,39 @@ services:
       ims-db:
         condition: service_healthy
 
+  # DOC API
+  doc-api:
+    container_name: doc-api
+    image: egi/doc-api:latest
+    build:
+      context: ../backend/docs-service/src/main/docker
+    environment:
+      - QUARKUS_PROFILE=${QUARKUS_PROFILE:-prod}
+      - EGI_IMS_VO=${EGI_VO}
+      - EGI_CHECKIN_PASSWORD=${EGI_CHECKIN_PASSWORD}
+      - QUARKUS_OIDC_AUTH_SERVER_URL=${EGI_CHECKIN_SERVER}/auth/realms/egi
+      - QUARKUS_DATASOURCE_REACTIVE_URL=postgresql://ims-db:5432/ims
+      - QUARKUS_DATASOURCE_USERNAME=${IMS_DB_USER:-ims}
+      - QUARKUS_DATASOURCE_PASSWORD=${IMS_DB_PASSWORD}
+      - QUARKUS_OPENTELEMETRY_TRACER_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}
+      - QUARKUS_OPENTELEMETRY_TRACER_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=data-transfer
+      - QUARKUS_SMALLRYE_OPENAPI_SERVERS=https://${SERVICE_DOMAIN}/api/doc
+      - QUARKUS_LOG_FILE_PATH=/deployments/logs/doc-api.json
+      - QUARKUS_HTTP_CORS_ORIGINS=/${CORS_ORIGINS:-.*}/
+      - QUARKUS_HTTP_CORS_HEADERS=${CORS_HEADERS:-Origin,Content-Type,Accept}
+      - QUARKUS_HTTP_CORS_METHODS=${CORS_METHODS:-HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS}
+      - QUARKUS_HTTP_ACCESS_LOG_ENABLED=${HTTP_ACCESS_LOG:-false}
+    volumes:
+      - logs:/deployments/logs:rw
+    restart: unless-stopped
+    ports:
+      - "9083:8083"
+    links:
+      - otelcol
+    depends_on:
+      ims-db:
+        condition: service_healthy
+
   # SLM API
   slm-api:
     container_name: slm-api
@@ -173,7 +209,7 @@ services:
       - logs:/deployments/logs:rw
     restart: unless-stopped
     ports:
-      - "9083:8083"
+      - "9084:8084"
     links:
       - otelcol
     depends_on:

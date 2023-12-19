@@ -8,6 +8,7 @@ ARG SERVICE_DOMAIN
 ARG SERVICE_UI
 ARG SERVICE_IMS
 ARG SERVICE_MSG
+ARG SERVICE_DOC
 ARG SERVICE_SLM
 ARG SERVICE_CAPM
 ARG TELEMETRY_URL
@@ -40,7 +41,7 @@ RUN apt-get -q -y update && \
 COPY ssl/ /etc/ssl-options
 COPY nginx.conf $NGINX_DIR/nginx.conf
 COPY default.conf $NGINX_DIR/conf.d/default.conf.template
-RUN envsubst '${DOMAIN}${SERVICE_UI}${SERVICE_IMS}${$SERVICE_MSG}${SERVICE_SLM}${SERVICE_CAPM}${GRAFANA_URL}${CORS_ORIGINS}${CORS_METHODS}${CORS_HEADERS}' < $NGINX_DIR/conf.d/default.conf.template > $NGINX_DIR/conf.d/default.conf && \
+RUN envsubst '${DOMAIN}${SERVICE_UI}${SERVICE_IMS}${$SERVICE_MSG}${$SERVICE_DOC}${SERVICE_SLM}${SERVICE_CAPM}${GRAFANA_URL}${CORS_ORIGINS}${CORS_METHODS}${CORS_HEADERS}' < $NGINX_DIR/conf.d/default.conf.template > $NGINX_DIR/conf.d/default.conf && \
     rm -f $NGINX_DIR/conf.d/default.conf.template && \
     rm -f $NGINX_DIR/sites-enabled/default && \
     mkdir -p /var/cache/nginx/proxycache && \
