@@ -10,3 +10,6 @@
 [submodule "messaging-service"]
 	path = backend/messaging-service
 	url = https://github.com/EGI-Federation/egi-ims-messaging
+[submodule "docs-service"]
+	path = backend/docs-service
+	url = https://github.com/EGI-Federation/egi-ims-docs
