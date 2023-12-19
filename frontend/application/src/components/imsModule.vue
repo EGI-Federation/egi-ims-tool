@@ -16,7 +16,7 @@
 import { isValid } from '@/utils'
 
 export default {
-    name: 'IsmModule',
+    name: 'imsModule',
     props: {
         title: String,
         icon: String,

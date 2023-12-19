@@ -12,12 +12,12 @@
     </div>
 </div>
 
-<div class="collapse" id="explanation">
+<div class="collapse pt-3" id="explanation">
     <p class="mt-3 mb-3">
         {{ $t('welcome.imsPartsIntro') }}:
     </p>
     <div class="d-flex justify-content-center ism-blocks">
-        <ism-component
+        <ims-component
             :title="$t('welcome.cmsTitle')"
             code="CMS"
             standard="ISO 9000"
@@ -25,7 +25,7 @@
             :description="$t('welcome.cmsDesc')"
             :scope="$t('welcome.cmsScope')"
         />
-        <ism-component
+        <ims-component
             :title="$t('welcome.smsTitle')"
             code="SMS"
             standard="ISO 9000"
@@ -33,7 +33,7 @@
             :description="$t('welcome.smsDesc')"
             :scope="$t('welcome.smsScope')"
         />
-        <ism-component
+        <ims-component
             :title="$t('welcome.itsmsTitle')"
             code="ITSMS"
             standard="ISO/IEC 20000"
@@ -41,7 +41,7 @@
             :description="$t('welcome.itsmsDesc')"
             :scope="$t('welcome.itsmsScope')"
         />
-        <ism-component
+        <ims-component
             :title="$t('welcome.pmisTitle')"
             code="PMIS"
             standard="ISO 9000"
@@ -49,7 +49,7 @@
             :description="$t('welcome.pmisDesc')"
             :scope="$t('welcome.pmisScope')"
         />
-        <ism-component
+        <ims-component
             :title="$t('welcome.ismsTitle')"
             code="ISMS"
             standard="ISO/IEC 27001"
@@ -58,21 +58,19 @@
             :scope="$t('welcome.ismsScope')"
         />
     </div>
-    <p class="mt-3">
-        {{ $t('welcome.imsBasedOn') }}
-        <a href="https://www.fitsm.eu/" target="_blank">FitSM</a> {{ $t('welcome.imsDocumentedIn') }}
-        <a href="https://confluence.egi.eu/display/IMS/Integrated+Management+System+%28IMS%29+Home" target="_blank">Confluence</a>.
+    <p class="mt-3 mb-0">
+        {{ $t('welcome.imsBasedOn') }} <a href="https://www.fitsm.eu/" target="_blank">FitSM</a>.
     </p>
 </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import IsmComponent from "@/components/imsComponent.vue";
+import imsComponent from "@/components/imsComponent.vue";
 
 export default {
     name: 'Welcome',
-    components: { IsmComponent },
+    components: { imsComponent },
     data() {
         return {
             explaining: false,

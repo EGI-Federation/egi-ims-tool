@@ -6,146 +6,146 @@
             <div v-if="loggedIn" class="home">
                 <div v-if="canUseTool" class="greet">{{ $t('navbar.processes') }}</div>
                 <div v-if="canUseTool" class="d-flex flex-wrap ism-modules">
-                    <ism-module
+                    <ims-module
                         :title="$t('home.BA')"
                         code="BA"
                         :icon="Icons.BA"
                         :color="Colors.BA"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.BDS')"
                         code="BDS"
                         :icon="Icons.BDS"
                         :color="Colors.BDS"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.CAPM')"
                         code="CAPM"
                         :icon="Icons.CAPM"
                         :color="Colors.CAPM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.CHM')"
                         code="CHM"
                         :icon="Icons.CHM"
                         :color="Colors.CHM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.COM')"
                         code="COM"
                         :icon="Icons.COM"
                         :color="Colors.COM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.CONFM')"
                         code="CONFM"
                         :icon="Icons.CONFM"
                         :color="Colors.CONFM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.CSI')"
                         code="CSI"
                         :icon="Icons.CSI"
                         :color="Colors.CSI"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.CRM')"
                         code="CRM"
                         :icon="Icons.CRM"
                         :color="Colors.CRM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.CPM')"
                         code="CPM"
                         :icon="Icons.CPM"
                         :color="Colors.CPM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.FA')"
                         code="FA"
                         :icon="Icons.FA"
                         :color="Colors.FA"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.HR')"
                         code="HR"
                         :icon="Icons.HR"
                         :color="Colors.HR"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.ISM')"
                         code="ISM"
                         :icon="Icons.ISM"
                         :color="Colors.ISM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.ISRM')"
                         code="ISRM"
                         :icon="Icons.ISRM"
                         :color="Colors.ISRM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.PPC')"
                         code="PPC"
                         :icon="Icons.PPC"
                         :color="Colors.PPC"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.PM')"
                         code="PM"
                         :icon="Icons.PM"
                         :color="Colors.PM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.PKM')"
                         code="PKM"
                         :icon="Icons.PKM"
                         :color="Colors.PKM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.PPM')"
                         code="PPM"
                         :icon="Icons.PPM"
                         :color="Colors.PPM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.RDM')"
                         code="RDM"
                         :icon="Icons.RDM"
                         :color="Colors.RDM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.RM')"
                         code="RM"
                         :icon="Icons.RM"
                         :color="Colors.RM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.SACM')"
                         code="SACM"
                         :icon="Icons.SACM"
                         :color="Colors.SACM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.SUPPM')"
                         code="SUPPM"
                         :icon="Icons.SUPPM"
                         :color="Colors.SUPPM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.SLM')"
                         code="SLM"
                         :icon="Icons.SLM"
                         :color="Colors.SLM"
                         active=true
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.SPM')"
                         code="SPM"
                         :icon="Icons.SPM"
                         :color="Colors.SPM"
                     />
-                    <ism-module
+                    <ims-module
                         :title="$t('home.SRM')"
                         code="SRM"
                         :icon="Icons.SRM"
@@ -180,12 +180,12 @@ import { store } from "@/store";
 import { mapActions } from "vuex";
 import imsNavbar from "@/components/navbar.vue";
 import Welcome from "@/components/welcome.vue";
-import IsmModule from "@/components/imsModule.vue";
+import imsModule from "@/components/imsModule.vue";
 import imsFooter from "@/components/footer.vue";
 
 export default {
     name: 'Home',
-    components: { imsNavbar, Welcome, IsmModule, imsFooter },
+    components: { imsNavbar, Welcome, imsModule, imsFooter },
     props: {
         toasts: Element,
     },

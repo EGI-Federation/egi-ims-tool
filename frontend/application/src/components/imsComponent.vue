@@ -15,7 +15,7 @@
 <script>
 // @ is an alias to /src
 export default {
-    name: 'IsmComponent',
+    name: 'imsComponent',
     props: {
         title: String,
         code: String,
