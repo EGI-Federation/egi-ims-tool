@@ -7,7 +7,8 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 1.0.56
-- Notifications are sent when roles are assigned/revoked or entities are reviewed 
+- Added image upload/embed support for markdown editor
+- Notifications are sent when roles are assigned/revoked or entities are reviewed
 
 ## 1.0.55
 - Added notifications support
