@@ -30,7 +30,9 @@
                 <!-- Description -->
                 <h3>{{ $t('ims.description') }}</h3>
                 <textbox-with-preview class="mt-1" :label="$t('gov.goalsLabel')" :text="descriptionEditor"
-                                      :rows="10" :max-length=1048576 required/>
+                                      :rows="10" :max-length=1048576 required :upload="true"
+                                      @too-big-to-upload="tooBigToUpload"
+                                      @imageExists="imageExists"/>
                 <!-- Annexes -->
                 <h3 id="annexes-title">{{ $t('gov.annexes') }}</h3>
                 <div class="groups">
@@ -143,8 +145,8 @@ import i18n from "@/locales";
 import { reactive } from 'vue';
 import { store, storeGovernanceInfo } from "@/store";
 import { isValid, isSuccess, strEqual, deepClone, scrollTo } from '@/utils'
-import { getGovernance } from "@/api/getGovernance";
-import { updateGovernance } from "@/api/updateGovernance";
+import { getGovernance } from "@/api/ims/getGovernance";
+import { updateGovernance } from "@/api/ims/updateGovernance";
 import MarkdownIt from 'markdown-it';
 import GovernanceHeader from "@/components/governanceHeader.vue"
 import TextboxWithPreview from "@/components/textboxPreview.vue"
@@ -678,6 +680,12 @@ export default {
             this.$router.push(isValid(this.$props.state.navigateTo) ?
                               this.$props.state.navigateTo :
                               this.returnToRoute);
+        },
+        tooBigToUpload(fileInfo) {
+            this.$root.tooBigToUpload(fileInfo);
+        },
+        imageExists(fileName) {
+            this.$root.imageExists(fileName);
         },
     },
     created() {

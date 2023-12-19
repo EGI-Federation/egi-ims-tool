@@ -4,7 +4,6 @@
         "imsTitle": "EGI Integrated Management System",
         "imsPartsIntro": "Integrated Management System (IMS) is an umbrella term that encompasses the following parts",
         "imsBasedOn": "The EGI IMS is based on",
-        "imsDocumentedIn": "and is documented in",
         "whatIs": "What is it?",
         "hideExplain": "Hide explanation",
         "cmsTitle": "Core Management System",
@@ -22,7 +21,7 @@
         "ismsTitle": "Information Security Management System",
         "ismsDesc": "Helps maintain an adequate level of information security and address risks to information security.",
         "ismsScope": "Processes, activities, tools, and technology to deliver infrastructure and business support services",
-        "scope": "@:ims.scope"
+        "scope": "Scope"
     },
     "navbar": {
         "search": "Search",
@@ -229,7 +228,11 @@
         "has": "has",
         "have": "have",
         "was": "was",
-        "were": "were"
+        "were": "were",
+        "bytes": "Bytes",
+        "kbytes": "KBytes",
+        "mbytes": "MBytes",
+        "gbytes": "GBytes"
     },
     "process": {
         "goalsLabel": "Describe the goals of this process",
@@ -389,6 +392,9 @@
     "textbox": {
         "useMarkdown": "using markdown language",
         "cheatsheet": "cheatsheet",
-        "showPreview": "Show preview"
+        "showPreview": "Show preview",
+        "uploadImage": "Insert image",
+        "imageTooBig": "The selected image has {size} and is too big to upload, maximum allowed size is {max}.",
+        "imageExists": "An image file named {name} already exists, you cannot overwrite existing images."
     }
 }

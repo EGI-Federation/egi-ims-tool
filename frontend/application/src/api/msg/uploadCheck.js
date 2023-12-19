@@ -2,16 +2,20 @@ import { ref } from 'vue'
 import axios from 'axios'
 
 
-export const getResponsibility = function(accessToken, processCode, allVersions, baseUrl) {
-    const responsibilityInfo = ref(null);
+export const uploadCheck = function(accessToken, fileName, fileSize, baseUrl) {
+    const response = ref(null);
     const error = ref(null);
 
-    const load = async function() {
+    const check = async function() {
 
         try {
-            const url = baseUrl + '/responsibilities' + (allVersions ? '?allVersions=true' : '');
-            let data = await axios.get(url, {
+            const url = baseUrl + '/images/check';
+            let data = await axios.post(url, {
+                name: fileName,
+                size: fileSize
+            },{
                 headers: {
+                    "Content-Type": 'application/json',
                     Accept: 'application/json',
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -31,14 +35,14 @@ export const getResponsibility = function(accessToken, processCode, allVersions,
                 throw Error("Error in request " + url + " : " + error.value?.status);
             }
 
-            responsibilityInfo.value = data.data;
+            response.value = data.data;
         }
         catch(err) {
-            console.error("Error getting " + processCode + " responsibilities");
+            console.error("Error checking if image file exists");
             if(!error.value)
                 error.value = err;
         }
     }
 
-    return { responsibilityInfo: responsibilityInfo, processCode: processCode, error: error, load: load };
+    return { response: response, error: error, check: check };
 }

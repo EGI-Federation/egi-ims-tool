@@ -69,6 +69,7 @@ services:
         - FALLBACK_LOCALE=${IMS_FALLBACK_LOCALE:-it}
         - TRACE_APIS=${IMS_TRACE_APIS:-true}
         - TRACE_ROLES=${IMS_TRACE_ROLES:-false}
+        - MAX_UPLOAD_SIZE=${IMS_MAX_IMAGE_SIZE:-102400}
         - IMS_API=https://${SERVICE_DOMAIN}/api/ims
         - MSG_API=https://${SERVICE_DOMAIN}/api/msg
         - SLM_API=https://${SERVICE_DOMAIN}/api/slm

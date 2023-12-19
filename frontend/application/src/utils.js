@@ -21,8 +21,10 @@ export const isSuccess = function(t, apiResult, redirectOnError) {
         }
 
         let message = isValid(apiResult.error.value.data?.description) ?
-            apiResult.error.value.data.description :
-            apiResult.error.value.message;
+            apiResult.error.value.data.description : (
+            isValid(apiResult.error.value.message) ?
+                apiResult.error.value.message :
+                apiResult.error.value.statusText);
         t.$root.$refs.toasts.showError(t.$t('ims.error'), message);
         return false;
     }
@@ -310,6 +312,33 @@ export const formatSinceEvent = function(event, t) {
 
     // Earlier
     return formatDate(d, 'day');
+}
+
+// Format a file size to a string
+export const formatFileSize = function(t, size) {
+    const kb = 1024;
+    const mb = 1024 * kb;
+    const gb = 1024 * mb;
+
+    if(size > gb) {
+        const n = size / gb;
+        const r = size % gb;
+        return `${0 === r ? n : Number(n).toFixed(2)} ${t('ims.gbytes')}`;
+    }
+
+    if(size > mb) {
+        const n = size / mb;
+        const r = size % mb;
+        return `${0 === r ? n : Number(n).toFixed(2)} ${t('ims.mbytes')}`;
+    }
+
+    if(size > kb) {
+        const n = size / kb;
+        const r = size % kb;
+        return `${0 === r ? n : Number(n).toFixed(2)} ${t('ims.kbytes')}`;
+    }
+
+    return `${size} ${t('ims.bytes')}`;
 }
 
 // Reusable sort function, allows sorting by any field and even

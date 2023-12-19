@@ -80,7 +80,9 @@
                 <!-- Description -->
                 <h3>{{ $t('ims.description') }}</h3>
                 <textbox-with-preview class="mt-1" :label="$t('process.goalsLabel')" :text="descriptionEditor"
-                                      :rows="10" :max-length=10240 required/>
+                                      :rows="10" :max-length=10240 required :upload="true"
+                                      @too-big-to-upload="tooBigToUpload"
+                                      @image-exists="imageExists"/>
                 <!-- Requirements -->
                 <h3 id="requirements-title">{{ $t('process.requirements') }}</h3>
                 <div class="requirements">
@@ -1155,6 +1157,12 @@ export default {
             this.$router.push(isValid(this.$props.state.navigateTo) ?
                               this.$props.state.navigateTo :
                               this.returnToRoute);
+        },
+        tooBigToUpload(fileInfo) {
+            this.$root.tooBigToUpload(fileInfo);
+        },
+        imageExists(fileName) {
+            this.$root.imageExists(fileName);
         },
     },
     created() {

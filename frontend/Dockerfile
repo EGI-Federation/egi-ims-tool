@@ -7,6 +7,7 @@ ARG LOCALE
 ARG FALLBACK_LOCALE
 ARG TRACE_APIS
 ARG TRACE_ROLES
+ARG MAX_UPLOAD_SIZE
 ARG IMS_API
 ARG MSG_API
 ARG SLM_API
@@ -37,7 +38,7 @@ RUN npm install
 COPY application/ .
 
 # Build app for production with minification
-RUN envsubst '${EGI_CHECKIN_SERVER}${EGI_VO}${EGI_VO_ENROLL_URL}${LOCALE}${FALLBACK_LOCALE}${TRACE_APIS}${TRACE_ROLES}${IMS_API}${MSG_API}${SLM_API}' < /app/.env.template > /app/.env && \
+RUN envsubst '${EGI_CHECKIN_SERVER}${EGI_VO}${EGI_VO_ENROLL_URL}${LOCALE}${FALLBACK_LOCALE}${TRACE_APIS}${TRACE_ROLES}${IMS_API}${MSG_API}${SLM_API}${MAX_UPLOAD_SIZE}' < /app/.env.template > /app/.env && \
     npm run build
 
 EXPOSE 8080
