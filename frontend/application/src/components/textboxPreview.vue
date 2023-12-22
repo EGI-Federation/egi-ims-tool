@@ -29,7 +29,7 @@
     <form v-if="upload" class="upload-form" ref="imageForm">
         <input type="file" id="imageFile" ref="imageFile" :accept="fileFormats" :multiple="false"
                @change="imageSelected($event)"/>
-        <button type="submit" ref="upload" @click="uploadImage($event)">Upload</button>
+        <button type="submit" ref="uploadImage" @click="uploadImage($event)">Upload</button>
     </form>
 </div>
 </template>
@@ -115,11 +115,11 @@ export default {
             this.showPreview = !this.showPreview;
             if(this.showPreview) {
                 this.$refs.wrapper.style.width = "calc((100% - .5rem) / 2)";
-                this.$refs.upload.classList.add('preview');
+                this.$refs.upload?.classList.add('preview');
             }
             else {
                 this.$refs.wrapper.style.width = "100%";
-                this.$refs.upload.classList.remove('preview');
+                this.$refs.upload?.classList.remove('preview');
             }
         },
         selectImage(event) {
@@ -143,7 +143,7 @@ export default {
                             t.$emit('imageExists', t.image.name);
                         else
                             // Upload possible, submit upload form
-                            t.$refs.upload.click();
+                            t.$refs.uploadImage.click();
                     });
                 }
             }
